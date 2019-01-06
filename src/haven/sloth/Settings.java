@@ -80,7 +80,7 @@ public class Settings {
      * @throws IOException on any error
      */
     public Settings load() throws IOException {
-        final var reader = new BufferedReader(new FileReader(filename));
+        final BufferedReader reader = new BufferedReader(new FileReader(filename));
         String ln;
         String section = "";
         Matcher find;
@@ -93,8 +93,8 @@ public class Settings {
                 } else {
                     find = kvpair.matcher(ln);
                     if(find.find()) {
-                        final var key = find.group(1);
-                        final var val = find.group(2);
+                        final String key = find.group(1);
+                        final String val = find.group(2);
                         for(final Pattern pat : parsers.keySet()) {
                             find = pat.matcher(val);
                             if(find.find()) {
@@ -116,12 +116,12 @@ public class Settings {
      * Saves our settings to our file. Ignores any errors
      */
     public void save() {
-        try(final var writer = new BufferedWriter(new FileWriter(filename))) {
-            for(final var section : settings.keySet()) {
+        try(final BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
+            for(final String section : settings.keySet()) {
                 writer.write('[');
                 writer.write(section);
                 writer.write(']');
-                for(final var key : settings.get(section).keySet()) {
+                for(final String key : settings.get(section).keySet()) {
                     writer.write(key);
                     writer.write(" = ");
                     writer.write(settings.get(section).get(key).toString());

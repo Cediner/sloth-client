@@ -15,3 +15,5 @@
 1.0.3
     - Added RGB to possible settings
     - Added additional profiling to MapView
+1.0.4
+    - Back to Java 8 since it's become clear that certain code outside of my reach can't support it
