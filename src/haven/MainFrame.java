@@ -33,6 +33,7 @@ import java.util.*;
 import java.lang.reflect.*;
 
 public class MainFrame extends java.awt.Frame implements Runnable, Console.Directory {
+    private static final String title = "Haven and Hearth \u2013 Sloth Client \u2013 1.0.0 \u2013 A New Beginning";
     HavenPanel p;
     private final ThreadGroup g;
     public final Thread mt;
@@ -169,7 +170,7 @@ public class MainFrame extends java.awt.Frame implements Runnable, Console.Direc
     }
 
     public MainFrame(Coord isz) {
-	super("Haven and Hearth");
+	super(title);
 	Coord sz;
 	if(isz == null) {
 	    sz = Utils.getprefc("wndsz", new Coord(800, 600));
@@ -249,10 +250,10 @@ public class MainFrame extends java.awt.Frame implements Runnable, Console.Direc
 			    Config.authck = null;
 			}
 			fun = bill;
-			setTitle("Haven and Hearth");
+			setTitle(title);
 		    } else {
 			fun = new RemoteUI(sess);
-			setTitle("Haven and Hearth \u2013 " + sess.username);
+			setTitle(title + " \u2013 " + sess.username);
 		    }
 		    sess = fun.run(p.newui(sess));
 		}
