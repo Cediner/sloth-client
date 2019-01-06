@@ -12,3 +12,6 @@
         - Also removed ARB extension checks for VAOs/Instancing since the ARB functions weren't used either way
           thus making VAO support only for OpenGL 3.0+ users, and Instancing for OpenGL 3.3+ users
     - Removed unused imports in various locations
+1.0.3
+    - Added RGB to possible settings
+    - Added additional profiling to MapView
