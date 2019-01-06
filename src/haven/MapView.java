@@ -35,7 +35,7 @@ import java.awt.event.KeyEvent;
 import java.util.*;
 import java.lang.ref.*;
 import java.lang.reflect.*;
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 
 public class MapView extends PView implements DTarget, Console.Directory {
     public static boolean clickdb = false;

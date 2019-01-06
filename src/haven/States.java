@@ -27,7 +27,7 @@
 package haven;
 
 import haven.glsl.*;
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 import java.awt.Color;
 
 public abstract class States extends GLState {

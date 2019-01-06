@@ -32,9 +32,8 @@ import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.awt.event.*;
 import java.util.*;
-import javax.media.opengl.*;
-import javax.media.opengl.awt.*;
-import javax.media.opengl.glu.GLU;
+import com.jogamp.opengl.*;
+import com.jogamp.opengl.awt.*;
 
 public class HavenPanel extends GLCanvas implements Runnable, Console.Directory {
     UI ui;
@@ -67,13 +66,14 @@ public class HavenPanel extends GLCanvas implements Runnable, Console.Directory 
 	cap.setRedBits(8);
 	cap.setGreenBits(8);
 	cap.setBlueBits(8);
+	cap.setStencilBits(8);
 	cap.setSampleBuffers(true);
 	cap.setNumSamples(4);
 	return(cap);
     }
 
-    public HavenPanel(int w, int h, GLCapabilitiesChooser cc) {
-	super(stdcaps(), cc, null, null);
+    public HavenPanel(int w, int h) {
+	super(stdcaps());
 	if(gldebug)
 	    setContextCreationFlags(getContextCreationFlags() | GLContext.CTX_OPTION_DEBUG);
 	setSize(this.w = w, this.h = h);
@@ -81,10 +81,6 @@ public class HavenPanel extends GLCanvas implements Runnable, Console.Directory 
 	initgl();
 	if(Toolkit.getDefaultToolkit().getMaximumCursorColors() >= 256)
 	    cursmode = "awt";
-    }
-    
-    public HavenPanel(int w, int h) {
-	this(w, h, null);
     }
     
     private void initgl() {

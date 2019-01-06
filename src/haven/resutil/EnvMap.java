@@ -29,9 +29,8 @@ package haven.resutil;
 import haven.*;
 import haven.glsl.*;
 import java.awt.Color;
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 import static haven.glsl.Cons.*;
-import static haven.glsl.Function.PDir.*;
 import static haven.glsl.Type.*;
 
 @Material.ResName("envref")

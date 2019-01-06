@@ -26,7 +26,7 @@
 
 package haven;
 
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 
 public class GLVertexArray extends GLObject implements BGL.ID {
     private int id;

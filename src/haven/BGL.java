@@ -26,7 +26,7 @@
 
 package haven;
 
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 import java.nio.*;
 import java.util.*;
 import java.util.function.*;
@@ -274,9 +274,9 @@ public abstract class BGL {
 	    });
     }
 
-    public void glCompileShaderARB(final ID shader) {
+    public void glCompileShader(final ID shader) {
 	add(new Command() {
-		public void run(GL2 gl) {gl.glCompileShaderARB(shader.glid());}
+		public void run(GL2 gl) {gl.glCompileShader(shader.glid());}
 	    });
     }
 
@@ -308,10 +308,19 @@ public abstract class BGL {
 	    });
     }
 
-    public void glDeleteObjectARB(final ID id) {
+    public void glDeleteShader(final ID id) {
 	add(new Command() {
-		public void run(GL2 gl) {gl.glDeleteObjectARB(id.glid());}
+		public void run(GL2 gl) {gl.glDeleteShader(id.glid());}
 	    });
+    }
+
+    public void glDeleteProgram(final ID id) {
+        add(new Command() {
+	    @Override
+	    public void run(GL2 gl) {
+		gl.glDeleteShader(id.glid());
+	    }
+	});
     }
 
     public void glDeleteRenderbuffers(final int count, final ID[] buffers, final int n) {
@@ -639,9 +648,9 @@ public abstract class BGL {
 	    });
     }
 
-    public void glShaderSourceARB(final ID shader, final int count, final String[] string, final int[] length, final int n) {
+    public void glShaderSource(final ID shader, final int count, final String[] string, final int[] length, final int n) {
 	add(new Command() {
-		public void run(GL2 gl) {gl.glShaderSourceARB(shader.glid(), count, string, length, n);}
+		public void run(GL2 gl) {gl.glShaderSource(shader.glid(), count, string, length, n);}
 	    });
     }
 
@@ -763,9 +772,9 @@ public abstract class BGL {
 	    });
     }
 
-    public void glUseProgramObjectARB(final ID program) {
+    public void glUseProgram(final ID program) {
 	add(new Command() {
-		public void run(GL2 gl) {gl.glUseProgramObjectARB(program.glid());}
+		public void run(GL2 gl) {gl.glUseProgram(program.glid());}
 	    });
     }
 

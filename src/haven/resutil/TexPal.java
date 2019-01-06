@@ -30,9 +30,7 @@ import java.util.*;
 import haven.*;
 import haven.glsl.*;
 import static haven.glsl.Cons.*;
-import static haven.glsl.Function.PDir.*;
 import static haven.glsl.Type.*;
-import haven.glsl.ValBlock.Value;
 
 public class TexPal extends GLState {
     public static final Slot<TexPal> slot = new Slot<TexPal>(Slot.Type.DRAW, TexPal.class);

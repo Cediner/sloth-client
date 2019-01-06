@@ -26,8 +26,6 @@
 
 package haven;
 
-import java.awt.image.BufferedImage;
-import java.awt.Graphics;
 import java.util.*;
 import java.lang.reflect.Constructor;
 

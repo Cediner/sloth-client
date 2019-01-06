@@ -26,8 +26,6 @@
 
 package haven;
 
-import javax.media.opengl.*;
-
 public class Location extends Transform {
     public final String id;
 

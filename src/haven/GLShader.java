@@ -27,8 +27,7 @@
 package haven;
 
 import java.io.*;
-import java.util.*;
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 
 public abstract class GLShader implements java.io.Serializable {
     public final String source, header;
@@ -50,12 +49,12 @@ public abstract class GLShader implements java.io.Serializable {
 	}
 
 	public void create(GL2 gl) {
-	    id = gl.glCreateShaderObjectARB(type);
+	    id = gl.glCreateShader(type);
 	    GOut.checkerr(gl);
 	}
 	
 	protected void delete(BGL gl) {
-	    gl.glDeleteObjectARB(this);
+	    gl.glDeleteShader(this);
 	}
 
 	public int glid() {
@@ -68,18 +67,18 @@ public abstract class GLShader implements java.io.Serializable {
 	     * the coding it encodes the String as so as to supply the
 	     * corrent length? It won't matter since all reasonable
 	     * programs will be ASCII, of course, but still... */
-	    gl.glShaderSourceARB(this, 1, new String[] {sh.source}, new int[] {sh.source.length()}, 0);
-	    gl.glCompileShaderARB(this);
+	    gl.glShaderSource(this, 1, new String[] {sh.source}, new int[] {sh.source.length()}, 0);
+	    gl.glCompileShader(this);
 	    gl.bglSubmit(new BGL.Request() {
 		    public void run(GL2 rgl) {
 			int[] buf = {0};
-			rgl.glGetObjectParameterivARB(id, GL2.GL_OBJECT_COMPILE_STATUS_ARB, buf, 0);
+			rgl.glGetShaderiv(id, GL2.GL_COMPILE_STATUS, buf, 0);
 			if(buf[0] != 1) {
 			    String info = null;
-			    rgl.glGetObjectParameterivARB(id, GL2.GL_OBJECT_INFO_LOG_LENGTH_ARB, buf, 0);
+			    rgl.glGetShaderiv(id, GL2.GL_INFO_LOG_LENGTH, buf, 0);
 			    if(buf[0] > 0) {
 				byte[] logbuf = new byte[buf[0]];
-				rgl.glGetInfoLogARB(id, logbuf.length, buf, 0, logbuf, 0);
+				rgl.glGetShaderInfoLog(id, logbuf.length, buf, 0, logbuf, 0);
 				/* The "platform's default charset" is probably a reasonable choice. */
 				info = new String(logbuf, 0, buf[0]);
 			    }

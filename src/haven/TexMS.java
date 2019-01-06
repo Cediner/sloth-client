@@ -26,9 +26,7 @@
 
 package haven;
 
-import java.awt.image.*;
-import java.nio.*;
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 import haven.TexGL.TexOb;
 import static haven.GOut.checkerr;
 

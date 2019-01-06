@@ -27,12 +27,9 @@
 package haven;
 
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.*;
-import java.util.function.*;
 import haven.ItemInfo.AttrCache;
-import static haven.ItemInfo.find;
 import static haven.Inventory.sqsz;
 
 public class WItem extends Widget implements DTarget {

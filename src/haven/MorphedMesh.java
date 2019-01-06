@@ -28,7 +28,6 @@ package haven;
 
 import java.util.*;
 import java.nio.*;
-import java.lang.ref.*;
 
 public class MorphedMesh extends FastMesh {
     private static Map<Morpher.Factory, Collection<MorphedBuf>> bufs = new CacheMap<Morpher.Factory, Collection<MorphedBuf>>(CacheMap.RefType.WEAK);
@@ -111,10 +110,10 @@ public class MorphedMesh extends FastMesh {
 		    ret[i] = ((MorphArray)from.bufs[i]).dup();
 		    if(type == MorphType.POS) {
 			pos.add(new Pair((FloatArray)from.bufs[i], (FloatArray)ret[i]));
-			ret[i].vbomode(javax.media.opengl.GL.GL_DYNAMIC_DRAW);
+			ret[i].vbomode(com.jogamp.opengl.GL.GL_DYNAMIC_DRAW);
 		    } else if(type == MorphType.DIR) {
 			dir.add(new Pair((FloatArray)from.bufs[i], (FloatArray)ret[i]));
-			ret[i].vbomode(javax.media.opengl.GL.GL_DYNAMIC_DRAW);
+			ret[i].vbomode(com.jogamp.opengl.GL.GL_DYNAMIC_DRAW);
 		    }
 		} else {
 		    ret[i] = from.bufs[i];

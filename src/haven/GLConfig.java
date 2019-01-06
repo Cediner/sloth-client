@@ -28,11 +28,18 @@ package haven;
 
 import java.util.*;
 import java.util.regex.*;
-import javax.media.opengl.*;
+
+import com.google.common.flogger.FluentLogger;
+import com.jogamp.opengl.*;
 
 public class GLConfig implements java.io.Serializable, Console.Directory {
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     private static final Pattern slvp = Pattern.compile("^(\\d+)\\.(\\d+)");
-    public int glslver, glmajver, glminver;
+    private static final int GL_VERSION_3_3 = (3 << 8) | 3;
+    private static final int GL_VERSION_3_2 = (3 << 8) | 2;
+    private static final int GL_VERSION_3_0 = (3 << 8);
+    private static final int GLSL_VERSION_1_20 = (1 << 8) | 20;
+    public int glmajver, glminver, glver, glslver;
     public int maxlights, maxtargets;
     public float anisotropy;
     public Collection<String> exts;
@@ -92,6 +99,7 @@ public class GLConfig implements java.io.Serializable, Console.Directory {
 	    c.glmajver = 1;
 	    c.glminver = 0;
 	}
+	c.glver = (c.glmajver << 8) | c.glminver;
 	c.maxlights = glgeti(gl, GL2.GL_MAX_LIGHTS);
 	c.maxtargets = glcondi(gl, GL2.GL_MAX_COLOR_ATTACHMENTS, 1);
 	c.exts = Arrays.asList(gl.glGetString(GL.GL_EXTENSIONS).split(" "));
@@ -104,30 +112,50 @@ public class GLConfig implements java.io.Serializable, Console.Directory {
 		try {
 		    int major = Integer.parseInt(m.group(1));
 		    int minor = Integer.parseInt(m.group(2));
-		    if((major > 0) && (major < 256) && (minor >= 0) && (minor < 256))
+		    if((major > 0) && (major < 256) && (minor >= 0) && (minor < 256)) {
 			c.glslver = (major << 8) | minor;
+		    }
 		} catch(NumberFormatException e) {
 		}
+	    } else {
+	        c.glslver = 0;
 	    }
+	} else {
+	    c.glslver = 0;
 	}
+
 	if(c.exts.contains("GL_EXT_texture_filter_anisotropic"))
 	    c.anisotropy = glgetf(gl, GL.GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT);
 	else
 	    c.anisotropy = 0;
 	c.assertcaps();
+	//Log everything
+	logger.atInfo().log("GL Version: %d.%d, GLSL: 0x%04X", c.glmajver, c.glminver, c.glslver);
+	logger.atInfo().log("Max Lights: %d, Max Targets: %d", c.maxlights, c.maxtargets);
+	logger.atFine().log("Extensions: %s", c.exts);
+	logger.atFine().log("%s", c.caps);
+
 	return(c);
     }
-    
+
+    public boolean haveVAO() {
+        return glver >= GL_VERSION_3_0;
+    }
+
+    public boolean haveInstancing() {
+        return glver >= GL_VERSION_3_3;
+    }
+
     public boolean havefsaa() {
-	return(exts.contains("GL_ARB_multisample") && caps.getSampleBuffers());
+	return (exts.contains("GL_ARB_multisample") || glver >= GL_VERSION_3_2) && caps.getSampleBuffers();
     }
     
     public boolean haveglsl() {
-	return(exts.contains("GL_ARB_fragment_shader") && exts.contains("GL_ARB_vertex_shader") && (glslver >= 0x0114));
+	return (glslver >= GLSL_VERSION_1_20);
     }
 
     public boolean havefbo() {
-	return(exts.contains("GL_EXT_framebuffer_object"));
+	return (exts.contains("GL_EXT_framebuffer_object")) || glver >= GL_VERSION_3_2;
     }
 
     public void resetprefs() {

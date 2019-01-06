@@ -27,11 +27,9 @@
 package haven;
 
 import java.awt.Color;
-import java.util.*;
 import haven.glsl.*;
 import static haven.glsl.Cons.*;
 import static haven.glsl.Type.*;
-import javax.media.opengl.*;
 
 public class Outlines implements Rendered {
     private boolean symmetric;

@@ -27,7 +27,7 @@
 package haven;
 
 import java.util.*;
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 
 public class GPUProfile extends Profile {
     private Collection<Frame> waiting = new LinkedList<Frame>();

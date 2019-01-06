@@ -27,8 +27,6 @@
 package haven;
 
 import java.util.*;
-import java.io.*;
-import java.lang.ref.WeakReference;
 import haven.Audio.CS;
 import haven.Audio.VolAdjust;
 

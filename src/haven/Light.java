@@ -29,7 +29,7 @@ package haven;
 import haven.glsl.*;
 import java.util.*;
 import java.awt.Color;
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 import static haven.Utils.c2fa;
 
 public class Light implements Rendered {

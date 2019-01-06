@@ -27,7 +27,7 @@
 package haven;
 
 import java.awt.Color;
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 
 public class SpotLight extends PosLight {
     public float[] dir;

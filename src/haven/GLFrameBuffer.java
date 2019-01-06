@@ -26,7 +26,7 @@
 
 package haven;
 
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 
 public class GLFrameBuffer extends GLState {
     public static final Slot<GLFrameBuffer> slot = new Slot<GLFrameBuffer>(Slot.Type.SYS, GLFrameBuffer.class, HavenPanel.global);

@@ -41,7 +41,7 @@ public class HtmlReporter {
     };
     public static final Class[] boring = {
 	RuntimeException.class,
-	javax.media.opengl.GLException.class,
+	com.jogamp.opengl.GLException.class,
     };
     
     public static class ErrorIdentity implements Comparable<ErrorIdentity> {
@@ -186,7 +186,7 @@ public class HtmlReporter {
 	    List<String> classes = new LinkedList<String>();
 	    String pkg = e.getClassName();
 	    if(pkg != null) {
-		if(pkg.startsWith("javax.media.opengl.") || pkg.startsWith("com.sun.opengl.")) {
+		if(pkg.startsWith("com.jogamp.opengl.") || pkg.startsWith("com.sun.opengl.")) {
 		    classes.add("pkg-jogl");
 		} else if(pkg.startsWith("java.") || pkg.startsWith("javax.")) {
 		    classes.add("pkg-java");

@@ -26,11 +26,9 @@
 
 package haven.resutil;
 
-import java.util.*;
 import haven.*;
 import haven.glsl.*;
 import static haven.glsl.Cons.*;
-import static haven.glsl.Function.PDir.*;
 import static haven.glsl.Type.*;
 import haven.glsl.ValBlock.Value;
 

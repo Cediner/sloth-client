@@ -27,7 +27,6 @@
 package haven.resutil;
 
 import haven.*;
-import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
 public class Curiosity extends ItemInfo.Tip {

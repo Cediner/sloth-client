@@ -26,7 +26,7 @@
 
 package haven;
 
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 
 public class PointedCam extends Camera {
     Coord3f base = Coord3f.o;

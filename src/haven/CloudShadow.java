@@ -26,12 +26,10 @@
 
 package haven;
 
-import java.util.*;
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 import haven.glsl.*;
 import haven.GLProgram.VarID;
 import static haven.glsl.Cons.*;
-import static haven.glsl.Function.PDir.*;
 import static haven.glsl.Type.*;
 
 public class CloudShadow extends GLState {

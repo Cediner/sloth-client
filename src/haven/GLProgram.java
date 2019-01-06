@@ -27,9 +27,7 @@
 package haven;
 
 import java.util.*;
-import javax.media.opengl.*;
-import haven.GLShader.VertexShader;
-import haven.GLShader.FragmentShader;
+import com.jogamp.opengl.*;
 
 public class GLProgram implements java.io.Serializable {
     public final Collection<GLShader> shaders;
@@ -95,11 +93,11 @@ public class GLProgram implements java.io.Serializable {
 	}
 
 	public void create(GL2 gl) {
-	    id = gl.glCreateProgramObjectARB();
+	    id = gl.glCreateProgram();
 	}
 
 	public void delete(BGL gl) {
-	    gl.glDeleteObjectARB(this);
+	    gl.glDeleteProgram(this);
 	}
 
 	public int glid() {
@@ -114,13 +112,13 @@ public class GLProgram implements java.io.Serializable {
 	    gl.bglSubmit(new BGL.Request() {
 		    public void run(GL2 rgl) {
 			int[] buf = {0};
-			rgl.glGetObjectParameterivARB(id, GL2.GL_OBJECT_LINK_STATUS_ARB, buf, 0);
+			rgl.glGetProgramiv(id, GL2.GL_LINK_STATUS, buf, 0);
 			if(buf[0] != 1) {
 			    String info = null;
-			    rgl.glGetObjectParameterivARB(id, GL2.GL_OBJECT_INFO_LOG_LENGTH_ARB, buf, 0);
+			    rgl.glGetProgramiv(id, GL2.GL_INFO_LOG_LENGTH, buf, 0);
 			    if(buf[0] > 0) {
 				byte[] logbuf = new byte[buf[0]];
-				rgl.glGetInfoLogARB(id, logbuf.length, buf, 0, logbuf, 0);
+				rgl.glGetProgramInfoLog(id, logbuf.length, buf, 0, logbuf, 0);
 				/* The "platform's default charset" is probably a reasonable choice. */
 				info = new String(logbuf, 0, buf[0]);
 			    }
@@ -131,7 +129,7 @@ public class GLProgram implements java.io.Serializable {
 	}
 	
 	public int uniform(GL2 gl, String name) {
-	    int r = gl.glGetUniformLocationARB(id, name);
+	    int r = gl.glGetUniformLocation(id, name);
 	    if(r < 0)
 		throw(new NoSuchElementException(name));
 	    return(r);
@@ -161,7 +159,7 @@ public class GLProgram implements java.io.Serializable {
     }
 
     public void apply(GOut g) {
-	g.gl.glUseProgramObjectARB(glob(g));
+	g.gl.glUseProgram(glob(g));
     }
     
     public abstract static class VarID implements BGL.ID, BGL.Request {

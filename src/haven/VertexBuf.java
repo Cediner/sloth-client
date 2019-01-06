@@ -29,7 +29,7 @@ package haven;
 import java.nio.*;
 import java.util.*;
 import java.lang.annotation.*;
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 import haven.GLProgram.VarID;
 
 public class VertexBuf {

@@ -30,7 +30,7 @@ import java.awt.Color;
 import java.util.*;
 import java.lang.annotation.*;
 import java.lang.reflect.*;
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 import static haven.Utils.c2fa;
 
 public class Material extends GLState {

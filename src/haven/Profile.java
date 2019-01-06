@@ -28,7 +28,6 @@ package haven;
 
 import java.awt.Graphics2D;
 import java.awt.Color;
-import java.util.*;
 
 public abstract class Profile {
     public static final Color[] cols;

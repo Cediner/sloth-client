@@ -27,7 +27,6 @@
 package haven;
 
 import java.awt.Color;
-import java.awt.Font;
 import static java.lang.Math.PI;
 
 public class FlowerMenu extends Widget {

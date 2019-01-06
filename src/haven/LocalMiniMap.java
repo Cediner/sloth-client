@@ -31,7 +31,6 @@ import static haven.MCache.tilesz;
 import static haven.OCache.posres;
 import haven.MCache.Grid;
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import haven.resutil.Ridges;

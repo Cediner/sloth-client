@@ -26,9 +26,6 @@
 
 package haven;
 
-import java.util.*;
-import java.awt.font.TextAttribute;
-
 public class OptWnd extends Window {
     public final Panel main, video, audio;
     public Panel current;

@@ -76,7 +76,7 @@ public class AvaRender {
 		    Projection proj = Projection.frustum(-field, field, -aspect * field, aspect * field, 1, 5000);
 
 		    Light.Model lmod = new Light.Model();
-		    lmod.cc = javax.media.opengl.GL2.GL_SEPARATE_SPECULAR_COLOR;
+		    lmod.cc = com.jogamp.opengl.GL2.GL_SEPARATE_SPECULAR_COLOR;
 
 		    BufView view = new BufView(buf, GLState.compose(proj, cam, lmod, new Light.LightList()));
 		    while(true) {

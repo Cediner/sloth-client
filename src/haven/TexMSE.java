@@ -26,7 +26,7 @@
 
 package haven;
 
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 
 public class TexMSE extends TexMS {
     public final int ifmt, dfmt, dtype;

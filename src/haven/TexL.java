@@ -29,7 +29,7 @@ package haven;
 import java.util.*;
 import java.awt.image.*;
 import java.nio.ByteBuffer;
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 import haven.Defer.Future;
 
 public abstract class TexL extends TexGL {

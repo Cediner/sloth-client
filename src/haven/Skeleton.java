@@ -27,7 +27,7 @@
 package haven;
 
 import java.util.*;
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 
 public class Skeleton {
     public final Map<String, Bone> bones = new HashMap<String, Bone>();

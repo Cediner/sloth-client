@@ -27,7 +27,7 @@
 package haven;
 
 import java.util.*;
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 import static haven.GOut.checkerr;
 
 public abstract class GLObject {

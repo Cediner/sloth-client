@@ -32,8 +32,6 @@ import java.security.*;
 import java.security.cert.*;
 import java.security.cert.Certificate;
 import javax.net.ssl.*;
-import java.nio.channels.SocketChannel;
-import java.nio.channels.UnresolvedAddressException;
 
 public class SslHelper {
     private KeyStore creds, trusted;

@@ -4,3 +4,11 @@
     - Cleaned up old code not needed
     - Added in flogger for logging
     - Introduced ini configs for settings
+1.0.2
+    - Upgraded jogl to latest (2.3.2)
+    - Cleaned up code to work with jogl 2.3.2
+    - Changed ARB calls to normal GLSL calls
+        - Primarily affected GLShader & GLProgram
+        - Also removed ARB extension checks for VAOs/Instancing since the ARB functions weren't used either way
+          thus making VAO support only for OpenGL 3.0+ users, and Instancing for OpenGL 3.3+ users
+    - Removed unused imports in various locations

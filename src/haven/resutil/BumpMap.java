@@ -30,10 +30,9 @@ import haven.*;
 import haven.glsl.*;
 import static haven.glsl.Cons.*;
 import static haven.glsl.Type.*;
-import haven.MapMesh.Scan;
 import java.util.*;
 import java.nio.FloatBuffer;
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 
 public class BumpMap extends GLState {
     public static final Slot<BumpMap> slot = new Slot<BumpMap>(Slot.Type.DRAW, BumpMap.class);

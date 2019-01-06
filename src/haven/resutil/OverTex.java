@@ -30,7 +30,7 @@ import haven.*;
 import haven.glsl.*;
 import java.util.*;
 import java.nio.*;
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 import static haven.glsl.Cons.*;
 import static haven.glsl.Type.*;
 

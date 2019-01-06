@@ -27,7 +27,7 @@
 package haven;
 
 import java.util.*;
-import javax.media.opengl.*;
+import com.jogamp.opengl.*;
 import haven.glsl.*;
 import haven.GLProgram.VarID;
 import haven.GLFrameBuffer.Attachment;

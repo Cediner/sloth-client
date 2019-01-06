@@ -32,8 +32,6 @@ import haven.MapMesh.Scan;
 import haven.MapMesh.Model;
 import haven.Surface.Vertex;
 import haven.Tiler.MPart;
-import haven.Tiler.SModel;
-import haven.Tiler.VertFactory;
 import haven.Surface.MeshVertex;
 import static haven.Utils.clip;
 
