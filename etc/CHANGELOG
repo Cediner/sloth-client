@@ -1,2 +1,6 @@
 1.0.0
     - Initial setup
+1.0.1
+    - Cleaned up old code not needed
+    - Added in flogger for logging
+    - Introduced ini configs for settings

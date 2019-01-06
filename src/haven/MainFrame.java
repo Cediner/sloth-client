@@ -33,7 +33,7 @@ import java.util.*;
 import java.lang.reflect.*;
 
 public class MainFrame extends java.awt.Frame implements Runnable, Console.Directory {
-    private static final String title = "Haven and Hearth \u2013 Sloth Client \u2013 1.0.0 \u2013 A New Beginning";
+    private static final String title = "Haven and Hearth \u2013 Sloth Client \u2013 1.0.1 \u2013 A New Beginning";
     HavenPanel p;
     private final ThreadGroup g;
     public final Thread mt;

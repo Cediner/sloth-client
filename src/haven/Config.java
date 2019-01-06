@@ -30,25 +30,35 @@ import java.net.URL;
 import java.io.PrintStream;
 import static haven.Utils.getprop;
 
+/**
+ * Solely kept around for properties that can be set by the command line or properties (jnlp). Some can also be
+ * changed via in game commands.
+ * These don't save back and are read-only. Any changes only last the given session.
+ *
+ * The following have been removed from here and will be ini file based:
+ *
+ * The following have been removed since they are no longer relevant to hafen:
+ *  mapurl - hnh stopped using server-side maps since hafen, now entirely client based
+ *  bounddb - no longer used
+ *  fscache - no longer used
+ *  softres - no longer used
+ *
+ */
 public class Config {
     public static String authuser = getprop("haven.authuser", null);
     public static String authserv = getprop("haven.authserv", null);
     public static String defserv = getprop("haven.defserv", "game.havenandhearth.com");
     public static URL resurl = geturl("haven.resurl", "http://game.havenandhearth.com/hres/");
-    public static URL mapurl = geturl("haven.mapurl", "");
     public static URL screenurl = geturl("haven.screenurl", "http://game.havenandhearth.com/mt/ss");
     public static boolean dbtext = getprop("haven.dbtext", "off").equals("on");
-    public static boolean bounddb = getprop("haven.bounddb", "off").equals("on");
     public static boolean profile = getprop("haven.profile", "off").equals("on");
     public static boolean profilegpu = getprop("haven.profilegpu", "off").equals("on");
-    public static boolean fscache = getprop("haven.fscache", "on").equals("on");
     public static String resdir = getprop("haven.resdir", null);
     public static boolean nopreload = getprop("haven.nopreload", "no").equals("yes");
     public static String loadwaited = getprop("haven.loadwaited", null);
     public static String allused = getprop("haven.allused", null);
     public static int mainport = getint("haven.mainport", 1870);
     public static int authport = getint("haven.authport", 1871);
-    public static boolean softres = getprop("haven.softres", "on").equals("on");
     public static byte[] authck = null;
     public static String prefspec = "hafen";
     public static final String confid = "";

@@ -37,6 +37,9 @@ import java.util.*;
 import haven.resutil.Ridges;
 
 public class LocalMiniMap extends Widget {
+    public static final Tex bg = Resource.loadtex("gfx/hud/mmap/ptex");
+    public static final Tex nomap = Resource.loadtex("gfx/hud/mmap/nomap");
+    public static final Resource plx = Resource.local().loadwait("gfx/hud/mmap/x");
     public final MapView mv;
     public MapFile save;
     private Coord cc = null;
@@ -222,7 +225,7 @@ public class LocalMiniMap extends Widget {
 	    }
 	}
 	if(cur != null) {
-	    g.image(MiniMap.bg, Coord.z);
+	    g.image(bg, Coord.z);
 	    g.image(cur.img, cur.ul.sub(cc).add(sz.div(2)));
 	    try {
 		synchronized(ui.sess.glob.party.memb) {
@@ -237,13 +240,13 @@ public class LocalMiniMap extends Widget {
 			    continue;
 			Coord ptc = p2c(ppc);
 			g.chcolor(m.col.getRed(), m.col.getGreen(), m.col.getBlue(), 128);
-			g.image(MiniMap.plx.layer(Resource.imgc).tex(), ptc.add(MiniMap.plx.layer(Resource.negc).cc.inv()));
+			g.image(plx.layer(Resource.imgc).tex(), ptc.add(plx.layer(Resource.negc).cc.inv()));
 			g.chcolor();
 		    }
 		}
 	    } catch(Loading l) {}
 	} else {
-	    g.image(MiniMap.nomap, Coord.z);
+	    g.image(nomap, Coord.z);
 	}
 	drawicons(g);
     }
