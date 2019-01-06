@@ -24,6 +24,7 @@ import java.util.regex.Pattern;
  *  - Coord2d           ^((Double), (Double))$
  *  - Coord3f           ^((Double), (Double), (Double))$
  *  - String arrays 	^[ String, ... ]$
+ *  - RGBA 0-255        ^(Int),(Int),(Int),(Int)$
  *
  * It also has section support like ini's
  *
@@ -45,7 +46,8 @@ public class Settings {
     	coord = Pattern.compile("^\\((-?[0-9]+), (-?[0-9]+)\\)$"),
     	coord2d = Pattern.compile("^\\((-?[0-9]*\\.[0-9]+), (-?[0-9]*\\.[0-9]+)\\)$"),
     	coord3f = Pattern.compile("^\\((-?[0-9]*\\.[0-9]+), (-?[0-9]*\\.[0-9]+), (-?[0-9]*\\.[0-9]+)\\)$"),
-    	strarr = Pattern.compile("^\\[(.+)]$");
+    	strarr = Pattern.compile("^\\[(.+)]$"),
+    	color = Pattern.compile("^([0-9]+),([0-9]+),([0-9]+),([0-9]+)$");
     private static final Map<Pattern, ParseFun> parsers;
     static {
         parsers = new HashMap<>();
@@ -59,6 +61,10 @@ public class Settings {
 		settings.set(section, key, new Coord3f(Float.parseFloat(val.group(1)), Float.parseFloat(val.group(2)), Float.parseFloat(val.group(3)))));
 	parsers.put(strarr, (settings, section, key, val) ->
 		settings.set(section, key, val.group(1).split(",")));
+	parsers.put(color, (settings, section, key, val) ->
+		settings.set(section, key,
+			new java.awt.Color(Integer.parseInt(val.group(1)), Integer.parseInt(val.group(2)),
+				Integer.parseInt(val.group(3)), Integer.parseInt(val.group(4)))));
     }
 
     private final Map<String, Map<String, Object>> settings;

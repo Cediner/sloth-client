@@ -26,7 +26,6 @@
 
 package haven;
 
-import static haven.MCache.cmaps;
 import static haven.MCache.tilesz;
 import static haven.OCache.posres;
 import haven.GLProgram.VarID;
@@ -55,6 +54,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
     public double shake = 0.0;
     public static int plobgran = 8;
     private static final Map<String, Class<? extends Camera>> camtypes = new HashMap<String, Class<? extends Camera>>();
+    public CPUProfile setupprof = new CPUProfile(300);
     
     public interface Delayed {
 	public void run(GOut g);
@@ -812,6 +812,9 @@ public class MapView extends PView implements DTarget, Console.Directory {
     public DirLight amb = null;
     private Outlines outlines = new Outlines(false);
     public void setup(RenderList rl) {
+	CPUProfile.Frame curf = null;
+	if(Config.profile)
+	    curf = setupprof.new Frame();
 	Gob pl = player();
 	if(pl != null)
 	    this.cc = new Coord2d(pl.getc());
@@ -824,12 +827,16 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    } else {
 		amb = null;
 	    }
+	    if(curf != null)
+		curf.tick("light");
 	    for(Glob.Weather w : glob.weather)
 		w.gsetup(rl);
 	    for(Glob.Weather w : glob.weather) {
 		if(w instanceof Rendered)
 		    rl.add((Rendered)w, null);
 	    }
+	    if(curf != null)
+		curf.tick("weather");
 	}
 	/* XXX: MSAA level should be configurable. */
 	if(rl.cfg.pref.fsaa.val) {
@@ -838,9 +845,17 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	}
 	if(rl.cfg.pref.outline.val)
 	    rl.add(outlines, null);
+	if(curf != null)
+	    curf.tick("outlines");
 	rl.add(map, null);
+	if(curf != null)
+	    curf.tick("map");
 	rl.add(mapol, null);
+	if(curf != null)
+	    curf.tick("mapol");
 	rl.add(gobs, null);
+	if(curf != null)
+	    curf.tick("gobs");
 	if(placing != null)
 	    addgob(rl, placing);
 	synchronized(extradraw) {
@@ -848,6 +863,10 @@ public class MapView extends PView implements DTarget, Console.Directory {
 		rl.add(extra, null);
 	    extradraw.clear();
 	}
+	if(curf != null)
+	    curf.tick("extra");
+	if(curf != null)
+	    curf.fin();
     }
 
     public static final haven.glsl.Uniform amblight = new haven.glsl.Uniform.AutoApply(haven.glsl.Type.INT) {
