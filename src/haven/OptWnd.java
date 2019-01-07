@@ -26,6 +26,9 @@
 
 package haven;
 
+import haven.sloth.DefSettings;
+import static haven.sloth.DefSettings.*;
+
 public class OptWnd extends Window {
     public final Panel main, video, audio;
     public Panel current;
@@ -74,9 +77,10 @@ public class OptWnd extends Window {
     }
 
     public class VideoPanel extends Panel {
+	PButton bback;
 	public VideoPanel(Panel back) {
 	    super();
-	    add(new PButton(200, "Back", 27, back), new Coord(0, 180));
+	    bback = add(new PButton(200, "Back", 27, back), new Coord(0, 180));
 	    pack();
 	}
 
@@ -95,15 +99,76 @@ public class OptWnd extends Window {
 				    cf.flight.set(true);
 				} catch(GLSettings.SettingException e) {
 				    error(e.getMessage());
+				    global.set(GRAPHICS, PFLIGHTING, false);
 				    return;
 				}
 			    } else {
 				cf.flight.set(false);
 			    }
+			    global.set(GRAPHICS, PFLIGHTING, val);
 			    a = val;
-			    cf.dirty = true;
 			}
 		    }, new Coord(0, y));
+		y += 25;
+		add(new CheckBox("Cel Shading") {
+		    {a = cf.cel.val;}
+
+		    public void set(boolean val) {
+			if(val) {
+			    try {
+				cf.cel.set(true);
+			    } catch(GLSettings.SettingException e) {
+				error(e.getMessage());
+				global.set(GRAPHICS, CELSHADING, false);
+				return;
+			    }
+			} else {
+			    cf.cel.set(false);
+			}
+			global.set(GRAPHICS, CELSHADING, val);
+			a = val;
+		    }
+		}, new Coord(0, y));
+		y += 25;
+		add(new CheckBox("Toggle Alpha Coverage") {
+		    {a = cf.alphacov.val;}
+
+		    public void set(boolean val) {
+			if(val) {
+			    try {
+				cf.alphacov.set(true);
+			    } catch(GLSettings.SettingException e) {
+				error(e.getMessage());
+				global.set(GRAPHICS, ALPHACOV, false);
+				return;
+			    }
+			} else {
+			    cf.cel.set(false);
+			}
+			global.set(GRAPHICS, ALPHACOV, val);
+			a = val;
+		    }
+		}, new Coord(0, y));
+		y += 25;
+		add(new CheckBox("Render water surface") {
+		    {a = cf.wsurf.val;}
+
+		    public void set(boolean val) {
+			if(val) {
+			    try {
+				cf.wsurf.set(true);
+			    } catch(GLSettings.SettingException e) {
+				error(e.getMessage());
+				global.set(GRAPHICS, WATERSURFACE, false);
+				return;
+			    }
+			} else {
+			    cf.wsurf.set(false);
+			}
+			global.set(GRAPHICS, WATERSURFACE, val);
+			a = val;
+		    }
+		}, new Coord(0, y));
 		y += 25;
 		add(new CheckBox("Render shadows") {
 			{a = cf.lshadow.val;}
@@ -119,8 +184,8 @@ public class OptWnd extends Window {
 			    } else {
 				cf.lshadow.set(false);
 			    }
+			    global.set(GRAPHICS, PFLIGHTING, val);
 			    a = val;
-			    cf.dirty = true;
 			}
 		    }, new Coord(0, y));
 		y += 25;
@@ -134,8 +199,8 @@ public class OptWnd extends Window {
 				error(e.getMessage());
 				return;
 			    }
+			    global.set(GRAPHICS, ANTIALIASING, val);
 			    a = val;
-			    cf.dirty = true;
 			}
 		    }, new Coord(0, y));
 		y += 25;
@@ -162,19 +227,120 @@ public class OptWnd extends Window {
 				    error(e.getMessage());
 				    return;
 				}
+				global.set(GRAPHICS, ANISOLEVEL, val);
 				dpy();
-				cf.dirty = true;
 			    }
 			}, new Coord(0, y + 15));
 		}
+		y += 25;
+		add(new CheckBox("Render Outlines") {
+		    {a = cf.outline.val;}
+
+		    public void set(boolean val) {
+			try {
+			    cf.outline.set(val);
+			} catch(GLSettings.SettingException e) {
+			    error(e.getMessage());
+			    return;
+			}
+			global.set(GRAPHICS, OUTLINES, val);
+			a = val;
+		    }
+		}, new Coord(0, y));
+		y += 25;
+		add(new CheckBox("Symmetric Outlines") {
+		    {a = global.get(GRAPHICS, SYMMETRICOUTLINES, Boolean.class);}
+
+		    public void set(boolean val) {
+			global.set(GRAPHICS, SYMMETRICOUTLINES, val);
+			final GameUI gui = getparent(GameUI.class);
+			if(gui != null && gui.map != null)
+				gui.map.outlines.symmetric = val;
+			a = val;
+		    }
+		}, new Coord(0, y));
+		y += 25;
+		add(new CheckBox("Skip Loading") {
+		    {a = global.get(GRAPHICS, SKIPLOADING, Boolean.class);}
+
+		    public void set(boolean val) {
+			global.set(GRAPHICS, SKIPLOADING, val);
+			a = val;
+		    }
+		}, new Coord(0, y));
+		y += 25;
+		add(new CheckBox("Show Flavor Objects") {
+		    {a = global.get(GRAPHICS, SHOWFLAVOBJS, Boolean.class);}
+
+		    public void set(boolean val) {
+			global.set(GRAPHICS, SHOWFLAVOBJS, val);
+			a = val;
+		    }
+		}, new Coord(0, y));
+		y += 25;
+		add(new CheckBox("Wireframe Mode") {
+		    {a = global.get(GRAPHICS, WIREFRAMEMODE, Boolean.class);}
+
+		    public void set(boolean val) {
+			global.set(GRAPHICS, WIREFRAMEMODE, val);
+			a = val;
+		    }
+		}, new Coord(0, y));
+		y += 25;
+		add(new CheckBox("Show Weather") {
+		    {a = global.get(GRAPHICS, WEATHER, Boolean.class);}
+
+		    public void set(boolean val) {
+			global.set(GRAPHICS, WEATHER, val);
+			a = val;
+		    }
+		}, new Coord(0, y));
+		y += 25;
+		add(new CheckBox("Show Animations") {
+		    {a = global.get(GRAPHICS, ANIMATIONS, Boolean.class);}
+
+		    public void set(boolean val) {
+			global.set(GRAPHICS, ANIMATIONS, val);
+			a = val;
+		    }
+		}, new Coord(0, y));
+		y += 25;
+		add(new CheckBox("Show Map") {
+		    {a = global.get(GRAPHICS, SHOWMAP, Boolean.class);}
+
+		    public void set(boolean val) {
+			global.set(GRAPHICS, SHOWMAP, val);
+			a = val;
+		    }
+		}, new Coord(0, y));
+		y += 25;
+		add(new CheckBox("Show Gobs") {
+		    {a = global.get(GRAPHICS, SHOWGOBS, Boolean.class);}
+
+		    public void set(boolean val) {
+			global.set(GRAPHICS, SHOWGOBS, val);
+			a = val;
+		    }
+		}, new Coord(0, y));
+		y += 25;
+		add(new CheckBox("Nightvision") {
+		    {a = global.get(GRAPHICS, NIGHTVISION, Boolean.class);}
+
+		    public void set(boolean val) {
+			global.set(GRAPHICS, NIGHTVISION, val);
+			a = val;
+		    }
+		}, new Coord(0, y));
 		y += 35;
-		add(new Button(200, "Reset to defaults") {
+		y += add(new Button(200, "Reset to defaults") {
 			public void click() {
+			    DefSettings.resetgraphics();
 			    cf.cfg.resetprefs();
 			    curcf.destroy();
 			    curcf = null;
 			}
-		    }, new Coord(0, 150));
+		    }, new Coord(0, y)).sz.y + 5;
+		bback.c = new Coord(bback.c.x, y);
 		pack();
 	    }
 	}
@@ -185,6 +351,9 @@ public class OptWnd extends Window {
 		if(curcf != null)
 		    curcf.destroy();
 		curcf = add(new CPanel(g.gc.pref), Coord.z);
+		curcf.pack();
+		pack();
+		parent.pack();
 	    }
 	    super.draw(g);
 	}

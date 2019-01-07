@@ -26,9 +26,11 @@
 
 package haven;
 
+import com.google.common.flogger.FluentLogger;
 import com.jogamp.opengl.*;
 
 public class GLFrameBuffer extends GLState {
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     public static final Slot<GLFrameBuffer> slot = new Slot<GLFrameBuffer>(Slot.Type.SYS, GLFrameBuffer.class, HavenPanel.global);
     private final Attachment[] color;
     private final Attachment depth;
@@ -230,8 +232,11 @@ public class GLFrameBuffer extends GLState {
 		gl.bglSubmit(new BGL.Request() {
 			public void run(GL2 gl) {
 			    int st = gl.glCheckFramebufferStatus(GL.GL_FRAMEBUFFER);
-			    if(st != GL.GL_FRAMEBUFFER_COMPLETE)
-				throw(new RuntimeException("FBO failed completeness test: " + GOut.GLException.constname(st)));
+			    if(st != GL.GL_FRAMEBUFFER_COMPLETE) {
+			        //I'd rather not crash the player over something that will likely be corrected within some frames.
+			        logger.atSevere().log("FBO failed completeness test: %s", GOut.GLException.constname(st));
+			        //throw (new RuntimeException("FBO failed completeness test: " + GOut.GLException.constname(st)));
+			    }
 			}
 		    });
 	    } else {

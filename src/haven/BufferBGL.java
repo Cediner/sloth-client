@@ -32,6 +32,7 @@ import com.jogamp.opengl.*;
 public class BufferBGL extends BGL {
     private Command[] list;
     private int n = 0;
+    private boolean inBeginBlock = false;
 
     public BufferBGL(int c) {
 	list = new Command[c];
@@ -42,6 +43,17 @@ public class BufferBGL extends BGL {
 	for(int i = 0; i < n; i++) {
 	    try {
 		list[i].run(gl);
+		if(list[i] instanceof glBeginCommand)
+		    inBeginBlock = true;
+		if(list[i] instanceof glEndCommand)
+		    inBeginBlock = false;
+		if(!inBeginBlock) {
+		    int err = gl.glGetError();
+		    if (err != 0) {
+			System.err.println("GL Error: " + err);
+			System.err.println("Last Op: " + list[i - 1]);
+		    }
+		}
 	    } catch(Exception exc) {
 		throw(new BGLException(this, list[i], exc));
 	    }

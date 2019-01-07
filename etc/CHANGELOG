@@ -17,3 +17,23 @@
     - Added additional profiling to MapView
 1.0.4
     - Back to Java 8 since it's become clear that certain code outside of my reach can't support it
+1.0.5
+    - Added back a lot of Ape graphics settings, all of these can be found in the Options window
+        - Skip loading screens
+        - Toggle flavor objects
+        - Display more flavor objects
+        - Symmetric Outlines
+        - Cel Shading via options
+        - Shadow quality/size
+        - MSAA levels
+        - Wireframe mode
+        - Toggle weather
+        - Toggle animations
+        - Toggle map grids on/off
+        - Toggle gobs on/off
+        - Nightvision
+    - Settings should create automatically if the file doesn't exist, minor issues with loading fixed
+    - Pushed GLSettings configurations to Settings
+    - :gl commands are no longer a thing, use the options menu
+    - Fixed mistake that would cause a gl error when deleting glPrograms since it was calling the wrong function
+    - Pushed anisotropic validation off into TexGL

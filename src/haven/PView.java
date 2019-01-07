@@ -29,6 +29,7 @@ package haven;
 import java.awt.Color;
 import java.util.*;
 import com.jogamp.opengl.*;
+import haven.sloth.DefSettings;
 
 public abstract class PView extends Widget {
     public RenderList rls;
@@ -219,6 +220,9 @@ public abstract class PView extends Widget {
 	    lm.prep(def);
 	    new Light.LightList().prep(def);
 	    rls.setup(scene, def);
+
+	    if(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.WIREFRAMEMODE, Boolean.class))
+	        g.gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_LINE);
 	    if(curf != null)
 		curf.tick("setup");
 	    rls.fin();
@@ -250,6 +254,9 @@ public abstract class PView extends Widget {
 		curf.tick("cls");
 	    g.st.time = 0;
 	    rls.render(rg);
+	    if(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.WIREFRAMEMODE, Boolean.class))
+		g.gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_FILL);
+
 	    if(cstate.cur.fb != null)
 		cstate.cur.resolve(g);
 	    if(curf != null) {

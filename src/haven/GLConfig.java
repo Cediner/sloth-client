@@ -104,7 +104,7 @@ public class GLConfig implements java.io.Serializable, Console.Directory {
 	c.maxtargets = glcondi(gl, GL2.GL_MAX_COLOR_ATTACHMENTS, 1);
 	c.exts = Arrays.asList(gl.glGetString(GL.GL_EXTENSIONS).split(" "));
 	c.caps = caps;
-	c.pref = GLSettings.defconf(c);
+	c.pref = new GLSettings(c);
 	String slv = glconds(gl, GL2.GL_SHADING_LANGUAGE_VERSION);
 	if(slv != null) {
 	    Matcher m = slvp.matcher(slv);
@@ -160,32 +160,9 @@ public class GLConfig implements java.io.Serializable, Console.Directory {
 
     public void resetprefs() {
 	pref = GLSettings.defconf(this);
-	pref.dirty = true;
     }
 
     private transient Map<String, Console.Command> cmdmap = new TreeMap<String, Console.Command>();
-    {
-	cmdmap.put("gl", new Console.Command() {
-		public void run(Console cons, String[] args) throws Exception {
-		    if(args.length >= 3) {
-			String var = args[1].intern();
-			for(GLSettings.Setting<?> s : pref.settings()) {
-			    if(s.nm == var) {
-				s.set(args[2]);
-				pref.dirty = true;
-				return;
-			    }
-			}
-			throw(new Exception("No such setting: " + var));
-		    }
-		}
-	    });
-	cmdmap.put("glreset", new Console.Command() {
-		public void run(Console cons, String[] args) {
-		    resetprefs();
-		}
-	    });
-    }
     public Map<String, Console.Command> findcmds() {
 	return(cmdmap);
     }

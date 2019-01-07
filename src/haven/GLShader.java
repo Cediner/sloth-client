@@ -72,13 +72,26 @@ public abstract class GLShader implements java.io.Serializable {
 	    gl.bglSubmit(new BGL.Request() {
 		    public void run(GL2 rgl) {
 			int[] buf = {0};
+			int err;
 			rgl.glGetShaderiv(id, GL2.GL_COMPILE_STATUS, buf, 0);
+			err = rgl.glGetError();
+			if(err != 0) {
+			    System.err.println("GL Error: " + err + " From glGetShaderiv [1]");
+			}
 			if(buf[0] != 1) {
 			    String info = null;
 			    rgl.glGetShaderiv(id, GL2.GL_INFO_LOG_LENGTH, buf, 0);
+			    err = rgl.glGetError();
+			    if(err != 0) {
+				System.err.println("GL Error: " + err + " From glGetShaderiv [2]");
+			    }
 			    if(buf[0] > 0) {
 				byte[] logbuf = new byte[buf[0]];
 				rgl.glGetShaderInfoLog(id, logbuf.length, buf, 0, logbuf, 0);
+				err = rgl.glGetError();
+				if(err != 0) {
+				    System.err.println("GL Error: " + err + " From glGetShaderInfoLog");
+				}
 				/* The "platform's default charset" is probably a reasonable choice. */
 				info = new String(logbuf, 0, buf[0]);
 			    }

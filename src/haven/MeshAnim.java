@@ -30,6 +30,7 @@ import java.util.*;
 import java.nio.*;
 import haven.MorphedMesh.Morpher;
 import haven.MorphedMesh.MorphedBuf;
+import haven.sloth.DefSettings;
 
 public class MeshAnim {
     public final Frame[] frames;
@@ -203,7 +204,9 @@ public class MeshAnim {
 		this.time -= len;
 		ret = true;
 	    }
-	    aupdate(this.time);
+	    if(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.ANIMATIONS, Boolean.class)) {
+		aupdate(this.time);
+	    }
 	    return(ret);
 	}
     }

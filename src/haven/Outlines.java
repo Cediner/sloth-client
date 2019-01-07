@@ -32,7 +32,7 @@ import static haven.glsl.Cons.*;
 import static haven.glsl.Type.*;
 
 public class Outlines implements Rendered {
-    private boolean symmetric;
+    public boolean symmetric;
 
     public void draw(GOut g) {}
 

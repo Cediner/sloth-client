@@ -26,6 +26,9 @@
 
 package haven;
 
+import haven.sloth.DefSettings;
+import haven.sloth.Settings;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -33,7 +36,7 @@ import java.util.*;
 import java.lang.reflect.*;
 
 public class MainFrame extends java.awt.Frame implements Runnable, Console.Directory {
-    private static final String title = "Haven and Hearth \u2013 Sloth Client \u2013 1.0.4 \u2013 A New Beginning";
+    private static final String title = "Haven and Hearth \u2013 Sloth Client \u2013 1.0.5 \u2013 A New Beginning";
     HavenPanel p;
     private final ThreadGroup g;
     public final Thread mt;
@@ -420,6 +423,7 @@ public class MainFrame extends java.awt.Frame implements Runnable, Console.Direc
 	    } catch(java.net.MalformedURLException e) {
 	    }
 	}
+	DefSettings.init();
 	Thread main = new HackThread(g, new Runnable() {
 		public void run() {
 		    main2(args);

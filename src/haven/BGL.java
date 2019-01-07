@@ -37,6 +37,24 @@ public abstract class BGL {
     protected static abstract class Command {
 	public abstract void run(GL2 gl);
     }
+    protected static abstract class glBeginCommand extends Command {}
+    protected static abstract class glEndCommand extends Command {}
+
+    protected static abstract class CommandWithCheck extends Command {
+        final String name;
+        public CommandWithCheck(final String name) {
+            this.name = name;
+	}
+	public void run(GL2 gl) {
+            _run(gl);
+            int err = gl.glGetError();
+            if(err != 0) {
+                System.err.println("GL Error: " + err + " From " + name);
+	    }
+	}
+
+	public abstract void _run(final GL2 gl);
+    }
 
     private static class BufState {
 	Buffer buf;
@@ -140,13 +158,13 @@ public abstract class BGL {
     }
 
     public void glAttachShader(final ID program, final ID shader) {
-	add(new Command() {
-		public void run(GL2 gl) {gl.glAttachShader(program.glid(), shader.glid());}
+	add(new CommandWithCheck("glAttachShader") {
+		public void _run(GL2 gl) {gl.glAttachShader(program.glid(), shader.glid());}
 	    });
     }
 
     public void glBegin(final int mode) {
-	add(new Command() {
+	add(new glBeginCommand() {
 		public void run(GL2 gl) {gl.glBegin(mode);}
 	    });
     }
@@ -275,8 +293,8 @@ public abstract class BGL {
     }
 
     public void glCompileShader(final ID shader) {
-	add(new Command() {
-		public void run(GL2 gl) {gl.glCompileShader(shader.glid());}
+	add(new CommandWithCheck("glCompileShader") {
+		public void _run(GL2 gl) {gl.glCompileShader(shader.glid());}
 	    });
     }
 
@@ -318,7 +336,7 @@ public abstract class BGL {
         add(new Command() {
 	    @Override
 	    public void run(GL2 gl) {
-		gl.glDeleteShader(id.glid());
+		gl.glDeleteProgram(id.glid());
 	    }
 	});
     }
@@ -461,7 +479,7 @@ public abstract class BGL {
     }
 
     public void glEnd() {
-	add(new Command() {
+	add(new glEndCommand() {
 		public void run(GL2 gl) {gl.glEnd();}
 	    });
     }
@@ -649,8 +667,8 @@ public abstract class BGL {
     }
 
     public void glShaderSource(final ID shader, final int count, final String[] string, final int[] length, final int n) {
-	add(new Command() {
-		public void run(GL2 gl) {gl.glShaderSource(shader.glid(), count, string, length, n);}
+	add(new CommandWithCheck("glShaderSource") {
+		public void _run(GL2 gl) {gl.glShaderSource(shader.glid(), count, string, length, n);}
 	    });
     }
 

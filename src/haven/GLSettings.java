@@ -26,20 +26,33 @@
 
 package haven;
 
+import haven.sloth.DefSettings;
+
 import java.util.*;
 
 /*
  * XXX: Hmmpf. This whole thing seems very overly complex, but I
  * really want to avoid duplicating the validation checks in every
  * place that changes a value.
+ *
+ * TODO: Work towards getting rid of this mess. Validation can be done in other places and Commands should no longer be supported
  */
 public class GLSettings implements java.io.Serializable {
     public final GLConfig cfg;
-    public boolean dirty = false;
     private final List<Setting<?>> settings = new ArrayList<Setting<?>>();
 
-    private GLSettings(GLConfig cfg) {
+    public GLSettings(GLConfig cfg) {
 	this.cfg = cfg;
+	flight.set(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.PFLIGHTING, Boolean.class));
+	cel.set(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.CELSHADING, Boolean.class));
+	lshadow.set(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.SHADOWS, Boolean.class));
+	wsurf.set(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.WATERSURFACE, Boolean.class));
+	fsaa.set(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.ANTIALIASING, Boolean.class));
+	alphacov.set(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.ALPHACOV, Boolean.class));
+	meshmode.set(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.MESHMODE, String.class));
+	instancing.set(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.INSTANCING, Boolean.class));
+	outline.set(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.OUTLINES, Boolean.class));
+	anisotex.set(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.ANISOLEVEL, Integer.class)/2.0f);
     }
 
     public static class SettingException extends RuntimeException {
@@ -126,15 +139,18 @@ public class GLSettings implements java.io.Serializable {
     }
     public final EnumSetting<MeshMode> meshmode = new EnumSetting<MeshMode>("meshmode", MeshMode.class) {
 	public MeshMode defval() {
-	    if(cfg.haveVAO())
-		return(MeshMode.VAO);
-	    return(MeshMode.DLIST);
+	    final MeshMode mode = MeshMode.valueOf(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.PFLIGHTING, String.class));
+	    if(mode == MeshMode.VAO && !cfg.haveVAO()) {
+		DefSettings.global.set(DefSettings.GRAPHICS, DefSettings.PFLIGHTING, "DLIST").save();
+		return MeshMode.DLIST;
+	    }
+	    return mode;
 	}
 
 	public void validate(MeshMode mode) {
 	    switch(mode) {
 	    case VAO:
-		if(cfg.haveVAO())
+		if(!cfg.haveVAO())
 		    throw(new SettingException("VAOs are not supported."));
 		break;
 	    }
@@ -143,7 +159,12 @@ public class GLSettings implements java.io.Serializable {
 
     public final BoolSetting instancing = new BoolSetting("instance") {
 	    public Boolean defval() {
-		return cfg.haveInstancing();
+	        final boolean instancing = DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.INSTANCING, Boolean.class);
+	        if(instancing && !cfg.haveInstancing()) {
+	            DefSettings.global.set(DefSettings.GRAPHICS, DefSettings.INSTANCING, false).save();
+	            return false;
+		}
+	        return instancing;
 	    }
 
 	    public void validate(Boolean val) {
@@ -153,14 +174,18 @@ public class GLSettings implements java.io.Serializable {
 	};
 
     public final BoolSetting fsaa = new BoolSetting("fsaa") {
-	    public Boolean defval() {return(false);}
+	    public Boolean defval() {
+	        return DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.ANTIALIASING, Boolean.class);
+	    }
 	    public void validate(Boolean val) {
 		if(val && !cfg.havefsaa())
 		    throw(new SettingException("FSAA is not supported."));
 	    }
 	};
     public final BoolSetting alphacov = new BoolSetting("alphacov") {
-	    public Boolean defval() {return(false);}
+	    public Boolean defval() {
+		return DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.ALPHACOV, Boolean.class);
+	    }
 	    public void validate(Boolean val) {
 		if(val) {
 		    if(!fsaa.val) throw(new SettingException("Alpha-to-coverage must be used with multisampling."));
@@ -169,12 +194,16 @@ public class GLSettings implements java.io.Serializable {
 	};
 
     public final BoolSetting flight = new BoolSetting("flight") {
-	    public Boolean defval() {return(true);}
+	    public Boolean defval() {
+		return DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.PFLIGHTING, Boolean.class);
+	    }
 	    public void validate(Boolean val) {}
 	};
 
     public final BoolSetting cel = new BoolSetting("cel") {
-	    public Boolean defval() {return(false);}
+	    public Boolean defval() {
+		return DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.CELSHADING, Boolean.class);
+	    }
 	    public void validate(Boolean val) {
 		if(val) {
 		    if(!flight.val) throw(new SettingException("Cel-shading requires per-fragment lighting."));
@@ -183,7 +212,9 @@ public class GLSettings implements java.io.Serializable {
 	};
 
     public final BoolSetting lshadow = new BoolSetting("sdw") {
-	    public Boolean defval() {return(true);}
+	    public Boolean defval() {
+		return DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.SHADOWS, Boolean.class);
+	    }
 	    public void validate(Boolean val) {
 		if(val) {
 		    if(!flight.val) throw(new SettingException("Shadowed lighting requires per-fragment lighting."));
@@ -192,7 +223,9 @@ public class GLSettings implements java.io.Serializable {
 	    }
 	};
     public final BoolSetting outline = new BoolSetting("outl") {
-	    public Boolean defval() {return(true);}
+	    public Boolean defval() {
+		return DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.OUTLINES, Boolean.class);
+	    }
 	    public void validate(Boolean val) {
 		if(val) {
 		    if(!cfg.havefbo()) throw(new SettingException("Outline rendering requires a video card supporting framebuffers."));
@@ -201,18 +234,20 @@ public class GLSettings implements java.io.Serializable {
 	};
 
     public final BoolSetting wsurf = new BoolSetting("wsurf") {
-	    public Boolean defval() {return(cfg.glmajver >= 3);}
+	    public Boolean defval() {
+		return DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.WATERSURFACE, Boolean.class);
+	    }
 	    public void validate(Boolean val) {}
 	};
 
     public final FloatSetting anisotex = new FloatSetting("aniso") {
-	    public Float defval() {return(0f);}
+	    public Float defval() {
+		return (float)DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.ANISOLEVEL, Integer.class);
+	    }
 	    public float min() {return(0);}
 	    public float max() {return(cfg.anisotropy);}
 	    public void validate(Float val) {
 		if(val != 0) {
-		    if(cfg.anisotropy <= 1) throw(new SettingException("Video card does not support anisotropic filtering."));
-		    if(val > cfg.anisotropy) throw(new SettingException("Video card only supports up to " + cfg.anisotropy + "x anistropic filtering."));
 		    if(val < 0) throw(new SettingException("Anisostropy factor cannot be negative."));
 		}
 	    }
@@ -226,63 +261,34 @@ public class GLSettings implements java.io.Serializable {
 	return(settings);
     }
 
-    public Object savedata() {
-	Map<String, Object> ret = new HashMap<String, Object>();
-	for(Setting<?> s : settings)
-	    ret.put(s.nm, s.val);
-	return(ret);
-    }
-
-    public void save() {
-	Utils.setprefb("glconf", Utils.serialize(savedata()));
-    }
-
-    private static <T> void iAmRunningOutOfNamesToInsultJavaWith(Setting<T> s) {
-	s.val = s.defval();
-    }
-
     public static GLSettings defconf(GLConfig cfg) {
 	GLSettings gs = new GLSettings(cfg);
-	for(Setting<?> s : gs.settings)
-	    iAmRunningOutOfNamesToInsultJavaWith(s);
-	return(gs);
-    }
 
-    @SuppressWarnings("unchecked")
-    private static <T> void iExistOnlyToIntroduceATypeVariableSinceJavaSucks(Setting<T> s, Object val) {
-	s.set((T)val);
-    }
+	//Reset the settings
+	DefSettings.global.set(DefSettings.GRAPHICS, DefSettings.PFLIGHTING, true);
+	DefSettings.global.set(DefSettings.GRAPHICS, DefSettings.CELSHADING, false);
+	DefSettings.global.set(DefSettings.GRAPHICS, DefSettings.SHADOWS, true);
+	DefSettings.global.set(DefSettings.GRAPHICS, DefSettings.WATERSURFACE, true);
+	DefSettings.global.set(DefSettings.GRAPHICS, DefSettings.ANTIALIASING, false);
+	DefSettings.global.set(DefSettings.GRAPHICS, DefSettings.ALPHACOV, false);
+	DefSettings.global.set(DefSettings.GRAPHICS, DefSettings.MESHMODE, "VAO");
+	DefSettings.global.set(DefSettings.GRAPHICS, DefSettings.INSTANCING, true);
+	DefSettings.global.set(DefSettings.GRAPHICS, DefSettings.OUTLINES, true);
+	DefSettings.global.set(DefSettings.GRAPHICS, DefSettings.ANISOLEVEL, 0);
+	DefSettings.global.save();
 
-    public static GLSettings load(Object data, GLConfig cfg, boolean failsafe) {
-	GLSettings gs = defconf(cfg);
-	Map<?, ?> dat = (Map)data;
-	for(Setting<?> s : gs.settings) {
-	    if(dat.containsKey(s.nm)) {
-		try {
-		    iExistOnlyToIntroduceATypeVariableSinceJavaSucks(s, dat.get(s.nm));
-		} catch(SettingException e) {
-		    if(!failsafe)
-			throw(e);
-		}
-	    }
-	}
-	return(gs);
-    }
+	//Setup the settings here
+	gs.flight.set(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.PFLIGHTING, Boolean.class));
+	gs.cel.set(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.CELSHADING, Boolean.class));
+	gs.lshadow.set(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.SHADOWS, Boolean.class));
+	gs.wsurf.set(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.WATERSURFACE, Boolean.class));
+	gs.fsaa.set(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.ANTIALIASING, Boolean.class));
+	gs.alphacov.set(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.ALPHACOV, Boolean.class));
+	gs.meshmode.set(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.MESHMODE, String.class));
+	gs.instancing.set(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.INSTANCING, Boolean.class));
+	gs.outline.set(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.OUTLINES, Boolean.class));
+	gs.anisotex.set(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.ANISOLEVEL, Integer.class)/2.0f);
 
-    public static GLSettings load(GLConfig cfg, boolean failsafe) {
-	byte[] data = Utils.getprefb("glconf", null);
-	if(data == null) {
-	    return(defconf(cfg));
-	} else {
-	    Object dat;
-	    try {
-		dat = Utils.deserialize(data);
-	    } catch(Exception e) {
-		dat = null;
-	    }
-	    if(dat == null)
-		return(defconf(cfg));
-	    return(load(dat, cfg, failsafe));
-	}
+	return gs;
     }
 }

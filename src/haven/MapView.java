@@ -28,6 +28,8 @@ package haven;
 
 import static haven.MCache.tilesz;
 import static haven.OCache.posres;
+
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import haven.GLProgram.VarID;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
@@ -35,6 +37,8 @@ import java.util.*;
 import java.lang.ref.*;
 import java.lang.reflect.*;
 import com.jogamp.opengl.*;
+import haven.sloth.DefSettings;
+import haven.sloth.Settings;
 
 public class MapView extends PView implements DTarget, Console.Directory {
     public static boolean clickdb = false;
@@ -482,15 +486,33 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    public boolean setup(RenderList rl) {
 		Coord cc = MapView.this.cc.floor(tilesz).div(MCache.cutsz);
 		Coord o = new Coord();
-		for(o.y = -view; o.y <= view; o.y++) {
-		    for(o.x = -view; o.x <= view; o.x++) {
-			Coord2d pc = cc.add(o).mul(MCache.cutsz).mul(tilesz);
-			MapMesh cut = glob.map.getcut(cc.add(o));
-			rl.add(cut, Location.xlate(new Coord3f((float)pc.x, -(float)pc.y, 0)));
+		if(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.SKIPLOADING, Boolean.class)) {
+		    for (o.y = -view; o.y <= view; o.y++) {
+			for (o.x = -view; o.x <= view; o.x++) {
+			    Coord2d pc = cc.add(o).mul(MCache.cutsz).mul(tilesz);
+			    try {
+				MapMesh cut = glob.map.getcut(cc.add(o));
+				if (cut != null) {
+				    rl.add(cut, Location.xlate(new Coord3f((float) pc.x, -(float) pc.y, 0)));
+				}
+			    } catch (Exception e) {}
+			}
+		    }
+		} else {
+		    for (o.y = -view; o.y <= view; o.y++) {
+			for (o.x = -view; o.x <= view; o.x++) {
+			    Coord2d pc = cc.add(o).mul(MCache.cutsz).mul(tilesz);
+			    MapMesh cut = glob.map.getcut(cc.add(o));
+			    if (cut != null) {
+				rl.add(cut, Location.xlate(new Coord3f((float) pc.x, -(float) pc.y, 0)));
+			    }
+			}
 		    }
 		}
-		if(!(rl.state().get(PView.ctx) instanceof ClickContext))
+		if(!(rl.state().get(PView.ctx) instanceof ClickContext)
+			&& DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.SHOWFLAVOBJS, Boolean.class)) {
 		    rl.add(flavobjs, null);
+		}
 		return(false);
 	    }
 	};
@@ -528,9 +550,11 @@ public class MapView extends PView implements DTarget, Console.Directory {
 				continue;
 			    if(visol[i] > 0) {
 				Rendered olcut;
-				olcut = glob.map.getolcut(i, cc.add(o));
-				if(olcut != null)
-				    rl.add(olcut, GLState.compose(Location.xlate(new Coord3f((float)pc.x, -(float)pc.y, 0)), mats[i]));
+				try {
+				    olcut = glob.map.getolcut(i, cc.add(o));
+				    if (olcut != null)
+					rl.add(olcut, GLState.compose(Location.xlate(new Coord3f((float) pc.x, -(float) pc.y, 0)), mats[i]));
+				} catch (Resource.Loading e) {}
 			    }
 			}
 		    }
@@ -778,11 +802,16 @@ public class MapView extends PView implements DTarget, Console.Directory {
 
     private Coord3f smapcc = null;
     private ShadowMap smap = null;
+    public static final int shadowmap[] = { 128, 256, 512, 1024, 2048, 4096, 8192, 16384 };
     private double lsmch = 0;
     private void updsmap(RenderList rl, DirLight light) {
 	if(rl.cfg.pref.lshadow.val) {
-	    if(smap == null)
-		smap = new ShadowMap(new Coord(2048, 2048), 750, 5000, 1);
+	    if(smap == null) {
+	        final int texs = shadowmap[DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.SHADOWSQUALITY, Integer.class)];
+		smap = new ShadowMap(new Coord(texs, texs),
+			DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.SHADOWSIZE, Integer.class),
+			5000, 1);
+	    }
 	    smap.light = light;
 	    Coord3f dir = new Coord3f(-light.dir[0], -light.dir[1], -light.dir[2]);
 	    Coord3f cc = getcc();
@@ -810,7 +839,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
     }
 
     public DirLight amb = null;
-    private Outlines outlines = new Outlines(false);
+    public Outlines outlines = new Outlines(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.SYMMETRICOUTLINES, Boolean.class));
     public void setup(RenderList rl) {
 	CPUProfile.Frame curf = null;
 	if(Config.profile)
@@ -820,7 +849,14 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    this.cc = new Coord2d(pl.getc());
 	synchronized(glob) {
 	    if(glob.lightamb != null) {
-		DirLight light = new DirLight(glob.lightamb, glob.lightdif, glob.lightspc, Coord3f.o.sadd((float)glob.lightelev, (float)glob.lightang, 1f));
+	        final boolean nightvision = DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.NIGHTVISION, Boolean.class);
+		final Color lamb = nightvision ? Color.WHITE : glob.lightamb;
+		final Color ldif = nightvision ? Color.WHITE : glob.lightdif;
+		final Color lspc = nightvision ? Color.WHITE : glob.lightspc;
+
+		DirLight light = new DirLight(lamb, ldif, lspc,
+			Coord3f.o.sadd((float)glob.lightelev, (float)glob.lightang, 1f));
+
 		rl.add(light, null);
 		updsmap(rl, light);
 		amb = light;
@@ -829,31 +865,36 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    }
 	    if(curf != null)
 		curf.tick("light");
-	    for(Glob.Weather w : glob.weather)
-		w.gsetup(rl);
-	    for(Glob.Weather w : glob.weather) {
-		if(w instanceof Rendered)
-		    rl.add((Rendered)w, null);
+	    if(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.WEATHER, Boolean.class)) {
+		for (Glob.Weather w : glob.weather)
+		    w.gsetup(rl);
+		for (Glob.Weather w : glob.weather) {
+		    if (w instanceof Rendered)
+			rl.add((Rendered) w, null);
+		}
 	    }
 	    if(curf != null)
 		curf.tick("weather");
 	}
-	/* XXX: MSAA level should be configurable. */
 	if(rl.cfg.pref.fsaa.val) {
 	    FBConfig cfg = ((PView.ConfContext)rl.state().get(PView.ctx)).cfg;
-	    cfg.ms = 4;
+	    cfg.ms = DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.MSAALEVEL, Integer.class);
 	}
 	if(rl.cfg.pref.outline.val)
 	    rl.add(outlines, null);
 	if(curf != null)
 	    curf.tick("outlines");
-	rl.add(map, null);
+	if(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.SHOWMAP, Boolean.class)) {
+	    rl.add(map, null);
+	}
 	if(curf != null)
 	    curf.tick("map");
 	rl.add(mapol, null);
 	if(curf != null)
 	    curf.tick("mapol");
-	rl.add(gobs, null);
+	if(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.SHOWGOBS, Boolean.class)) {
+	    rl.add(gobs, null);
+	}
 	if(curf != null)
 	    curf.tick("gobs");
 	if(placing != null)
@@ -1282,8 +1323,10 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    String text = e.getMessage();
 	    if(text == null)
 		text = "Loading...";
-	    g.chcolor(Color.BLACK);
-	    g.frect(Coord.z, sz);
+	    if(!DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.SKIPLOADING, Boolean.class)) {
+		g.chcolor(Color.BLACK);
+		g.frect(Coord.z, sz);
+	    }
 	    g.chcolor(Color.WHITE);
 	    g.atext(text, sz.div(2), 0.5, 0.5);
 	    if(e instanceof Resource.Loading) {

@@ -34,6 +34,7 @@ import java.awt.event.*;
 import java.util.*;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.*;
+import haven.sloth.DefSettings;
 
 public class HavenPanel extends GLCanvas implements Runnable, Console.Directory {
     UI ui;
@@ -90,14 +91,6 @@ public class HavenPanel extends GLCanvas implements Runnable, Console.Directory 
 		Debug.DumpGL dump = null;
 		public void display(GLAutoDrawable d) {
 		    GL2 gl = d.getGL().getGL2();
-		    /*
-		    if((dump == null) || (dump.getDownstreamGL() != gl))
-			dump = new Debug.DumpGL((GL4bc)gl);
-		    if(Debug.kf2 && !Debug.pk2)
-			dump.dump("/tmp/gldump");
-		    dump.reset();
-		    gl = dump;
-		    */
 		    if(inited)
 			redraw(gl);
 		}
@@ -114,12 +107,14 @@ public class HavenPanel extends GLCanvas implements Runnable, Console.Directory 
 			    h.lsetprop("gl.conf", glconf);
 			}
 			glconf = GLConfig.fromgl(gl, d.getContext(), getChosenGLCapabilities());
-			if(gldebug) {
+			if(gldebug)
+				d.getContext().addGLDebugListener((event) -> System.err.println(event));
+
+			/* if(gldebug) {
 			    if(!d.getContext().isGLDebugMessageEnabled())
 				System.err.println("GL debugging not actually enabled");
 			    ((GL2)gl).glDebugMessageControl(GL.GL_DONT_CARE, GL.GL_DONT_CARE, GL.GL_DONT_CARE, 0, null, true);
-			}
-			glconf.pref = GLSettings.load(glconf, true);
+			} */
 			ui.cons.add(glconf);
 			gstate = new GLState() {
 				public void apply(GOut g) {
@@ -289,6 +284,8 @@ public class HavenPanel extends GLCanvas implements Runnable, Console.Directory 
 	gstate.prep(ibuf);
 	ostate.prep(ibuf);
 	GOut g = new GOut(gl, state.cgl, state.cfg, state, ibuf, new Coord(w, h));
+	g.gl.glEnable(GL2.GL_DEBUG_OUTPUT);
+
 	state.set(ibuf);
 
 	g.state(ostate);
@@ -384,8 +381,8 @@ public class HavenPanel extends GLCanvas implements Runnable, Console.Directory 
 	lastcursor = curs;
 	state.clean();
 	GLObject.disposeall(state.cgl, gl);
-	if(gldebug)
-	    gl.bglGetDebugMessageLog(msg -> System.err.println(msg));
+	/*if(gldebug)
+	    gl.bglGetDebugMessageLog(msg -> System.err.println(msg)); */
     }
 
     private static class Frame {
@@ -421,10 +418,7 @@ public class HavenPanel extends GLCanvas implements Runnable, Console.Directory 
 		curgf.fin();
 	    }
 
-	    if(glconf.pref.dirty) {
-		glconf.pref.save();
-		glconf.pref.dirty = false;
-	    }
+	    DefSettings.checkForDirty();
 	    f.doneat = System.currentTimeMillis();
 	}
     }
