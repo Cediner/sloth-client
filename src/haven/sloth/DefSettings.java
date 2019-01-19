@@ -30,39 +30,36 @@ public class DefSettings {
 
     //Sections & settings for each one, for 'global'
     public static final String
-	GRAPHICS = "graphics",
 	//GLSettings
-	PFLIGHTING = "lighting-per-fragment", 		//[Bool] Use per-fragment lighting
-	CELSHADING = "lighting-cel-shading",		//[Bool] Use cel-shading shader
-	SHADOWS = "shadows-show",			//[Bool] Display shadows
-	WATERSURFACE = "water-surface-show",		//[Bool] Render water surfaces
-	ANTIALIASING = "msaa-use",			//[Bool] Use Antialiasing
-    	MESHMODE = "meshmode",				//[String] Mesh mode : { VAO, DLIST, MEM }
-    	INSTANCING = "instancing-use",			//[Bool] Use instancing or not
-    	OUTLINES = "outlines-use",			//[Bool] Toggle outlines
-        ANISOLEVEL = "anisotropic-level",		//[Int] Anisotropic level [0-GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT]
-    	ALPHACOV = "alpha-coverage",                    //[Bool] Toggle alpha coverage for multisampling
+	PFLIGHTING = "graphics.lighting-per-fragment", 		//[Bool] Use per-fragment lighting
+	CELSHADING = "graphics.lighting-cel-shading",		//[Bool] Use cel-shading shader
+	SHADOWS = "graphics.shadows-show",			//[Bool] Display shadows
+	WATERSURFACE = "graphics.water-surface-show",		//[Bool] Render water surfaces
+	ANTIALIASING = "graphics.msaa-use",			//[Bool] Use Antialiasing
+    	MESHMODE = "graphics.meshmode",				//[String] Mesh mode : { VAO, DLIST, MEM }
+    	INSTANCING = "graphics.instancing-use",			//[Bool] Use instancing or not
+    	OUTLINES = "graphics.outlines-use",			//[Bool] Toggle outlines
+        ANISOLEVEL = "graphics.anisotropic-level",		//[Int] Anisotropic level [0-GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT]
+    	ALPHACOV = "graphics.alpha-coverage",                   //[Bool] Toggle alpha coverage for multisampling
 	//Custom stuff
-	SKIPLOADING = "skip-loading",			//[Bool] Skip loading screens
-	SHOWFLAVOBJS = "flav-objs-show",	  	//[Bool] Don't show flav objs
-	SYMMETRICOUTLINES = "outlines-symmetric",   	//[Bool] Make outlines symmetric (bolder)
-	SHADOWSQUALITY = "shadows-quality",		//[Int ] Shadow quality level [0-7], 4 is default
-	SHADOWSIZE = "shadows-size",			//[Int ] Shadow size, 750 is default
-	MSAALEVEL = "msaa-level",			//[Int ] MSAA level [1-8]
-	WIREFRAMEMODE = "wireframe-mode",		//[Int ] Display everything as wireframe
-	WEATHER = "weather-show",			//[Bool] Show weather or not
-	ANIMATIONS = "animations-show",			//[Bool] Turn animations orr or on
-	SHOWMAP = "map-show",				//[Bool] Toggle mapgrid on/off
-	SHOWGOBS = "gobs-show",				//[Bool] Toggle gobs on/off
-	NIGHTVISION = "nightvision",			//[Bool] Toggle nightvision
+	SKIPLOADING = "graphics.skip-loading",			//[Bool] Skip loading screens
+	SHOWFLAVOBJS = "graphics.flav-objs-show",	  	//[Bool] Don't show flav objs
+	SYMMETRICOUTLINES = "graphics.outlines-symmetric",   	//[Bool] Make outlines symmetric (bolder)
+	SHADOWSQUALITY = "graphics.shadows-quality",		//[Int ] Shadow quality level [0-7], 4 is default
+	SHADOWSIZE = "graphics.shadows-size",			//[Int ] Shadow size, 750 is default
+	MSAALEVEL = "graphics.msaa-level",			//[Int ] MSAA level [1-8]
+	WIREFRAMEMODE = "graphics.wireframe-mode",		//[Int ] Display everything as wireframe
+	WEATHER = "graphics.weather-show",			//[Bool] Show weather or not
+	ANIMATIONS = "graphics.animations-show",		//[Bool] Turn animations orr or on
+	SHOWMAP = "graphics.map-show",				//[Bool] Toggle mapgrid on/off
+	SHOWGOBS = "graphics.gobs-show",			//[Bool] Toggle gobs on/off
+	NIGHTVISION = "graphics.nightvision",			//[Bool] Toggle nightvision
 
-    	AUDIO = "audio",
-    	NOGOBAUDIO = "no-gob-audio"; 			//[Bool] Toggles Gob audio
+    	NOGOBAUDIO = "audio.no-gob-audio"; 			//[Bool] Toggles Gob audio
 
     public static final String
-    	SESSION = "session",
-    	PAUSED = "paused",
-    	SHOWGRID = "show-grid";
+    	PAUSED = "session.paused",
+    	SHOWGRID = "session.show-grid";
 
     /**
      * Checks out settings nad saves them if they are dirty
@@ -78,37 +75,37 @@ public class DefSettings {
     public static void init() {
         global.load();
         //GLSettings
-	global.ensure(GRAPHICS, PFLIGHTING, true);
-	global.ensure(GRAPHICS, CELSHADING, false);
-	global.ensure(GRAPHICS, SHADOWS, true);
-	global.ensure(GRAPHICS, WATERSURFACE, true);
-	global.ensure(GRAPHICS, ANTIALIASING, false);
-	global.ensure(GRAPHICS, ALPHACOV, false);
-	global.ensure(GRAPHICS, MESHMODE, "VAO");
-	global.ensure(GRAPHICS, INSTANCING, true);
-	global.ensure(GRAPHICS, OUTLINES, true);
-	global.ensure(GRAPHICS, ANISOLEVEL, 0);
+	global.ensure(PFLIGHTING, true);
+	global.ensure(CELSHADING, false);
+	global.ensure(SHADOWS, true);
+	global.ensure(WATERSURFACE, true);
+	global.ensure(ANTIALIASING, false);
+	global.ensure(ALPHACOV, false);
+	global.ensure(MESHMODE, "VAO");
+	global.ensure(INSTANCING, true);
+	global.ensure(OUTLINES, true);
+	global.ensure(ANISOLEVEL, 0);
 	//Custom Graphics
-	global.ensure(GRAPHICS, SKIPLOADING,true);
-	global.ensure(GRAPHICS, SHOWFLAVOBJS,false);
-	global.ensure(GRAPHICS, SKIPLOADING, true);
-	global.ensure(GRAPHICS, SHOWFLAVOBJS, true);
-	global.ensure(GRAPHICS, SYMMETRICOUTLINES, false);
-	global.ensure(GRAPHICS, SHADOWSQUALITY, 4);
-	global.ensure(GRAPHICS, SHADOWSIZE, 750);
-	global.ensure(GRAPHICS, MSAALEVEL, 4);
-	global.ensure(GRAPHICS, WIREFRAMEMODE, false);
-	global.ensure(GRAPHICS, WEATHER, true);
-	global.ensure(GRAPHICS, ANIMATIONS, true);
-	global.ensure(GRAPHICS, SHOWMAP, true);
-	global.ensure(GRAPHICS, SHOWGOBS, true);
-	global.ensure(GRAPHICS, NIGHTVISION, false);
+	global.ensure(SKIPLOADING,true);
+	global.ensure(SHOWFLAVOBJS,false);
+	global.ensure(SKIPLOADING, true);
+	global.ensure(SHOWFLAVOBJS, true);
+	global.ensure(SYMMETRICOUTLINES, false);
+	global.ensure(SHADOWSQUALITY, 4);
+	global.ensure(SHADOWSIZE, 750);
+	global.ensure(MSAALEVEL, 4);
+	global.ensure(WIREFRAMEMODE, false);
+	global.ensure(WEATHER, true);
+	global.ensure(ANIMATIONS, true);
+	global.ensure(SHOWMAP, true);
+	global.ensure(SHOWGOBS, true);
+	global.ensure(NIGHTVISION, false);
 	//Audio
-	global.ensure(AUDIO, NOGOBAUDIO, false);
+	global.ensure(NOGOBAUDIO, false);
 
 	//Session based globals
-	session.ensure(SESSION, PAUSED, false);
-	session.ensure(SESSION, SHOWGRID, false);
+	session.ensure(PAUSED, false);
+	session.ensure(SHOWGRID, false);
     }
 
     /**
@@ -116,30 +113,30 @@ public class DefSettings {
      */
     public static void resetgraphics() {
         //GLSettings
-	global.set(GRAPHICS, PFLIGHTING, true);
-	global.set(GRAPHICS, CELSHADING, false);
-	global.set(GRAPHICS, SHADOWS, true);
-	global.set(GRAPHICS, WATERSURFACE, true);
-	global.set(GRAPHICS, ANTIALIASING, false);
-	global.set(GRAPHICS, ALPHACOV, false);
-	global.set(GRAPHICS, MESHMODE, "VAO");
-	global.set(GRAPHICS, INSTANCING, true);
-	global.set(GRAPHICS, OUTLINES, true);
-	global.set(GRAPHICS, ANISOLEVEL, 0);
+	global.set(PFLIGHTING, true);
+	global.set(CELSHADING, false);
+	global.set(SHADOWS, true);
+	global.set(WATERSURFACE, true);
+	global.set(ANTIALIASING, false);
+	global.set(ALPHACOV, false);
+	global.set(MESHMODE, "VAO");
+	global.set(INSTANCING, true);
+	global.set(OUTLINES, true);
+	global.set(ANISOLEVEL, 0);
 	//Custom Graphics
-	global.set(GRAPHICS, SKIPLOADING,true);
-	global.set(GRAPHICS, SHOWFLAVOBJS,false);
-	global.set(GRAPHICS, SKIPLOADING, true);
-	global.set(GRAPHICS, SHOWFLAVOBJS, true);
-	global.set(GRAPHICS, SYMMETRICOUTLINES, false);
-	global.set(GRAPHICS, SHADOWSQUALITY, 4);
-	global.set(GRAPHICS, SHADOWSIZE, 750);
-	global.set(GRAPHICS, MSAALEVEL, 4);
-	global.set(GRAPHICS, WIREFRAMEMODE, false);
-	global.set(GRAPHICS, WEATHER, true);
-	global.set(GRAPHICS, ANIMATIONS, true);
-	global.set(GRAPHICS, SHOWMAP, true);
-	global.set(GRAPHICS, SHOWGOBS, true);
-	global.set(GRAPHICS, NIGHTVISION, false);
+	global.set(SKIPLOADING,true);
+	global.set(SHOWFLAVOBJS,false);
+	global.set(SKIPLOADING, true);
+	global.set(SHOWFLAVOBJS, true);
+	global.set(SYMMETRICOUTLINES, false);
+	global.set(SHADOWSQUALITY, 4);
+	global.set(SHADOWSIZE, 750);
+	global.set(MSAALEVEL, 4);
+	global.set(WIREFRAMEMODE, false);
+	global.set(WEATHER, true);
+	global.set(ANIMATIONS, true);
+	global.set(SHOWMAP, true);
+	global.set(SHOWGOBS, true);
+	global.set(NIGHTVISION, false);
     }
 }

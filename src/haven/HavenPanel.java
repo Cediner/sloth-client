@@ -524,7 +524,7 @@ public class HavenPanel extends GLCanvas implements Runnable, Console.Directory 
 		long frames[] = new long[128];
 		int framep = 0, waited[] = new int[128];
 		while(true) {
-		    if(!DefSettings.session.get(DefSettings.SESSION, DefSettings.PAUSED, Boolean.class)) {
+		    if(!DefSettings.session.get(DefSettings.PAUSED, Boolean.class)) {
 			int fwaited = 0;
 			Debug.cycle();
 			UI ui = this.ui;

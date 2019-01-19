@@ -221,7 +221,7 @@ public abstract class PView extends Widget {
 	    new Light.LightList().prep(def);
 	    rls.setup(scene, def);
 
-	    if(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.WIREFRAMEMODE, Boolean.class))
+	    if(DefSettings.global.get(DefSettings.WIREFRAMEMODE, Boolean.class))
 	        g.gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_LINE);
 	    if(curf != null)
 		curf.tick("setup");
@@ -254,7 +254,7 @@ public abstract class PView extends Widget {
 		curf.tick("cls");
 	    g.st.time = 0;
 	    rls.render(rg);
-	    if(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.WIREFRAMEMODE, Boolean.class))
+	    if(DefSettings.global.get(DefSettings.WIREFRAMEMODE, Boolean.class))
 		g.gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_FILL);
 
 	    if(cstate.cur.fb != null)

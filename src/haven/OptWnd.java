@@ -100,13 +100,13 @@ public class OptWnd extends Window {
 				    cf.flight.set(true);
 				} catch(GLSettings.SettingException e) {
 				    error(e.getMessage());
-				    global.set(GRAPHICS, PFLIGHTING, false);
+				    global.set(PFLIGHTING, false);
 				    return;
 				}
 			    } else {
 				cf.flight.set(false);
 			    }
-			    global.set(GRAPHICS, PFLIGHTING, val);
+			    global.set(PFLIGHTING, val);
 			    a = val;
 			}
 		    }, new Coord(0, y)).sz.y + spacer;
@@ -119,13 +119,13 @@ public class OptWnd extends Window {
 				cf.cel.set(true);
 			    } catch(GLSettings.SettingException e) {
 				error(e.getMessage());
-				global.set(GRAPHICS, CELSHADING, false);
+				global.set(CELSHADING, false);
 				return;
 			    }
 			} else {
 			    cf.cel.set(false);
 			}
-			global.set(GRAPHICS, CELSHADING, val);
+			global.set(CELSHADING, val);
 			a = val;
 		    }
 		}, new Coord(0, y)).sz.y + spacer;
@@ -138,13 +138,13 @@ public class OptWnd extends Window {
 				cf.alphacov.set(true);
 			    } catch(GLSettings.SettingException e) {
 				error(e.getMessage());
-				global.set(GRAPHICS, ALPHACOV, false);
+				global.set(ALPHACOV, false);
 				return;
 			    }
 			} else {
 			    cf.cel.set(false);
 			}
-			global.set(GRAPHICS, ALPHACOV, val);
+			global.set(ALPHACOV, val);
 			a = val;
 		    }
 		}, new Coord(0, y)).sz.y + spacer;
@@ -157,13 +157,13 @@ public class OptWnd extends Window {
 				cf.wsurf.set(true);
 			    } catch(GLSettings.SettingException e) {
 				error(e.getMessage());
-				global.set(GRAPHICS, WATERSURFACE, false);
+				global.set(WATERSURFACE, false);
 				return;
 			    }
 			} else {
 			    cf.wsurf.set(false);
 			}
-			global.set(GRAPHICS, WATERSURFACE, val);
+			global.set(WATERSURFACE, val);
 			a = val;
 		    }
 		}, new Coord(0, y)).sz.y + spacer;
@@ -181,7 +181,7 @@ public class OptWnd extends Window {
 			    } else {
 				cf.lshadow.set(false);
 			    }
-			    global.set(GRAPHICS, PFLIGHTING, val);
+			    global.set(PFLIGHTING, val);
 			    a = val;
 			}
 		    }, new Coord(0, y)).sz.y + spacer;
@@ -195,7 +195,7 @@ public class OptWnd extends Window {
 				error(e.getMessage());
 				return;
 			    }
-			    global.set(GRAPHICS, ANTIALIASING, val);
+			    global.set(ANTIALIASING, val);
 			    a = val;
 			}
 		    }, new Coord(0, y)).sz.y + spacer;
@@ -223,7 +223,7 @@ public class OptWnd extends Window {
 				    error(e.getMessage());
 				    return;
 				}
-				global.set(GRAPHICS, ANISOLEVEL, val);
+				global.set(ANISOLEVEL, val);
 				dpy();
 			    }
 			}, new Coord(0, y)).sz.y + spacer;
@@ -238,15 +238,15 @@ public class OptWnd extends Window {
 			    error(e.getMessage());
 			    return;
 			}
-			global.set(GRAPHICS, OUTLINES, val);
+			global.set(OUTLINES, val);
 			a = val;
 		    }
 		}, new Coord(0, y)).sz.y + spacer;
 		y += add(new CheckBox("Symmetric Outlines") {
-		    {a = global.get(GRAPHICS, SYMMETRICOUTLINES, Boolean.class);}
+		    {a = global.get(SYMMETRICOUTLINES, Boolean.class);}
 
 		    public void set(boolean val) {
-			global.set(GRAPHICS, SYMMETRICOUTLINES, val);
+			global.set(SYMMETRICOUTLINES, val);
 			final GameUI gui = getparent(GameUI.class);
 			if(gui != null && gui.map != null)
 				gui.map.outlines.symmetric = val;
@@ -254,66 +254,66 @@ public class OptWnd extends Window {
 		    }
 		}, new Coord(0, y)).sz.y + spacer;
 		y += add(new CheckBox("Skip Loading") {
-		    {a = global.get(GRAPHICS, SKIPLOADING, Boolean.class);}
+		    {a = global.get(SKIPLOADING, Boolean.class);}
 
 		    public void set(boolean val) {
-			global.set(GRAPHICS, SKIPLOADING, val);
+			global.set(SKIPLOADING, val);
 			a = val;
 		    }
 		}, new Coord(0, y)).sz.y + spacer;
 		y += add(new CheckBox("Show Flavor Objects") {
-		    {a = global.get(GRAPHICS, SHOWFLAVOBJS, Boolean.class);}
+		    {a = global.get(SHOWFLAVOBJS, Boolean.class);}
 
 		    public void set(boolean val) {
-			global.set(GRAPHICS, SHOWFLAVOBJS, val);
+			global.set(SHOWFLAVOBJS, val);
 			a = val;
 		    }
 		}, new Coord(0, y)).sz.y + spacer;
 		y += add(new CheckBox("Wireframe Mode") {
-		    {a = global.get(GRAPHICS, WIREFRAMEMODE, Boolean.class);}
+		    {a = global.get(WIREFRAMEMODE, Boolean.class);}
 
 		    public void set(boolean val) {
-			global.set(GRAPHICS, WIREFRAMEMODE, val);
+			global.set(WIREFRAMEMODE, val);
 			a = val;
 		    }
 		}, new Coord(0, y)).sz.y + spacer;
 		y += add(new CheckBox("Show Weather") {
-		    {a = global.get(GRAPHICS, WEATHER, Boolean.class);}
+		    {a = global.get(WEATHER, Boolean.class);}
 
 		    public void set(boolean val) {
-			global.set(GRAPHICS, WEATHER, val);
+			global.set(WEATHER, val);
 			a = val;
 		    }
 		}, new Coord(0, y)).sz.y + spacer;
 		y += add(new CheckBox("Show Animations") {
-		    {a = global.get(GRAPHICS, ANIMATIONS, Boolean.class);}
+		    {a = global.get(ANIMATIONS, Boolean.class);}
 
 		    public void set(boolean val) {
-			global.set(GRAPHICS, ANIMATIONS, val);
+			global.set(ANIMATIONS, val);
 			a = val;
 		    }
 		}, new Coord(0, y)).sz.y + spacer;
 		y += add(new CheckBox("Show Map") {
-		    {a = global.get(GRAPHICS, SHOWMAP, Boolean.class);}
+		    {a = global.get(SHOWMAP, Boolean.class);}
 
 		    public void set(boolean val) {
-			global.set(GRAPHICS, SHOWMAP, val);
+			global.set(SHOWMAP, val);
 			a = val;
 		    }
 		}, new Coord(0, y)).sz.y + spacer;
 		y += add(new CheckBox("Show Gobs") {
-		    {a = global.get(GRAPHICS, SHOWGOBS, Boolean.class);}
+		    {a = global.get(SHOWGOBS, Boolean.class);}
 
 		    public void set(boolean val) {
-			global.set(GRAPHICS, SHOWGOBS, val);
+			global.set(SHOWGOBS, val);
 			a = val;
 		    }
 		}, new Coord(0, y)).sz.y + spacer;
 		y += add(new CheckBox("Nightvision") {
-		    {a = global.get(GRAPHICS, NIGHTVISION, Boolean.class);}
+		    {a = global.get(NIGHTVISION, Boolean.class);}
 
 		    public void set(boolean val) {
-			global.set(GRAPHICS, NIGHTVISION, val);
+			global.set(NIGHTVISION, val);
 			a = val;
 		    }
 		}, new Coord(0, y)).sz.y + spacer;
@@ -404,10 +404,10 @@ public class OptWnd extends Window {
 		}
 	    }, new Coord(0, y)).sz.y + spacer;
 	    y += audio.add(new CheckBox("No Gob Audio") {
-		{a = global.get(AUDIO, NOGOBAUDIO, Boolean.class);}
+		{a = global.get(NOGOBAUDIO, Boolean.class);}
 
 		public void set(boolean val) {
-		    global.set(AUDIO, NOGOBAUDIO, val);
+		    global.set(NOGOBAUDIO, val);
 		    a = val;
 		}
 	    }, new Coord(0, y)).sz.y + spacer;

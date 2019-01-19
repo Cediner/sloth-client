@@ -36,7 +36,7 @@ import java.util.regex.Pattern;
 public class Settings {
     @FunctionalInterface
     interface ParseFun {
-	void parse(final Settings settings, final String section, final String key, final Matcher val);
+	void parse(final Settings settings, final String key, final Matcher val);
     }
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     private static final Pattern
@@ -52,24 +52,24 @@ public class Settings {
     private static final Map<Pattern, ParseFun> parsers;
     static {
         parsers = new HashMap<>();
-        parsers.put(bool, (settings, section, key, val) -> settings.set(section, key, val.group(1).equals("true")));
-        parsers.put(intval, (settings, section, key, val) -> settings.set(section, key, Integer.parseInt(val.group(1))));
-        parsers.put(dval, (settings, section, key, val) -> settings.set(section, key, Double.parseDouble(val.group(1))));
-        parsers.put(coord, (settings, section, key, val) ->
-            settings.set(section, key, new Coord(Integer.parseInt(val.group(1)), Integer.parseInt(val.group(2)))));
-	parsers.put(coord2d, (settings, section, key, val) ->
-	    settings.set(section, key, new Coord2d(Double.parseDouble(val.group(1)), Double.parseDouble(val.group(2)))));
-	parsers.put(coord3f, (settings, section, key, val) ->
-		settings.set(section, key, new Coord3f(Float.parseFloat(val.group(1)), Float.parseFloat(val.group(2)), Float.parseFloat(val.group(3)))));
-	parsers.put(strarr, (settings, section, key, val) ->
-		settings.set(section, key, val.group(1).split(",")));
-	parsers.put(color, (settings, section, key, val) ->
-		settings.set(section, key,
+        parsers.put(bool, (settings, key, val) -> settings.set(key, val.group(1).equals("true")));
+        parsers.put(intval, (settings, key, val) -> settings.set(key, Integer.parseInt(val.group(1))));
+        parsers.put(dval, (settings, key, val) -> settings.set(key, Double.parseDouble(val.group(1))));
+        parsers.put(coord, (settings, key, val) ->
+            settings.set(key, new Coord(Integer.parseInt(val.group(1)), Integer.parseInt(val.group(2)))));
+	parsers.put(coord2d, (settings, key, val) ->
+	    settings.set(key, new Coord2d(Double.parseDouble(val.group(1)), Double.parseDouble(val.group(2)))));
+	parsers.put(coord3f, (settings, key, val) ->
+		settings.set(key, new Coord3f(Float.parseFloat(val.group(1)), Float.parseFloat(val.group(2)), Float.parseFloat(val.group(3)))));
+	parsers.put(strarr, (settings, key, val) ->
+		settings.set(key, val.group(1).split(",")));
+	parsers.put(color, (settings, key, val) ->
+		settings.set(key,
 			new java.awt.Color(Integer.parseInt(val.group(1)), Integer.parseInt(val.group(2)),
 				Integer.parseInt(val.group(3)), Integer.parseInt(val.group(4)))));
     }
 
-    private final Map<String, Map<String, Object>> settings;
+    private final Map<String, Object> settings;
     private final String filename;
     private boolean dirty;
 
@@ -100,13 +100,13 @@ public class Settings {
 			} else {
 			    find = kvpair.matcher(ln);
 			    if (find.find()) {
-				final String key = find.group(1).trim();
+				final String key = section+"."+find.group(1).trim();
 				final String val = find.group(2).trim();
 				logger.atFine().log("Found %s = %s", key, val);
 				for (final Pattern pat : parsers.keySet()) {
 				    find = pat.matcher(val);
 				    if (find.find()) {
-					parsers.get(pat).parse(this, section, key, find);
+					parsers.get(pat).parse(this, key, find);
 					break;
 				    }
 				}
@@ -138,18 +138,23 @@ public class Settings {
 	    logger.atSevere().withCause(e).log("Failed to save settings for %s", filename);
             return;
 	}
+        String lastSection = "";
 	try (final BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
-	    for (final String section : settings.keySet()) {
-		writer.write('[');
-		writer.write(section);
-		writer.write(']');
-		writer.newLine();
-		for (final String key : settings.get(section).keySet()) {
-		    writer.write(key);
-		    writer.write(" = ");
-		    writer.write(settings.get(section).get(key).toString());
+	    for (final String skey : settings.keySet()) {
+	        final String section = skey.substring(0, skey.indexOf("."));
+	        final String key = skey.substring(skey.indexOf(".")+1);
+	        if(!lastSection.equals(section)) {
+		    writer.write('[');
+		    writer.write(section);
+		    writer.write(']');
 		    writer.newLine();
+		    lastSection = section;
 		}
+
+		writer.write(key);
+		writer.write(" = ");
+		writer.write(settings.get(skey).toString());
+		writer.newLine();
 	    }
 	} catch (Exception e) {
 	    logger.atSevere().withCause(e).log("Failed to save settings for %s", filename);
@@ -161,9 +166,9 @@ public class Settings {
     /**
      * Fetches a value from our settings, if it exists. Returns the `def` value if not
      */
-    public <T> T get(final String section, final String key, final T def, final Class<T> cls) {
-        if(settings.containsKey(section) && settings.get(section).containsKey(key)) {
-            return cls.cast(settings.get(section).get(key));
+    public <T> T get(final String key, final T def, final Class<T> cls) {
+        if(settings.containsKey(key)) {
+            return cls.cast(settings.get(key));
 	} else {
             return def;
 	}
@@ -172,40 +177,27 @@ public class Settings {
     /**
      * Fetches a value from our settings, if it exists. Return null if not.
      */
-    public <T> T get(final String section, final String key, final Class<T> cls) {
-        return get(section, key, null, cls);
+    public <T> T get(final String key, final Class<T> cls) {
+        return get(key, null, cls);
     }
 
     /**
      * Sets a setting to the specified value
      */
-    public Settings set(final String section, final String key, final Object val) {
+    public Settings set(final String key, final Object val) {
         dirty = true;
-        if(settings.containsKey(section)) {
-            settings.get(section).put(key, val);
-	} else {
-            settings.put(section, new TreeMap<>());
-            settings.get(section).put(key, val);
-	}
-        return this;
+	settings.put(key, val);
+	return this;
     }
 
     /**
      * Ensures that this section and key exist with some value. If not it will create it
      * with the given value.
      */
-    void ensure(final String section, final String key, final Object val) {
-	if(settings.containsKey(section)) {
-	    if(settings.get(section).containsKey(key)) {
-	        return;
-	    }
-	    logger.atFine().log("Missing setting: [%s] %s = %s", section, key, val);
-	    settings.get(section).put(key, val);
-	    dirty = true;
-	} else {
-	    logger.atFine().log("Missing setting: [%s] %s = %s", section, key, val);
-	    settings.put(section, new TreeMap<>());
-	    settings.get(section).put(key, val);
+    void ensure(final String key, final Object val) {
+	if(!settings.containsKey(key)) {
+	    logger.atFine().log("Missing setting: [%s] %s = %s", key, val);
+	    settings.put(key, val);
 	    dirty = true;
 	}
     }

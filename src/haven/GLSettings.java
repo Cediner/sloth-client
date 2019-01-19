@@ -43,16 +43,16 @@ public class GLSettings implements java.io.Serializable {
 
     public GLSettings(GLConfig cfg) {
 	this.cfg = cfg;
-	flight.set(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.PFLIGHTING, Boolean.class));
-	cel.set(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.CELSHADING, Boolean.class));
-	lshadow.set(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.SHADOWS, Boolean.class));
-	wsurf.set(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.WATERSURFACE, Boolean.class));
-	fsaa.set(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.ANTIALIASING, Boolean.class));
-	alphacov.set(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.ALPHACOV, Boolean.class));
-	meshmode.set(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.MESHMODE, String.class));
-	instancing.set(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.INSTANCING, Boolean.class));
-	outline.set(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.OUTLINES, Boolean.class));
-	anisotex.set(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.ANISOLEVEL, Integer.class)/2.0f);
+	flight.set(DefSettings.global.get(DefSettings.PFLIGHTING, Boolean.class));
+	cel.set(DefSettings.global.get(DefSettings.CELSHADING, Boolean.class));
+	lshadow.set(DefSettings.global.get(DefSettings.SHADOWS, Boolean.class));
+	wsurf.set(DefSettings.global.get(DefSettings.WATERSURFACE, Boolean.class));
+	fsaa.set(DefSettings.global.get(DefSettings.ANTIALIASING, Boolean.class));
+	alphacov.set(DefSettings.global.get(DefSettings.ALPHACOV, Boolean.class));
+	meshmode.set(DefSettings.global.get(DefSettings.MESHMODE, String.class));
+	instancing.set(DefSettings.global.get(DefSettings.INSTANCING, Boolean.class));
+	outline.set(DefSettings.global.get(DefSettings.OUTLINES, Boolean.class));
+	anisotex.set(DefSettings.global.get(DefSettings.ANISOLEVEL, Integer.class)/2.0f);
     }
 
     public static class SettingException extends RuntimeException {
@@ -139,9 +139,9 @@ public class GLSettings implements java.io.Serializable {
     }
     public final EnumSetting<MeshMode> meshmode = new EnumSetting<MeshMode>("meshmode", MeshMode.class) {
 	public MeshMode defval() {
-	    final MeshMode mode = MeshMode.valueOf(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.PFLIGHTING, String.class));
+	    final MeshMode mode = MeshMode.valueOf(DefSettings.global.get(DefSettings.PFLIGHTING, String.class));
 	    if(mode == MeshMode.VAO && !cfg.haveVAO()) {
-		DefSettings.global.set(DefSettings.GRAPHICS, DefSettings.PFLIGHTING, "DLIST").save();
+		DefSettings.global.set(DefSettings.PFLIGHTING, "DLIST").save();
 		return MeshMode.DLIST;
 	    }
 	    return mode;
@@ -159,9 +159,9 @@ public class GLSettings implements java.io.Serializable {
 
     public final BoolSetting instancing = new BoolSetting("instance") {
 	    public Boolean defval() {
-	        final boolean instancing = DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.INSTANCING, Boolean.class);
+	        final boolean instancing = DefSettings.global.get(DefSettings.INSTANCING, Boolean.class);
 	        if(instancing && !cfg.haveInstancing()) {
-	            DefSettings.global.set(DefSettings.GRAPHICS, DefSettings.INSTANCING, false).save();
+	            DefSettings.global.set(DefSettings.INSTANCING, false).save();
 	            return false;
 		}
 	        return instancing;
@@ -175,7 +175,7 @@ public class GLSettings implements java.io.Serializable {
 
     public final BoolSetting fsaa = new BoolSetting("fsaa") {
 	    public Boolean defval() {
-	        return DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.ANTIALIASING, Boolean.class);
+	        return DefSettings.global.get(DefSettings.ANTIALIASING, Boolean.class);
 	    }
 	    public void validate(Boolean val) {
 		if(val && !cfg.havefsaa())
@@ -184,7 +184,7 @@ public class GLSettings implements java.io.Serializable {
 	};
     public final BoolSetting alphacov = new BoolSetting("alphacov") {
 	    public Boolean defval() {
-		return DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.ALPHACOV, Boolean.class);
+		return DefSettings.global.get(DefSettings.ALPHACOV, Boolean.class);
 	    }
 	    public void validate(Boolean val) {
 		if(val) {
@@ -195,14 +195,14 @@ public class GLSettings implements java.io.Serializable {
 
     public final BoolSetting flight = new BoolSetting("flight") {
 	    public Boolean defval() {
-		return DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.PFLIGHTING, Boolean.class);
+		return DefSettings.global.get(DefSettings.PFLIGHTING, Boolean.class);
 	    }
 	    public void validate(Boolean val) {}
 	};
 
     public final BoolSetting cel = new BoolSetting("cel") {
 	    public Boolean defval() {
-		return DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.CELSHADING, Boolean.class);
+		return DefSettings.global.get(DefSettings.CELSHADING, Boolean.class);
 	    }
 	    public void validate(Boolean val) {
 		if(val) {
@@ -213,7 +213,7 @@ public class GLSettings implements java.io.Serializable {
 
     public final BoolSetting lshadow = new BoolSetting("sdw") {
 	    public Boolean defval() {
-		return DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.SHADOWS, Boolean.class);
+		return DefSettings.global.get(DefSettings.SHADOWS, Boolean.class);
 	    }
 	    public void validate(Boolean val) {
 		if(val) {
@@ -224,7 +224,7 @@ public class GLSettings implements java.io.Serializable {
 	};
     public final BoolSetting outline = new BoolSetting("outl") {
 	    public Boolean defval() {
-		return DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.OUTLINES, Boolean.class);
+		return DefSettings.global.get(DefSettings.OUTLINES, Boolean.class);
 	    }
 	    public void validate(Boolean val) {
 		if(val) {
@@ -235,14 +235,14 @@ public class GLSettings implements java.io.Serializable {
 
     public final BoolSetting wsurf = new BoolSetting("wsurf") {
 	    public Boolean defval() {
-		return DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.WATERSURFACE, Boolean.class);
+		return DefSettings.global.get(DefSettings.WATERSURFACE, Boolean.class);
 	    }
 	    public void validate(Boolean val) {}
 	};
 
     public final FloatSetting anisotex = new FloatSetting("aniso") {
 	    public Float defval() {
-		return (float)DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.ANISOLEVEL, Integer.class);
+		return (float)DefSettings.global.get(DefSettings.ANISOLEVEL, Integer.class);
 	    }
 	    public float min() {return(0);}
 	    public float max() {return(cfg.anisotropy);}
@@ -265,29 +265,29 @@ public class GLSettings implements java.io.Serializable {
 	GLSettings gs = new GLSettings(cfg);
 
 	//Reset the settings
-	DefSettings.global.set(DefSettings.GRAPHICS, DefSettings.PFLIGHTING, true);
-	DefSettings.global.set(DefSettings.GRAPHICS, DefSettings.CELSHADING, false);
-	DefSettings.global.set(DefSettings.GRAPHICS, DefSettings.SHADOWS, true);
-	DefSettings.global.set(DefSettings.GRAPHICS, DefSettings.WATERSURFACE, true);
-	DefSettings.global.set(DefSettings.GRAPHICS, DefSettings.ANTIALIASING, false);
-	DefSettings.global.set(DefSettings.GRAPHICS, DefSettings.ALPHACOV, false);
-	DefSettings.global.set(DefSettings.GRAPHICS, DefSettings.MESHMODE, "VAO");
-	DefSettings.global.set(DefSettings.GRAPHICS, DefSettings.INSTANCING, true);
-	DefSettings.global.set(DefSettings.GRAPHICS, DefSettings.OUTLINES, true);
-	DefSettings.global.set(DefSettings.GRAPHICS, DefSettings.ANISOLEVEL, 0);
+	DefSettings.global.set(DefSettings.PFLIGHTING, true);
+	DefSettings.global.set(DefSettings.CELSHADING, false);
+	DefSettings.global.set(DefSettings.SHADOWS, true);
+	DefSettings.global.set(DefSettings.WATERSURFACE, true);
+	DefSettings.global.set(DefSettings.ANTIALIASING, false);
+	DefSettings.global.set(DefSettings.ALPHACOV, false);
+	DefSettings.global.set(DefSettings.MESHMODE, "VAO");
+	DefSettings.global.set(DefSettings.INSTANCING, true);
+	DefSettings.global.set(DefSettings.OUTLINES, true);
+	DefSettings.global.set(DefSettings.ANISOLEVEL, 0);
 	DefSettings.global.save();
 
 	//Setup the settings here
-	gs.flight.set(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.PFLIGHTING, Boolean.class));
-	gs.cel.set(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.CELSHADING, Boolean.class));
-	gs.lshadow.set(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.SHADOWS, Boolean.class));
-	gs.wsurf.set(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.WATERSURFACE, Boolean.class));
-	gs.fsaa.set(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.ANTIALIASING, Boolean.class));
-	gs.alphacov.set(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.ALPHACOV, Boolean.class));
-	gs.meshmode.set(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.MESHMODE, String.class));
-	gs.instancing.set(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.INSTANCING, Boolean.class));
-	gs.outline.set(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.OUTLINES, Boolean.class));
-	gs.anisotex.set(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.ANISOLEVEL, Integer.class)/2.0f);
+	gs.flight.set(DefSettings.global.get(DefSettings.PFLIGHTING, Boolean.class));
+	gs.cel.set(DefSettings.global.get(DefSettings.CELSHADING, Boolean.class));
+	gs.lshadow.set(DefSettings.global.get(DefSettings.SHADOWS, Boolean.class));
+	gs.wsurf.set(DefSettings.global.get(DefSettings.WATERSURFACE, Boolean.class));
+	gs.fsaa.set(DefSettings.global.get(DefSettings.ANTIALIASING, Boolean.class));
+	gs.alphacov.set(DefSettings.global.get(DefSettings.ALPHACOV, Boolean.class));
+	gs.meshmode.set(DefSettings.global.get(DefSettings.MESHMODE, String.class));
+	gs.instancing.set(DefSettings.global.get(DefSettings.INSTANCING, Boolean.class));
+	gs.outline.set(DefSettings.global.get(DefSettings.OUTLINES, Boolean.class));
+	gs.anisotex.set(DefSettings.global.get(DefSettings.ANISOLEVEL, Integer.class)/2.0f);
 
 	return gs;
     }
