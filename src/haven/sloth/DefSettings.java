@@ -61,7 +61,8 @@ public class DefSettings {
 
     public static final String
     	SESSION = "session",
-    	PAUSED = "paused";
+    	PAUSED = "paused",
+    	SHOWGRID = "show-grid";
 
     /**
      * Checks out settings nad saves them if they are dirty
@@ -107,6 +108,7 @@ public class DefSettings {
 
 	//Session based globals
 	session.ensure(SESSION, PAUSED, false);
+	session.ensure(SESSION, SHOWGRID, false);
     }
 
     /**

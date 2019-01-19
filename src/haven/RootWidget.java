@@ -57,6 +57,9 @@ public class RootWidget extends ConsoleHost {
 		if (Config.profilegpu) {
 		    add(new Profwnd(ggprof, "GPU profile"), new Coord(800, 100));
 		}
+	    } else if(key == 'g') {
+		DefSettings.session.set(DefSettings.SESSION, DefSettings.SHOWGRID,
+			!DefSettings.session.get(DefSettings.SESSION, DefSettings.SHOWGRID, Boolean.class));
 	    } else if(key == 'p') {
 		DefSettings.session.set(DefSettings.SESSION, DefSettings.PAUSED,
 			!DefSettings.session.get(DefSettings.SESSION, DefSettings.PAUSED, Boolean.class));

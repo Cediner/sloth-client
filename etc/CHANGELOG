@@ -39,3 +39,4 @@
     - Pushed anisotropic validation off into TexGL
     - Added in pausing via 'p' key
     - Added back the "No Gob Audio" option under Audio Options.
+    - Added back in the Grid mode via 'g' key

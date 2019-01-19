@@ -4,6 +4,10 @@
   <target name="build-env">
     <mkdir dir="build" />
     <mkdir dir="build/classes" />
+    <mkdir dir="build/data"/>
+    <copy todir="build/data/">
+      <fileset dir="etc/data/" includes="**"/>
+    </copy>
     <available property="has-res-jar" file="build/hafen-res.jar" />
     <available property="has-buildinfo" file="build/classes/buildinfo" />
     <available property="unpacked-lib" file="build/classes-lib" />

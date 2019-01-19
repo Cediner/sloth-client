@@ -514,7 +514,29 @@ public class MapView extends PView implements DTarget, Console.Directory {
 		return(false);
 	    }
 	};
-    
+
+    private final Rendered grid = new Rendered() {
+	public void draw(GOut g) {}
+
+	public boolean setup(RenderList rl) {
+	    Coord cc = MapView.this.cc.floor(tilesz).div(MCache.cutsz);
+	    Coord o = new Coord();
+	    for(o.y = -view; o.y <= view; o.y++) {
+		for(o.x = -view; o.x <= view; o.x++) {
+		    Coord2d pc = cc.add(o).mul(MCache.cutsz).mul(tilesz);
+		    try {
+			FastMesh cut = glob.map.getgcut(cc.add(o));
+			if(cut != null) {
+			    rl.add(cut, Location.xlate(new Coord3f((float)pc.x, (float)-pc.y, 0)));
+			}
+		    } catch(Loading e) {
+		    }
+		}
+	    }
+	    return(false);
+	}
+    };
+
     private final Rendered mapol = new Rendered() {
 	    private final GLState[] mats;
 	    {
@@ -884,6 +906,9 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    curf.tick("outlines");
 	if(DefSettings.global.get(DefSettings.GRAPHICS, DefSettings.SHOWMAP, Boolean.class)) {
 	    rl.add(map, null);
+	}
+	if(DefSettings.session.get(DefSettings.SESSION, DefSettings.SHOWGRID, Boolean.class)) {
+	    rl.add(grid, null);
 	}
 	if(curf != null)
 	    curf.tick("map");

@@ -26,6 +26,8 @@
 
 package haven;
 
+import haven.sloth.gfx.GridMesh;
+
 import java.util.*;
 import java.lang.ref.*;
 
@@ -105,8 +107,14 @@ public class MCache {
 	private Collection<Gob>[] fo = null;
 
 	private class Cut {
+	    //Basic visible textured mapmesh
 	    MapMesh mesh;
 	    Defer.Future<MapMesh> dmesh;
+
+	    //Grid layout view
+	    FastMesh grid;
+	    Defer.Future<FastMesh> dgrid;
+
 	    Rendered[] ols;
 	}
 
@@ -197,6 +205,23 @@ public class MCache {
 	    }
 	    return(cut.mesh);
 	}
+
+	/**
+	 * returns the Grid layout cut given the coordinate
+	 */
+	public FastMesh getgcut(Coord cc) {
+	    Cut cut = geticut(cc);
+	    if(cut.dgrid != null) {
+		if(cut.dgrid.done() || cut.grid == null) {
+		    FastMesh old = cut.grid;
+		    cut.grid = cut.dgrid.get();
+		    cut.dgrid = null;
+		    if(old != null)
+			old.dispose();
+		}
+	    }
+	    return cut.grid;
+	}
 	
 	public Rendered getolcut(int ol, Coord cc) {
 	    int nseq = MCache.this.olseq;
@@ -235,6 +260,27 @@ public class MCache {
 		});
 	    if(prev != null)
 		prev.cancel();
+	    //automatically build a grid mesh with every cut
+	    buildgcut(cc);
+	}
+
+	/**
+	 * Builds the grid layout mesh
+	 */
+	private void buildgcut(final Coord cc) {
+	    final Cut cut = geticut(cc);
+	    Defer.Future<?> gprev = cut.dgrid;
+	    cut.dgrid = Defer.later(new Defer.Callable<FastMesh>() {
+		public FastMesh call() {
+		    return(GridMesh.build(MCache.this, ul.add(cc.mul(cutsz)), cutsz));
+		}
+
+		public String toString() {
+		    return("Building grid overlay...");
+		}
+	    });
+	    if(gprev != null)
+		gprev.cancel();
 	}
 
 	public void ivneigh(Coord nc) {
@@ -454,6 +500,12 @@ public class MCache {
     public MapMesh getcut(Coord cc) {
 	synchronized(grids) {
 	    return(getgrid(cc.div(cutn)).getcut(cc.mod(cutn)));
+	}
+    }
+
+    public FastMesh getgcut(Coord cc) {
+	synchronized(grids) {
+	    return(getgrid(cc.div(cutn)).getgcut(cc.mod(cutn)));
 	}
     }
     
