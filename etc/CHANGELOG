@@ -38,3 +38,4 @@
     - Fixed mistake that would cause a gl error when deleting glPrograms since it was calling the wrong function
     - Pushed anisotropic validation off into TexGL
     - Added in pausing via 'p' key
+    - Added back the "No Gob Audio" option under Audio Options.

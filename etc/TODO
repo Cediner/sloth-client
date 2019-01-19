@@ -1,6 +1,4 @@
 TODO
-    - Audio
-        - No Gob Audio ("no-gob-audio" -> False)
     - Deleting
     - Hiding
         - Color for it, default. Each obj can have its own color?

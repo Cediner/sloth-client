@@ -203,7 +203,8 @@ public class OptWnd extends Window {
 		if(cf.anisotex.max() <= 1) {
 		    y += add(new Label("(Not supported)"), new Coord(15, y)).sz.y + spacer;
 		} else {
-		    final Label dpy = add(new Label(""), new Coord(165, y + 15));
+		    final Label dpy = add(new Label(""), new Coord(165, y));
+		    y += dpy.sz.y;
 		    y += add(new HSlider(160, (int)(cf.anisotex.min() * 2), (int)(cf.anisotex.max() * 2), (int)(cf.anisotex.val * 2)) {
 			    protected void added() {
 				dpy();
@@ -225,7 +226,7 @@ public class OptWnd extends Window {
 				global.set(GRAPHICS, ANISOLEVEL, val);
 				dpy();
 			    }
-			}, new Coord(0, y + 15)).sz.y + spacer;
+			}, new Coord(0, y)).sz.y + spacer;
 		}
 		y += add(new CheckBox("Render Outlines") {
 		    {a = cf.outline.val;}
@@ -371,41 +372,48 @@ public class OptWnd extends Window {
 	    }, new Coord(0, 180));
 	main.pack();
 
-	y = 0;
-	audio.add(new Label("Master audio volume"), new Coord(0, y));
-	y += 15;
-	audio.add(new HSlider(200, 0, 1000, (int)(Audio.volume * 1000)) {
+	{
+	    int spacer = 5;
+	    y = 0;
+	    y += audio.add(new Label("Master audio volume"), new Coord(0, y)).sz.y + spacer;
+	    y += audio.add(new HSlider(200, 0, 1000, (int) (Audio.volume * 1000)) {
 		public void changed() {
 		    Audio.setvolume(val / 1000.0);
 		}
-	    }, new Coord(0, y));
-	y += 30;
-	audio.add(new Label("In-game event volume"), new Coord(0, y));
-	y += 15;
-	audio.add(new HSlider(200, 0, 1000, 0) {
+	    }, new Coord(0, y)).sz.y + spacer;
+	    y += audio.add(new Label("In-game event volume"), new Coord(0, y)).sz.y + spacer;
+	    y += audio.add(new HSlider(200, 0, 1000, 0) {
 		protected void attach(UI ui) {
 		    super.attach(ui);
-		    val = (int)(ui.audio.pos.volume * 1000);
+		    val = (int) (ui.audio.pos.volume * 1000);
 		}
+
 		public void changed() {
 		    ui.audio.pos.setvolume(val / 1000.0);
 		}
-	    }, new Coord(0, y));
-	y += 20;
-	audio.add(new Label("Ambient volume"), new Coord(0, y));
-	y += 15;
-	audio.add(new HSlider(200, 0, 1000, 0) {
+	    }, new Coord(0, y)).sz.y + spacer;
+	    y += audio.add(new Label("Ambient volume"), new Coord(0, y)).sz.y + spacer;
+	    y += audio.add(new HSlider(200, 0, 1000, 0) {
 		protected void attach(UI ui) {
 		    super.attach(ui);
-		    val = (int)(ui.audio.amb.volume * 1000);
+		    val = (int) (ui.audio.amb.volume * 1000);
 		}
+
 		public void changed() {
 		    ui.audio.amb.setvolume(val / 1000.0);
 		}
-	    }, new Coord(0, y));
-	y += 35;
-	audio.add(new PButton(200, "Back", 27, main), new Coord(0, 180));
-	audio.pack();
+	    }, new Coord(0, y)).sz.y + spacer;
+	    y += audio.add(new CheckBox("No Gob Audio") {
+		{a = global.get(AUDIO, NOGOBAUDIO, Boolean.class);}
+
+		public void set(boolean val) {
+		    global.set(AUDIO, NOGOBAUDIO, val);
+		    a = val;
+		}
+	    }, new Coord(0, y)).sz.y + spacer;
+	    audio.add(new PButton(200, "Back", 27, main), new Coord(0, y));
+	    audio.pack();
+	}
 
 	chpanel(main);
     }

@@ -54,7 +54,10 @@ public class DefSettings {
 	ANIMATIONS = "animations-show",			//[Bool] Turn animations orr or on
 	SHOWMAP = "map-show",				//[Bool] Toggle mapgrid on/off
 	SHOWGOBS = "gobs-show",				//[Bool] Toggle gobs on/off
-	NIGHTVISION = "nightvision";			//[Bool] Toggle nightvision
+	NIGHTVISION = "nightvision",			//[Bool] Toggle nightvision
+
+    	AUDIO = "audio",
+    	NOGOBAUDIO = "no-gob-audio"; 			//[Bool] Toggles Gob audio
 
     public static final String
     	SESSION = "session",
@@ -99,6 +102,8 @@ public class DefSettings {
 	global.ensure(GRAPHICS, SHOWMAP, true);
 	global.ensure(GRAPHICS, SHOWGOBS, true);
 	global.ensure(GRAPHICS, NIGHTVISION, false);
+	//Audio
+	global.ensure(AUDIO, NOGOBAUDIO, false);
 
 	//Session based globals
 	session.ensure(SESSION, PAUSED, false);
