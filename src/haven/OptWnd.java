@@ -440,6 +440,14 @@ public class OptWnd extends Window {
 		    a = val;
 		}
 	    }, c.copy()).sz.y + spacer;
+	    c.y += gameplay.add(new CheckBox("Don't close flowermenu on clicks") {
+		{a = global.get(BUGGEDMENU, Boolean.class);}
+
+		public void set(boolean val) {
+		    global.set(BUGGEDMENU, val);
+		    a = val;
+		}
+	    }, c.copy()).sz.y + spacer;
 	    gameplay.add(new PButton(200, "Back", 27, main), c.copy());
 	    gameplay.pack();
 	}

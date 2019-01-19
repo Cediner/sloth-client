@@ -42,3 +42,4 @@
     - Added back in the Grid mode via 'g' key
     - Added back flatworld, can be toggled in the Options window under Graphics.
     - Added back quick flower menus, can be toggled under Options window under Gameplay
+    - Added back bugged flower menus (aka: don't close them when you click outside them). Options -> Gameplay

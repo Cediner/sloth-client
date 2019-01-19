@@ -222,6 +222,8 @@ public class FlowerMenu extends Widget {
     public boolean mousedown(Coord c, int button) {
 	if(!anims.isEmpty())
 	    return(true);
+	if(DefSettings.global.get(DefSettings.BUGGEDMENU, Boolean.class))
+	    return super.mousedown(c, button);
 	if(!super.mousedown(c, button))
 	    choose(null);
 	return(true);

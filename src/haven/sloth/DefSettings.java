@@ -57,6 +57,7 @@ public class DefSettings {
     	FLATWORLD = "graphics.flatworld",			//[Bool] Toggle flatworld (haven)
 
     	QUICKMENU = "gameplay.quick-flowermenu", 		//[Bool] Toggle quick flowermenu
+    	BUGGEDMENU = "gameplay.bugged-flowermenu",		//[Bool] Whether not flowermenu should close on clicks outside of it
 
     	NOGOBAUDIO = "audio.no-gob-audio"; 			//[Bool] Toggles Gob audio
 
@@ -106,6 +107,7 @@ public class DefSettings {
 	global.ensure(FLATWORLD, false);
 	//Gameplay
 	global.ensure(QUICKMENU, false);
+	global.ensure(BUGGEDMENU, false);
 	//Audio
 	global.ensure(NOGOBAUDIO, false);
 
