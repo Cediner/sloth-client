@@ -32,6 +32,7 @@ import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 import haven.Surface.Vertex;
 import haven.Surface.MeshVertex;
+import haven.sloth.DefSettings;
 
 public class MapMesh implements Rendered, Disposable {
     public final Coord ul, sz;
@@ -116,9 +117,11 @@ public class MapMesh implements Rendered, Disposable {
 	public final boolean[] split = new boolean[ts.l];
 
 	public MapSurface() {
+	    float z;
 	    for(int y = vs.ul.y; y < vs.br.y; y++) {
 		for(int x = vs.ul.x; x < vs.br.x; x++) {
-		    surf[vs.o(x, y)] = new Vertex(x * (float)tilesz.x, y * -(float)tilesz.y, map.getz(ul.add(x, y)));
+		    z = !DefSettings.global.get(DefSettings.FLATWORLD, Boolean.class) ? map.getz(ul.add(x, y)) : 0;
+		    surf[vs.o(x, y)] = new Vertex(x * (float)tilesz.x, y * -(float)tilesz.y, z);
 		}
 	    }
 	    for(int y = ts.ul.y; y < ts.br.y; y++) {

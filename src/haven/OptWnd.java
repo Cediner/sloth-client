@@ -317,6 +317,18 @@ public class OptWnd extends Window {
 			a = val;
 		    }
 		}, new Coord(0, y)).sz.y + spacer;
+		y += add(new CheckBox("Flatworld (Legacy)") {
+		    {a = global.get(FLATWORLD, Boolean.class);}
+
+		    public void set(boolean val) {
+			global.set(FLATWORLD, val);
+			if(ui.sess != null) {
+			    //All of our MapMesh/GridMesh need invalidated
+			    ui.sess.glob.map.invalidateAll();
+			}
+			a = val;
+		    }
+		}, new Coord(0, y)).sz.y + spacer;
 		y += add(new Button(200, "Reset to defaults") {
 			public void click() {
 			    DefSettings.resetgraphics();

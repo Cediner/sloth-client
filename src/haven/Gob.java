@@ -26,6 +26,8 @@
 
 package haven;
 
+import haven.sloth.DefSettings;
+
 import java.util.*;
 
 public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
@@ -499,6 +501,8 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 	public void tick() {
 	    try {
 		Coord3f c = getc();
+		if(DefSettings.global.get(DefSettings.FLATWORLD, Boolean.class))
+		    c.z = 0;
 		c.y = -c.y;
 		if((this.c == null) || !c.equals(this.c))
 		    xl.update(Transform.makexlate(new Matrix4f(), this.c = c));

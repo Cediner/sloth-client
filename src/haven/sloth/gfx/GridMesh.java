@@ -4,6 +4,7 @@ import com.google.common.flogger.FluentLogger;
 import haven.*;
 
 import com.jogamp.opengl.*;
+import haven.sloth.DefSettings;
 
 import java.io.File;
 import java.nio.FloatBuffer;
@@ -75,7 +76,7 @@ public class GridMesh extends FastMesh {
 	for(c.y = ul.y; c.y <= stop.y; ++c.y) {
 	    for(c.x = ul.x; c.x <= stop.x; ++c.x) {
 		me = mapToScreen(c, ul, mc);
-		mez = me.z;
+		mez = !DefSettings.global.get(DefSettings.FLATWORLD, Boolean.class) ? me.z : 0;
 		pa.put(me.x).put(me.y).put(mez+zoff);
 		z = ((int)me.z + 128) % 256;
 		cl.put(colors[z][0]).put(colors[z][1]).put(colors[z][2]).put(0.5f);

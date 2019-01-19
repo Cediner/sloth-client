@@ -33,6 +33,8 @@ import haven.MapMesh.Model;
 import haven.Surface.Vertex;
 import haven.Tiler.MPart;
 import haven.Surface.MeshVertex;
+import haven.sloth.DefSettings;
+
 import static haven.Utils.clip;
 
 public class Ridges extends MapMesh.Hooks {
@@ -187,6 +189,10 @@ public class Ridges extends MapMesh.Hooks {
 	    Coord gc = tc.add(m.ul);
 	    int z1 = m.map.getz(gc.add(tccs[e])), z2 = m.map.getz(gc.add(tccs[(e + 1) % 4]));
 	    lo = Math.min(z1, z2); hi = Math.max(z1, z2);
+	    if(DefSettings.global.get(DefSettings.FLATWORLD, Boolean.class)) {
+	        lo = 0;
+	        hi = 15;
+	    }
 	}
 	int nseg = Math.max((hi - lo + (segh / 2)) / segh, 2) - 1;
 	Vertex[] ret = new Vertex[nseg + 1];
@@ -465,6 +471,10 @@ public class Ridges extends MapMesh.Hooks {
 
     private Vertex[] colzmatch(Coord3f[] cl, float lo, float hi) {
 	int i, l, h;
+	if(DefSettings.global.get(DefSettings.FLATWORLD, Boolean.class)) {
+	    lo = 0;
+	    hi = 15;
+	}
 	float md;
 	for(i = 1, l = 0, md = Math.abs(cl[0].z - lo); i < cl.length; i++) {
 	    float zd = Math.abs(cl[i].z - lo);

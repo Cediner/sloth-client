@@ -54,6 +54,7 @@ public class DefSettings {
 	SHOWMAP = "graphics.map-show",				//[Bool] Toggle mapgrid on/off
 	SHOWGOBS = "graphics.gobs-show",			//[Bool] Toggle gobs on/off
 	NIGHTVISION = "graphics.nightvision",			//[Bool] Toggle nightvision
+    	FLATWORLD = "graphics.flatworld",			//[Bool] Toggle flatworld (haven)
 
     	NOGOBAUDIO = "audio.no-gob-audio"; 			//[Bool] Toggles Gob audio
 
@@ -100,6 +101,7 @@ public class DefSettings {
 	global.ensure(SHOWMAP, true);
 	global.ensure(SHOWGOBS, true);
 	global.ensure(NIGHTVISION, false);
+	global.ensure(FLATWORLD, false);
 	//Audio
 	global.ensure(NOGOBAUDIO, false);
 

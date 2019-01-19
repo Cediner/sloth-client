@@ -218,6 +218,8 @@ public class MapView extends PView implements DTarget, Console.Directory {
 
 	public void tick(double dt) {
 	    Coord3f cc = getcc();
+	    if(DefSettings.global.get(DefSettings.FLATWORLD, Boolean.class))
+	        cc.z = 0;
 	    cc.y = -cc.y;
 	    view.update(PointedCam.compute(cc.add(camoff).add(0.0f, 0.0f, 15f), dist, elev, angl));
 	}
@@ -269,6 +271,8 @@ public class MapView extends PView implements DTarget, Console.Directory {
 
 	public void tick2(double dt) {
 	    Coord3f cc = getcc();
+	    if(DefSettings.global.get(DefSettings.FLATWORLD, Boolean.class))
+	        cc.z = 0;
 	    cc.y = -cc.y;
 	    this.cc = cc;
 	}

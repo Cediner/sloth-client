@@ -57,3 +57,4 @@ TODO
     - Queued movement
         - Show path for this
     - Flowermenu as a list rather than circle
+    - Flavor Objs with flatworld sometimes don't use z = 0, need to get the source to fix that.
