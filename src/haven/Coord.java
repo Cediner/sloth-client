@@ -77,11 +77,11 @@ public class Coord implements Comparable<Coord>, java.io.Serializable {
     }
 
     public int compareTo(Coord c) {
-	if(c.y != y)
-	    return(c.y - y);
-	if(c.x != x)
-	    return(c.x - x);
-	return(0);
+	if (c.y != y)
+	    return (c.y - y);
+	if (c.x != x)
+	    return (c.x - x);
+	return (0);
     }
 
     public int hashCode() {
@@ -140,8 +140,12 @@ public class Coord implements Comparable<Coord>, java.io.Serializable {
 	return(new Coord(Utils.floormod(x, d.x), Utils.floormod(y, d.y)));
     }
 
+    public Coord copy() {
+        return new Coord(x, y);
+    }
+
     public boolean isect(Coord c, Coord s) {
-	return((x >= c.x) && (y >= c.y) && (x < c.x + s.x) && (y < c.y + s.y));
+	return ((x >= c.x) && (y >= c.y) && (x < c.x + s.x) && (y < c.y + s.y));
     }
 
     public String toString() {

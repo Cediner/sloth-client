@@ -361,10 +361,12 @@ public class OptWnd extends Window {
 	main = add(new Panel());
 	video = add(new VideoPanel(main));
 	audio = add(new Panel());
+	final Panel gameplay = add(new Panel());
 	int y;
 
 	main.add(new PButton(200, "Video settings", 'v', video), new Coord(0, 0));
 	main.add(new PButton(200, "Audio settings", 'a', audio), new Coord(0, 30));
+	main.add(new PButton(200, "Gameplay settings", 'g', gameplay), new Coord(0, 60));
 	if(gopts) {
 	    main.add(new Button(200, "Switch character") {
 		    public void click() {
@@ -384,7 +386,7 @@ public class OptWnd extends Window {
 	    }, new Coord(0, 180));
 	main.pack();
 
-	{
+	{ //Audio
 	    int spacer = 5;
 	    y = 0;
 	    y += audio.add(new Label("Master audio volume"), new Coord(0, y)).sz.y + spacer;
@@ -426,6 +428,22 @@ public class OptWnd extends Window {
 	    audio.add(new PButton(200, "Back", 27, main), new Coord(0, y));
 	    audio.pack();
 	}
+
+	{ //Gameplay settings
+	    final int spacer = 5;
+	    final Coord c = new Coord(0, 0);
+	    c.y += gameplay.add(new CheckBox("Quick flowermenu") {
+		{a = global.get(QUICKMENU, Boolean.class);}
+
+		public void set(boolean val) {
+		    global.set(QUICKMENU, val);
+		    a = val;
+		}
+	    }, c.copy()).sz.y + spacer;
+	    gameplay.add(new PButton(200, "Back", 27, main), c.copy());
+	    gameplay.pack();
+	}
+
 
 	chpanel(main);
     }

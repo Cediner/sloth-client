@@ -56,6 +56,8 @@ public class DefSettings {
 	NIGHTVISION = "graphics.nightvision",			//[Bool] Toggle nightvision
     	FLATWORLD = "graphics.flatworld",			//[Bool] Toggle flatworld (haven)
 
+    	QUICKMENU = "gameplay.quick-flowermenu", 		//[Bool] Toggle quick flowermenu
+
     	NOGOBAUDIO = "audio.no-gob-audio"; 			//[Bool] Toggles Gob audio
 
     public static final String
@@ -102,6 +104,8 @@ public class DefSettings {
 	global.ensure(SHOWGOBS, true);
 	global.ensure(NIGHTVISION, false);
 	global.ensure(FLATWORLD, false);
+	//Gameplay
+	global.ensure(QUICKMENU, false);
 	//Audio
 	global.ensure(NOGOBAUDIO, false);
 

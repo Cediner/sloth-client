@@ -287,6 +287,7 @@ public class Widget {
     }
 
     protected void added() {}
+    protected void binded() {}
 
     public Coord relpos(String spec, Object self, Object[] args, int off) {
 	int i = 0;

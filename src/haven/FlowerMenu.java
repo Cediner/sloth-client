@@ -26,6 +26,8 @@
 
 package haven;
 
+import haven.sloth.DefSettings;
+
 import java.awt.Color;
 import static java.lang.Math.PI;
 
@@ -234,6 +236,23 @@ public class FlowerMenu extends Widget {
 	    new Chosen(opts[(Integer)args[0]]);
 	    mg.remove();
 	    kg.remove();
+	}
+    }
+
+    public void binded() {
+	int jack = ui.modflags();
+
+	if(DefSettings.global.get(DefSettings.QUICKMENU, Boolean.class) && jack < opts.length && opts.length <= 2) {
+	    if(opts[0].name.equals("Empty")){
+		if(opts.length == 1) return; //don't jackui a single empty
+		//switch options for containers
+		jack = jack == 1 ? 0 : 1;
+	    }
+	    wdgmsg("cl",jack,0);
+	    hide();
+	} else if(DefSettings.global.get(DefSettings.QUICKMENU, Boolean.class) && jack < opts.length && opts[1].name.equals("Sip")) {
+	    wdgmsg("cl", jack, 0);
+	    hide();
 	}
     }
 

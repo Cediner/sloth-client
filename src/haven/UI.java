@@ -123,6 +123,7 @@ public class UI {
     public void bind(Widget w, int id) {
 	widgets.put(id, w);
 	rwidgets.put(w, id);
+	w.binded();
     }
     
     public void drawafter(AfterDraw ad) {
