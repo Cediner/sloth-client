@@ -26,6 +26,8 @@
 
 package haven;
 
+import haven.sloth.DefSettings;
+
 import java.awt.event.KeyEvent;
 
 public class RootWidget extends ConsoleHost {
@@ -44,17 +46,20 @@ public class RootWidget extends ConsoleHost {
 	if(!super.globtype(key, ev)) {
 	    if(key == '`') {
 		GameUI gi = findchild(GameUI.class);
-		if(Config.profile) {
+		if (Config.profile) {
 		    add(new Profwnd(guprof, "UI profile"), new Coord(100, 100));
 		    add(new Profwnd(grprof, "GL profile"), new Coord(450, 100));
-		    if((gi != null) && (gi.map != null)) {
+		    if ((gi != null) && (gi.map != null)) {
 			add(new Profwnd(gi.map.prof, "Map profile"), new Coord(100, 250));
 			add(new Profwnd(gi.map.setupprof, "Map Setup profile"), new Coord(450, 250));
 		    }
 		}
-		if(Config.profilegpu) {
+		if (Config.profilegpu) {
 		    add(new Profwnd(ggprof, "GPU profile"), new Coord(800, 100));
 		}
+	    } else if(key == 'p') {
+		DefSettings.session.set(DefSettings.SESSION, DefSettings.PAUSED,
+			!DefSettings.session.get(DefSettings.SESSION, DefSettings.PAUSED, Boolean.class));
 	    } else if(key == ':') {
 		entercmd();
 	    } else if(key != 0) {

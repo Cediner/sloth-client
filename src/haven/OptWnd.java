@@ -89,8 +89,9 @@ public class OptWnd extends Window {
 
 	    public CPanel(GLSettings gcf) {
 		this.cf = gcf;
+		final int spacer = 5;
 		int y = 0;
-		add(new CheckBox("Per-fragment lighting") {
+		y = add(new CheckBox("Per-fragment lighting") {
 			{a = cf.flight.val;}
 
 			public void set(boolean val) {
@@ -108,9 +109,8 @@ public class OptWnd extends Window {
 			    global.set(GRAPHICS, PFLIGHTING, val);
 			    a = val;
 			}
-		    }, new Coord(0, y));
-		y += 25;
-		add(new CheckBox("Cel Shading") {
+		    }, new Coord(0, y)).sz.y + spacer;
+		y += add(new CheckBox("Cel Shading") {
 		    {a = cf.cel.val;}
 
 		    public void set(boolean val) {
@@ -128,9 +128,8 @@ public class OptWnd extends Window {
 			global.set(GRAPHICS, CELSHADING, val);
 			a = val;
 		    }
-		}, new Coord(0, y));
-		y += 25;
-		add(new CheckBox("Toggle Alpha Coverage") {
+		}, new Coord(0, y)).sz.y + spacer;
+		y += add(new CheckBox("Toggle Alpha Coverage") {
 		    {a = cf.alphacov.val;}
 
 		    public void set(boolean val) {
@@ -148,9 +147,8 @@ public class OptWnd extends Window {
 			global.set(GRAPHICS, ALPHACOV, val);
 			a = val;
 		    }
-		}, new Coord(0, y));
-		y += 25;
-		add(new CheckBox("Render water surface") {
+		}, new Coord(0, y)).sz.y + spacer;
+		y += add(new CheckBox("Render water surface") {
 		    {a = cf.wsurf.val;}
 
 		    public void set(boolean val) {
@@ -168,9 +166,8 @@ public class OptWnd extends Window {
 			global.set(GRAPHICS, WATERSURFACE, val);
 			a = val;
 		    }
-		}, new Coord(0, y));
-		y += 25;
-		add(new CheckBox("Render shadows") {
+		}, new Coord(0, y)).sz.y + spacer;
+		y += add(new CheckBox("Render shadows") {
 			{a = cf.lshadow.val;}
 
 			public void set(boolean val) {
@@ -187,9 +184,8 @@ public class OptWnd extends Window {
 			    global.set(GRAPHICS, PFLIGHTING, val);
 			    a = val;
 			}
-		    }, new Coord(0, y));
-		y += 25;
-		add(new CheckBox("Antialiasing") {
+		    }, new Coord(0, y)).sz.y + spacer;
+		y += add(new CheckBox("Antialiasing") {
 			{a = cf.fsaa.val;}
 
 			public void set(boolean val) {
@@ -202,14 +198,13 @@ public class OptWnd extends Window {
 			    global.set(GRAPHICS, ANTIALIASING, val);
 			    a = val;
 			}
-		    }, new Coord(0, y));
-		y += 25;
-		add(new Label("Anisotropic filtering"), new Coord(0, y));
+		    }, new Coord(0, y)).sz.y + spacer;
+		y += add(new Label("Anisotropic filtering"), new Coord(0, y)).sz.y + spacer;
 		if(cf.anisotex.max() <= 1) {
-		    add(new Label("(Not supported)"), new Coord(15, y + 15));
+		    y += add(new Label("(Not supported)"), new Coord(15, y)).sz.y + spacer;
 		} else {
 		    final Label dpy = add(new Label(""), new Coord(165, y + 15));
-		    add(new HSlider(160, (int)(cf.anisotex.min() * 2), (int)(cf.anisotex.max() * 2), (int)(cf.anisotex.val * 2)) {
+		    y += add(new HSlider(160, (int)(cf.anisotex.min() * 2), (int)(cf.anisotex.max() * 2), (int)(cf.anisotex.val * 2)) {
 			    protected void added() {
 				dpy();
 				this.c.y = dpy.c.y + ((dpy.sz.y - this.sz.y) / 2);
@@ -230,10 +225,9 @@ public class OptWnd extends Window {
 				global.set(GRAPHICS, ANISOLEVEL, val);
 				dpy();
 			    }
-			}, new Coord(0, y + 15));
+			}, new Coord(0, y + 15)).sz.y + spacer;
 		}
-		y += 25;
-		add(new CheckBox("Render Outlines") {
+		y += add(new CheckBox("Render Outlines") {
 		    {a = cf.outline.val;}
 
 		    public void set(boolean val) {
@@ -246,9 +240,8 @@ public class OptWnd extends Window {
 			global.set(GRAPHICS, OUTLINES, val);
 			a = val;
 		    }
-		}, new Coord(0, y));
-		y += 25;
-		add(new CheckBox("Symmetric Outlines") {
+		}, new Coord(0, y)).sz.y + spacer;
+		y += add(new CheckBox("Symmetric Outlines") {
 		    {a = global.get(GRAPHICS, SYMMETRICOUTLINES, Boolean.class);}
 
 		    public void set(boolean val) {
@@ -258,80 +251,71 @@ public class OptWnd extends Window {
 				gui.map.outlines.symmetric = val;
 			a = val;
 		    }
-		}, new Coord(0, y));
-		y += 25;
-		add(new CheckBox("Skip Loading") {
+		}, new Coord(0, y)).sz.y + spacer;
+		y += add(new CheckBox("Skip Loading") {
 		    {a = global.get(GRAPHICS, SKIPLOADING, Boolean.class);}
 
 		    public void set(boolean val) {
 			global.set(GRAPHICS, SKIPLOADING, val);
 			a = val;
 		    }
-		}, new Coord(0, y));
-		y += 25;
-		add(new CheckBox("Show Flavor Objects") {
+		}, new Coord(0, y)).sz.y + spacer;
+		y += add(new CheckBox("Show Flavor Objects") {
 		    {a = global.get(GRAPHICS, SHOWFLAVOBJS, Boolean.class);}
 
 		    public void set(boolean val) {
 			global.set(GRAPHICS, SHOWFLAVOBJS, val);
 			a = val;
 		    }
-		}, new Coord(0, y));
-		y += 25;
-		add(new CheckBox("Wireframe Mode") {
+		}, new Coord(0, y)).sz.y + spacer;
+		y += add(new CheckBox("Wireframe Mode") {
 		    {a = global.get(GRAPHICS, WIREFRAMEMODE, Boolean.class);}
 
 		    public void set(boolean val) {
 			global.set(GRAPHICS, WIREFRAMEMODE, val);
 			a = val;
 		    }
-		}, new Coord(0, y));
-		y += 25;
-		add(new CheckBox("Show Weather") {
+		}, new Coord(0, y)).sz.y + spacer;
+		y += add(new CheckBox("Show Weather") {
 		    {a = global.get(GRAPHICS, WEATHER, Boolean.class);}
 
 		    public void set(boolean val) {
 			global.set(GRAPHICS, WEATHER, val);
 			a = val;
 		    }
-		}, new Coord(0, y));
-		y += 25;
-		add(new CheckBox("Show Animations") {
+		}, new Coord(0, y)).sz.y + spacer;
+		y += add(new CheckBox("Show Animations") {
 		    {a = global.get(GRAPHICS, ANIMATIONS, Boolean.class);}
 
 		    public void set(boolean val) {
 			global.set(GRAPHICS, ANIMATIONS, val);
 			a = val;
 		    }
-		}, new Coord(0, y));
-		y += 25;
-		add(new CheckBox("Show Map") {
+		}, new Coord(0, y)).sz.y + spacer;
+		y += add(new CheckBox("Show Map") {
 		    {a = global.get(GRAPHICS, SHOWMAP, Boolean.class);}
 
 		    public void set(boolean val) {
 			global.set(GRAPHICS, SHOWMAP, val);
 			a = val;
 		    }
-		}, new Coord(0, y));
-		y += 25;
-		add(new CheckBox("Show Gobs") {
+		}, new Coord(0, y)).sz.y + spacer;
+		y += add(new CheckBox("Show Gobs") {
 		    {a = global.get(GRAPHICS, SHOWGOBS, Boolean.class);}
 
 		    public void set(boolean val) {
 			global.set(GRAPHICS, SHOWGOBS, val);
 			a = val;
 		    }
-		}, new Coord(0, y));
-		y += 25;
-		add(new CheckBox("Nightvision") {
+		}, new Coord(0, y)).sz.y + spacer;
+		y += add(new CheckBox("Nightvision") {
 		    {a = global.get(GRAPHICS, NIGHTVISION, Boolean.class);}
 
 		    public void set(boolean val) {
 			global.set(GRAPHICS, NIGHTVISION, val);
 			a = val;
 		    }
-		}, new Coord(0, y));
-		y += 35;
+		}, new Coord(0, y)).sz.y + spacer;
 		y += add(new Button(200, "Reset to defaults") {
 			public void click() {
 			    DefSettings.resetgraphics();

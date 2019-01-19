@@ -1,0 +1,64 @@
+TODO
+    - Audio
+        - No Gob Audio ("no-gob-audio" -> False)
+    - Deleting
+    - Hiding
+        - Color for it, default. Each obj can have its own color?
+    - Show gob path
+        - Color for it
+    - Show Animal Path
+        - Color for it
+    - Fix "Show Animations" to actually stop animations
+    - Graphics
+        - Show TransTiles ("show-transtiles" -> True)
+        - Simple Crops ("simple-crops" -> False)
+        - Low priority
+            - Tree Scale ("tree-scale" -> 1)
+            - Colorful Cave Dust ("colorful-cave-dust" -> True)
+            - More FlavObjs ("more-flavobjs" -> False);
+            - Skybox + Skybox range ("show-skybox" -> False, "skybox-range" -> ???)
+            - Don't delete grids ("dont-delete-grids" -> False)
+                - Map Grid radius for drawing, default: 2 ("map-draw-radius" -> 2)
+    - UI
+        - Chat Window
+        - Additonal hotkeys
+        - Keybinds
+        - Always show quality of items
+        - Infinite zoom out on Overview map
+        - Camera options in Options window under "UI"?
+        - Show Gob HP
+        - High Prio
+            - Quick Flowermenu
+            - Auto Hearth
+            - Smart Aim
+            - Show Crop Stage
+            - Colorful Grid
+            - Flatworld
+            - Animal Aggro Radius
+        - Bug Flowermenu
+        - Experimental Map?
+        - Enable profiling -> Show profiling windows via Options under "UI"
+        - Fully Movable UI
+        - Alt + Right Click Obj FlowerMenu
+            - Hide/Unhide
+            - Add/Remove Sound
+            - Delete
+            - Delete this
+            - Edit Gob (Low Priority)
+        - Alt + Right Click ground (Low Priority)
+            - Add Gob
+            - Edit tile
+        - Separate Study Window
+        - Grid Mode
+        - Inventories
+            - Lock items (Ctrl + Right Click)
+                - Interact with them via 'q'
+            - Drop all of one kind (Shift + Ctrl + Right Click)
+            - Right click to equip
+        - Lock building objs (Ctrl + Middle click)
+        - Lock items on mouse (Ctrl + Right Click)
+        - (Low Priority) Themes
+    - Scripting
+    - Queued movement
+        - Show path for this
+    - Flowermenu as a list rather than circle

@@ -37,3 +37,4 @@
     - :gl commands are no longer a thing, use the options menu
     - Fixed mistake that would cause a gl error when deleting glPrograms since it was calling the wrong function
     - Pushed anisotropic validation off into TexGL
+    - Added in pausing via 'p' key

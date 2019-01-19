@@ -29,7 +29,6 @@ package haven;
 import static haven.MCache.tilesz;
 import static haven.OCache.posres;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import haven.GLProgram.VarID;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
@@ -38,7 +37,6 @@ import java.lang.ref.*;
 import java.lang.reflect.*;
 import com.jogamp.opengl.*;
 import haven.sloth.DefSettings;
-import haven.sloth.Settings;
 
 public class MapView extends PView implements DTarget, Console.Directory {
     public static boolean clickdb = false;

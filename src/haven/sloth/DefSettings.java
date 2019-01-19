@@ -25,8 +25,10 @@ package haven.sloth;
  */
 public class DefSettings {
     public static final Settings global = new Settings("config.ini");
+    //Settings in 'session' don't save, only valid for the lifetime of the session
+    public static final Settings session = new Settings("");
 
-    //Sections & settings for each one
+    //Sections & settings for each one, for 'global'
     public static final String
 	GRAPHICS = "graphics",
 	//GLSettings
@@ -54,6 +56,9 @@ public class DefSettings {
 	SHOWGOBS = "gobs-show",				//[Bool] Toggle gobs on/off
 	NIGHTVISION = "nightvision";			//[Bool] Toggle nightvision
 
+    public static final String
+    	SESSION = "session",
+    	PAUSED = "paused";
 
     /**
      * Checks out settings nad saves them if they are dirty
@@ -94,6 +99,9 @@ public class DefSettings {
 	global.ensure(GRAPHICS, SHOWMAP, true);
 	global.ensure(GRAPHICS, SHOWGOBS, true);
 	global.ensure(GRAPHICS, NIGHTVISION, false);
+
+	//Session based globals
+	session.ensure(SESSION, PAUSED, false);
     }
 
     /**

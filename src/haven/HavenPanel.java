@@ -524,70 +524,97 @@ public class HavenPanel extends GLCanvas implements Runnable, Console.Directory 
 		long frames[] = new long[128];
 		int framep = 0, waited[] = new int[128];
 		while(true) {
-		    int fwaited = 0;
-		    Debug.cycle();
-		    UI ui = this.ui;
-		    then = System.currentTimeMillis();
-		    CPUProfile.Frame curf = null;
-		    if(Config.profile)
-			curf = uprof.new Frame();
-		    synchronized(ui) {
-			if(ui.sess != null)
-			    ui.sess.glob.ctick();
-			dispatch();
-			ui.tick();
-			if((ui.root.sz.x != w) || (ui.root.sz.y != h))
-			    ui.root.resize(new Coord(w, h));
-		    }
-		    if(curf != null)
-			curf.tick("dsp");
+		    if(!DefSettings.session.get(DefSettings.SESSION, DefSettings.PAUSED, Boolean.class)) {
+			int fwaited = 0;
+			Debug.cycle();
+			UI ui = this.ui;
+			then = System.currentTimeMillis();
+			CPUProfile.Frame curf = null;
+			if (Config.profile)
+			    curf = uprof.new Frame();
+			synchronized (ui) {
+			    if (ui.sess != null)
+				ui.sess.glob.ctick();
+			    dispatch();
+			    ui.tick();
+			    if ((ui.root.sz.x != w) || (ui.root.sz.y != h))
+				ui.root.resize(new Coord(w, h));
+			}
+			if (curf != null)
+			    curf.tick("dsp");
 
-		    BufferBGL buf = new BufferBGL();
-		    GLState.Applier state = this.state;
-		    rootdraw(state, ui, buf);
-		    if(curf != null)
-			curf.tick("draw");
-		    synchronized(drawfun) {
+			BufferBGL buf = new BufferBGL();
+			GLState.Applier state = this.state;
+			rootdraw(state, ui, buf);
+			if (curf != null)
+			    curf.tick("draw");
+			synchronized (drawfun) {
+			    now = System.currentTimeMillis();
+			    while (bufdraw != null)
+				drawfun.wait();
+			    bufdraw = new Frame(buf, state.cgl);
+			    drawfun.notifyAll();
+			    fwaited += System.currentTimeMillis() - now;
+			}
+
+			ui.audio.cycle();
+			if (curf != null)
+			    curf.tick("aux");
+
 			now = System.currentTimeMillis();
-			while(bufdraw != null)
-			    drawfun.wait();
-			bufdraw = new Frame(buf, state.cgl);
-			drawfun.notifyAll();
-			fwaited += System.currentTimeMillis() - now;
-		    }
-
-		    ui.audio.cycle();
-		    if(curf != null)
-			curf.tick("aux");
-
-		    now = System.currentTimeMillis();
-		    long fd = bgmode?this.bgfd:this.fd;
-		    if(now - then < fd) {
-			synchronized(events) {
-			    events.wait(fd - (now - then));
+			long fd = bgmode ? this.bgfd : this.fd;
+			if (now - then < fd) {
+			    synchronized (events) {
+				events.wait(fd - (now - then));
+			    }
+			    fwaited += System.currentTimeMillis() - now;
 			}
-			fwaited += System.currentTimeMillis() - now;
-		    }
 
-		    frames[framep] = now;
-		    waited[framep] = fwaited;
-		    for(int i = 0, ckf = framep, twait = 0; i < frames.length; i++) {
-			ckf = (ckf - 1 + frames.length) % frames.length;
-			twait += waited[ckf];
-			if(now - frames[ckf] > 1000) {
-			    fps = i;
-			    uidle = ((double)twait) / ((double)(now - frames[ckf]));
-			    break;
+			frames[framep] = now;
+			waited[framep] = fwaited;
+			for (int i = 0, ckf = framep, twait = 0; i < frames.length; i++) {
+			    ckf = (ckf - 1 + frames.length) % frames.length;
+			    twait += waited[ckf];
+			    if (now - frames[ckf] > 1000) {
+				fps = i;
+				uidle = ((double) twait) / ((double) (now - frames[ckf]));
+				break;
+			    }
 			}
-		    }
-		    framep = (framep + 1) % frames.length;
+			framep = (framep + 1) % frames.length;
 
-		    if(curf != null)
-			curf.tick("wait");
-		    if(curf != null)
-			curf.fin();
-		    if(Thread.interrupted())
-			throw(new InterruptedException());
+			if (curf != null)
+			    curf.tick("wait");
+			if (curf != null)
+			    curf.fin();
+			if (Thread.interrupted())
+			    throw (new InterruptedException());
+		    } else {
+		        //Things that must run each frame, even when paused
+			Debug.cycle();
+			synchronized(ui) {
+			    if(ui.sess != null)
+				ui.sess.glob.ctick();
+			    dispatch();
+			    ui.tick();
+			    if((ui.root.sz.x != w) || (ui.root.sz.y != h))
+				ui.root.resize(new Coord(w, h));
+			}
+			ui.audio.cycle();
+			synchronized(ui) {
+			    if(ui.sess != null)
+				ui.sess.glob.ctick();
+			    dispatch();
+			    ui.tick();
+			    if((ui.root.sz.x != w) || (ui.root.sz.y != h))
+				ui.root.resize(new Coord(w, h));
+			}
+			//This is for scripts doing queued movements
+			//TODO: Fix this once scripting is added back in
+			//if(haven.Context.map != null)
+			//    haven.Context.map.try_move();
+			Thread.sleep(100);
+		    }
 		}
 	    } finally {
 		drawthread.interrupt();

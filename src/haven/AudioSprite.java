@@ -28,6 +28,7 @@ package haven;
 
 import java.util.*;
 import haven.Audio.CS;
+import haven.sloth.DefSettings;
 
 public class AudioSprite {
     public static List<Resource.Audio> clips(Resource res, String id)
@@ -49,6 +50,9 @@ public class AudioSprite {
 
     public static final Sprite.Factory fact = new Sprite.Factory() {
 	    public Sprite create(Sprite.Owner owner, Resource res, Message sdt) {
+	        if(DefSettings.session.get(DefSettings.SESSION, DefSettings.PAUSED, Boolean.class)) {
+	            return new IgnoreSprite(owner, res);
+		}
 		{
 		    Resource.Audio clip = randoom(res, "cl");
 		    if(clip != null)
@@ -66,6 +70,17 @@ public class AudioSprite {
 		return(null);
 	    }
 	};
+
+    public static class IgnoreSprite extends Sprite {
+	public IgnoreSprite(Owner owner, Resource res) {
+	    super(owner, res);
+	}
+	public boolean setup(RenderList r) { return false; }
+	public boolean tick(int dt) { return true; }
+	public Object staticp() {
+	    return(CONSTANS);
+	}
+    }
 
     public static class ClipSprite extends Sprite {
 	public final ActAudio.PosClip clip;
