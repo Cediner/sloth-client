@@ -55,6 +55,7 @@ public class DefSettings {
 	SHOWGOBS = "graphics.gobs-show",			//[Bool] Toggle gobs on/off
 	NIGHTVISION = "graphics.nightvision",			//[Bool] Toggle nightvision
     	FLATWORLD = "graphics.flatworld",			//[Bool] Toggle flatworld (haven)
+    	SHOWTRANTILES = "graphics.show-transition-tiles",	//[Bool] Toggle transition tiles
 
     	QUICKMENU = "gameplay.quick-flowermenu", 		//[Bool] Toggle quick flowermenu
     	BUGGEDMENU = "gameplay.bugged-flowermenu",		//[Bool] Whether not flowermenu should close on clicks outside of it
@@ -105,6 +106,7 @@ public class DefSettings {
 	global.ensure(SHOWGOBS, true);
 	global.ensure(NIGHTVISION, false);
 	global.ensure(FLATWORLD, false);
+	global.ensure(SHOWTRANTILES, true);
 	//Gameplay
 	global.ensure(QUICKMENU, false);
 	global.ensure(BUGGEDMENU, false);
@@ -146,5 +148,7 @@ public class DefSettings {
 	global.set(SHOWMAP, true);
 	global.set(SHOWGOBS, true);
 	global.set(NIGHTVISION, false);
+	global.set(FLATWORLD, false);
+	global.set(SHOWTRANTILES, true);
     }
 }

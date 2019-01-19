@@ -301,6 +301,18 @@ public class OptWnd extends Window {
 			a = val;
 		    }
 		}, new Coord(0, y)).sz.y + spacer;
+		y += add(new CheckBox("Show Transition Tiles") {
+		    {a = global.get(SHOWTRANTILES, Boolean.class);}
+
+		    public void set(boolean val) {
+			global.set(SHOWTRANTILES, val);
+			a = val;
+			if(ui.sess != null) {
+			    //All of our MapMesh/GridMesh need invalidated
+			    ui.sess.glob.map.invalidateAll();
+			}
+		    }
+		}, new Coord(0, y)).sz.y + spacer;
 		y += add(new CheckBox("Show Gobs") {
 		    {a = global.get(SHOWGOBS, Boolean.class);}
 

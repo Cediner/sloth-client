@@ -211,40 +211,42 @@ public class MapMesh implements Rendered, Disposable {
     }
 	
     private static void dotrans(MapMesh m, Random rnd, Coord lc, Coord gc) {
-	Tiler ground = m.map.tiler(m.map.gettile(gc));
-	int tr[][] = new int[3][3];
-	int max = -1;
-	for(int y = -1; y <= 1; y++) {
-	    for(int x = -1; x <= 1; x++) {
-		if((x == 0) && (y == 0))
-		    continue;
-		int tn = m.map.gettile(gc.add(x, y));
-		tr[x + 1][y + 1] = tn;
-		if(tn > max)
-		    max = tn;
+        if(DefSettings.global.get(DefSettings.SHOWTRANTILES, Boolean.class)) {
+	    Tiler ground = m.map.tiler(m.map.gettile(gc));
+	    int tr[][] = new int[3][3];
+	    int max = -1;
+	    for (int y = -1; y <= 1; y++) {
+		for (int x = -1; x <= 1; x++) {
+		    if ((x == 0) && (y == 0))
+			continue;
+		    int tn = m.map.gettile(gc.add(x, y));
+		    tr[x + 1][y + 1] = tn;
+		    if (tn > max)
+			max = tn;
+		}
 	    }
-	}
-	int bx[] = {0, 1, 2, 1};
-	int by[] = {1, 0, 1, 2};
-	int cx[] = {0, 2, 2, 0};
-	int cy[] = {0, 0, 2, 2};
-	for(int i = max; i >= 0; i--) {
-	    int bm = 0, cm = 0;
-	    for(int o = 0; o < 4; o++) {
-		if(tr[bx[o]][by[o]] == i)
-		    bm |= 1 << o;
-	    }
-	    for(int o = 0; o < 4; o++) {
-		if((bm & ((1 << o) | (1 << ((o + 1) % 4)))) != 0)
-		    continue;
-		if(tr[cx[o]][cy[o]] == i)
-		    cm |= 1 << o;
-	    }
-	    if((bm != 0) || (cm != 0)) {
-		Tiler t = m.map.tiler(i);
-		if(t == null)
-		    continue;
-		t.trans(m, rnd, ground, lc, gc, 255 - i, bm, cm);
+	    int bx[] = {0, 1, 2, 1};
+	    int by[] = {1, 0, 1, 2};
+	    int cx[] = {0, 2, 2, 0};
+	    int cy[] = {0, 0, 2, 2};
+	    for (int i = max; i >= 0; i--) {
+		int bm = 0, cm = 0;
+		for (int o = 0; o < 4; o++) {
+		    if (tr[bx[o]][by[o]] == i)
+			bm |= 1 << o;
+		}
+		for (int o = 0; o < 4; o++) {
+		    if ((bm & ((1 << o) | (1 << ((o + 1) % 4)))) != 0)
+			continue;
+		    if (tr[cx[o]][cy[o]] == i)
+			cm |= 1 << o;
+		}
+		if ((bm != 0) || (cm != 0)) {
+		    Tiler t = m.map.tiler(i);
+		    if (t == null)
+			continue;
+		    t.trans(m, rnd, ground, lc, gc, 255 - i, bm, cm);
+		}
 	    }
 	}
     }

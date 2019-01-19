@@ -1,6 +1,6 @@
 TODO
-    - Deleting
-    - Hiding
+    - Deleting Objs
+    - Hiding Objs
         - Color for it, default. Each obj can have its own color?
     - Show gob path
         - Color for it
@@ -8,7 +8,6 @@ TODO
         - Color for it
     - Fix "Show Animations" to actually stop animations
     - Graphics
-        - Show TransTiles ("show-transtiles" -> True)
         - Simple Crops ("simple-crops" -> False)
         - Low priority
             - Tree Scale ("tree-scale" -> 1)

@@ -30,6 +30,7 @@
         - Toggle weather
         - Toggle animations
         - Toggle map grids on/off
+        - Toggle transition tiles
         - Toggle gobs on/off
         - Nightvision
     - Settings should create automatically if the file doesn't exist, minor issues with loading fixed
