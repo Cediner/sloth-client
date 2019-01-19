@@ -460,6 +460,14 @@ public class OptWnd extends Window {
 		    a = val;
 		}
 	    }, c.copy()).sz.y + spacer;
+	    c.y += gameplay.add(new CheckBox("Simple Crops") {
+		{a = global.get(SIMPLECROPS, Boolean.class);}
+
+		public void set(boolean val) {
+		    global.set(SIMPLECROPS, val);
+		    a = val;
+		}
+	    }, c.copy()).sz.y + spacer;
 	    gameplay.add(new PButton(200, "Back", 27, main), c.copy());
 	    gameplay.pack();
 	}

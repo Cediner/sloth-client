@@ -56,9 +56,23 @@ public class DefSettings {
 	NIGHTVISION = "graphics.nightvision",			//[Bool] Toggle nightvision
     	FLATWORLD = "graphics.flatworld",			//[Bool] Toggle flatworld (haven)
     	SHOWTRANTILES = "graphics.show-transition-tiles",	//[Bool] Toggle transition tiles
+    	TREESCALE = "graphics.tree-scale",			//[Int ] Tree scaling value [1-16], 1 is default
+    	COLORFULDUST = "graphics.colorful-cave-dust",		//[Bool] Toggle colorful cave dust
+    	MOREFLAVOBJS = "graphics.more-flavor-objs",		//[Bool] Toggle more flavor objects
+    	SHOWSKYBOX = "graphics.show-skybox",			//[Bool] Toggle skybox
+    	SKYBOXRANGE = "graphics.skybox-range",			//[Int ] Skybox range, default -> 1500?
+    	KEEPGRIDS = "graphics.dont-delete-grids",		//[Bool] Don't delete map grids
+    	DRAWGRIDRADIUS = "graphics.map-grid-draw-radius",	//[Int ] Map grid draw radius, default -> 2
 
     	QUICKMENU = "gameplay.quick-flowermenu", 		//[Bool] Toggle quick flowermenu
     	BUGGEDMENU = "gameplay.bugged-flowermenu",		//[Bool] Whether not flowermenu should close on clicks outside of it
+    	SIMPLECROPS = "gameplay.simple-crops",			//[Bool] Toggle simple crop meshes
+    	SHOWCROPSTAGE = "gameplay.show-crop-stage",		//[Bool] Toggle crop stages off/on
+    	AUTOHEARTH = "gameplay.autohearth",			//[Bool] Toggle auto hearth on players
+    	SMARTAIM = "gameplay.smartaim",				//[Bool] Toggle smart aim for archery
+    	SHOWGOBHP = "gameplay.show-gob-hp",			//[Bool] Toggle gob hp visibility
+    	SHOWGOBPATH = "gameplay.show-gob-path",			//[Bool] Toggle gob path rendering
+    	SHOWANIMALPATH = "gameplay.show-animal-path",		//[Bool] Toggle animal path rendering
 
     	NOGOBAUDIO = "audio.no-gob-audio"; 			//[Bool] Toggles Gob audio
 
@@ -110,6 +124,7 @@ public class DefSettings {
 	//Gameplay
 	global.ensure(QUICKMENU, false);
 	global.ensure(BUGGEDMENU, false);
+	global.ensure(SIMPLECROPS, false);
 	//Audio
 	global.ensure(NOGOBAUDIO, false);
 

@@ -1,14 +1,26 @@
 TODO
+    - Camera options in Options window under "UI"?
+    - Show Gob HP
+    - Auto Hearth
+    - Smart Aim
+    - Show Crop Stage
+    - Infinite zoom out on Overview map
+    - Alt + Right Click Obj FlowerMenu
+        - Hide/Unhide
+        - Add/Remove Sound
+        - Delete
+        - Delete this
+        - Edit Gob (Low Priority)
     - Deleting Objs
     - Hiding Objs
         - Color for it, default. Each obj can have its own color?
     - Show gob path
         - Color for it
+    - Queued movement
+        - Show path for this
     - Show Animal Path
         - Color for it
-    - Fix "Show Animations" to actually stop animations
     - Graphics
-        - Simple Crops ("simple-crops" -> False)
         - Low priority
             - Tree Scale ("tree-scale" -> 1)
             - Colorful Cave Dust ("colorful-cave-dust" -> True)
@@ -16,43 +28,31 @@ TODO
             - Skybox + Skybox range ("show-skybox" -> False, "skybox-range" -> ???)
             - Don't delete grids ("dont-delete-grids" -> False)
                 - Map Grid radius for drawing, default: 2 ("map-draw-radius" -> 2)
+    - Inventories
+        - Lock items (Ctrl + Right Click)
+            - Interact with them via 'q'
+        - Drop all of one kind (Shift + Ctrl + Right Click)
+        - Right click to equip
+    - Lock building objs (Ctrl + Middle click)
+    - Lock items on mouse (Ctrl + Right Click)
+    - Enable profiling -> Show profiling windows via Options under "UI"
+    - Fix "Show Animations" to actually stop animations
+    - Always show quality of items
     - UI
         - Chat Window
         - Additonal hotkeys
         - Keybinds
-        - Always show quality of items
-        - Infinite zoom out on Overview map
-        - Camera options in Options window under "UI"?
-        - Show Gob HP
-        - High Prio
-            - Auto Hearth
-            - Smart Aim
-            - Show Crop Stage
-            - Animal Aggro Radius
-        - Experimental Map?
-        - Enable profiling -> Show profiling windows via Options under "UI"
         - Fully Movable UI
-        - Alt + Right Click Obj FlowerMenu
-            - Hide/Unhide
-            - Add/Remove Sound
-            - Delete
-            - Delete this
-            - Edit Gob (Low Priority)
-        - Alt + Right Click ground (Low Priority)
-            - Add Gob
-            - Edit tile
         - Separate Study Window
-        - Inventories
-            - Lock items (Ctrl + Right Click)
-                - Interact with them via 'q'
-            - Drop all of one kind (Shift + Ctrl + Right Click)
-            - Right click to equip
-        - Lock building objs (Ctrl + Middle click)
-        - Lock items on mouse (Ctrl + Right Click)
         - (Low Priority) Themes
     - Scripting
-    - Queued movement
-        - Show path for this
     - Flowermenu as a list rather than circle
     - Allow targetting of objs and the TargetSprite
     - Account manager at login
+    - Animal Aggro Radius
+    - Options
+        - Everything should be defered since it can be modified in multiple locations
+          for some options. (ie: Options + menu grid toggles)
+    - Alt + Right Click ground (Low Priority)
+        - Add Gob
+        - Edit tile
