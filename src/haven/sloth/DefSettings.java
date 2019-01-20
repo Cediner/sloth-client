@@ -1,5 +1,7 @@
 package haven.sloth;
 
+import java.awt.*;
+
 /**
  * A global view of all our settings. This should at some point cover all of Ape.
  *
@@ -72,7 +74,10 @@ public class DefSettings {
     	SMARTAIM = "gameplay.smartaim",				//[Bool] Toggle smart aim for archery
     	SHOWGOBHP = "gameplay.show-gob-hp",			//[Bool] Toggle gob hp visibility
     	SHOWGOBPATH = "gameplay.show-gob-path",			//[Bool] Toggle gob path rendering
+    	GOBPATHCOL = "gameplay.gob-path-color",			//[RGBA] Path color for gobs, only for unknown gobs
+    	VEHPATHCOL = "gameplay.vehicle-path-color",		//[RGBA] Path color for vehicle
     	SHOWANIMALPATH = "gameplay.show-animal-path",		//[Bool] Toggle animal path rendering
+    	ANIMALPATHCOL = "gameplay.animal-path-color",		//[RBGA] Path color for animals
 
     	NOGOBAUDIO = "audio.no-gob-audio"; 			//[Bool] Toggles Gob audio
 
@@ -137,7 +142,10 @@ public class DefSettings {
 	global.ensure(SMARTAIM, false);
 	global.ensure(SHOWGOBHP, false);
 	global.ensure(SHOWGOBPATH, true);
+	global.ensure(GOBPATHCOL, new Color(255, 0, 0, 168));
+	global.ensure(VEHPATHCOL, new Color(111, 255, 138, 168));
 	global.ensure(SHOWANIMALPATH, true);
+	global.ensure(ANIMALPATHCOL, new Color(144,255,171,146));
 	//Audio
 	global.ensure(NOGOBAUDIO, false);
 

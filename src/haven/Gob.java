@@ -27,35 +27,14 @@
 package haven;
 
 import haven.sloth.DefSettings;
-import haven.sloth.gob.GCrop;
-import haven.sloth.gob.Plants;
+import haven.sloth.gob.Growth;
+import haven.sloth.gob.Movable;
+import haven.sloth.gob.Type;
 
 import java.util.*;
 
 public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
     public static final Text.Foundry gobhpf = new Text.Foundry(Text.sansb, 14).aa(true);
-    public Coord2d rc;
-    public Coord sc;
-    public Coord3f sczu;
-    public double a;
-    public boolean virtual = false;
-    int clprio = 0;
-    public long id;
-    public int frame;
-    public final Glob glob;
-    Map<Class<? extends GAttrib>, GAttrib> attr = new HashMap<Class<? extends GAttrib>, GAttrib>();
-    public Collection<Overlay> ols = new LinkedList<Overlay>() {
-	public boolean add(Overlay item) {
-	    /* XXX: Remove me once local code is changed to use addol(). */
-	    if(glob.oc.getgob(id) != null)
-		glob.oc.changed(Gob.this);
-	    return(super.add(item));
-	}
-    };
-    private final Collection<ResAttr.Cell<?>> rdata = new LinkedList<ResAttr.Cell<?>>();
-    private final Collection<ResAttr.Load> lrdata = new LinkedList<ResAttr.Load>();
-
-    private boolean discovered = false;
 
     public static class Overlay implements Rendered {
 	public Indir<Resource> res;
@@ -168,8 +147,93 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 	}
     }
 
+    public static interface ANotif<T extends GAttrib> {
+	public void ch(T n);
+    }
+
+    public class Save extends GLState.Abstract {
+	public Matrix4f cam = new Matrix4f(), wxf = new Matrix4f(),
+		mv = new Matrix4f();
+	public Projection proj = null;
+	boolean debug = false;
+
+	public void prep(Buffer buf) {
+	    mv.load(cam.load(buf.get(PView.cam).fin(Matrix4f.id))).mul1(wxf.load(buf.get(PView.loc).fin(Matrix4f.id)));
+	    Projection proj = buf.get(PView.proj);
+	    PView.RenderState wnd = buf.get(PView.wnd);
+	    Coord3f s = proj.toscreen(mv.mul4(Coord3f.o), wnd.sz());
+	    Gob.this.sc = new Coord(s);
+	    Gob.this.sczu = proj.toscreen(mv.mul4(Coord3f.zu), wnd.sz()).sub(s);
+	    this.proj = proj;
+	}
+    }
+
+    public class GobLocation extends GLState.Abstract {
+	private Coord3f c = null;
+	private double a = 0.0;
+	private Matrix4f update = null;
+	private final Location xl = new Location(Matrix4f.id, "gobx"), rot = new Location(Matrix4f.id, "gob");
+
+	public void tick() {
+	    try {
+		Coord3f c = getc();
+		if(DefSettings.global.get(DefSettings.FLATWORLD, Boolean.class))
+		    c.z = 0;
+		c.y = -c.y;
+		if((this.c == null) || !c.equals(this.c))
+		    xl.update(Transform.makexlate(new Matrix4f(), this.c = c));
+		if(this.a != Gob.this.a)
+		    rot.update(Transform.makerot(new Matrix4f(), Coord3f.zu, (float)-(this.a = Gob.this.a)));
+	    } catch(Loading l) {}
+	}
+
+	public void prep(Buffer buf) {
+	    xl.prep(buf);
+	    rot.prep(buf);
+	}
+    }
+
     public static class Static {}
     public static class SemiStatic {}
+
+    public final Save save = new Save();
+    public final GobLocation loc = new GobLocation();
+    public final GLState olmod = new GLState() {
+	public void apply(GOut g) {}
+	public void unapply(GOut g) {}
+	public void prep(Buffer buf) {
+	    for(Overlay ol : ols) {
+		if(ol.spr instanceof Overlay.SetupMod) {
+		    ((Overlay.SetupMod)ol.spr).setupgob(buf);
+		}
+	    }
+	}
+    };
+
+    public Coord2d rc;
+    public Coord sc;
+    public Coord3f sczu;
+    public double a;
+    public boolean virtual = false;
+    int clprio = 0;
+    public long id;
+    public int frame;
+    public final Glob glob;
+    Map<Class<? extends GAttrib>, GAttrib> attr = new HashMap<Class<? extends GAttrib>, GAttrib>();
+    private final Set<haven.sloth.gob.Rendered> renderedattrs = new HashSet<>();
+    public Collection<Overlay> ols = new LinkedList<Overlay>() {
+	public boolean add(Overlay item) {
+	    /* XXX: Remove me once local code is changed to use addol(). */
+	    if(glob.oc.getgob(id) != null)
+		glob.oc.changed(Gob.this);
+	    return(super.add(item));
+	}
+    };
+    private final Collection<ResAttr.Cell<?>> rdata = new LinkedList<ResAttr.Cell<?>>();
+    private final Collection<ResAttr.Load> lrdata = new LinkedList<ResAttr.Load>();
+
+    private boolean discovered = false;
+    public Type type;
 
     public Gob(Glob glob, Coord2d c, long id, int frame) {
 	this.glob = glob;
@@ -183,17 +247,20 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 	this(glob, c, -1, 0);
     }
 
-    public static interface ANotif<T extends GAttrib> {
-	public void ch(T n);
-    }
-
     /**
      * This method is called once as soon as its res name is accessible
      * @param name The res name
      */
     private void discovered(final String name) {
-        if(Plants.isPlant(name)) {
-            setattr(new GCrop(this));
+        //Figure out our type first
+	type = Type.getType(name);
+
+	//Check for any special attributes we should attach
+        if(Growth.isGrowth(name)) {
+            setattr(new Growth(this));
+	}
+        if(Movable.isMovable(name)) {
+            setattr(new Movable(this));
 	}
     }
 
@@ -283,6 +350,8 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
     }
 
     public void setattr(GAttrib a) {
+        if(a instanceof haven.sloth.gob.Rendered)
+            renderedattrs.add((haven.sloth.gob.Rendered)a);
 	Class<? extends GAttrib> ac = attrclass(a.getClass());
 	attr.put(ac, a);
     }
@@ -423,10 +492,11 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 	KinInfo ki = getattr(KinInfo.class);
 	if(ki != null)
 	    rl.add(ki.fx, null);
-	final GCrop gc = getattr(GCrop.class);
-	if(gc != null && gc.fx != null && DefSettings.global.get(DefSettings.SHOWCROPSTAGE, Boolean.class)) {
-	    rl.add(gc.fx, null);
+
+	for(final haven.sloth.gob.Rendered attr : renderedattrs) {
+	    attr.setup(rl);
 	}
+
 
 	return(false);
     }
@@ -510,60 +580,4 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 	    return(0);
 	return(m.getv());
     }
-
-    public final GLState olmod = new GLState() {
-	    public void apply(GOut g) {}
-	    public void unapply(GOut g) {}
-	    public void prep(Buffer buf) {
-		for(Overlay ol : ols) {
-		    if(ol.spr instanceof Overlay.SetupMod) {
-			((Overlay.SetupMod)ol.spr).setupgob(buf);
-		    }
-		}
-	    }
-	};
-
-    public class Save extends GLState.Abstract {
-	public Matrix4f cam = new Matrix4f(), wxf = new Matrix4f(),
-	    mv = new Matrix4f();
-	public Projection proj = null;
-	boolean debug = false;
-
-	public void prep(Buffer buf) {
-	    mv.load(cam.load(buf.get(PView.cam).fin(Matrix4f.id))).mul1(wxf.load(buf.get(PView.loc).fin(Matrix4f.id)));
-	    Projection proj = buf.get(PView.proj);
-	    PView.RenderState wnd = buf.get(PView.wnd);
-	    Coord3f s = proj.toscreen(mv.mul4(Coord3f.o), wnd.sz());
-	    Gob.this.sc = new Coord(s);
-	    Gob.this.sczu = proj.toscreen(mv.mul4(Coord3f.zu), wnd.sz()).sub(s);
-	    this.proj = proj;
-	}
-    }
-
-    public final Save save = new Save();
-    public class GobLocation extends GLState.Abstract {
-	private Coord3f c = null;
-	private double a = 0.0;
-	private Matrix4f update = null;
-	private final Location xl = new Location(Matrix4f.id, "gobx"), rot = new Location(Matrix4f.id, "gob");
-
-	public void tick() {
-	    try {
-		Coord3f c = getc();
-		if(DefSettings.global.get(DefSettings.FLATWORLD, Boolean.class))
-		    c.z = 0;
-		c.y = -c.y;
-		if((this.c == null) || !c.equals(this.c))
-		    xl.update(Transform.makexlate(new Matrix4f(), this.c = c));
-		if(this.a != Gob.this.a)
-		    rot.update(Transform.makerot(new Matrix4f(), Coord3f.zu, (float)-(this.a = Gob.this.a)));
-	    } catch(Loading l) {}
-	}
-
-	public void prep(Buffer buf) {
-	    xl.prep(buf);
-	    rot.prep(buf);
-	}
-    }
-    public final GobLocation loc = new GobLocation();
 }

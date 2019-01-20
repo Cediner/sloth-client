@@ -1,249 +1,339 @@
 --PRAGMA JOURNAL_MODE=wal;
-CREATE TABLE IF NOT EXISTS plant (
-    name        TEXT,       -- Name of the plant
-    final_stage INTEGER,    -- The final growth stage when it can be harvested
-    CONSTRAINT plant_pk_name PRIMARY KEY (name)
+CREATE TABLE IF NOT EXISTS type (
+    type_id     INTEGER,    -- Alias for ROWID
+    name_key    TEXT,       -- All Caps name of this type
+    CONSTRAINT type_pk_type_id PRIMARY KEY (type_id),
+    CONSTRAINT type_un_name_key UNIQUE (name_key)
 );
-CREATE TABLE IF NOT EXISTS sfx (
-    name    TEXT,       -- Name of the sfx resource
-    CONSTRAINT sfx_pk_name PRIMARY KEY (name)
+--Our types
+INSERT OR IGNORE INTO type (name_key) VALUES ('PLANT');
+INSERT OR IGNORE INTO type (name_key) VALUES ('HUMAN');
+INSERT OR IGNORE INTO type (name_key) VALUES ('ANIMAL');
+INSERT OR IGNORE INTO type (name_key) VALUES ('VEHICLE');
+INSERT OR IGNORE INTO type (name_key) VALUES ('TILE');
+INSERT OR IGNORE INTO type (name_key) VALUES ('SOUND');
+
+CREATE TABLE IF NOT EXISTS object (
+    object_id   INTEGER,    -- Alias for ROWID
+    name        TEXT,       -- The res name of the obj
+    type_id     INTEGER,    -- The type of the obj
+    CONSTRAINT object_pk_object_id PRIMARY KEY (object_id),
+    CONSTRAINT object_un_name UNIQUE (name),
+    CONSTRAINT object_fk_type_id FOREIGN KEY (type_id) REFERENCES type(type_id) ON DELETE CASCADE
 );
-CREATE TABLE IF NOT EXISTS tile (
-    name    TEXT,        -- Name of the tile
-    CONSTRAINT tile_pk_name PRIMARY KEY (name)
-);
-CREATE TABLE IF NOT EXISTS animal (
-    name        TEXT,       -- Name of the animal
-    dangerous   BOOLEAN,    -- Whether or not it will aggro you
-    CONSTRAINT animal_pk_name PRIMARY KEY (name)
-);
--- plant
-INSERT OR IGNORE INTO plant VALUES ('gfx/terobjs/plants/flax', 3);
-INSERT OR IGNORE INTO plant VALUES ('gfx/terobjs/plants/barley', 3);
-INSERT OR IGNORE INTO plant VALUES ('gfx/terobjs/plants/carrot', 3);
-INSERT OR IGNORE INTO plant VALUES ('gfx/terobjs/plants/poppy', 4);
-INSERT OR IGNORE INTO plant VALUES ('gfx/terobjs/plants/hemp', 3);
-INSERT OR IGNORE INTO plant VALUES ('gfx/terobjs/plants/pipeweed', 4);
-INSERT OR IGNORE INTO plant VALUES ('gfx/terobjs/plants/beet', 3);
-INSERT OR IGNORE INTO plant VALUES ('gfx/terobjs/plants/hops', 6);
-INSERT OR IGNORE INTO plant VALUES ('gfx/terobjs/plants/peas', 4);
-INSERT OR IGNORE INTO plant VALUES ('gfx/terobjs/plants/yellowonion', 3);
-INSERT OR IGNORE INTO plant VALUES ('gfx/terobjs/plants/pumpkin', 4);
-INSERT OR IGNORE INTO plant VALUES ('gfx/terobjs/plants/pepper', 6);
-INSERT OR IGNORE INTO plant VALUES ('gfx/terobjs/plants/wine', 6);
--- tiles
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/beach');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/beechgrove');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/bluesod');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/boards');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/bog');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/bogwater');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/cave');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/cloudrange');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/deep');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/dirt');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/dryflat');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/fen');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/fenwater');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/field');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/flowermeadow');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/grass');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/greensward');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/hardsteppe');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/heath');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/highground');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/leaf');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/leafpatch');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/lichenwold');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/lushfield');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/mine');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/moor');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/mossbrush');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/mountain');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/nil');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/oakwilds');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/paving/acrebrick');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/paving/argentite');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/paving/ballbrick');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/paving/basalt');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/paving/blackcoal');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/paving/cassiterite');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/paving/catgold');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/paving/chalcopyrite');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/paving/cinnabar');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/paving/dolomite');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/paving/feldspar');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/paving/flint');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/paving/galena');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/paving/gneiss');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/paving/granite');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/paving/hematite');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/paving/ilmenite');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/paving/limestone');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/paving/limonite');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/paving/magnetite');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/paving/malachite');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/paving/marble');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/paving/nagyagite');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/paving/petzite');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/paving/porphyry');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/paving/quartz');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/paving/sandstone');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/paving/schist');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/paving/slag');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/paving/sylvanite');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/pinebarren');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/redplain');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/ridges/cavein');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/ridges/caveout');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/ridges/soil');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/rocks/argentite');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/rocks/basalt');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/rocks/blackcoal');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/rocks/cassiterite');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/rocks/chalcopyrite');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/rocks/cinnabar');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/rocks/dolomite');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/rocks/feldspar');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/rocks/flint');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/rocks/galena');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/rocks/gneiss');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/rocks/granite');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/rocks/hematite');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/rocks/ilmenite');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/rocks/limestone');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/rocks/limonite');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/rocks/magnetite');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/rocks/malachite');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/rocks/marble');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/rocks/petzite');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/rocks/porphyry');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/rocks/quartz');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/rocks/sandstone');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/rocks/schist');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/rocks/sylvanite');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/rootbosk');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/sandcliff');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/seabed');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/shadycopse');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/skycube');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/snow');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/sombrebramble');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/spave');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/swamp');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/swampwater');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/timberland');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/wald');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/water');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/wildturf');
-INSERT OR IGNORE INTO tile VALUES ('gfx/tiles/wn');
--- sfx files
-INSERT OR IGNORE INTO sfx VALUES ('sfx/blowing');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/bone');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/breakwood');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/balders');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/build');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/chip');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/choppan');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/clank');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/clonk');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/creak2');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/creakdoor');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/drinkan');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/exp');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/heavydoor');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/lvlup');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/fanfar');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/farman');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/hammer');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/heathbird');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/jump');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/land');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/squeak');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/swoosh');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/match');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/meat');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/metalhinge');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/metalhit');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/mineout');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/plop');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/plums');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/plums-big');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/ropecreak');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/runningwater');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/treefall');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/thud');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/wading');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/twang');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/borka/butcher');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/borka/leafrustle');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/borka/shoveldig');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/borka/sowing');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/borka/cc-scream');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/borka/bitedust');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/fight/antspit');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/fight/armorcrash');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/fight/arm-soak1');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/fight/arm-soak2');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/fight/you-lose');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/fight/you-win');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/fx/flame');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/fx/metal');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/fx/burnhand');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/fx/tar');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/inst/drum');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/inst/fiddle');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/inst/flute');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/inst/lute');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/items/pickaxe');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/items/stretch');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/terobjs/items/die');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/terobjs/arch/door');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/terobjs/anvil');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/terobjs/cauldron');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/terobjs/grinder');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/terobjs/plow');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/terobjs/quern');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/terobjs/rustygate');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/terobjs/swheel');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/terobjs/thud-wood');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/terobjs/woodcrash');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/terobjs/woodcrash2');
-INSERT OR IGNORE INTO sfx VALUES ('sfx/terobjs/woodspin');
+-- Specific objects we care about
+-- plants
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/terobjs/plants/flax', (SELECT type_id FROM type WHERE name_key = 'PLANT'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/terobjs/plants/barley', (SELECT type_id FROM type WHERE name_key = 'PLANT'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/terobjs/plants/carrot', (SELECT type_id FROM type WHERE name_key = 'PLANT'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/terobjs/plants/poppy', (SELECT type_id FROM type WHERE name_key = 'PLANT'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/terobjs/plants/hemp', (SELECT type_id FROM type WHERE name_key = 'PLANT'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/terobjs/plants/pipeweed', (SELECT type_id FROM type WHERE name_key = 'PLANT'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/terobjs/plants/beet', (SELECT type_id FROM type WHERE name_key = 'PLANT'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/terobjs/plants/hops', (SELECT type_id FROM type WHERE name_key = 'PLANT'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/terobjs/plants/peas', (SELECT type_id FROM type WHERE name_key = 'PLANT'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/terobjs/plants/yellowonion', (SELECT type_id FROM type WHERE name_key = 'PLANT'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/terobjs/plants/pumpkin', (SELECT type_id FROM type WHERE name_key = 'PLANT'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/terobjs/plants/pepper', (SELECT type_id FROM type WHERE name_key = 'PLANT'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/terobjs/plants/wine', (SELECT type_id FROM type WHERE name_key = 'PLANT'));
+-- humans
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/borka/body', (SELECT type_id FROM type WHERE name_key = 'HUMAN'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/borka/wisp', (SELECT type_id FROM type WHERE name_key = 'HUMAN'));
+-- vehicles
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/terobjs/vehicle/cart'			, (SELECT type_id FROM type WHERE name_key = 'VEHICLE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/terobjs/vehicle/catapult'		, (SELECT type_id FROM type WHERE name_key = 'VEHICLE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/terobjs/vehicle/knarr'			, (SELECT type_id FROM type WHERE name_key = 'VEHICLE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/terobjs/vehicle/plow'			, (SELECT type_id FROM type WHERE name_key = 'VEHICLE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/terobjs/vehicle/raft'			, (SELECT type_id FROM type WHERE name_key = 'VEHICLE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/terobjs/vehicle/rowboat'		, (SELECT type_id FROM type WHERE name_key = 'VEHICLE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/terobjs/vehicle/wagon'			, (SELECT type_id FROM type WHERE name_key = 'VEHICLE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/terobjs/vehicle/wheelbarrow'	, (SELECT type_id FROM type WHERE name_key = 'VEHICLE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/terobjs/vehicle/wreckingball'	, (SELECT type_id FROM type WHERE name_key = 'VEHICLE'));
 -- animals
-INSERT OR IGNORE INTO animal VALUES('gfx/kritter/badger/badger', 1);
-INSERT OR IGNORE INTO animal VALUES('gfx/kritter/bear/bear', 1);
-INSERT OR IGNORE INTO animal VALUES('gfx/kritter/bat/bat', 1);
-INSERT OR IGNORE INTO animal VALUES('gfx/kritter/boar/boar', 1);
-INSERT OR IGNORE INTO animal VALUES('gfx/kritter/mammoth/mammoth', 1);
-INSERT OR IGNORE INTO animal VALUES('gfx/kritter/troll/troll', 1);
-INSERT OR IGNORE INTO animal VALUES('gfx/kritter/lynx/lynx', 1);
-INSERT OR IGNORE INTO animal VALUES('gfx/kritter/wolf/wolf', 1);
-INSERT OR IGNORE INTO animal VALUES('gfx/kritter/fox/fox', 0);
-INSERT OR IGNORE INTO animal VALUES('gfx/kritter/rabbit/rabbit', 0);
-INSERT OR IGNORE INTO animal VALUES('gfx/kritter/reddeer/reddeer', 0);
-INSERT OR IGNORE INTO animal VALUES('gfx/kritter/dryad/dryad', 0);
-INSERT OR IGNORE INTO animal VALUES('gfx/kritter/ants/ants', 0);
-INSERT OR IGNORE INTO animal VALUES('gfx/kritter/cattle/bull', 0);
-INSERT OR IGNORE INTO animal VALUES('gfx/kritter/cattle/cattle', 0);
-INSERT OR IGNORE INTO animal VALUES('gfx/kritter/cattle/cow', 0);
-INSERT OR IGNORE INTO animal VALUES('gfx/kritter/cattle/aurochs', 0);
-INSERT OR IGNORE INTO animal VALUES('gfx/kritter/chicken/chick', 0);
-INSERT OR IGNORE INTO animal VALUES('gfx/kritter/chicken/chicken', 0);
-INSERT OR IGNORE INTO animal VALUES('gfx/kritter/chicken/hen', 0);
-INSERT OR IGNORE INTO animal VALUES('gfx/kritter/chicken/rooster', 0);
-INSERT OR IGNORE INTO animal VALUES('gfx/kritter/hedgehog/hedgehog', 0);
-INSERT OR IGNORE INTO animal VALUES('gfx/kritter/horse/horse', 0);
-INSERT OR IGNORE INTO animal VALUES('gfx/kritter/horse/mare', 0);
-INSERT OR IGNORE INTO animal VALUES('gfx/kritter/horse/stallion', 0);
-INSERT OR IGNORE INTO animal VALUES('gfx/kritter/ladybug/ladybug', 0);
-INSERT OR IGNORE INTO animal VALUES('gfx/kritter/moose/moose', 0);
-INSERT OR IGNORE INTO animal VALUES('gfx/kritter/rat/rat', 0);
-INSERT OR IGNORE INTO animal VALUES('gfx/kritter/sheep/sheep', 0);
-INSERT OR IGNORE INTO animal VALUES('gfx/kritter/sheep/ram', 0);
-INSERT OR IGNORE INTO animal VALUES('gfx/kritter/sheep/mouflon', 0);
-INSERT OR IGNORE INTO animal VALUES('gfx/kritter/silkmoth/silkmoth', 0);
-INSERT OR IGNORE INTO animal VALUES('gfx/kritter/squirrel/squirrel', 0);
-INSERT OR IGNORE INTO animal VALUES('gfx/kritter/toad/toad', 0);
-INSERT OR IGNORE INTO animal VALUES('gfx/kritter/frog/frog', 0);
-INSERT OR IGNORE INTO animal VALUES('gfx/kritter/dragonfly/dragonfly', 0);
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/badger/badger', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/bear/bear', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/bat/bat', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/boar/boar', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/mammoth/mammoth', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/troll/troll', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/lynx/lynx', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/wolf/wolf', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/fox/fox', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/rabbit/rabbit', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/reddeer/reddeer', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/dryad/dryad', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/ants/ants', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/cattle/bull', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/cattle/cattle', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/cattle/cow', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/cattle/aurochs', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/chicken/chick', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/chicken/chicken', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/chicken/hen', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/chicken/rooster', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/hedgehog/hedgehog', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/horse/horse', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/horse/mare', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/horse/stallion', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/ladybug/ladybug', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/moose/moose', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/rat/rat', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/sheep/sheep', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/sheep/ram', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/sheep/mouflon', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/silkmoth/silkmoth', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/squirrel/squirrel', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/toad/toad', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/frog/frog', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/dragonfly/dragonfly', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
+-- vehicles
+-- tiles
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/beach', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/beechgrove', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/bluesod', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/boards', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/bog', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/bogwater', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/cave', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/cloudrange', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/deep', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/dirt', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/dryflat', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/fen', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/fenwater', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/field', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/flowermeadow', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/grass', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/greensward', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/hardsteppe', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/heath', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/highground', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/leaf', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/leafpatch', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/lichenwold', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/lushfield', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/mine', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/moor', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/mossbrush', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/mountain', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/nil', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/oakwilds', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/paving/acrebrick', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/paving/argentite', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/paving/ballbrick', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/paving/basalt', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/paving/blackcoal', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/paving/cassiterite', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/paving/catgold', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/paving/chalcopyrite', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/paving/cinnabar', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/paving/dolomite', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/paving/feldspar', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/paving/flint', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/paving/galena', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/paving/gneiss', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/paving/granite', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/paving/hematite', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/paving/ilmenite', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/paving/limestone', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/paving/limonite', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/paving/magnetite', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/paving/malachite', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/paving/marble', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/paving/nagyagite', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/paving/petzite', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/paving/porphyry', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/paving/quartz', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/paving/sandstone', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/paving/schist', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/paving/slag', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/paving/sylvanite', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/pinebarren', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/redplain', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/ridges/cavein', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/ridges/caveout', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/ridges/soil', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/rocks/argentite', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/rocks/basalt', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/rocks/blackcoal', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/rocks/cassiterite', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/rocks/chalcopyrite', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/rocks/cinnabar', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/rocks/dolomite', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/rocks/feldspar', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/rocks/flint', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/rocks/galena', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/rocks/gneiss', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/rocks/granite', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/rocks/hematite', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/rocks/ilmenite', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/rocks/limestone', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/rocks/limonite', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/rocks/magnetite', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/rocks/malachite', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/rocks/marble', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/rocks/petzite', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/rocks/porphyry', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/rocks/quartz', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/rocks/sandstone', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/rocks/schist', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/rocks/sylvanite', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/rootbosk', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/sandcliff', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/seabed', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/shadycopse', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/skycube', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/snow', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/sombrebramble', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/spave', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/swamp', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/swampwater', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/timberland', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/wald', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/water', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/wildturf', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/wn', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+-- sounds
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/blowing', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/bone', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/breakwood', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/balders', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/build', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/chip', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/choppan', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/clank', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/clonk', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/creak2', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/creakdoor', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/drinkan', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/exp', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/heavydoor', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/lvlup', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/fanfar', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/farman', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/hammer', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/heathbird', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/jump', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/land', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/squeak', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/swoosh', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/match', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/meat', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/metalhinge', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/metalhit', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/mineout', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/plop', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/plums', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/plums-big', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/ropecreak', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/runningwater', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/treefall', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/thud', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/wading', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/twang', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/borka/butcher', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/borka/leafrustle', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/borka/shoveldig', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/borka/sowing', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/borka/cc-scream', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/borka/bitedust', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/fight/antspit', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/fight/armorcrash', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/fight/arm-soak1', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/fight/arm-soak2', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/fight/you-lose', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/fight/you-win', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/fx/flame', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/fx/metal', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/fx/burnhand', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/fx/tar', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/inst/drum', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/inst/fiddle', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/inst/flute', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/inst/lute', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/items/pickaxe', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/items/stretch', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/terobjs/items/die', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/terobjs/arch/door', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/terobjs/anvil', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/terobjs/cauldron', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/terobjs/grinder', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/terobjs/plow', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/terobjs/quern', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/terobjs/rustygate', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/terobjs/swheel', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/terobjs/thud-wood', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/terobjs/woodcrash', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/terobjs/woodcrash2', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/terobjs/woodspin', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+
+CREATE TABLE IF NOT EXISTS growth (
+    object_id   INTEGER,    -- Objects that can grow and have stages
+    final_stage INTEGER,    -- The final growth stage when it can be harvested
+    CONSTRAINT plant_pk_object_id PRIMARY KEY (object_id),
+    CONSTRAINT plant_fk_object_id FOREIGN KEY (object_id) REFERENCES object(object_id) ON DELETE CASCADE
+);
+--Mainly plants
+INSERT OR IGNORE INTO growth VALUES ((SELECT object_id FROM object WHERE name = 'gfx/terobjs/plants/flax')          , 3);
+INSERT OR IGNORE INTO growth VALUES ((SELECT object_id FROM object WHERE name = 'gfx/terobjs/plants/barley')        , 3);
+INSERT OR IGNORE INTO growth VALUES ((SELECT object_id FROM object WHERE name = 'gfx/terobjs/plants/carrot')        , 3);
+INSERT OR IGNORE INTO growth VALUES ((SELECT object_id FROM object WHERE name = 'gfx/terobjs/plants/poppy')         , 4);
+INSERT OR IGNORE INTO growth VALUES ((SELECT object_id FROM object WHERE name = 'gfx/terobjs/plants/hemp')          , 3);
+INSERT OR IGNORE INTO growth VALUES ((SELECT object_id FROM object WHERE name = 'gfx/terobjs/plants/pipeweed')      , 4);
+INSERT OR IGNORE INTO growth VALUES ((SELECT object_id FROM object WHERE name = 'gfx/terobjs/plants/beet')          , 3);
+INSERT OR IGNORE INTO growth VALUES ((SELECT object_id FROM object WHERE name = 'gfx/terobjs/plants/hops')          , 6);
+INSERT OR IGNORE INTO growth VALUES ((SELECT object_id FROM object WHERE name = 'gfx/terobjs/plants/peas')          , 4);
+INSERT OR IGNORE INTO growth VALUES ((SELECT object_id FROM object WHERE name = 'gfx/terobjs/plants/yellowonion')   , 3);
+INSERT OR IGNORE INTO growth VALUES ((SELECT object_id FROM object WHERE name = 'gfx/terobjs/plants/pumpkin')       , 4);
+INSERT OR IGNORE INTO growth VALUES ((SELECT object_id FROM object WHERE name = 'gfx/terobjs/plants/pepper')        , 6);
+INSERT OR IGNORE INTO growth VALUES ((SELECT object_id FROM object WHERE name = 'gfx/terobjs/plants/wine')          , 6);
+
+CREATE TABLE IF NOT EXISTS dangerous (
+    object_id   INTEGER,    -- Objects that are dangerous to the player
+    CONSTRAINT dangerous_pk_object_id PRIMARY KEY (object_id),
+    CONSTRAINT dangerous_fk_object_id FOREIGN KEY (object_id) REFERENCES object(object_id) ON DELETE CASCADE
+);
+-- animals
+INSERT OR IGNORE INTO dangerous VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/badger/badger'	));
+INSERT OR IGNORE INTO dangerous VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/bear/bear'		));
+INSERT OR IGNORE INTO dangerous VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/bat/bat'		));
+INSERT OR IGNORE INTO dangerous VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/boar/boar'		));
+INSERT OR IGNORE INTO dangerous VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/mammoth/mammoth'));
+INSERT OR IGNORE INTO dangerous VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/troll/troll'	));
+INSERT OR IGNORE INTO dangerous VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/lynx/lynx'		));
+INSERT OR IGNORE INTO dangerous VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/wolf/wolf'		));
+
+CREATE TABLE IF NOT EXISTS range (
+    object_id   INTEGER,    -- Objects that have some kind of radius for a reason
+    radius      INTEGER,    -- The circular range in tiles
+    CONSTRAINT dangerous_pk_object_id PRIMARY KEY (object_id),
+    CONSTRAINT dangerous_fk_object_id FOREIGN KEY (object_id) REFERENCES object(object_id) ON DELETE CASCADE
+);
+-- objs with range
+INSERT OR IGNORE INTO range VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/badger/badger'	), 10);
+INSERT OR IGNORE INTO range VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/bear/bear'		), 10);
+INSERT OR IGNORE INTO range VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/bat/bat'		), 10);
+INSERT OR IGNORE INTO range VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/boar/boar'		), 10);
+INSERT OR IGNORE INTO range VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/mammoth/mammoth'), 10);
+INSERT OR IGNORE INTO range VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/troll/troll'	), 10);
+INSERT OR IGNORE INTO range VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/lynx/lynx'		), 10);
+INSERT OR IGNORE INTO range VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/wolf/wolf'		), 10);
+INSERT OR IGNORE INTO range VALUES ((SELECT object_id FROM object WHERE name = 'gfx/terobjs/minesupport'    ), 9);
+INSERT OR IGNORE INTO range VALUES ((SELECT object_id FROM object WHERE name = 'gfx/terobjs/column'         ), 11);
+INSERT OR IGNORE INTO range VALUES ((SELECT object_id FROM object WHERE name = 'gfx/terobjs/trough'         ), 18);
+INSERT OR IGNORE INTO range VALUES ((SELECT object_id FROM object WHERE name = 'gfx/terobjs/beehive'        ), 13);
+
+CREATE TABLE IF NOT EXISTS move (
+    object_id   INTEGER,    -- Objects that can move
+    CONSTRAINT move_pk_object_id PRIMARY KEY (object_id),
+    CONSTRAINT move_fk_object_id FOREIGN KEY (object_id) REFERENCES object(object_id) ON DELETE CASCADE
+);
+-- all humans
+INSERT OR IGNORE INTO move SELECT object_id FROM object WHERE type_id = (SELECT type_id FROM type WHERE name_key = 'HUMAN');
+-- some vehicles, mainly boats
+INSERT OR IGNORE INTO move VALUES ((SELECT object_id FROM object WHERE name = 'gfx/terobjs/vehicle/knarr'));
+INSERT OR IGNORE INTO move VALUES ((SELECT object_id FROM object WHERE name = 'gfx/terobjs/vehicle/rowboat'));
+INSERT OR IGNORE INTO move VALUES ((SELECT object_id FROM object WHERE name = 'gfx/terobjs/vehicle/raft'));
+INSERT OR IGNORE INTO move VALUES ((SELECT object_id FROM object WHERE name = 'gfx/terobjs/vehicle/wagon'));
+-- all the animals
+INSERT OR IGNORE INTO move SELECT object_id FROM object WHERE type_id = (SELECT type_id FROM type WHERE name_key = 'ANIMAL');

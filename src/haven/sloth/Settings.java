@@ -5,6 +5,7 @@ import haven.Coord;
 import haven.Coord2d;
 import haven.Coord3f;
 
+import java.awt.*;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -153,7 +154,14 @@ public class Settings {
 
 		writer.write(key);
 		writer.write(" = ");
-		writer.write(settings.get(skey).toString());
+		if(!(settings.get(skey) instanceof Color)) {
+		    writer.write(settings.get(skey).toString());
+		} else {
+		    //Default Color toString leaves out alpha... and doesn't match what we wanted
+		    final Color c = (Color)settings.get(skey);
+		    writer.write(String.format("%d,%d,%d,%d",
+			    c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()));
+		}
 		writer.newLine();
 	    }
 	} catch (Exception e) {

@@ -27,6 +27,11 @@
 package haven;
 
 import haven.sloth.DefSettings;
+import haven.sloth.gob.Movable;
+import haven.sloth.gui.ColorPreview;
+
+import java.awt.*;
+
 import static haven.sloth.DefSettings.*;
 
 public class OptWnd extends Window {
@@ -512,6 +517,55 @@ public class OptWnd extends Window {
 		    }
 		}
 	    }, c.copy()).sz.y + spacer;
+	    c.y += gameplay.add(new CheckBox("Show Gob Paths") {
+		{a = global.get(SHOWGOBPATH, Boolean.class);}
+
+		public void set(boolean val) {
+		    global.set(SHOWGOBPATH, val);
+		    a = val;
+		}
+	    }, c.copy()).sz.y + spacer;
+	    {
+	        final Label lbl = new Label("Unknown human path color");
+	        final ColorPreview pre = new ColorPreview(new Coord(32, 32), global.get(GOBPATHCOL, Color.class),
+			(color -> {
+			    global.set(GOBPATHCOL, color);
+			    Movable.unknowngobcol = new States.ColState(color);
+			}));
+	        c.y += gameplay.add(pre, c.copy()).sz.y + spacer;
+	        Coord lblc = new Coord(c.x + pre.sz.x + spacer, c.y - (pre.sz.y/2) - (lbl.sz.y/2));
+		gameplay.add(lbl, lblc);
+	    }
+	    {
+		final Label lbl = new Label("Vehicle path color");
+		final ColorPreview pre = new ColorPreview(new Coord(32, 32), global.get(VEHPATHCOL, Color.class),
+			(color -> {
+			    global.set(VEHPATHCOL, color);
+			    Movable.vehiclepathcol = new States.ColState(color);
+			}));
+		c.y += gameplay.add(pre, c.copy()).sz.y + spacer;
+		Coord lblc = new Coord(c.x + pre.sz.x + spacer, c.y - (pre.sz.y/2) - (lbl.sz.y/2));
+		gameplay.add(lbl, lblc);
+	    }
+	    c.y += gameplay.add(new CheckBox("Show Animal Paths") {
+		{a = global.get(SHOWANIMALPATH, Boolean.class);}
+
+		public void set(boolean val) {
+		    global.set(SHOWANIMALPATH, val);
+		    a = val;
+		}
+	    }, c.copy()).sz.y + spacer;
+	    {
+		final Label lbl = new Label("Animal path color");
+		final ColorPreview pre = new ColorPreview(new Coord(32, 32), global.get(ANIMALPATHCOL, Color.class),
+			(color -> {
+			    global.set(ANIMALPATHCOL, color);
+			    Movable.animalpathcol = new States.ColState(color);
+			}));
+		c.y += gameplay.add(pre, c.copy()).sz.y + spacer;
+		Coord lblc = new Coord(c.x + pre.sz.x + spacer, c.y - (pre.sz.y/2) - (lbl.sz.y/2));
+		gameplay.add(lbl, lblc);
+	    }
 	    gameplay.add(new PButton(200, "Back", 27, main), c.copy());
 	    gameplay.pack();
 	}

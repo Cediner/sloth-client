@@ -280,9 +280,13 @@ public class Window extends Widget implements DTarget {
 	}
     }
 
+    public void close() {
+        wdgmsg("close");
+    }
+
     public void wdgmsg(Widget sender, String msg, Object... args) {
 	if(sender == cbtn) {
-	    wdgmsg("close");
+	    close();
 	} else {
 	    super.wdgmsg(sender, msg, args);
 	}

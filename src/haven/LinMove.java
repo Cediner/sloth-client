@@ -26,12 +26,27 @@
 
 package haven;
 
+import com.google.common.flogger.FluentLogger;
+
+import java.util.Optional;
+
 public class LinMove extends Moving {
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     public static final double MAXOVER = 0.5;
     public Coord2d s, v;
     public double t, lt, e;
     public boolean ts = false;
 
+    /**
+     * s + (v * t) is the current position within our path
+     * s + (v * (lt+MAXOVER)) is the max position we can currently go along the path
+     * s + (v * e) is the actual end coordinate
+     * e however is not exposed until t is within 0.5f of it, which is roughly 1.5-1.6 tiles length
+     *
+     * @param gob Our Gob
+     * @param s The ORIGINAL starting coordinate of this line move
+     * @param v A vector specifying the direction of our line movement, will never change
+     */
     public LinMove(Gob gob, Coord2d s, Coord2d v) {
 	super(gob);
 	this.s = s;
@@ -44,6 +59,25 @@ public class LinMove extends Moving {
 	return(gob.glob.map.getzp(s.add(v.mul(t))));
     }
 
+    /**
+     * If e is NaN this will only be PART of the destination path
+     * If e is not Nan then this will be the real destination path
+     */
+    public Optional<Coord2d> getDest() {
+	if(Double.isNaN(e)) {
+	    //Most of the time we're probably only given part of the destination path
+	    // This is the max position we could be in the possible visible path
+	    //return Optional.of(s.add(v.mul(lt+MAXOVER)));
+	    // This is simply the current position + direction vector which is larger than above
+	    //return Optional.of(s.add(v.mul(t)).add(v));
+	    // This is an exaggerated line to better give you an idea of where they COULD be
+	    return Optional.of(s.add(v.mul(t)).add(v.mul(5)));
+	} else {
+	    //The real destination
+	    return Optional.of(s.add(v.mul(e)));
+	}
+    }
+
     public double getv() {
 	return(v.abs());
     }
@@ -52,8 +86,10 @@ public class LinMove extends Moving {
 	if(!ts) {
 	    t += (dt / 1000.0) * 0.9;
 	    if(!Double.isNaN(e) && (t > e)) {
+	        //This is a hard stop in case we go over e.
 		t = e;
 	    } else if(t > lt + MAXOVER) {
+	        //Hit our destination
 		t = lt + MAXOVER;
 		ts = true;
 	    }

@@ -26,7 +26,7 @@
 
 package haven;
 
-import haven.sloth.gob.GCrop;
+import haven.sloth.gob.Growth;
 
 import java.util.*;
 
@@ -82,7 +82,7 @@ public class OCache implements Iterable<Gob> {
 
     synchronized void changeCropGobs() {
         for(final Gob g : this) {
-            if(g.getattr(GCrop.class) != null) {
+            if(g.getattr(Growth.class) != null) {
                 changed(g);
 	    }
 	}
@@ -253,7 +253,7 @@ public class OCache implements Iterable<Gob> {
 	
     public synchronized void linstep(Gob g, double t, double e) {
 	Moving m = g.getattr(Moving.class);
-	if((m == null) || !(m instanceof LinMove))
+	if(!(m instanceof LinMove))
 	    return;
 	LinMove lm = (LinMove)m;
 	if(t < 0)
