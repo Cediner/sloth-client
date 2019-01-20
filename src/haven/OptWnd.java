@@ -29,6 +29,7 @@ package haven;
 import haven.sloth.DefSettings;
 import haven.sloth.gob.Movable;
 import haven.sloth.gui.ColorPreview;
+import haven.sloth.gui.RadioGroup;
 
 import java.awt.*;
 
@@ -401,11 +402,13 @@ public class OptWnd extends Window {
 	video = add(new VideoPanel(main));
 	audio = add(new Panel());
 	final Panel gameplay = add(new Panel());
+	final Panel camera = add(new Panel());
 	int y;
 
 	main.add(new PButton(200, "Video settings", 'v', video), new Coord(0, 0));
 	main.add(new PButton(200, "Audio settings", 'a', audio), new Coord(0, 30));
 	main.add(new PButton(200, "Gameplay settings", 'g', gameplay), new Coord(0, 60));
+	main.add(new PButton(200, "Camera settings", 'c', camera), new Coord(0, 90));
 	if(gopts) {
 	    main.add(new Button(200, "Switch character") {
 		    public void click() {
@@ -570,6 +573,38 @@ public class OptWnd extends Window {
 	    gameplay.pack();
 	}
 
+	{ //Camera settings
+	    final int spacer = 5;
+	    final Coord c = new Coord(0, 0);
+	    final RadioGroup rgrp = camera.add(new RadioGroup("Camera Type:"), c.copy());
+	    rgrp.add("Ortho Cam", global.get(CAMERA, String.class).equals("sortho"), (val) -> {
+	        global.set(CAMERA, "sortho");
+	        if(ui.gui != null) {
+	            ui.gui.map.setcam("sortho");
+		}
+	    });
+	    rgrp.add("Angle Locked Ortho Cam", global.get(CAMERA, String.class).equals("ortho"), (val) -> {
+		global.set(CAMERA, "ortho");
+		if(ui.gui != null) {
+		    ui.gui.map.setcam("ortho");
+		}
+	    });
+	    rgrp.add("Free Cam", global.get(CAMERA, String.class).equals("bad"), (val) -> {
+		global.set(CAMERA, "bad");
+		if(ui.gui != null) {
+		    ui.gui.map.setcam("bad");
+		}
+	    });
+	    rgrp.add("Follow Cam", global.get(CAMERA, String.class).equals("follow"), (val) -> {
+		global.set(CAMERA, "follow");
+		if(ui.gui != null) {
+		    ui.gui.map.setcam("follow");
+		}
+	    });
+	    c.y += rgrp.sz.y;
+	    camera.add(new PButton(200, "Back", 27, main), c.copy());
+	    camera.pack();
+	}
 
 	chpanel(main);
     }

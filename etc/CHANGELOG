@@ -49,3 +49,4 @@
     - Added back Showing of Gob HP. Options -> Gameplay
     - Added back tree scaling. Options -> Graphics
     - Added back in Gob and Animal paths. Options -> Gameplay
+    - Added Camera settings to switch easily. Options -> Camera, also modified the maximum zoom out of ortho and speed of free cam

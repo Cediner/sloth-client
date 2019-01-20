@@ -244,7 +244,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	}
 
 	public boolean wheel(Coord c, int amount) {
-	    float d = dist + (amount * 5);
+	    float d = dist + (amount * 10);
 	    if(d < 5)
 		d = 5;
 	    dist = d;
@@ -321,9 +321,11 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	private float tangl = angl;
 	private float tfield = field;
 	private final float pi2 = (float)(Math.PI * 2);
+	private boolean lock = true;
 
-	public SOrthoCam(boolean exact) {
+	public SOrthoCam(boolean exact, boolean lock) {
 	    super(exact);
+	    this.lock = lock;
 	}
 
 	public SOrthoCam(String... args) {
@@ -371,13 +373,13 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	}
 
 	public void release() {
-	    if(tfield > 100)
+	    if(lock && tfield > 100)
 		tangl = (float)(Math.PI * 0.5 * (Math.floor(tangl / (Math.PI * 0.5)) + 0.5));
 	}
 
 	private void chfield(float nf) {
 	    tfield = nf;
-	    tfield = Math.max(Math.min(tfield, sz.x * (float)Math.sqrt(2) / 8f), 50);
+	    tfield = Math.max(tfield, 50);
 	    if(tfield > 100)
 		release();
 	}
@@ -1892,16 +1894,21 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	throw(new RuntimeException("No valid constructor found for camera " + ct.getName()));
     }
 
+    public void setcam(final String cam) {
+	Class<? extends Camera> ct = camtypes.get(cam);
+	if(ct != null) {
+	    camera = makecam(ct);
+	} else {
+	    camera = new SOrthoCam(true, false);
+	}
+    }
+
     private Camera restorecam() {
-	Class<? extends Camera> ct = camtypes.get(Utils.getpref("defcam", null));
-	if(ct == null)
-	    return(new SOrthoCam(true));
-	String[] args = (String [])Utils.deserialize(Utils.getprefb("camargs", null));
-	if(args == null) args = new String[0];
-	try {
-	    return(makecam(ct, args));
-	} catch(Exception e) {
-	    return(new SOrthoCam(true));
+	Class<? extends Camera> ct = camtypes.get(DefSettings.global.get(DefSettings.CAMERA, String.class));
+	if(ct != null) {
+	    return makecam(ct);
+	} else {
+	    return new SOrthoCam(true, false);
 	}
     }
 

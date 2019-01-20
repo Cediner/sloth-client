@@ -79,6 +79,8 @@ public class DefSettings {
     	SHOWANIMALPATH = "gameplay.show-animal-path",		//[Bool] Toggle animal path rendering
     	ANIMALPATHCOL = "gameplay.animal-path-color",		//[RBGA] Path color for animals
 
+    	CAMERA = "camera.camera-type",				//[String] Camera type, default: Ortho
+
     	NOGOBAUDIO = "audio.no-gob-audio"; 			//[Bool] Toggles Gob audio
 
     public static final String
@@ -146,6 +148,8 @@ public class DefSettings {
 	global.ensure(VEHPATHCOL, new Color(111, 255, 138, 168));
 	global.ensure(SHOWANIMALPATH, true);
 	global.ensure(ANIMALPATHCOL, new Color(144,255,171,146));
+	//Cameras
+	global.ensure(CAMERA, "ortho");
 	//Audio
 	global.ensure(NOGOBAUDIO, false);
 

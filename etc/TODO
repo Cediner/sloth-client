@@ -1,6 +1,4 @@
 TODO
-    - Camera options in Options window under "UI"?
-    - Auto Hearth
     - Smart Aim
     - Infinite zoom out on Overview map
     - Alt + Right Click Obj FlowerMenu
@@ -49,3 +47,4 @@ TODO
     - Alt + Right Click ground (Low Priority)
         - Add Gob
         - Edit tile
+    - Auto Hearth (Not really needed)
