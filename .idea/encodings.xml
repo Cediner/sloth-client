@@ -3,5 +3,6 @@
   <component name="Encoding" addBOMForNewFiles="with NO BOM">
     <file url="file://$PROJECT_DIR$/src/haven/res/lib/plants/GrowingPlant.java" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/src/haven/res/lib/plants/TrellisPlant.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/src/haven/res/lib/tree/Tree.java" charset="windows-1252" />
   </component>
 </project>

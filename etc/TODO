@@ -20,7 +20,6 @@ TODO
         - Color for it
     - Graphics
         - Low priority
-            - Tree Scale ("tree-scale" -> 1)
             - Colorful Cave Dust ("colorful-cave-dust" -> True)
             - More FlavObjs ("more-flavobjs" -> False);
             - Skybox + Skybox range ("show-skybox" -> False, "skybox-range" -> ???)
