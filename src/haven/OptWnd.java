@@ -480,6 +480,17 @@ public class OptWnd extends Window {
 		    }
 		}
 	    }, c.copy()).sz.y + spacer;
+	    c.y += gameplay.add(new CheckBox("Show Gob HP") {
+		{a = global.get(SHOWGOBHP, Boolean.class);}
+
+		public void set(boolean val) {
+		    global.set(SHOWGOBHP, val);
+		    a = val;
+		    if(ui.sess != null) {
+			ui.sess.glob.oc.changeHealthGobs();
+		    }
+		}
+	    }, c.copy()).sz.y + spacer;
 	    gameplay.add(new PButton(200, "Back", 27, main), c.copy());
 	    gameplay.pack();
 	}

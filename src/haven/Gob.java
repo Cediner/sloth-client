@@ -408,8 +408,12 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 		((Overlay.SetupMod)ol.spr).setupmain(rl);
 	}
 	GobHealth hlt = getattr(GobHealth.class);
-	if(hlt != null)
+	if(hlt != null) {
 	    rl.prepc(hlt.getfx());
+	    if(DefSettings.global.get(DefSettings.SHOWGOBHP, Boolean.class)) {
+	        rl.add(hlt.hpfx, null);
+	    }
+	}
 	Drawable d = getattr(Drawable.class);
 	if(d != null)
 	    d.setup(rl);
