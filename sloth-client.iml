@@ -12,5 +12,6 @@
     <orderEntry type="library" name="lib" level="project" />
     <orderEntry type="library" name="flogger-0.3.1" level="project" />
     <orderEntry type="library" name="flogger-system-backend-0.3.1" level="project" />
+    <orderEntry type="library" name="sqlite-jdbc-3.26.0" level="project" />
   </component>
 </module>

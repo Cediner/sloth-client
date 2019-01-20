@@ -62,7 +62,7 @@
       <fileset dir="build/classes-lib" />
       <manifest>
 	<attribute name="Main-Class" value="haven.MainFrame" />
-	<attribute name="Class-Path" value="jogl-all.jar gluegen-rt.jar builtin-res.jar hafen-res.jar flogger-0.3.1.jar flogger-system-backend-0.3.1.jar" />
+	<attribute name="Class-Path" value="jogl-all.jar gluegen-rt.jar builtin-res.jar hafen-res.jar flogger-0.3.1.jar flogger-system-backend-0.3.1.jar sqlite-jdbc-3.26.0.jar" />
       </manifest>
     </jar>
     <chmod file="build/hafen.jar" perm="a+x" />
@@ -88,6 +88,7 @@
 	<include name="builtin-res.jar" />
         <include name="flogger-0.3.1.jar" />
         <include name="flogger-system-backend-0.3.1.jar" />
+        <include name="sqlite-jdbc-3.26.0.jar"/>
       </fileset>
       <fileset dir="lib/jogl-natives" />
     </copy>

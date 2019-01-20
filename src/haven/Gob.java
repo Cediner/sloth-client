@@ -27,10 +27,13 @@
 package haven;
 
 import haven.sloth.DefSettings;
+import haven.sloth.gob.GCrop;
+import haven.sloth.gob.Plants;
 
 import java.util.*;
 
 public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
+    public static final Text.Foundry gobhpf = new Text.Foundry(Text.sansb, 14).aa(true);
     public Coord2d rc;
     public Coord sc;
     public Coord3f sczu;
@@ -51,6 +54,8 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
     };
     private final Collection<ResAttr.Cell<?>> rdata = new LinkedList<ResAttr.Cell<?>>();
     private final Collection<ResAttr.Load> lrdata = new LinkedList<ResAttr.Load>();
+
+    private boolean discovered = false;
 
     public static class Overlay implements Rendered {
 	public Indir<Resource> res;
@@ -182,7 +187,22 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 	public void ch(T n);
     }
 
+    /**
+     * This method is called once as soon as its res name is accessible
+     * @param name The res name
+     */
+    private void discovered(final String name) {
+        if(Plants.isPlant(name)) {
+            setattr(new GCrop(this));
+	}
+    }
+
     public void ctick(int dt) {
+        if(!discovered) {
+            resname().ifPresent(this::discovered);
+            discovered = true;
+	}
+
 	for(GAttrib a : attr.values())
 	    a.ctick(dt);
 	for(Iterator<Overlay> i = ols.iterator(); i.hasNext();) {
@@ -370,6 +390,13 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 	}
     }
 
+    public int sdt() {
+	ResDrawable dw = getattr(ResDrawable.class);
+	if(dw != null)
+	    return dw.sdtnum();
+	return 0;
+    }
+
     public void draw(GOut g) {}
 
     public boolean setup(RenderList rl) {
@@ -392,6 +419,11 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 	KinInfo ki = getattr(KinInfo.class);
 	if(ki != null)
 	    rl.add(ki.fx, null);
+	final GCrop gc = getattr(GCrop.class);
+	if(gc != null && gc.fx != null && DefSettings.global.get(DefSettings.SHOWCROPSTAGE, Boolean.class)) {
+	    rl.add(gc.fx, null);
+	}
+
 	return(false);
     }
 
@@ -437,6 +469,19 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 
     public Random mkrandoom() {
 	return(Utils.mkrandoom(id));
+    }
+
+    public Optional<String> resname() {
+        return res().map((res) -> res.name);
+    }
+
+    public Optional<Resource> res() {
+        final Drawable d = getattr(Drawable.class);
+        try {
+	    return d != null ? Optional.of(d.getres()) : Optional.empty();
+	} catch (Exception e) {
+            return Optional.empty();
+	}
     }
 
     public Resource getres() {

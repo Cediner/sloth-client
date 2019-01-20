@@ -59,7 +59,15 @@ public class ResDrawable extends Drawable {
 	}
 	rl.add(spr, null);
     }
-	
+
+    public int sdtnum() {
+	if(sdt != null) {
+	    Message csdt = sdt.clone();
+	    return csdt.eom() ? 0xffff000 : Sprite.decnum(csdt);
+	}
+	return 0;
+    }
+
     public void ctick(int dt) {
 	if(spr == null) {
 	    delay += dt;

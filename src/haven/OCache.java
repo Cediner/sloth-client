@@ -26,6 +26,8 @@
 
 package haven;
 
+import haven.sloth.gob.GCrop;
+
 import java.util.*;
 
 public class OCache implements Iterable<Gob> {
@@ -76,6 +78,22 @@ public class OCache implements Iterable<Gob> {
 	ob.changed();
 	for(ChangeCallback cb : cbs)
 	    cb.changed(ob);
+    }
+
+    public synchronized void changeCropGobs() {
+        for(final Gob g : this) {
+            if(g.getattr(GCrop.class) != null) {
+                changed(g);
+	    }
+	}
+    }
+
+    public synchronized void changeStaticGobs() {
+	for(Gob g : this) {
+	    if(g.staticp() != null) {
+		changed(g);
+	    }
+	}
     }
 
     public synchronized void remove(long id, int frame) {

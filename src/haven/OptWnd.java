@@ -337,6 +337,7 @@ public class OptWnd extends Window {
 			if(ui.sess != null) {
 			    //All of our MapMesh/GridMesh need invalidated
 			    ui.sess.glob.map.invalidateAll();
+			    ui.sess.glob.oc.changeStaticGobs();
 			}
 			a = val;
 		    }
@@ -466,6 +467,17 @@ public class OptWnd extends Window {
 		public void set(boolean val) {
 		    global.set(SIMPLECROPS, val);
 		    a = val;
+		}
+	    }, c.copy()).sz.y + spacer;
+	    c.y += gameplay.add(new CheckBox("Show Crop Stage") {
+		{a = global.get(SHOWCROPSTAGE, Boolean.class);}
+
+		public void set(boolean val) {
+		    global.set(SHOWCROPSTAGE, val);
+		    a = val;
+		    if(ui.sess != null) {
+		        ui.sess.glob.oc.changeCropGobs();
+		    }
 		}
 	    }, c.copy()).sz.y + spacer;
 	    gameplay.add(new PButton(200, "Back", 27, main), c.copy());

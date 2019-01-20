@@ -121,10 +121,23 @@ public class DefSettings {
 	global.ensure(NIGHTVISION, false);
 	global.ensure(FLATWORLD, false);
 	global.ensure(SHOWTRANTILES, true);
+	global.ensure(TREESCALE, 1);
+	global.ensure(COLORFULDUST, true);
+	global.ensure(MOREFLAVOBJS, false);
+	global.ensure(SHOWSKYBOX, false);
+	global.ensure(SKYBOXRANGE, 15000);
+	global.ensure(KEEPGRIDS, false);
+	global.ensure(DRAWGRIDRADIUS, 2);
 	//Gameplay
 	global.ensure(QUICKMENU, false);
 	global.ensure(BUGGEDMENU, false);
 	global.ensure(SIMPLECROPS, false);
+	global.ensure(SHOWCROPSTAGE, false);
+	global.ensure(AUTOHEARTH, false);
+	global.ensure(SMARTAIM, false);
+	global.ensure(SHOWGOBHP, false);
+	global.ensure(SHOWGOBPATH, true);
+	global.ensure(SHOWANIMALPATH, true);
 	//Audio
 	global.ensure(NOGOBAUDIO, false);
 
