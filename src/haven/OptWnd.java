@@ -569,6 +569,22 @@ public class OptWnd extends Window {
 		Coord lblc = new Coord(c.x + pre.sz.x + spacer, c.y - (pre.sz.y/2) - (lbl.sz.y/2));
 		gameplay.add(lbl, lblc);
 	    }
+	    c.y += gameplay.add(new CheckBox("Show Dangerous Animal Radius") {
+		{a = global.get(SHOWANIMALRADIUS, Boolean.class);}
+
+		public void set(boolean val) {
+		    global.set(SHOWANIMALRADIUS, val);
+		    a = val;
+		}
+	    }, c.copy()).sz.y + spacer;
+	    c.y += gameplay.add(new CheckBox("Show Farming Equipment Radius") {
+		{a = global.get(SHOWFARMRADIUS, Boolean.class);}
+
+		public void set(boolean val) {
+		    global.set(SHOWFARMRADIUS, val);
+		    a = val;
+		}
+	    }, c.copy()).sz.y + spacer;
 	    gameplay.add(new PButton(200, "Back", 27, main), c.copy());
 	    gameplay.pack();
 	}

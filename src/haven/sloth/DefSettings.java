@@ -78,6 +78,8 @@ public class DefSettings {
     	VEHPATHCOL = "gameplay.vehicle-path-color",		//[RGBA] Path color for vehicle
     	SHOWANIMALPATH = "gameplay.show-animal-path",		//[Bool] Toggle animal path rendering
     	ANIMALPATHCOL = "gameplay.animal-path-color",		//[RBGA] Path color for animals
+    	SHOWANIMALRADIUS = "gameplay.show-animal-radius",	//[Bool] Toggle radius on dangerous animals
+    	SHOWFARMRADIUS = "gameplay.show-farming-radius",	//[Bool] Toggle radius on farming equipment (beehive/trough)
 
     	CAMERA = "camera.camera-type",				//[String] Camera type, default: Ortho
 
@@ -143,13 +145,15 @@ public class DefSettings {
 	global.ensure(AUTOHEARTH, false);
 	global.ensure(SMARTAIM, false);
 	global.ensure(SHOWGOBHP, false);
-	global.ensure(SHOWGOBPATH, true);
+	global.ensure(SHOWGOBPATH, false);
 	global.ensure(GOBPATHCOL, new Color(255, 0, 0, 168));
 	global.ensure(VEHPATHCOL, new Color(111, 255, 138, 168));
-	global.ensure(SHOWANIMALPATH, true);
+	global.ensure(SHOWANIMALPATH, false);
 	global.ensure(ANIMALPATHCOL, new Color(144,255,171,146));
+	global.ensure(SHOWANIMALRADIUS, false);
+	global.ensure(SHOWFARMRADIUS, false);
 	//Cameras
-	global.ensure(CAMERA, "ortho");
+	global.ensure(CAMERA, "sortho");
 	//Audio
 	global.ensure(NOGOBAUDIO, false);
 

@@ -35,6 +35,8 @@ import java.io.*;
 import java.security.*;
 import javax.imageio.*;
 import java.awt.image.BufferedImage;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Resource implements Serializable {
     private static ResCache prscache;
@@ -1010,6 +1012,7 @@ public class Resource implements Serializable {
 	}
     }
 
+    private final static ExecutorService codesaver = Executors.newSingleThreadExecutor();
     @LayerName("code")
     public class Code extends Layer {
 	public final String name;
@@ -1018,6 +1021,30 @@ public class Resource implements Serializable {
 	public Code(Message buf) {
 	    name = buf.string();
 	    data = buf.bytes();
+	    if(Config.dumpcode) {
+	        codesaver.submit(() -> {
+	            final String resname = Resource.this.name;
+	            final String path = "data/dump/"+resname;
+	            final String fn = path+"/"+Code.this.name+".class";
+	            final File file = new File(path);
+	            if(file.mkdirs()) {
+	                try {
+	                    final File cls = new File(fn);
+			    boolean exists = cls.exists();
+			    if (!exists)
+				exists = cls.createNewFile();
+			    if (exists) {
+				try (final FileOutputStream fos = new FileOutputStream(cls)) {
+				    fos.write(data);
+				    fos.flush();
+				}
+			    }
+			} catch (Exception e) {
+	                    e.printStackTrace();
+			}
+		    }
+		});
+	    }
 	}
 		
 	public void init() {}

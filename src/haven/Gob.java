@@ -26,14 +26,17 @@
 
 package haven;
 
+import com.google.common.flogger.FluentLogger;
 import haven.sloth.DefSettings;
 import haven.sloth.gob.Growth;
 import haven.sloth.gob.Movable;
+import haven.sloth.gob.Range;
 import haven.sloth.gob.Type;
 
 import java.util.*;
 
 public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     public static final Text.Foundry gobhpf = new Text.Foundry(Text.sansb, 14).aa(true);
 
     public static class Overlay implements Rendered {
@@ -261,6 +264,10 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 	}
         if(Movable.isMovable(name)) {
             setattr(new Movable(this));
+	}
+        if(Range.hasRange(name)) {
+            logger.atFinest().log("Gob %s has Range", name);
+            setattr(new Range(this, name));
 	}
     }
 

@@ -1,13 +1,12 @@
 TODO
-    - Smart Aim
     - Infinite zoom out on Overview map
     - Alt + Right Click Obj FlowerMenu
         - Hide/Unhide
         - Add/Remove Sound
         - Delete
         - Delete this
-        - Edit Gob (Low Priority)
     - Deleting Objs
+    - Sounds for Objs
     - Hiding Objs
         - Color for it, default. Each obj can have its own color?
     - Queued movement
@@ -26,9 +25,11 @@ TODO
         - Right click to equip
     - Lock building objs (Ctrl + Middle click)
     - Lock items on mouse (Ctrl + Right Click)
+    - Smart Aim
     - Enable profiling -> Show profiling windows via Options under "UI"
     - Fix "Show Animations" to actually stop animations
     - Always show quality of items
+    - Scripting
     - UI
         - Chat Window
         - Additonal hotkeys
@@ -36,15 +37,15 @@ TODO
         - Fully Movable UI
         - Separate Study Window
         - (Low Priority) Themes
-    - Scripting
     - Flowermenu as a list rather than circle
     - Allow targetting of objs and the TargetSprite
     - Account manager at login
-    - Animal Aggro Radius
     - Options
         - Everything should be defered since it can be modified in multiple locations
           for some options. (ie: Options + menu grid toggles)
     - Alt + Right Click ground (Low Priority)
         - Add Gob
         - Edit tile
+    - Alt + Right Click Obj FlowerMenu
+        - Edit Gob (Low Priority)
     - Auto Hearth (Not really needed)

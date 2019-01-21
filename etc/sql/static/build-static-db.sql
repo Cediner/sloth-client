@@ -12,6 +12,8 @@ INSERT OR IGNORE INTO type (name_key) VALUES ('ANIMAL');
 INSERT OR IGNORE INTO type (name_key) VALUES ('VEHICLE');
 INSERT OR IGNORE INTO type (name_key) VALUES ('TILE');
 INSERT OR IGNORE INTO type (name_key) VALUES ('SOUND');
+INSERT OR IGNORE INTO type (name_key) VALUES ('FARMING');
+INSERT OR IGNORE INTO type (name_key) VALUES ('UNKNOWN');
 
 CREATE TABLE IF NOT EXISTS object (
     object_id   INTEGER,    -- Alias for ROWID
@@ -36,6 +38,9 @@ INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/terobjs/plants/yellowon
 INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/terobjs/plants/pumpkin', (SELECT type_id FROM type WHERE name_key = 'PLANT'));
 INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/terobjs/plants/pepper', (SELECT type_id FROM type WHERE name_key = 'PLANT'));
 INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/terobjs/plants/wine', (SELECT type_id FROM type WHERE name_key = 'PLANT'));
+-- misc stuff
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/terobjs/trough', (SELECT type_id FROM type WHERE name_key = 'FARMING'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/terobjs/beehive', (SELECT type_id FROM type WHERE name_key = 'FARMING'));
 -- humans
 INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/borka/body', (SELECT type_id FROM type WHERE name_key = 'HUMAN'));
 INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/borka/wisp', (SELECT type_id FROM type WHERE name_key = 'HUMAN'));
@@ -318,10 +323,11 @@ INSERT OR IGNORE INTO range VALUES ((SELECT object_id FROM object WHERE name = '
 INSERT OR IGNORE INTO range VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/troll/troll'	), 10);
 INSERT OR IGNORE INTO range VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/lynx/lynx'		), 10);
 INSERT OR IGNORE INTO range VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/wolf/wolf'		), 10);
-INSERT OR IGNORE INTO range VALUES ((SELECT object_id FROM object WHERE name = 'gfx/terobjs/minesupport'    ), 9);
-INSERT OR IGNORE INTO range VALUES ((SELECT object_id FROM object WHERE name = 'gfx/terobjs/column'         ), 11);
 INSERT OR IGNORE INTO range VALUES ((SELECT object_id FROM object WHERE name = 'gfx/terobjs/trough'         ), 18);
 INSERT OR IGNORE INTO range VALUES ((SELECT object_id FROM object WHERE name = 'gfx/terobjs/beehive'        ), 13);
+-- While true, these have a built in way to display their Radius and there's no point to duplicate that
+--INSERT OR IGNORE INTO range VALUES ((SELECT object_id FROM object WHERE name = 'gfx/terobjs/minesupport'    ), 9);
+--INSERT OR IGNORE INTO range VALUES ((SELECT object_id FROM object WHERE name = 'gfx/terobjs/column'         ), 11);
 
 CREATE TABLE IF NOT EXISTS move (
     object_id   INTEGER,    -- Objects that can move

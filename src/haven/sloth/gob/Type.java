@@ -13,6 +13,7 @@ public enum Type {
     VEHICLE,
     TILE,
     SOUND,
+    FARMING,
     UNKNOWN;
 
 

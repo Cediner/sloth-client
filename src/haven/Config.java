@@ -59,6 +59,7 @@ public class Config {
     public static String allused = getprop("haven.allused", null);
     public static int mainport = getint("haven.mainport", 1870);
     public static int authport = getint("haven.authport", 1871);
+    public static boolean dumpcode = getprop("haven.dumpcode", "off").equals("on");
     public static byte[] authck = null;
     public static String prefspec = "hafen";
     public static final String confid = "";
