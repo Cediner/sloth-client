@@ -27,6 +27,7 @@
 package haven;
 
 import haven.sloth.gob.Growth;
+import haven.sloth.gob.Hidden;
 
 import java.util.*;
 
@@ -80,6 +81,23 @@ public class OCache implements Iterable<Gob> {
 	    cb.changed(ob);
     }
 
+    synchronized void changeHiddenGobs() {
+	for(final Gob g : this) {
+	    if(g.getattr(Hidden.class) != null) {
+		changed(g);
+	    }
+	}
+    }
+
+    synchronized void updateHiddenGobs() {
+	for(final Gob g : this) {
+	    if(g.getattr(Hidden.class) != null) {
+	        g.setattr(new Hidden(g));
+		changed(g);
+	    }
+	}
+    }
+
     synchronized void changeCropGobs() {
         for(final Gob g : this) {
             if(g.getattr(Growth.class) != null) {
@@ -101,6 +119,45 @@ public class OCache implements Iterable<Gob> {
 	    if(g.staticp() != null) {
 		changed(g);
 	    }
+	}
+    }
+
+    synchronized void hideAll(final String name) {
+        for(final Gob g : this) {
+            g.resname().ifPresent(gname -> {
+                if(gname.equals(name)) {
+                    g.setattr(new Hidden(g));
+                    changed(g);
+		}
+	    });
+        }
+    }
+
+    synchronized void unhideAll(final String name) {
+	for(final Gob g : this) {
+	    g.resname().ifPresent(gname -> {
+		if(gname.equals(name)) {
+		    g.delattr(Hidden.class);
+		    changed(g);
+		}
+	    });
+	}
+    }
+
+    synchronized void removeAll(final String name) {
+        //TODO: I2 iterator doesn't support remove and I should fix that later on, for now this is a two step process
+        final List<Long> rem = new ArrayList<>();
+	for(final Gob g : this) {
+	    g.resname().ifPresent(gname -> {
+		if(gname.equals(name)) {
+		    g.dispose();
+		    rem.add(g.id);
+		}
+	    });
+	}
+
+	for(long id : rem) {
+	    remove(id);
 	}
     }
 

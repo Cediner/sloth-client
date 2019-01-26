@@ -1,6 +1,11 @@
 package haven.sloth;
 
+import com.google.common.flogger.FluentLogger;
+import haven.sloth.gob.*;
+import haven.sloth.io.Storage;
+
 import java.awt.*;
+import java.util.Optional;
 
 /**
  * A global view of all our settings. This should at some point cover all of Ape.
@@ -26,6 +31,7 @@ import java.awt.*;
  *
  */
 public class DefSettings {
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     public static final Settings global = new Settings("config.ini");
     //Settings in 'session' don't save, only valid for the lifetime of the session
     public static final Settings session = new Settings("");
@@ -80,6 +86,8 @@ public class DefSettings {
     	ANIMALPATHCOL = "gameplay.animal-path-color",		//[RBGA] Path color for animals
     	SHOWANIMALRADIUS = "gameplay.show-animal-radius",	//[Bool] Toggle radius on dangerous animals
     	SHOWFARMRADIUS = "gameplay.show-farming-radius",	//[Bool] Toggle radius on farming equipment (beehive/trough)
+    	SHOWHIDDEN = "gameplay.show-hidden",			//[Bool] Toggle hidden squares
+    	HIDDENCOLOR = "gameplay.hidden-color",			//[RGBA] Color of hidden squares
 
     	CAMERA = "camera.camera-type",				//[String] Camera type, default: Ortho
 
@@ -152,6 +160,8 @@ public class DefSettings {
 	global.ensure(ANIMALPATHCOL, new Color(144,255,171,146));
 	global.ensure(SHOWANIMALRADIUS, false);
 	global.ensure(SHOWFARMRADIUS, false);
+	global.ensure(SHOWHIDDEN, true);
+	global.ensure(HIDDENCOLOR, Color.RED);
 	//Cameras
 	global.ensure(CAMERA, "sortho");
 	//Audio
@@ -160,6 +170,22 @@ public class DefSettings {
 	//Session based globals
 	session.ensure(PAUSED, false);
 	session.ensure(SHOWGRID, false);
+
+	//Piggy backing off this to init some other important settings
+	final Optional<Storage> optint = Storage.create("jdbc:sqlite:data/static.sqlite");
+	if(optint.isPresent()) {
+	    Movable.init(optint.get());
+	    Growth.init(optint.get());
+	    Range.init(optint.get());
+	    Alerted.init(optint.get());
+	    Deleted.init();
+	    Hidden.init();
+	    //Internal lookups are no longer needed
+	    optint.get().close();
+	} else {
+	    logger.atSevere().log("Failed to open static datastore");
+	    System.exit(0);
+	}
     }
 
     /**

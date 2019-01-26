@@ -32,11 +32,16 @@ import static haven.OCache.posres;
 import haven.GLProgram.VarID;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.util.*;
 import java.lang.ref.*;
 import java.lang.reflect.*;
 import com.jogamp.opengl.*;
 import haven.sloth.DefSettings;
+import haven.sloth.gob.Alerted;
+import haven.sloth.gob.Deleted;
+import haven.sloth.gob.Hidden;
+import haven.sloth.gui.SoundSelector;
 
 public class MapView extends PView implements DTarget, Console.Directory {
     public static boolean clickdb = false;
@@ -1632,11 +1637,65 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    super(c);
 	    clickb = b;
 	}
+
+	private Optional<Gob> gobFromClick(final ClickInfo inf) {
+	    if(inf == null)
+		return Optional.empty();
+	    Rendered[] st = inf.array();
+	    for(final Rendered g : st) {
+	        if(g instanceof Gob) {
+	            return Optional.of((Gob)g);
+		}
+	    }
+	    return Optional.empty();
+	}
+
+	private void showSpecialMenu(final Gob g) {
+	    g.resname().ifPresent((name) -> {
+		final FlowerMenu modmenu = new FlowerMenu((selection) -> {
+		    switch (selection) {
+			case 0: //Toggle hide
+			    if(Hidden.isHidden(name)) {
+			        Hidden.remove(name);
+			        ui.sess.glob.oc.unhideAll(name);
+			    } else {
+			        Hidden.add(name);
+			        ui.sess.glob.oc.hideAll(name);
+			    }
+			    break;
+			case 1: //Toggle Sound
+			    if(Alerted.shouldAlert(name)) {
+				Alerted.remove(name);
+			    } else {
+				ui.gui.add(new SoundSelector(name), ui.mc);
+			    }
+			    break;
+			case 2: //Delete all gobs like this one
+			    Deleted.add(name);
+			    ui.sess.glob.oc.removeAll(name);
+			    break;
+			case 3: //Delete this specific gob
+			    g.dispose();
+			    ui.sess.glob.oc.remove(g.id);
+			    break;
+		    }
+		},  Hidden.isHidden(name) ? "Unhide" : "Hide",
+			Alerted.shouldAlert(name) ? "Remove Sound" : "Add Sound",
+			"Delete",
+			"Delete this");
+		ui.gui.add(modmenu, ui.mc);
+	    });
+	}
 	
 	protected void hit(Coord pc, Coord2d mc, ClickInfo inf) {
-	    Object[] args = {pc, mc.floor(posres), clickb, ui.modflags()};
-	    args = Utils.extend(args, gobclickargs(inf));
-	    wdgmsg("click", args);
+	    if (clickb == MouseEvent.BUTTON3 && ui.modmeta) {
+	        gobFromClick(inf).ifPresent(this::showSpecialMenu);
+	    } else {
+		final Object[] gobargs = gobclickargs(inf);
+		Object[] args = {pc, mc.floor(posres), clickb, ui.modflags()};
+		args = Utils.extend(args, gobargs);
+		wdgmsg("click", args);
+	    }
 	}
     }
     

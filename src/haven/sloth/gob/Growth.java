@@ -1,8 +1,8 @@
 package haven.sloth.gob;
 
-import com.google.common.flogger.FluentLogger;
 import haven.*;
 import haven.sloth.DefSettings;
+import haven.sloth.io.Storage;
 
 import java.awt.*;
 import java.sql.*;
@@ -13,23 +13,21 @@ import java.util.Map;
  * Gob Attribute for showing crop stage number if possible
  */
 public class Growth extends GAttrib implements Rendered {
-    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     private static Map<String, Integer> growth = new HashMap<>();
     private static final Color stagecolor = new Color(235, 235, 235);
-    static {
-	try(final Connection sql = DriverManager.getConnection("jdbc:sqlite:data/static.sqlite")) {
-	    try(final Statement stmt = sql.createStatement()) {
-		try(final ResultSet res = stmt.executeQuery("SELECT object.name, growth.final_stage FROM object JOIN growth USING (object_id)")) {
+
+    public static void init(final Storage internal) {
+        internal.ensure(sql -> {
+	    try (final Statement stmt = sql.createStatement()) {
+		try (final ResultSet res = stmt.executeQuery("SELECT object.name, growth.final_stage FROM object JOIN growth USING (object_id)")) {
 		    while (res.next()) {
 			growth.put(res.getString(1), res.getInt(2));
 		    }
 		}
 	    }
-	} catch (final SQLException e) {
-	    logger.atSevere().withCause(e).log("Failed to load growth data from static sqlite");
-	    System.exit(0);
-	}
+	});
     }
+
     public static boolean isGrowth(final String resname) {
 	return growth.containsKey(resname) || resname.startsWith("gfx/terobjs/trees")
 		|| resname.startsWith("gfx/terobjs/bush");
@@ -38,7 +36,7 @@ public class Growth extends GAttrib implements Rendered {
 
     public Tex tex = null;
     public PView.Draw2D fx = null;
-    public int cstage = -1;
+    private int cstage = -1;
 
     public Growth(Gob g) {
 	super(g);

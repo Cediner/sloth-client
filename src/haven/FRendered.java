@@ -26,6 +26,10 @@
 
 package haven;
 
+/**
+ * Note: These layers are used for clicktests
+ * A Sprite/Mesh without this won't be considered in a clicktest
+ */
 public interface FRendered extends Rendered {
     public void drawflat(GOut g);
 }

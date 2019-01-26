@@ -28,10 +28,7 @@ package haven;
 
 import com.google.common.flogger.FluentLogger;
 import haven.sloth.DefSettings;
-import haven.sloth.gob.Growth;
-import haven.sloth.gob.Movable;
-import haven.sloth.gob.Range;
-import haven.sloth.gob.Type;
+import haven.sloth.gob.*;
 
 import java.util.*;
 
@@ -255,26 +252,37 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
      * @param name The res name
      */
     private void discovered(final String name) {
-        //Figure out our type first
-	type = Type.getType(name);
+        //Before we do anything make sure we care about this
+	if(!Deleted.isDeleted(name)) {
+	    //Gobs we care about
+	    //Figure out our type first
+	    type = Type.getType(name);
 
-	//Check for any special attributes we should attach
-        if(Growth.isGrowth(name)) {
-            setattr(new Growth(this));
+	    //Check for any special attributes we should attach
+	    Alerted.checkAlert(name);
+	    if(Growth.isGrowth(name)) {
+		setattr(new Growth(this));
+	    }
+	    if(Movable.isMovable(name)) {
+		setattr(new Movable(this));
+	    }
+	    if(Range.hasRange(name)) {
+		setattr(new Range(this, name));
+	    }
+	    if(Hidden.isHidden(name)) {
+	        setattr(new Hidden(this));
+	    }
+	} else {
+	    //We don't care about these gobs, tell OCache to start the removal process
+	    dispose();
+	    glob.oc.remove(id);
 	}
-        if(Movable.isMovable(name)) {
-            setattr(new Movable(this));
-	}
-        if(Range.hasRange(name)) {
-            logger.atFinest().log("Gob %s has Range", name);
-            setattr(new Range(this, name));
-	}
+	discovered = true;
     }
 
     public void ctick(int dt) {
         if(!discovered) {
             resname().ifPresent(this::discovered);
-            discovered = true;
 	}
 
 	for(GAttrib a : attr.values())
@@ -477,31 +485,40 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 
     public boolean setup(RenderList rl) {
 	loc.tick();
-	for(Overlay ol : ols)
-	    rl.add(ol, null);
-	for(Overlay ol : ols) {
-	    if(ol.spr instanceof Overlay.SetupMod)
-		((Overlay.SetupMod)ol.spr).setupmain(rl);
-	}
-	GobHealth hlt = getattr(GobHealth.class);
-	if(hlt != null) {
-	    rl.prepc(hlt.getfx());
-	    if(DefSettings.global.get(DefSettings.SHOWGOBHP, Boolean.class)) {
-	        rl.add(hlt.hpfx, null);
-	    }
-	}
-	Drawable d = getattr(Drawable.class);
-	if(d != null)
-	    d.setup(rl);
-	Speaking sp = getattr(Speaking.class);
-	if(sp != null)
-	    rl.add(sp.fx, null);
-	KinInfo ki = getattr(KinInfo.class);
-	if(ki != null)
-	    rl.add(ki.fx, null);
 
-	for(final haven.sloth.gob.Rendered attr : renderedattrs) {
-	    attr.setup(rl);
+	final Hidden hid = getattr(Hidden.class);
+	if(hid == null) {
+	    for (Overlay ol : ols)
+		rl.add(ol, null);
+	    for (Overlay ol : ols) {
+		if (ol.spr instanceof Overlay.SetupMod)
+		    ((Overlay.SetupMod) ol.spr).setupmain(rl);
+	    }
+	    GobHealth hlt = getattr(GobHealth.class);
+	    if (hlt != null) {
+		rl.prepc(hlt.getfx());
+		if (DefSettings.global.get(DefSettings.SHOWGOBHP, Boolean.class)) {
+		    rl.add(hlt.hpfx, null);
+		}
+	    }
+	    Drawable d = getattr(Drawable.class);
+	    if (d != null)
+		d.setup(rl);
+	    Speaking sp = getattr(Speaking.class);
+	    if (sp != null)
+		rl.add(sp.fx, null);
+	    KinInfo ki = getattr(KinInfo.class);
+	    if (ki != null)
+		rl.add(ki.fx, null);
+
+	    for (final haven.sloth.gob.Rendered attr : renderedattrs) {
+		attr.setup(rl);
+	    }
+	} else {
+	    //hidden gob, only show its square if allowed
+	    if(DefSettings.global.get(DefSettings.SHOWHIDDEN, Boolean.class)) {
+	        hid.setup(rl);
+	    }
 	}
 
 

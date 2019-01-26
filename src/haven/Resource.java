@@ -39,6 +39,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Resource implements Serializable {
+    public static Resource fake = new Resource(null, "fake", -1);
     private static ResCache prscache;
     public static ThreadGroup loadergroup = null;
     private static Map<String, LayerFactory<?>> ltypes = new TreeMap<String, LayerFactory<?>>();
@@ -914,11 +915,15 @@ public class Resource implements Serializable {
     @LayerName("neg")
     public class Neg extends Layer {
 	public Coord cc;
+	public Coord bc, bs, sz;
 	public Coord[][] ep;
 		
 	public Neg(Message buf) {
 	    cc = cdec(buf);
-	    buf.skip(12);
+	    bc = cdec(buf);
+	    bs = cdec(buf);
+	    sz = cdec(buf);
+	    //buf.skip(12);
 	    ep = new Coord[8][0];
 	    int en = buf.uint8();
 	    for(int i = 0; i < en; i++) {
@@ -978,6 +983,20 @@ public class Resource implements Serializable {
 	public final Named parent;
 	public final char hk;
 	public final String[] ad;
+
+	public AButton(Named parent, String name) {
+	    this.name = name;
+	    this.parent = parent;
+	    ad = null;
+	    hk = '\0';
+	}
+
+	public AButton(Named parent, String name, char h) {
+	    this.name = name;
+	    this.parent = parent;
+	    ad = null;
+	    hk = h;
+	}
 		
 	public AButton(Message buf) {
 	    String pr = buf.string();

@@ -26,6 +26,8 @@
 
 package haven;
 
+import haven.sloth.gui.DeletedManager;
+
 import java.util.*;
 import java.awt.Color;
 import java.awt.event.KeyEvent;

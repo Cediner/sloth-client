@@ -51,3 +51,7 @@
     - Added back in Gob and Animal paths. Options -> Gameplay
     - Added Camera settings to switch easily. Options -> Camera, also modified the maximum zoom out of ortho and speed of free cam
     - Added back Animal/Trough/Beehive radius. Options -> Gameplay
+    - Added back the special menu when you alt + right click objects.
+        - This will let you hide, add sound, or delete objects
+    - Added in MenuGrid custom menus. Management windows are under the "Management" icon or 'm' key at the top level of menugrid
+        - Under this is the Management icons for Hidden, Deleted, and Alerted items to see and modify (keys: 'h', 'd', 'a' respectively)

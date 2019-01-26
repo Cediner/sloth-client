@@ -601,17 +601,9 @@ public class HavenPanel extends GLCanvas implements Runnable, Console.Directory 
 				ui.root.resize(new Coord(w, h));
 			}
 			ui.audio.cycle();
-			synchronized(ui) {
-			    if(ui.sess != null)
-				ui.sess.glob.ctick();
-			    dispatch();
-			    ui.tick();
-			    if((ui.root.sz.x != w) || (ui.root.sz.y != h))
-				ui.root.resize(new Coord(w, h));
-			}
 			//This is for scripts doing queued movements
 			//TODO: Fix this once scripting is added back in
-			//if(haven.Context.map != null)
+			// if(haven.Context.map != null)
 			//    haven.Context.map.try_move();
 			Thread.sleep(100);
 		    }

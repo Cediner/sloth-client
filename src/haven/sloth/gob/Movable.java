@@ -3,6 +3,7 @@ package haven.sloth.gob;
 import com.google.common.flogger.FluentLogger;
 import haven.*;
 import haven.sloth.gfx.GobPathSprite;
+import haven.sloth.io.Storage;
 
 import java.awt.*;
 import java.sql.*;
@@ -13,35 +14,34 @@ import java.util.stream.IntStream;
 import static haven.sloth.DefSettings.*;
 
 public class Movable extends GAttrib implements Rendered {
-    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     public static haven.States.ColState vehiclepathcol;
     public static haven.States.ColState animalpathcol;
     public static haven.States.ColState unknowngobcol;
-    private static haven.States.ColState buddycol[];
+    private static final haven.States.ColState[] buddycol;
     private static Set<String> movable = new HashSet<>();
     static {
-        //Setup our colors
+	//Setup our colors
 	vehiclepathcol = new haven.States.ColState(global.get(VEHPATHCOL, Color.class));
 	unknowngobcol = new haven.States.ColState(global.get(GOBPATHCOL, Color.class));
 	animalpathcol = new haven.States.ColState(global.get(ANIMALPATHCOL, Color.class)); //Animals
 	buddycol = new States.ColState[BuddyWnd.gc.length]; //Humans
 	IntStream.range(0, buddycol.length).forEach((i) -> buddycol[i] = new States.ColState(BuddyWnd.gc[i]));
+    }
 
-	try(final Connection sql = DriverManager.getConnection("jdbc:sqlite:data/static.sqlite")) {
-	    try(final Statement stmt = sql.createStatement()) {
-		try(final ResultSet res = stmt.executeQuery(
+    public static void init(final Storage internal) {
+        internal.ensure(sql -> {
+	    try (final Statement stmt = sql.createStatement()) {
+		try (final ResultSet res = stmt.executeQuery(
 			"SELECT object.name " +
 				"FROM object JOIN move USING (object_id)")) {
 		    while (res.next()) {
-		        movable.add(res.getString(1));
+			movable.add(res.getString(1));
 		    }
 		}
 	    }
-	} catch (final SQLException e) {
-	    logger.atSevere().withCause(e).log("Failed to load movable data from static sqlite");
-	    System.exit(0);
-	}
+	});
     }
+
     public static boolean isMovable(final String resname) {
 	return movable.contains(resname);
     }

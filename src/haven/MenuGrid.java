@@ -31,17 +31,25 @@ import java.awt.event.KeyEvent;
 import java.awt.font.TextAttribute;
 import java.awt.image.BufferedImage;
 import haven.Resource.AButton;
-import java.util.*;
+import haven.sloth.gui.DeletedManager;
+import haven.sloth.gui.HiddenManager;
+import haven.sloth.gui.SoundManager;
+import haven.sloth.util.Images;
 
+import java.util.*;
+import java.util.function.Consumer;
+
+//TODO: Not happy with the way custom pagina are currently, would be more ideal to match normal Pagina
 public class MenuGrid extends Widget {
     public final static Tex bg = Resource.loadtex("gfx/hud/invsq");
     public final static Coord bgsz = bg.sz().add(-1, -1);
     public final static RichText.Foundry ttfnd = new RichText.Foundry(TextAttribute.FAMILY, "SansSerif", TextAttribute.SIZE, 10);
-    public final Set<Pagina> paginae = new HashSet<Pagina>();
+    public final Set<Pagina> paginae = new HashSet<>();
     private static Coord gsz = new Coord(4, 4);
     private Pagina cur, dragging;
     private Collection<PagButton> curbtns = null;
-    private PagButton pressed, layout[][] = new PagButton[gsz.x][gsz.y];
+    private PagButton pressed;
+    private PagButton[][] layout = new PagButton[gsz.x][gsz.y];
     private UI.Grab grab;
     private int curoff = 0;
     private boolean recons = true;
@@ -112,6 +120,42 @@ public class MenuGrid extends Widget {
 	@Resource.PublishedCode(name = "pagina")
 	public interface Factory {
 	    public PagButton make(Pagina info);
+	}
+    }
+
+    public static class CustomButton extends PagButton {
+        private final BufferedImage img;
+        private final Consumer<CustomButton> onUse;
+        public CustomButton(final CustomPagina pag, final BufferedImage img, final Consumer<CustomButton> onUse) {
+            super(pag);
+            this.img = img;
+            this.onUse = onUse;
+	}
+
+	@Override
+	public String name() {
+	    return ((CustomPagina)pag).tt;
+	}
+
+	@Override
+	public char hotkey() {
+	    return ((CustomPagina)pag).hk;
+	}
+
+	@Override
+	public String sortkey() {
+            return "\0"+((CustomPagina)pag).tt;
+	}
+
+	@Override
+	public BufferedImage img() { return img; }
+
+	@Override
+	public void use() { onUse.accept(this); }
+
+	@Override
+	public BufferedImage rendertt(boolean withpg) {
+            return ((CustomPagina)pag).rendertt().img;
 	}
     }
 
@@ -193,7 +237,80 @@ public class MenuGrid extends Widget {
 	}
     }
 
-    public Map<Indir<Resource>, Pagina> pmap = new WeakHashMap<Indir<Resource>, Pagina>();
+    public static class CustomPagina extends Pagina {
+        private final String name;
+        private final String tt;
+        private final char hk;
+        private final PagButton button;
+	private final List<PagButton> children;
+
+        CustomPagina(final MenuGrid scm, final String name, final char hk,
+		     final BufferedImage img, final Consumer<CustomButton> onUse) {
+            super(scm, Resource.fake.indir());
+            this.name = "shortcut:"+name;
+            this.tt = name;
+            this.hk = hk;
+            this.children = null;
+            this.button = new CustomButton(this, img, onUse);
+	}
+
+	CustomPagina(final MenuGrid scm, final String name, final char hk,
+		     final BufferedImage img, final Pagina... children) {
+	    super(scm, Resource.fake.indir());
+	    this.name = "shortcut:"+name;
+	    this.tt = name;
+	    this.hk = hk;
+	    this.button = new CustomButton(this, img, null);
+	    this.children = new ArrayList<>(children.length);
+	    for(final Pagina child : children) {
+		this.children.add(child.button());
+	    }
+	}
+
+	Optional<List<PagButton>> children() { return Optional.ofNullable(children); }
+
+	Text rendertt() {
+	    String tt = this.tt;
+	    if(hk != '\0') {
+		int pos = tt.toUpperCase().indexOf(Character.toUpperCase(hk));
+		if(pos >= 0)
+		    tt = tt.substring(0, pos) + "$b{$col[255,128,0]{" + tt.charAt(pos) + "}}" + tt.substring(pos + 1);
+	    }
+	    return ttfnd.render(tt, 300);
+	}
+
+	@Override
+	public PagButton button() {
+	    return button;
+	}
+
+	@Override
+	public AButton act() {
+	    if(hk != '\0') {
+	        return res.get().new AButton(null, name, hk);
+	    } else {
+		return res.get().new AButton(null, name);
+	    }
+	}
+    }
+
+    public MenuGrid() {
+	super(bgsz.mul(gsz).add(1, 1));
+
+	//Make custom stuff
+	final CustomPagina hidden_pag = new CustomPagina(this, "Hidden Objs", 'h',
+		Images.loadimg("menu/default/hide"), (btn) -> ui.gui.add(new HiddenManager()));
+	final CustomPagina deleted_pag = new CustomPagina(this, "Deleted Objs", 'd',
+		Images.loadimg("menu/default/deleted"), (btn) -> ui.gui.add(new DeletedManager()));
+	final CustomPagina sound_pag = new CustomPagina(this, "Alerted Objs", 'a',
+		Images.loadimg("menu/default/sound"), (btn) -> ui.gui.add(new SoundManager()));
+	//Can't use: A, B, C, E, T for base menus
+	paginae.add(new CustomPagina(this, "Management", 'm', Images.loadimg("menu/default/scripts"),
+		hidden_pag, deleted_pag, sound_pag));
+    }
+
+
+    public final Map<Indir<Resource>, Pagina> pmap = new WeakHashMap<Indir<Resource>, Pagina>();
     public Pagina paginafor(Indir<Resource> res) {
 	if(res == null)
 	    return(null);
@@ -205,11 +322,35 @@ public class MenuGrid extends Widget {
 	}
     }
 
-    private boolean cons(Pagina p, Collection<PagButton> buf) {
-	Pagina[] cp = new Pagina[0];
-	Collection<Pagina> open, close = new HashSet<Pagina>();
+    /**
+     * This is specifically for nested Custom Buttons
+     * Example:
+     * 	Management -> { Hidden, Deleted, Sound, ... }
+     */
+    private boolean cons(CustomPagina p, Collection<PagButton> buf) {
 	synchronized(paginae) {
-	    open = new LinkedList<Pagina>();
+	    for(Pagina pag : paginae) {
+		if(pag.newp == 2) {
+		    pag.newp = 0;
+		    pag.fstart = 0;
+		}
+	    }
+	    for(Pagina pag : pmap.values()) {
+		if(pag.newp == 2) {
+		    pag.newp = 0;
+		    pag.fstart = 0;
+		}
+	    }
+	}
+
+	p.children().ifPresent(buf::addAll);
+        return true;
+    }
+
+    private boolean cons(Pagina p, Collection<PagButton> buf) {
+	Collection<Pagina> open, close = new HashSet<>();
+	synchronized(paginae) {
+	    open = new LinkedList<>();
 	    for(Pagina pag : paginae) {
 		if(pag.newp == 2) {
 		    pag.newp = 0;
@@ -250,15 +391,14 @@ public class MenuGrid extends Widget {
 	return(ret);
     }
 
-    public MenuGrid() {
-	super(bgsz.mul(gsz).add(1, 1));
-    }
-
     private void updlayout() {
 	synchronized(paginae) {
 	    List<PagButton> cur = new ArrayList<>();
-	    recons = !cons(this.cur, cur);
-	    Collections.sort(cur, Comparator.comparing(PagButton::sortkey));
+	    if(this.cur instanceof CustomPagina)
+	        recons = !cons((CustomPagina)this.cur, cur);
+	    else
+	    	recons = !cons(this.cur, cur);
+	    cur.sort(Comparator.comparing(PagButton::sortkey));
 	    this.curbtns = cur;
 	    int i = curoff;
 	    hotmap.clear();
@@ -339,11 +479,7 @@ public class MenuGrid extends Widget {
 	super.draw(g);
 	if(dragging != null) {
 	    Tex dt = dragging.img.get();
-	    ui.drawafter(new UI.AfterDraw() {
-		    public void draw(GOut g) {
-			g.image(dt, ui.mc.add(dt.sz().div(2).inv()));
-		    }
-		});
+	    ui.drawafter((gl) -> gl.image(dt, ui.mc.add(dt.sz().div(2).inv())));
 	}
     }
 
@@ -402,7 +538,10 @@ public class MenuGrid extends Widget {
 
     private void use(PagButton r, boolean reset) {
 	Collection<PagButton> sub = new ArrayList<>();
-	cons(r.pag, sub);
+	if(r.pag instanceof CustomPagina)
+	    cons((CustomPagina)r.pag, sub);
+	else
+	    cons(r.pag, sub);
 	if(sub.size() > 0) {
 	    this.cur = r.pag;
 	    curoff = 0;
@@ -441,14 +580,14 @@ public class MenuGrid extends Widget {
     }
 
     public void uimsg(String msg, Object... args) {
-	if(msg == "goto") {
+	if(msg.equals("goto")) {
 	    if(args[0] == null)
 		cur = null;
 	    else
 		cur = paginafor(ui.sess.getres((Integer)args[0]));
 	    curoff = 0;
 	    updlayout();
-	} else if(msg == "fill") {
+	} else if(msg.equals("fill")) {
 	    synchronized(paginae) {
 		int a = 0;
 		while(a < args.length) {

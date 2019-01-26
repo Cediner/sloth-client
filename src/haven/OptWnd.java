@@ -27,6 +27,8 @@
 package haven;
 
 import haven.sloth.DefSettings;
+import haven.sloth.gfx.HitboxMesh;
+import haven.sloth.gfx.HitboxSprite;
 import haven.sloth.gob.Movable;
 import haven.sloth.gui.ColorPreview;
 import haven.sloth.gui.RadioGroup;
@@ -585,6 +587,31 @@ public class OptWnd extends Window {
 		    a = val;
 		}
 	    }, c.copy()).sz.y + spacer;
+	    c.y += gameplay.add(new CheckBox("Show Hidden") {
+		{a = global.get(SHOWHIDDEN, Boolean.class);}
+
+		public void set(boolean val) {
+		    global.set(SHOWHIDDEN, val);
+		    a = val;
+		    if(ui.sess != null) {
+		        ui.sess.glob.oc.changeHiddenGobs();
+		    }
+		}
+	    }, c.copy()).sz.y + spacer;
+	    {
+		final Label lbl = new Label("Hidden color");
+		final ColorPreview pre = new ColorPreview(new Coord(32, 32), global.get(HIDDENCOLOR, Color.class),
+			(color -> {
+			    global.set(HIDDENCOLOR, color);
+			    HitboxMesh.updateColor(new States.ColState(color));
+			    if(ui.sess != null) {
+			        ui.sess.glob.oc.updateHiddenGobs();
+			    }
+			}));
+		c.y += gameplay.add(pre, c.copy()).sz.y + spacer;
+		Coord lblc = new Coord(c.x + pre.sz.x + spacer, c.y - (pre.sz.y/2) - (lbl.sz.y/2));
+		gameplay.add(lbl, lblc);
+	    }
 	    gameplay.add(new PButton(200, "Back", 27, main), c.copy());
 	    gameplay.pack();
 	}

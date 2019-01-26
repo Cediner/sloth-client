@@ -382,6 +382,7 @@ public class MainFrame extends java.awt.Frame implements Runnable, Console.Direc
 	    return;
 	}
 	setupres();
+	DefSettings.init(); //init after res has been setup...
 	MainFrame f = new MainFrame(null);
 	if(Utils.getprefb("fullscreen", false))
 	    f.setfs();
@@ -423,7 +424,6 @@ public class MainFrame extends java.awt.Frame implements Runnable, Console.Direc
 	    } catch(java.net.MalformedURLException e) {
 	    }
 	}
-	DefSettings.init();
 	Thread main = new HackThread(g, new Runnable() {
 		public void run() {
 		    main2(args);

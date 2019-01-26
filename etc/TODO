@@ -1,16 +1,6 @@
 TODO
     - Infinite zoom out on Overview map
-    - Alt + Right Click Obj FlowerMenu
-        - Hide/Unhide
-        - Add/Remove Sound
-        - Delete
-        - Delete this
-    - Deleting Objs
-    - Sounds for Objs
-    - Hiding Objs
-        - Color for it, default. Each obj can have its own color?
-    - Queued movement
-        - Show path for this
+    - Account manager at login
     - Graphics
         - Low priority
             - Colorful Cave Dust ("colorful-cave-dust" -> True)
@@ -39,7 +29,8 @@ TODO
         - (Low Priority) Themes
     - Flowermenu as a list rather than circle
     - Allow targetting of objs and the TargetSprite
-    - Account manager at login
+    - Queued movement
+        - Show path for this
     - Options
         - Everything should be defered since it can be modified in multiple locations
           for some options. (ie: Options + menu grid toggles)

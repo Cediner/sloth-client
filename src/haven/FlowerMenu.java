@@ -29,6 +29,10 @@ package haven;
 import haven.sloth.DefSettings;
 
 import java.awt.Color;
+import java.util.Optional;
+import java.util.OptionalInt;
+import java.util.function.Consumer;
+
 import static java.lang.Math.PI;
 
 public class FlowerMenu extends Widget {
@@ -40,6 +44,8 @@ public class FlowerMenu extends Widget {
     public static final int ph = 30, ppl = 8;
     public Petal[] opts;
     private UI.Grab mg, kg;
+    //private final Optional<Consumer<Integer>> callback;
+    private final Consumer<Integer> callback;
 
     @RName("sm")
     public static class $_ implements Factory {
@@ -201,13 +207,18 @@ public class FlowerMenu extends Widget {
 	}
     }
 
-    public FlowerMenu(String... options) {
+    public FlowerMenu(final Consumer<Integer> callback, final String... options) {
 	super(Coord.z);
+	this.callback = callback;
 	opts = new Petal[options.length];
 	for(int i = 0; i < options.length; i++) {
 	    add(opts[i] = new Petal(options[i]));
 	    opts[i].num = i;
 	}
+    }
+
+    public FlowerMenu(String... options) {
+    	this(null, options);
     }
 
     protected void added() {
@@ -283,10 +294,15 @@ public class FlowerMenu extends Widget {
     }
 
     public void choose(Petal option) {
-	if(option == null) {
-	    wdgmsg("cl", -1);
+        if(callback == null) {
+	    if (option == null) {
+		wdgmsg("cl", -1);
+	    } else {
+		wdgmsg("cl", option.num, ui.modflags());
+	    }
 	} else {
-	    wdgmsg("cl", option.num, ui.modflags());
+	    callback.accept(option != null ? option.num : -1);
+	    ui.destroy(this);
 	}
     }
 }
