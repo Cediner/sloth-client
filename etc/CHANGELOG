@@ -57,3 +57,5 @@
         - Under this is the Management icons for Hidden, Deleted, and Alerted items to see and modify (keys: 'h', 'd', 'a' respectively)
 1.0.6
     - Added in Account management
+    - Can now see how far you are from quests by looking at their tooltip when mousing over the pointer icon.
+        - This is only accurate to within ~1000 tiles.
