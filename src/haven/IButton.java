@@ -31,6 +31,7 @@ import java.awt.image.BufferedImage;
 
 public class IButton extends SIWidget {
     BufferedImage up, down, hover;
+    private Runnable action = null;
     boolean h = false;
     boolean a = false;
     UI.Grab d = null;
@@ -42,15 +43,28 @@ public class IButton extends SIWidget {
 	}
     }
 
+    public IButton(BufferedImage up, BufferedImage down, BufferedImage hover, final Runnable action) {
+	super(Utils.imgsz(up));
+	this.up = up;
+	this.down = down;
+	this.hover = hover;
+	this.action = action;
+    }
+
     public IButton(BufferedImage up, BufferedImage down, BufferedImage hover) {
 	super(Utils.imgsz(up));
 	this.up = up;
 	this.down = down;
 	this.hover = hover;
+	this.action = () -> wdgmsg("activate");
     }
 
     public IButton(BufferedImage up, BufferedImage down) {
 	this(up, down, up);
+    }
+
+    public IButton(String base, String up, String down, String hover, final Runnable action) {
+	this(Resource.loadimg(base + up), Resource.loadimg(base + down), Resource.loadimg(base + (hover == null?up:hover)), action);
     }
 
     public IButton(String base, String up, String down, String hover) {
@@ -76,8 +90,12 @@ public class IButton extends SIWidget {
 	return(up.getRaster().getSample(c.x, c.y, 3) >= 128);
     }
 
+    private void activate() {
+        action.run();
+    }
+
     public void click() {
-	wdgmsg("activate");
+        action.run();
     }
 
     protected void depress() {

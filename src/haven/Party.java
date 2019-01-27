@@ -95,6 +95,8 @@ public class Party {
 		    c = msg.coord().mul(OCache.posres);
 		Color col = msg.color();
 		if(m != null) {
+		    //If this member is on the same map as me c will be their actual coordinate
+		    //If they are not on the same map c should be null
 		    m.c = c;
 		    m.col = col;
 		}

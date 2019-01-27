@@ -7,6 +7,12 @@
     <file url="file://$PROJECT_DIR$/src/haven/sloth/gfx/GobPathSprite.java" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/src/haven/sloth/gui/ColorPicker.java" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/src/haven/sloth/gui/ColorPreview.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/src/haven/sloth/security/AccountManagement.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/src/haven/sloth/security/Crypto.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/src/haven/sloth/security/DerivedKeyGen.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/src/haven/sloth/security/Pad.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/src/haven/sloth/security/RndKeyGen.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/src/haven/sloth/util/BinaryFile.java" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/src/haven/sloth/util/Images.java" charset="windows-1252" />
   </component>
 </project>

@@ -55,3 +55,5 @@
         - This will let you hide, add sound, or delete objects
     - Added in MenuGrid custom menus. Management windows are under the "Management" icon or 'm' key at the top level of menugrid
         - Under this is the Management icons for Hidden, Deleted, and Alerted items to see and modify (keys: 'h', 'd', 'a' respectively)
+1.0.6
+    - Added in Account management

@@ -31,6 +31,7 @@
 	<pathelement path="lib/jnlp.jar" />
 	<pathelement path="lib/jglob.jar" />
         <pathelement path="lib/flogger-0.3.1.jar" />
+        <pathelement path="lib/bcprov-jdk15on-160.jar"/>
       </classpath>
       <compilerarg value="-Xlint:unchecked" />
       <compilerarg value="-Xlint:-options" />
@@ -62,7 +63,7 @@
       <fileset dir="build/classes-lib" />
       <manifest>
 	<attribute name="Main-Class" value="haven.MainFrame" />
-	<attribute name="Class-Path" value="jogl-all.jar gluegen-rt.jar builtin-res.jar hafen-res.jar flogger-0.3.1.jar flogger-system-backend-0.3.1.jar sqlite-jdbc-3.26.0.jar" />
+	<attribute name="Class-Path" value="jogl-all.jar gluegen-rt.jar builtin-res.jar hafen-res.jar flogger-0.3.1.jar flogger-system-backend-0.3.1.jar sqlite-jdbc-3.26.0.jar bcprov-jdk15on-160.jar" />
       </manifest>
     </jar>
     <chmod file="build/hafen.jar" perm="a+x" />
@@ -89,6 +90,7 @@
         <include name="flogger-0.3.1.jar" />
         <include name="flogger-system-backend-0.3.1.jar" />
         <include name="sqlite-jdbc-3.26.0.jar"/>
+        <include name="bcprov-jdk15on-160.jar"/>
       </fileset>
       <fileset dir="lib/jogl-natives" />
     </copy>

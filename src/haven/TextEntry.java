@@ -29,6 +29,7 @@ package haven;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.util.function.Consumer;
 
 public class TextEntry extends SIWidget {
     public static final Color defcol = new Color(255, 205, 109), dirtycol = new Color(255, 232, 209);
@@ -77,6 +78,11 @@ public class TextEntry extends SIWidget {
 		}
 	    };
 	redraw();
+    }
+
+    public void setpw(final boolean val) {
+        this.pw = val;
+        commit();
     }
 
     public void commit() {
@@ -137,10 +143,19 @@ public class TextEntry extends SIWidget {
 	}
     }
 
-    public TextEntry(int w, String deftext) {
+    private final Consumer<String> onChange;
+    private final Consumer<String> onActivate;
+
+    public TextEntry(final int w, final String deftext, final Consumer<String> onChange, final Consumer<String> onActivate) {
 	super(new Coord(w, mext.getHeight()));
+	this.onChange = onChange;
+	this.onActivate = onActivate;
 	rsettext(deftext);
 	setcanfocus(true);
+    }
+
+    public TextEntry(int w, String deftext) {
+        this(w, deftext, null, null);
     }
 
     @Deprecated
@@ -150,11 +165,15 @@ public class TextEntry extends SIWidget {
 
     protected void changed() {
 	dirty = true;
+	if(onChange != null)
+	    onChange.accept(text);
     }
 
     public void activate(String text) {
 	if(canactivate)
 	    wdgmsg("activate", text);
+	if(onActivate != null)
+	    onActivate.accept(text);
     }
 
     public boolean type(char c, KeyEvent ev) {

@@ -2,7 +2,6 @@ package haven.sloth.gui;
 
 import haven.*;
 import haven.sloth.gob.Alerted;
-import haven.sloth.gob.Hidden;
 import haven.sloth.util.ObservableMapListener;
 
 import java.util.ArrayList;

@@ -1,13 +1,4 @@
 TODO
-    - Infinite zoom out on Overview map
-    - Account manager at login
-    - Graphics
-        - Low priority
-            - Colorful Cave Dust ("colorful-cave-dust" -> True)
-            - More FlavObjs ("more-flavobjs" -> False);
-            - Skybox + Skybox range ("show-skybox" -> False, "skybox-range" -> ???)
-            - Don't delete grids ("dont-delete-grids" -> False)
-                - Map Grid radius for drawing, default: 2 ("map-draw-radius" -> 2)
     - Inventories
         - Lock items (Ctrl + Right Click)
             - Interact with them via 'q'
@@ -40,3 +31,12 @@ TODO
     - Alt + Right Click Obj FlowerMenu
         - Edit Gob (Low Priority)
     - Auto Hearth (Not really needed)
+    - Infinite zoom out on Overview map
+        - This has more to do with merging the overview map with the minimap
+    - Graphics
+        - Low priority
+            - Colorful Cave Dust ("colorful-cave-dust" -> True)
+            - More FlavObjs ("more-flavobjs" -> False);
+            - Skybox + Skybox range ("show-skybox" -> False, "skybox-range" -> ???)
+            - Don't delete grids ("dont-delete-grids" -> False)
+                - Map Grid radius for drawing, default: 2 ("map-draw-radius" -> 2)

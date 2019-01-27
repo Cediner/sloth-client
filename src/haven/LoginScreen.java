@@ -26,210 +26,150 @@
 
 package haven;
 
-import java.awt.event.KeyEvent;
+import haven.sloth.security.AccountManagement;
+
+import java.awt.*;
 
 public class LoginScreen extends Widget {
-    Login cur;
-    Text error;
-    IButton btn;
-    Button optbtn;
-    OptWnd opts;
-    static Text.Foundry textf, textfs;
-    static Tex bg = Resource.loadtex("gfx/loginscr");
-    Text progress = null;
+    public final static Text.Foundry textf = new Text.Foundry(Text.sans, 16).aa(true);;
+    public final static Text.Foundry textfs = new Text.Foundry(Text.sans, 14).aa(true);;
+    static final Tex bg = Resource.loadtex("gfx/loginscr");
+    private final AccountManagement accdb;
+    private final Listbox<AccountManagement.Account> accounts;
+    private final TextEntry username;
+    private final TextEntry password;
+    private final CheckBox showPassword;
+    private final Label error, progress;
 
-    static {
-	textf = new Text.Foundry(Text.sans, 16).aa(true);
-	textfs = new Text.Foundry(Text.sans, 14).aa(true);
-    }
 
-    public LoginScreen() {
+    public LoginScreen(final AccountManagement accdb) {
 	super(bg.sz());
 	setfocustab(true);
+	this.accdb = accdb;
+
+	accounts = new Listbox<AccountManagement.Account>(275, 24, 20) {
+	    final Coord offset = new Coord(5, 1);
+	    @Override
+	    protected AccountManagement.Account listitem(int i) {
+		return accdb.get(i);
+	    }
+
+	    @Override
+	    protected int listitems() {
+		return accdb.size();
+	    }
+
+	    @Override
+	    protected void drawitem(GOut g, AccountManagement.Account item, int i) {
+		g.text(item.username, offset);
+	    }
+
+	    @Override
+	    public void change(AccountManagement.Account item) {
+		if(item != null) {
+		    username.settext(item.username);
+		    password.settext(item.password);
+		}
+	        super.change(item);
+	    }
+	};
+	username = new TextEntry(150, "", null, text -> login());
+	password = new TextEntry(150, "", null, text -> login());
+	password.pw = true;
+	showPassword = new CheckBox("Show Password", false, val -> password.setpw(!val));
+	showPassword.a = false;
+	error = new Label("");
+	error.setcolor(Color.red);
+	progress = new Label("");
+	final Label userlbl = new Label("Username");
+	final Label passlbl = new Label("Password");
+	if(accdb.size() > 0) {
+	    final AccountManagement.Account acc = accdb.get(0);
+	    accounts.sel = acc;
+	    username.settext(acc.username);
+	    password.settext(acc.password);
+	}
+
+	final int spacer = 5;
 	add(new Img(bg), Coord.z);
-	optbtn = adda(new Button(100, "Options"), 10, sz.y - 10, 0, 1);
+	adda(new Button(100, "Options", () -> adda(new OptWnd(),sz.div(2), 0.5, 0.5)),
+		10, sz.y - 10, 0, 1);
+	adda(new IButton("gfx/hud/buttons/login", "u", "d", "o", this::login) {
+	    protected void depress() {Audio.play(Button.lbtdown.stream());}
+	    protected void unpress() {Audio.play(Button.lbtup.stream());}
+	}, 419, 520, 0.5, 0.5);
+	add(accounts, new Coord(25, 25));
+	add(error, new Coord(420 - username.sz.x/2, 300));
+	add(progress, new Coord(420 - username.sz.x/2, error.c.y + error.sz.y + spacer));
+	add(userlbl, new Coord(420 - username.sz.x/2, progress.c.y + progress.sz.y + spacer));
+	add(username, new Coord(420 - username.sz.x/2, userlbl.c.y + userlbl.sz.y + spacer));
+	add(passlbl, new Coord(420 - username.sz.x/2, username.c.y + username.sz.y + spacer));
+	add(password, new Coord(420 - password.sz.x/2, passlbl.c.y + passlbl.sz.y + spacer));
+	add(showPassword, new Coord(password.c.x, password.c.y + password.sz.y + spacer));
+	adda(new Button(100, "Save", this::save), new Coord(420, showPassword.c.y + showPassword.sz.y + spacer), 0.5, 0);
+	add(new Button(275, "New Account", this::newAccount), new Coord(accounts.c.x, accounts.c.y + accounts.sz.y + spacer));
     }
 
-    private static abstract class Login extends Widget {
-	abstract Object[] data();
-	abstract boolean enter();
+    public Object[] data() {
+	return new Object[]{ new AuthClient.NativeCred(username.text, password.text), false };
     }
 
-    private class Pwbox extends Login {
-	TextEntry user, pass;
-	CheckBox savepass;
+    private void login() {
+        super.wdgmsg("login", data());
+    }
 
-	private Pwbox(String username, boolean save) {
-	    setfocustab(true);
-	    add(new Label("User name", textf), Coord.z);
-	    add(user = new TextEntry(150, username), new Coord(0, 20));
-	    add(new Label("Password", textf), new Coord(0, 50));
-	    add(pass = new TextEntry(150, ""), new Coord(0, 70));
-	    pass.pw = true;
-	    add(savepass = new CheckBox("Remember me", true), new Coord(0, 100));
-	    savepass.a = save;
-	    if(user.text.equals(""))
-		setfocus(user);
-	    else
-		setfocus(pass);
-	    resize(new Coord(150, 150));
-	    LoginScreen.this.add(this, new Coord(345, 310));
+    private void save() {
+        if(accounts.sel != null) {
+            accounts.sel.username = username.text;
+            accounts.sel.password = password.text;
 	}
-
-	public void wdgmsg(Widget sender, String name, Object... args) {
-	}
-
-	Object[] data() {
-	    return(new Object[] {new AuthClient.NativeCred(user.text, pass.text), savepass.a});
-	}
-
-	boolean enter() {
-	    if(user.text.equals("")) {
-		setfocus(user);
-		return(false);
-	    } else if(pass.text.equals("")) {
-		setfocus(pass);
-		return(false);
-	    } else {
-		return(true);
-	    }
-	}
-
-	public boolean globtype(char k, KeyEvent ev) {
-	    if((k == 'r') && ((ev.getModifiersEx() & (KeyEvent.META_DOWN_MASK | KeyEvent.ALT_DOWN_MASK)) != 0)) {
-		savepass.set(!savepass.a);
-		return(true);
-	    }
-	    return(false);
+        try {
+            accdb.save();
+	} catch (Exception e) {
+            error("Failed to save accounts");
 	}
     }
 
-    private class Tokenbox extends Login {
-	Text label;
-	Button btn;
-		
-	private Tokenbox(String username) {
-	    label = textfs.render("Identity is saved for " + username, java.awt.Color.WHITE);
-	    add(btn = new Button(100, "Forget me"), new Coord(75, 30));
-	    resize(new Coord(250, 100));
-	    LoginScreen.this.add(this, new Coord(295, 330));
-	}
-		
-	Object[] data() {
-	    return(new Object[0]);
-	}
-		
-	boolean enter() {
-	    return(true);
-	}
-		
-	public void wdgmsg(Widget sender, String name, Object... args) {
-	    if(sender == btn) {
-		LoginScreen.this.wdgmsg("forget");
-		return;
-	    }
-	    super.wdgmsg(sender, name, args);
-	}
-		
-	public void draw(GOut g) {
-	    g.image(label.tex(), new Coord((sz.x / 2) - (label.sz().x / 2), 0));
-	    super.draw(g);
-	}
-	
-	public boolean globtype(char k, KeyEvent ev) {
-	    if((k == 'f') && ((ev.getModifiersEx() & (KeyEvent.META_DOWN_MASK | KeyEvent.ALT_DOWN_MASK)) != 0)) {
-		LoginScreen.this.wdgmsg("forget");
-		return(true);
-	    }
-	    return(false);
-	}
-    }
-
-    private void mklogin() {
-	synchronized(ui) {
-	    adda(btn = new IButton("gfx/hud/buttons/login", "u", "d", "o") {
-		    protected void depress() {Audio.play(Button.lbtdown.stream());}
-		    protected void unpress() {Audio.play(Button.lbtup.stream());}
-		}, 419, 510, 0.5, 0.5);
-	    progress(null);
-	}
+    private void newAccount() {
+        final AccountManagement.Account acc = accdb.addAccount();
+        accounts.sel = acc;
+	username.settext(acc.username);
+	setfocus(username);
+	password.settext(acc.password);
     }
 
     private void error(String error) {
 	synchronized(ui) {
-	    if(this.error != null)
-		this.error = null;
-	    if(error != null)
-		this.error = textf.render(error, java.awt.Color.RED);
+	    this.error.settext(error);
 	}
     }
 
     private void progress(String p) {
 	synchronized(ui) {
-	    if(progress != null)
-		progress = null;
-	    if(p != null)
-		progress = textf.render(p, java.awt.Color.WHITE);
+	    this.progress.settext(p);
 	}
     }
 
     private void clear() {
-	if(cur != null) {
-	    ui.destroy(cur);
-	    cur = null;
-	    ui.destroy(btn);
-	    btn = null;
-	}
-	progress(null);
-    }
-
-    public void wdgmsg(Widget sender, String msg, Object... args) {
-	if(sender == btn) {
-	    if(cur.enter())
-		super.wdgmsg("login", cur.data());
-	    return;
-	} else if(sender == optbtn) {
-	    if(opts == null) {
-		opts = adda(new OptWnd(false) {
-			public void hide() {
-			    /* XXX */
-			    reqdestroy();
-			}
-		    }, sz.div(2), 0.5, 0.5);
-	    } else {
-		opts.reqdestroy();
-		opts = null;
-	    }
-	    return;
-	} else if(sender == opts) {
-	    opts.reqdestroy();
-	    opts = null;
-	}
-	super.wdgmsg(sender, msg, args);
-    }
-
-    public void cdestroy(Widget ch) {
-	if(ch == opts) {
-	    opts = null;
-	}
+	progress("");
     }
 
     public void uimsg(String msg, Object... args) {
 	synchronized(ui) {
-	    if(msg == "passwd") {
-		clear();
-		cur = new Pwbox((String)args[0], (Boolean)args[1]);
-		mklogin();
-	    } else if(msg == "token") {
-		clear();
-		cur = new Tokenbox((String)args[0]);
-		mklogin();
-	    } else if(msg == "error") {
-		error((String)args[0]);
-	    } else if(msg == "prg") {
-		error(null);
-		clear();
-		progress((String)args[0]);
+	    switch (msg) {
+		case "passwd":
+		    clear();
+		    break;
+		case "token":
+		    clear();
+		    break;
+		case "error":
+		    error((String)args[0]);
+		    break;
+		case "prg":
+		    error("");
+		    progress((String)args[0]);
+		    break;
 	    }
 	}
     }
@@ -241,22 +181,6 @@ public class LoginScreen extends Widget {
     protected void added() {
 	presize();
 	parent.setfocus(this);
-    }
-
-    public void draw(GOut g) {
-	super.draw(g);
-	if(error != null)
-	    g.image(error.tex(), new Coord(420 - (error.sz().x / 2), 450));
-	if(progress != null)
-	    g.image(progress.tex(), new Coord(420 - (progress.sz().x / 2), 350));
-    }
-
-    public boolean type(char k, KeyEvent ev) {
-	if(k == 10) {
-	    if((cur != null) && cur.enter())
-		wdgmsg("login", cur.data());
-	    return(true);
-	}
-	return(super.type(k, ev));
+	setfocus(username);
     }
 }

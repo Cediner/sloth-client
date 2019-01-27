@@ -402,7 +402,9 @@ public class MapFileWidget extends Widget {
 
     public boolean mousewheel(Coord c, int amount) {
 	if(amount > 0) {
-	    if(allowzoomout())
+	    //if(allowzoomout())
+	    final Coord zmaps = cmaps.mul(1 << Math.min(zoomlevel + 1, dlvl + 1));
+	    if(zmaps.x != 0 && zmaps.y != 0)
 		zoomlevel = Math.min(zoomlevel + 1, dlvl + 1);
 	} else {
 	    zoomlevel = Math.max(zoomlevel - 1, 0);

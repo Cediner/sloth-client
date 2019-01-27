@@ -26,12 +26,15 @@
 
 package haven;
 
+import java.util.function.Consumer;
+
 public class CheckBox extends Widget {
     public static final Tex lbox = Resource.loadtex("gfx/hud/chkbox"), lmark = Resource.loadtex("gfx/hud/chkmark");
     public static final Tex sbox = Resource.loadtex("gfx/hud/chkboxs"), smark = Resource.loadtex("gfx/hud/chkmarks");
     public final Tex box, mark;
     public final Coord loff;
     public boolean a = false;
+    private Consumer<Boolean> onChange;
     Text lbl;
 
     @RName("chk")
@@ -43,7 +46,7 @@ public class CheckBox extends Widget {
 	}
     }
 
-    public CheckBox(String lbl, boolean lg) {
+    public CheckBox(String lbl, boolean lg, final Consumer<Boolean> onChange) {
 	this.lbl = Text.std.render(lbl, java.awt.Color.WHITE);
 	if(lg) {
 	    box = lbox; mark = lmark;
@@ -53,10 +56,15 @@ public class CheckBox extends Widget {
 	    loff = new Coord(5, 0);
 	}
 	sz = new Coord(box.sz().x + 5 + this.lbl.sz().x, Math.max(box.sz().y, this.lbl.sz().y));
+	this.onChange = onChange;
+    }
+
+    public CheckBox(String lbl, boolean lg) {
+	this(lbl, lg, null);
     }
 
     public CheckBox(String lbl) {
-	this(lbl, false);
+	this(lbl, false, null);
     }
 
     public boolean mousedown(Coord c, int button) {
@@ -82,6 +90,8 @@ public class CheckBox extends Widget {
     public void changed(boolean val) {
 	if(canactivate)
 	    wdgmsg("ch", a?1:0);
+	if(onChange != null)
+	    onChange.accept(val);
     }
 
     public void uimsg(String msg, Object... args) {
