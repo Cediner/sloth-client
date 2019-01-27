@@ -26,12 +26,16 @@
 
 package haven;
 
+import com.google.common.flogger.FluentLogger;
+
+import java.lang.reflect.Field;
 import java.util.*;
 import java.util.function.*;
 import java.awt.image.BufferedImage;
 import java.awt.Graphics;
 
 public abstract class ItemInfo {
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     public final Owner owner;
     
     public interface Owner extends OwnerContext {
@@ -338,8 +342,19 @@ public abstract class ItemInfo {
 		}
 		InfoFactory f = ttres.getcode(InfoFactory.class, true);
 		ItemInfo inf = f.build(owner, raw, a);
-		if(inf != null)
+		if(inf != null) {
 		    ret.add(inf);
+		    if(inf.getClass().getName().equals("Quality") && owner instanceof GItem) {
+			final GItem gi = (GItem) owner;
+		        try {
+			    final Field q = inf.getClass().getField("q");
+			    q.setAccessible(true);
+			    gi.updateQuality((int)q.getDouble(inf));
+			} catch (Exception e) {
+		            e.printStackTrace();
+			}
+		    }
+		}
 	    } else if(o instanceof String) {
 		ret.add(new AdHoc(owner, (String)o));
 	    } else {

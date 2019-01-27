@@ -60,7 +60,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public HelpWnd help;
     public OptWnd opts;
     public Collection<DraggedItem> hand = new LinkedList<DraggedItem>();
-    public WItem vhand;
+    public WItem vhand; //held item
     public ChatUI chat;
     public ChatUI.Channel syslog;
     public double prog = -1;
@@ -985,6 +985,9 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	} else if((key == 27) && (map != null) && !map.hasfocus) {
 	    setfocus(map);
 	    return(true);
+	} else if(key == '`' && vhand != null) {
+	    vhand.setLock(!vhand.locked());
+	    return true;
 	}
 	return(super.globtype(key, ev));
     }

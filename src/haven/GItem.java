@@ -31,14 +31,6 @@ import java.awt.image.BufferedImage;
 import java.util.*;
 
 public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owner {
-    public Indir<Resource> res;
-    public MessageBuf sdt;
-    public int meter = 0;
-    public int num = -1;
-    private GSprite spr;
-    private ItemInfo.Raw rawinfo;
-    private List<ItemInfo> info = Collections.emptyList();
-
     @RName("item")
     public static class $_ implements Factory {
 	public Widget create(UI ui, Object[] args) {
@@ -111,6 +103,19 @@ public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owne
 	}
     }
 
+    private static final Text.Foundry avg_txt = new Text.Foundry(Text.sansb, 10);
+    private static final Color qcol = new Color(230, 255, 255);
+    public Indir<Resource> res;
+    public MessageBuf sdt;
+    public int meter = 0;
+    public int num = -1;
+    private GSprite spr;
+    private ItemInfo.Raw rawinfo;
+    private List<ItemInfo> info = Collections.emptyList();
+    public int quality;
+    public Tex q_tex;
+
+
     public GItem(Indir<Resource> res, Message sdt) {
 	this.res = res;
 	this.sdt = new MessageBuf(sdt);
@@ -118,6 +123,15 @@ public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owne
 
     public GItem(Indir<Resource> res) {
 	this(res, Message.nil);
+    }
+
+    public void updateQuality(final int q) {
+        this.quality = q;
+        if(q > 0) {
+	    if (q_tex != null)
+		q_tex.dispose();
+	    q_tex = new TexI(Utils.outline2(avg_txt.render(String.format("%d", q), qcol).img, Color.BLACK));
+	}
     }
 
     private Random rnd = null;

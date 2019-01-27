@@ -26,6 +26,9 @@
 
 package haven;
 
+/**
+ * This is specifically the item you're holding on your mouse
+ */
 public class ItemDrag extends WItem {
     public Coord doff;
     
@@ -86,20 +89,30 @@ public class ItemDrag extends WItem {
     }
 	
     public boolean mousedown(Coord c, int button) {
+        if(button == 3 && ui.modctrl) {
+            setLock(!locked());
+            return true;
+	}
+
+        /* Loftars way of walking around with items on mouse
 	if(ui.modctrl) {
-	    /* XXX */
 	    GameUI gui = getparent(GameUI.class);
 	    if((gui != null) && (gui.map != null)) {
 		ui.modctrl = false;
 		return(gui.map.mousedown(gui.map.rootxlate(c.add(rootpos())), button));
 	    }
-	}
-	if(button == 1) {
-	    dropon(parent, c.add(this.c));
-	    return(true);
-	} else if(button == 3) {
-	    interact(parent, c.add(this.c));
-	    return(true);
+	} */
+	if(!locked()) {
+	    if (button == 1) {
+		dropon(parent, c.add(this.c));
+		return (true);
+	    } else if (button == 3) {
+		interact(parent, c.add(this.c));
+		return (true);
+	    }
+	} else if(button == 3 && ui.modmeta) {
+	    item.wdgmsg("iact", c, 0);
+	    return true;
 	}
 	return(false);
     }

@@ -612,6 +612,14 @@ public class OptWnd extends Window {
 		Coord lblc = new Coord(c.x + pre.sz.x + spacer, c.y - (pre.sz.y/2) - (lbl.sz.y/2));
 		gameplay.add(lbl, lblc);
 	    }
+	    c.y += gameplay.add(new CheckBox("Show Item Quality") {
+		{a = global.get(SHOWQUALITY, Boolean.class);}
+
+		public void set(boolean val) {
+		    global.set(SHOWQUALITY, val);
+		    a = val;
+		}
+	    }, c.copy()).sz.y + spacer;
 	    gameplay.add(new PButton(200, "Back", 27, main), c.copy());
 	    gameplay.pack();
 	}

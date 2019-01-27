@@ -88,6 +88,7 @@ public class DefSettings {
     	SHOWFARMRADIUS = "gameplay.show-farming-radius",	//[Bool] Toggle radius on farming equipment (beehive/trough)
     	SHOWHIDDEN = "gameplay.show-hidden",			//[Bool] Toggle hidden squares
     	HIDDENCOLOR = "gameplay.hidden-color",			//[RGBA] Color of hidden squares
+    	SHOWQUALITY = "gameplay.show-item-quality",             //[Bool] Toggle item quality
 
     	CAMERA = "camera.camera-type",				//[String] Camera type, default: Ortho
 
@@ -162,6 +163,7 @@ public class DefSettings {
 	global.ensure(SHOWFARMRADIUS, false);
 	global.ensure(SHOWHIDDEN, true);
 	global.ensure(HIDDENCOLOR, Color.RED);
+	global.ensure(SHOWQUALITY, true);
 	//Cameras
 	global.ensure(CAMERA, "sortho");
 	//Audio

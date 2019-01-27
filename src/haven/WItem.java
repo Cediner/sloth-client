@@ -30,18 +30,26 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import haven.ItemInfo.AttrCache;
+import haven.sloth.DefSettings;
+import haven.sloth.util.Images;
+
 import static haven.Inventory.sqsz;
 
 public class WItem extends Widget implements DTarget {
     public static final Resource missing = Resource.local().loadwait("gfx/invobjs/missing");
+    public static final Tex lockt = Images.load("item/locked");
     public final GItem item;
     private Resource cspr = null;
     private Message csdt = Message.nil;
+    private boolean locked = false;
 
     public WItem(GItem item) {
 	super(sqsz);
 	this.item = item;
     }
+
+    public boolean locked() { return locked; }
+    public void setLock(final boolean val) { locked = val; }
 
     public void drawmain(GOut g, GSprite spr) {
 	spr.draw(g);
@@ -188,6 +196,19 @@ public class WItem extends Widget implements DTarget {
 		g.prect(half, half.inv(), half, meter * Math.PI * 2);
 		g.chcolor();
 	    }
+
+	    if(item.quality > 0 && DefSettings.global.get(DefSettings.SHOWQUALITY, Boolean.class)) {
+		final Coord tsz = item.q_tex.sz();
+		final Coord c = new Coord(sz.x - tsz.x, 0);
+		g.chcolor(new Color(128, 128, 128, 128));
+		g.frect(c, c.add(tsz.x,0), c.add(tsz), c.add(0, tsz.y));
+		g.chcolor();
+	        g.image(item.q_tex, c);
+	    }
+
+	    if(locked) {
+	        g.image(lockt, Coord.z);
+	    }
 	} else {
 	    g.image(missing.layer(Resource.imgc).tex(), Coord.z, sz);
 	}
@@ -195,17 +216,24 @@ public class WItem extends Widget implements DTarget {
 
     public boolean mousedown(Coord c, int btn) {
 	if(btn == 1) {
-	    if(ui.modshift) {
-		int n = ui.modctrl ? -1 : 1;
-		item.wdgmsg("transfer", c, n);
-	    } else if(ui.modctrl) {
-		item.wdgmsg("drop", c);
-	    } else {
-		item.wdgmsg("take", c);
+	    if(!locked) {
+		if (ui.modshift) {
+		    int n = ui.modctrl ? -1 : 1;
+		    item.wdgmsg("transfer", c, n);
+		} else if (ui.modctrl) {
+		    item.wdgmsg("drop", c);
+		} else {
+		    item.wdgmsg("take", c);
+		}
+		return (true);
 	    }
-	    return(true);
 	} else if(btn == 3) {
-	    item.wdgmsg("iact", c, ui.modflags());
+	    if(ui.modctrl) {
+	        locked = !locked;
+	        return true;
+	    } else {
+		item.wdgmsg("iact", c, ui.modflags());
+	    }
 	    return(true);
 	}
 	return(false);

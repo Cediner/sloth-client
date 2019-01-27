@@ -59,3 +59,4 @@
     - Added in Account management
     - Can now see how far you are from quests by looking at their tooltip when mousing over the pointer icon.
         - This is only accurate to within ~1000 tiles.
+    - Can now lock items again in inventory and on mouse via ctrl+right click or '`' for mouse item
