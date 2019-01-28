@@ -26,11 +26,14 @@
 
 package haven;
 
+import haven.sloth.gui.MovableWidget;
+
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+
 import static haven.PUtils.*;
 
-public class Window extends Widget implements DTarget {
+public class Window extends MovableWidget implements DTarget {
     public static final Tex bg = Resource.loadtex("gfx/hud/wnd/lg/bg");
     public static final Tex bgl = Resource.loadtex("gfx/hud/wnd/lg/bgl");
     public static final Tex bgr = Resource.loadtex("gfx/hud/wnd/lg/bgr");
@@ -72,16 +75,14 @@ public class Window extends Widget implements DTarget {
     public Text cap;
     public Coord wsz, ctl, csz, atl, asz, cptl, cpsz;
     public int cmw;
-    private UI.Grab dm = null;
-    private Coord doff;
 
     @RName("wnd")
     public static class $_ implements Factory {
 	public Widget create(UI ui, Object[] args) {
 	    Coord sz = (Coord)args[0];
 	    String cap = (args.length > 1)?(String)args[1]:null;
-	    boolean lg = (args.length > 2)?((Integer)args[2] != 0):false;
-	    return(new Window(sz, cap, lg, Coord.z, Coord.z));
+	    boolean lg = (args.length > 2) && ((Integer)args[2] != 0);
+	    return (new Window(sz, cap, lg, Coord.z, Coord.z));
 	}
     }
 
@@ -95,16 +96,36 @@ public class Window extends Widget implements DTarget {
 	setfocustab(true);
     }
 
+    public Window(Coord sz, String cap, final String moveKey, boolean lg, Coord tlo, Coord rbo) {
+        super(moveKey);
+	this.tlo = tlo;
+	this.rbo = rbo;
+	this.mrgn = lg?dlmrgn:dsmrgn;
+	cbtn = add(new IButton(cbtni[0], cbtni[1], cbtni[2]));
+	chcap(cap);
+	resize2(sz);
+	setfocustab(true);
+    }
+
     public Window(Coord sz, String cap, boolean lg) {
 	this(sz, cap, lg, Coord.z, Coord.z);
+    }
+
+    public Window(Coord sz, String cap, final String moveKey, boolean lg) {
+	this(sz, cap, moveKey, lg, Coord.z, Coord.z);
     }
 
     public Window(Coord sz, String cap) {
 	this(sz, cap, false);
     }
 
+    public Window(final Coord sz, final String cap, final String moveKey) {
+	this(sz, cap, moveKey,false);
+    }
+
     protected void added() {
 	parent.setfocus(this);
+	super.added();
     }
 
     public void chcap(String cap) {
@@ -224,15 +245,20 @@ public class Window extends Widget implements DTarget {
     }
 
     public void uimsg(String msg, Object... args) {
-	if(msg == "pack") {
-	    pack();
-	} else if(msg == "dt") {
-	    dt = (Integer)args[0] != 0;
-	} else if(msg == "cap") {
-	    String cap = (String)args[0];
-	    chcap(cap.equals("")?null:cap);
-	} else {
-	    super.uimsg(msg, args);
+        switch (msg) {
+	    case "pack":
+		pack();
+		break;
+	    case "dt":
+		dt = (Integer)args[0] != 0;
+		break;
+	    case "cap":
+		String cap = (String)args[0];
+		chcap(cap.equals("")?null:cap);
+		break;
+	    default:
+		super.uimsg(msg, args);
+	        break;
 	}
     }
 
@@ -243,18 +269,14 @@ public class Window extends Widget implements DTarget {
 	    return(c.sub(atl));
     }
 
+    @Override
+    protected boolean moveHit(Coord c, int btn) {
+	Coord cpc = c.sub(cptl);
+	return c.isect(ctl, csz) || (c.isect(cptl, cpsz) && (cm.back.getRaster().getSample(cpc.x % cm.back.getWidth(), cpc.y, 3) >= 128));
+    }
+
     public boolean mousedown(Coord c, int button) {
 	if(super.mousedown(c, button)) {
-	    parent.setfocus(this);
-	    raise();
-	    return(true);
-	}
-	Coord cpc = c.sub(cptl);
-	if(c.isect(ctl, csz) || (c.isect(cptl, cpsz) && (cm.back.getRaster().getSample(cpc.x % cm.back.getWidth(), cpc.y, 3) >= 128))) {
-	    if(button == 1) {
-		dm = ui.grabmouse(this);
-		doff = c;
-	    }
 	    parent.setfocus(this);
 	    raise();
 	    return(true);
@@ -263,21 +285,12 @@ public class Window extends Widget implements DTarget {
     }
 
     public boolean mouseup(Coord c, int button) {
-	if(dm != null) {
-	    dm.remove();
-	    dm = null;
-	} else {
-	    super.mouseup(c, button);
-	}
+	super.mouseup(c, button);
 	return(true);
     }
 
     public void mousemove(Coord c) {
-	if(dm != null) {
-	    this.c = this.c.add(c.add(doff.inv()));
-	} else {
-	    super.mousemove(c);
-	}
+	super.mousemove(c);
     }
 
     public void close() {

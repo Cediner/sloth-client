@@ -33,6 +33,7 @@ import java.awt.image.BufferedImage;
 import haven.Resource.AButton;
 import haven.sloth.gui.DeletedManager;
 import haven.sloth.gui.HiddenManager;
+import haven.sloth.gui.MovableWidget;
 import haven.sloth.gui.SoundManager;
 import haven.sloth.util.Images;
 
@@ -40,7 +41,7 @@ import java.util.*;
 import java.util.function.Consumer;
 
 //TODO: Not happy with the way custom pagina are currently, would be more ideal to match normal Pagina
-public class MenuGrid extends Widget {
+public class MenuGrid extends MovableWidget {
     public final static Tex bg = Resource.loadtex("gfx/hud/invsq");
     public final static Coord bgsz = bg.sz().add(-1, -1);
     public final static RichText.Foundry ttfnd = new RichText.Foundry(TextAttribute.FAMILY, "SansSerif", TextAttribute.SIZE, 10);
@@ -295,7 +296,7 @@ public class MenuGrid extends Widget {
     }
 
     public MenuGrid() {
-	super(bgsz.mul(gsz).add(1, 1));
+	super(bgsz.mul(gsz).add(1, 1), "Menugrid");
 
 	//Make custom stuff
 	final CustomPagina hidden_pag = new CustomPagina(this, "Hidden Objs", 'h',
@@ -304,9 +305,22 @@ public class MenuGrid extends Widget {
 		Images.loadimg("menu/default/deleted"), (btn) -> ui.gui.add(new DeletedManager()));
 	final CustomPagina sound_pag = new CustomPagina(this, "Alerted Objs", 'a',
 		Images.loadimg("menu/default/sound"), (btn) -> ui.gui.add(new SoundManager()));
+	//Hafen windows
+	final CustomPagina inv_pag = new CustomPagina(this, "Inventory", 'i',
+		Images.loadimg("menu/default/wnd/inventory"), (btn) -> ui.gui.toggleInv());
+	final CustomPagina kin_pag = new CustomPagina(this, "Kith & Kin", 'k',
+		Images.loadimg("menu/default/wnd/kithnkin"), (btn) -> ui.gui.toggleKin());
+	final CustomPagina chr_pag = new CustomPagina(this, "Chracter Sheet", 'c',
+		Images.loadimg("menu/default/wnd/charwnd"), (btn) -> ui.gui.toggleCharWnd());
+	final CustomPagina equ_pag = new CustomPagina(this, "Equipment", 'e',
+		Images.loadimg("menu/default/wnd/equipment"), (btn) -> ui.gui.toggleEquipment());
+	final CustomPagina opt_pag = new CustomPagina(this, "Options", 'o',
+		Images.loadimg("menu/default/wnd/options"), (btn) -> ui.gui.toggleOpts());
+	final CustomPagina mapf_pag = new CustomPagina(this, "Map", 'm',
+		Images.loadimg("menu/default/wnd/bigmap"), (btn) -> ui.gui.toggleMapfile());
 	//Can't use: A, B, C, E, T for base menus
 	paginae.add(new CustomPagina(this, "Management", 'm', Images.loadimg("menu/default/scripts"),
-		hidden_pag, deleted_pag, sound_pag));
+		hidden_pag, deleted_pag, sound_pag, inv_pag, kin_pag, chr_pag, equ_pag, opt_pag, mapf_pag));
     }
 
 
@@ -519,13 +533,19 @@ public class MenuGrid extends Widget {
 	    return(null);
     }
 
+    @Override
+    protected boolean moveHit(Coord c, int btn) {
+	return btn == 3 && c.isect(Coord.z, sz);
+    }
+
     public boolean mousedown(Coord c, int button) {
 	PagButton h = bhit(c);
 	if((button == 1) && (h != null)) {
 	    pressed = h;
 	    grab = ui.grabmouse(this);
+	    return(true);
 	}
-	return(true);
+	return super.mousedown(c, button);
     }
 
     public void mousemove(Coord c) {
@@ -533,6 +553,8 @@ public class MenuGrid extends Widget {
 	    PagButton h = bhit(c);
 	    if(h != pressed)
 		dragging = pressed.pag;
+	} else {
+	    super.mousemove(c);
 	}
     }
 
@@ -575,8 +597,10 @@ public class MenuGrid extends Widget {
 	    }
 	    grab.remove();
 	    grab = null;
+	    return(true);
+	} else {
+	    return super.mouseup(c, button);
 	}
-	return(true);
     }
 
     public void uimsg(String msg, Object... args) {

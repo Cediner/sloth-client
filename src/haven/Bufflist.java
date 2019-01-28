@@ -26,11 +26,17 @@
 
 package haven;
 
+import haven.sloth.gui.MovableWidget;
+
 import java.util.*;
 
-public class Bufflist extends Widget {
+public class Bufflist extends MovableWidget {
     static final int margin = 2;
     static final int num = 5;
+
+    Bufflist() {
+        super("Bufflist");
+    }
 
     private void arrange(Widget imm) {
 	int i = 0;
@@ -55,6 +61,17 @@ public class Bufflist extends Widget {
 	    p.a.move(p.b, coff);
 	    coff += off;
 	}
+    }
+
+    @Override
+    protected boolean moveHit(Coord c, int btn) {
+        if(btn == 3 && ui.modmeta) {
+	    for (Widget wdg = child; wdg != null; wdg = wdg.next) {
+		if (c.isect(wdg.c, wdg.sz))
+		    return true;
+	    }
+	}
+	return false;
     }
 
     public void addchild(Widget child, Object... args) {

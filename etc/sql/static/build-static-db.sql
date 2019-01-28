@@ -56,6 +56,7 @@ INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/terobjs/vehicle/wheelba
 INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/terobjs/vehicle/wreckingball'	, (SELECT type_id FROM type WHERE name_key = 'VEHICLE'));
 -- animals
 INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/badger/badger', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/walrus/walrus', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
 INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/bear/bear', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
 INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/bat/bat', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
 INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/boar/boar', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
@@ -315,6 +316,7 @@ CREATE TABLE IF NOT EXISTS range (
     CONSTRAINT dangerous_fk_object_id FOREIGN KEY (object_id) REFERENCES object(object_id) ON DELETE CASCADE
 );
 -- objs with range
+INSERT OR IGNORE INTO range VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/walrus/walrus'	), 10);
 INSERT OR IGNORE INTO range VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/badger/badger'	), 10);
 INSERT OR IGNORE INTO range VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/bear/bear'		), 10);
 INSERT OR IGNORE INTO range VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/bat/bat'		), 10);

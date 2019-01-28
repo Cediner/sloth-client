@@ -27,10 +27,16 @@
 package haven;
 
 import java.awt.Color;
+import java.sql.PreparedStatement;
 import java.util.*;
 import haven.Composited.Desc;
+import haven.sloth.gui.MovableWidget;
+import haven.sloth.io.Storage;
+
+import static haven.sloth.gui.MovableWidget.VISIBLE_PER;
 
 public class Avaview extends PView {
+    private static final String plkey = "PlayerAvaview";
     public static final Tex missing = Resource.loadtex("gfx/hud/equip/missing");
     public static final Coord dasz = missing.sz();
     public Color color = Color.WHITE;
@@ -40,7 +46,11 @@ public class Avaview extends PView {
     private Composited comp;
     private List<Composited.MD> cmod = null;
     private List<Composited.ED> cequ = null;
+    private UI.Grab dm;
+    private Coord doff;
     private final String camnm;
+    private final boolean player, party;
+
 
     @RName("av")
     public static class $_ implements Factory {
@@ -60,8 +70,31 @@ public class Avaview extends PView {
 
     public Avaview(Coord sz, long avagob, String camnm) {
 	super(sz);
-	this.camnm = camnm;
+	switch (camnm) {
+	    case "plavacam":
+	        player = true;
+	        party = false;
+	        this.camnm = "avacam";
+	        break;
+	    case "ptavacam":
+	        player = false;
+	        party = true;
+		this.camnm = "avacam";
+		break;
+	    default:
+		player = false;
+		party = false;
+	        this.camnm = camnm;
+	}
 	this.avagob = avagob;
+    }
+
+    @Override
+    protected void added() {
+	if(player && MovableWidget.knownPositions.containsKey(plkey)) {
+	    setPosRel(MovableWidget.knownPositions.get(plkey));
+	}
+        super.added();
     }
 
     public void uimsg(String msg, Object... args) {
@@ -211,10 +244,83 @@ public class Avaview extends PView {
     }
 
     public boolean mousedown(Coord c, int button) {
-	if(canactivate) {
+        if(player || (party && button == 3 && ui.modmeta)) {
+	    dm = ui.grabmouse(this);
+	    doff = c;
+	    parent.setfocus(this);
+	    raise();
+	    return true;
+	} else if(canactivate) {
 	    wdgmsg("click", button);
 	    return(true);
+	} else {
+	    return super.mousedown(c, button);
 	}
-	return(super.mousedown(c, button));
+    }
+
+
+    private void savePosition() {
+	if(player || party) {
+	    final Coord2d rel = player ? relpos() : parent.relpos();
+	    Storage.dynamic.write(sql -> {
+		final PreparedStatement stmt = Storage.dynamic.prepare("INSERT OR REPLACE INTO widget_position VALUES (?, ?, ?)");
+		stmt.setString(1, player ? plkey : Partyview.ptkey);
+		stmt.setDouble(2, rel.x);
+		stmt.setDouble(3, rel.y);
+		stmt.executeUpdate();
+	    });
+	}
+    }
+
+    @Override
+    public boolean mouseup(final Coord mc, final int button) {
+	if(dm != null) {
+	    //Preference to this if we're in the middle of moving the widget
+	    dm.remove();
+	    dm = null;
+	    if(player) {
+		//Ensure user didn't throw the window right off the visible screen...
+		if ((c.x + sz.x * VISIBLE_PER) > parent.sz.x) {
+		    c.x = parent.sz.x - sz.x;
+		} else if ((c.x + (sz.x * VISIBLE_PER)) < 0) {
+		    c.x = 0;
+		}
+		if ((c.y + sz.y * VISIBLE_PER) > parent.sz.y) {
+		    c.y = parent.sz.y - sz.y;
+		} else if ((c.y + (sz.y * VISIBLE_PER)) < 0) {
+		    c.y = 0;
+		}
+	    } else {
+		//Ensure user didn't throw the window right off the visible screen...
+		if ((parent.c.x + parent.sz.x * VISIBLE_PER) > parent.parent.sz.x) {
+		    parent.c.x = parent.parent.sz.x - parent.sz.x;
+		} else if ((parent.c.x + (parent.sz.x * VISIBLE_PER)) < 0) {
+		    parent.c.x = 0;
+		}
+		if ((parent.c.y + parent.sz.y * VISIBLE_PER) > parent.parent.sz.y) {
+		    parent.c.y = parent.parent.sz.y - parent.sz.y;
+		} else if ((parent.c.y + (parent.sz.y * VISIBLE_PER)) < 0) {
+		    parent.c.y = 0;
+		}
+	    }
+	    savePosition();
+	    return true;
+	} else {
+	    return super.mouseup(mc, button);
+	}
+    }
+
+    @Override
+    public void mousemove(final Coord mc) {
+	if(dm != null) {
+	    if(player) {
+		//Preference to this if we're in the middle of moving the widget
+		c = c.add(mc.add(doff.inv()));
+	    } else {
+	        parent.c = parent.c.add(mc.add(doff.inv()));
+	    }
+	} else {
+	    super.mousemove(mc);
+	}
     }
 }

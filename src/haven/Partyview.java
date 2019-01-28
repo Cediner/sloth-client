@@ -27,11 +27,13 @@
 package haven;
 
 import haven.Party.Member;
+import haven.sloth.gui.MovableWidget;
 
 import java.util.*;
 import java.util.Map.Entry;
 
 public class Partyview extends Widget {
+    public static final String ptkey = "Partyview";
     long ign;
     Party party;
     Map<Long, Member> om = null;
@@ -52,6 +54,9 @@ public class Partyview extends Widget {
     }
 
     protected void added() {
+	if(MovableWidget.knownPositions.containsKey(ptkey)) {
+	    setPosRel(MovableWidget.knownPositions.get(ptkey));
+	}
 	party = ui.sess.glob.party;
 	update();
     }
@@ -64,7 +69,7 @@ public class Partyview extends Widget {
 		    continue;
 		Avaview w = avs.get(m);
 		if(w == null) {
-		    w = add(new Avaview(new Coord(27, 27), m.gobid, "avacam") {
+		    w = add(new Avaview(new Coord(27, 27), m.gobid, "ptavacam") {
 			    private Tex tooltip = null;
 			    
 			    public Object tooltip(Coord c, Widget prev) {

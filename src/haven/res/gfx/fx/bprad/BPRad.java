@@ -19,7 +19,7 @@ public class BPRad extends Sprite {
     public BPRad(Sprite.Owner owner, Resource res, float radius) {
 	super(owner, res);
 	final int per = Math.max(24, (int)(6.283185307179586D * radius / 11.0D));
-	final float height = 5.0f;
+	final float height = 10.0f;
 	FloatBuffer verts = Utils.mkfbuf(per * 3 * 2);
 	FloatBuffer normals = Utils.mkfbuf(per * 3 * 2);
 	ShortBuffer indx = Utils.mksbuf(per * 6);

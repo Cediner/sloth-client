@@ -38,7 +38,7 @@ public class HelpWnd extends Window {
     }
     
     public HelpWnd(Indir<Resource> res) {
-	super(new Coord(300, 430), "Help");
+	super(new Coord(300, 430), "Help", "Help");
 	this.res = res;
 	this.text = add(new RichTextBox(new Coord(300, 400), "", fnd), Coord.z);
 	add(new Button(100, "Dismiss") {

@@ -251,7 +251,11 @@ public class Buff extends Widget implements ItemInfo.ResOwner {
     }
 
     public boolean mousedown(Coord c, int btn) {
-	wdgmsg("cl", c.sub(imgoff), btn, ui.modflags());
-	return(true);
+        if(!(btn == 3 && ui.modmeta)) {
+	    wdgmsg("cl", c.sub(imgoff), btn, ui.modflags());
+	    return (true);
+	} else {
+            return false;
+	}
     }
 }

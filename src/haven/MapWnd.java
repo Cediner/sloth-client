@@ -63,7 +63,7 @@ public class MapWnd extends Window {
     private final static Comparator<Marker> namecmp = ((a, b) -> a.nm.compareTo(b.nm));
 
     public MapWnd(MapFile file, MapView mv, Coord sz, String title) {
-	super(sz, title, true);
+	super(sz, title, title,true);
 	this.mv = mv;
 	this.player = new MapLocator(mv);
 	viewf = add(new Frame(Coord.z, true));

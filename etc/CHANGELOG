@@ -60,3 +60,18 @@
     - Can now see how far you are from quests by looking at their tooltip when mousing over the pointer icon.
         - This is only accurate to within ~1000 tiles.
     - Can now lock items again in inventory and on mouse via ctrl+right click or '`' for mouse item
+    - Added back in movable UI and converted over to my own position saving system. This covers:
+        - Your main inventory, equipment window, character window, kith & kin window, map window, Calendar widget,
+          Help Window, Your avatar, The Party view via right click, Bufflist (alt+right click drag buff icons)
+    - Made it so that anything that is movable has to have a certain percentage of its width or height exposed otherwise
+      it will rebound back into the clients window. This is to avoid people dragging windows off into oblivion and
+      having to manually reset them in the settings
+    - The buttons to bring up windows have been moved to the menugrid under management ('m'). You can still toggle them
+      via the old keybinds as well
+        - Equipment ('e')  Ctrl+E
+        - Character Sheet ('c') Ctrl+T
+        - Options ('o') Ctrl+O
+        - Kith & Kin ('k') Ctrl+B
+        - Map ('m') Ctrl+A
+        - Inventory ('i') Tab
+    - Bumped the radius circle height back to 10 units like default

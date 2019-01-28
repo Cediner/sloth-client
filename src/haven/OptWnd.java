@@ -399,7 +399,7 @@ public class OptWnd extends Window {
     }
 
     public OptWnd(boolean gopts) {
-	super(Coord.z, "Options", true);
+	super(Coord.z, "Options", "Options",true);
 	main = add(new Panel());
 	video = add(new VideoPanel(main));
 	audio = add(new Panel());

@@ -26,10 +26,12 @@
 
 package haven;
 
+import haven.sloth.gui.MovableWidget;
+
 import java.awt.Color;
 import java.util.*;
 
-public class IMeter extends Widget {
+public class IMeter extends MovableWidget {
     static Coord off = new Coord(22, 7);
     static Coord fsz = new Coord(101, 24);
     static Coord msz = new Coord(75, 10);
@@ -41,14 +43,16 @@ public class IMeter extends Widget {
 	public Widget create(UI ui, Object[] args) {
 	    Indir<Resource> bg = ui.sess.getres((Integer)args[0]);
 	    List<Meter> meters = new LinkedList<Meter>();
-	    for(int i = 1; i < args.length; i += 2)
-		meters.add(new Meter((Color)args[i], (Integer)args[i + 1]));
-	    return(new IMeter(bg, meters));
+	    StringBuilder name = new StringBuilder();
+	    for(int i = 1; i < args.length; i += 2) {
+		meters.add(new Meter((Color) args[i], (Integer) args[i + 1]));
+	    }
+	    return(new IMeter(bg, meters, "meter-"+args[0]));
 	}
     }
     
-    public IMeter(Indir<Resource> bg, List<Meter> meters) {
-	super(fsz);
+    public IMeter(Indir<Resource> bg, List<Meter> meters, final String name) {
+	super(fsz, name);
 	this.bg = bg;
 	this.meters = meters;
     }
@@ -62,7 +66,12 @@ public class IMeter extends Widget {
 	    this.a = a;
 	}
     }
-    
+
+    @Override
+    protected boolean moveHit(Coord c, int btn) {
+	return c.isect(Coord.z, sz);
+    }
+
     public void draw(GOut g) {
 	try {
 	    Tex bg = this.bg.get().layer(Resource.imgc).tex();

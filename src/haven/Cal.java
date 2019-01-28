@@ -26,11 +26,13 @@
 
 package haven;
 
+import haven.sloth.gui.MovableWidget;
+
 import static java.lang.Math.PI;
 
-public class Cal extends Widget {
+public class Cal extends MovableWidget {
     public static final double hbr = 20;
-    static Tex bg = Resource.loadtex("gfx/hud/calendar/glass");
+    static TexI bg = new TexI(Resource.loadimg("gfx/hud/calendar/glass"));
     static Tex dlnd = Resource.loadtex("gfx/hud/calendar/dayscape");
     static Tex dsky = Resource.loadtex("gfx/hud/calendar/daysky");
     static Tex nlnd = Resource.loadtex("gfx/hud/calendar/nightscape");
@@ -39,7 +41,7 @@ public class Cal extends Widget {
     static Resource.Anim moon = Resource.local().loadwait("gfx/hud/calendar/moon").layer(Resource.animc);
 
     public Cal() {
-	super(bg.sz());
+	super(bg.sz(), "Calendar");
     }
 
     public void draw(GOut g) {
@@ -57,5 +59,10 @@ public class Cal extends Widget {
 	g.image(sun, sc);
 	g.image(a.night?nlnd:dlnd, Coord.z);
 	g.image(bg, Coord.z);
+    }
+
+    @Override
+    protected boolean moveHit(Coord c, int btn) {
+	return bg.back.getRaster().getSample(c.x % bg.back.getWidth(), c.y, 3) > 0;
     }
 }

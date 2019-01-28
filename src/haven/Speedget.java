@@ -26,9 +26,11 @@
 
 package haven;
 
+import haven.sloth.gui.MovableWidget;
+
 import java.awt.event.KeyEvent;
 
-public class Speedget extends Widget {
+public class Speedget extends MovableWidget {
     public static final Tex imgs[][];
     public static final String tips[];
     public static final Coord tsz;
@@ -61,7 +63,7 @@ public class Speedget extends Widget {
     }
 
     public Speedget(int cur, int max) {
-	super(tsz);
+	super(tsz, "Speedget");
 	this.cur = cur;
 	this.max = max;
     }
@@ -88,20 +90,29 @@ public class Speedget extends Widget {
 	    max = (Integer)args[0];
     }
 
+    @Override
+    protected boolean moveHit(Coord c, int btn) {
+	return btn == 3 && c.isect(Coord.z, sz);
+    }
+
     public void set(int s) {
 	wdgmsg("set", s);
     }
 
     public boolean mousedown(Coord c, int button) {
-	int x = 0;
-	for(int i = 0; i < 4; i++) {
-	    x += imgs[i][0].sz().x;
-	    if(c.x < x) {
-		set(i);
-		break;
+        if(button == 1) {
+	    int x = 0;
+	    for (int i = 0; i < 4; i++) {
+		x += imgs[i][0].sz().x;
+		if (c.x < x) {
+		    set(i);
+		    break;
+		}
 	    }
+	    return (true);
+	} else {
+            return super.mousedown(c, button);
 	}
-	return(true);
     }
 
     public boolean mousewheel(Coord c, int amount) {
