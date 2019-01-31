@@ -22,7 +22,7 @@ public class GridMesh extends FastMesh {
 	colors = new float[256][3];
 	int i = 0;
 	try {
-	    BufferedImage im = ImageIO.read(new File("data/grad.png"));
+	    BufferedImage im = Resource.loadimg("custom/gridgrad");
 	    Color c;
 	    for(i=0;i<256;++i) {
 		c = new Color(im.getRGB(i, 25));

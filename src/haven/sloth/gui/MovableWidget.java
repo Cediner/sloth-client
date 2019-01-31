@@ -78,6 +78,7 @@ public abstract class MovableWidget extends Widget {
     private void savePosition() {
         if(key != null) {
             final Coord2d rel = relpos();
+            knownPositions.put(key, rel);
             Storage.dynamic.write(sql -> {
                 final PreparedStatement stmt = Storage.dynamic.prepare("INSERT OR REPLACE INTO widget_position VALUES (?, ?, ?)");
                 stmt.setString(1, key);

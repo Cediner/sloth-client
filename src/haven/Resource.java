@@ -1467,6 +1467,28 @@ public class Resource implements Serializable {
 	return(local().loadwait(name).layer(imgc).img);
     }
 
+    public static BufferedImage loadimg(final String name, final int id) {
+	final Resource res = local().loadwait(name);
+	final Collection<Image> imgs = res.layers(imgc);
+	for(Image img : imgs) {
+	    if(img.id == id) {
+		return img.img;
+	    }
+	}
+	throw new RuntimeException("Failed to find img for " + name + " - id: " + id);
+    }
+
+    public static Tex loadtex(final String name, final int id) {
+	final Resource res = local().loadwait(name);
+	final Collection<Image> imgs = res.layers(imgc);
+	for(Image img : imgs) {
+	    if(img.id == id) {
+		return img.tex();
+	    }
+	}
+	throw new RuntimeException("Failed to find tex for " + name + " - id: " + id);
+    }
+
     public static Tex loadtex(String name) {
 	return(local().loadwait(name).layer(imgc).tex());
     }

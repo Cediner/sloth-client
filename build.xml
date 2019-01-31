@@ -8,6 +8,9 @@
     <copy todir="build/data/">
       <fileset dir="etc/data/" includes="**"/>
     </copy>
+    <copy todir="build/data/res/">
+      <fileset dir="etc/res/built/" includes="**"/>
+    </copy>
     <available property="has-res-jar" file="build/hafen-res.jar" />
     <available property="has-buildinfo" file="build/classes/buildinfo" />
     <available property="unpacked-lib" file="build/classes-lib" />
@@ -95,6 +98,54 @@
       <fileset dir="lib/jogl-natives" />
     </copy>
   </target>
+
+  <target name="build-custom-res">
+    <delete dir="etc/res/built/" includes="**"/>
+    <exec executable="etc/res/hafen-layer-util.exe">
+      <arg value="ENCODE"/>
+      <arg value="etc/res/unbuilt/"/>
+      <arg value="etc/res/built/"/>
+      <arg value="etc/res/layers/hafen"/>
+    </exec>
+  </target>
+
+  <target name="prep-update">
+    <copy todir="update">
+      <fileset dir="lib">
+        <include name="jogl-all.jar" />
+        <include name="gluegen-rt.jar" />
+        <include name="hafen-res.jar" />
+        <include name="builtin-res.jar" />
+        <include name="flogger-0.3.1.jar" />
+        <include name="flogger-system-backend-0.3.1.jar" />
+        <include name="sqlite-jdbc-3.26.0.jar"/>
+        <include name="bcprov-jdk15on-160.jar"/>
+      </fileset>
+      <fileset dir="lib/jogl-natives" />
+      <fileset dir="build">
+        <include name="hafen.jar"/>
+        <include name="logging.properties"/>
+      </fileset>
+    </copy>
+    <copy todir="update/data">
+      <fileset dir="etc/data/" includes="**"/>
+    </copy>
+    <copy todir="update/data/res">
+      <fileset dir="etc/res/built/" includes="**"/>
+    </copy>
+  </target>
+
+  <target name="update" depends="prep-update">
+    <exec executable="git" outputproperty="gitrev" failifexecutionfails="false">
+      <arg line="rev-parse HEAD" />
+    </exec>
+    <java jar="update/hafen-updater.jar" fork="true">
+      <arg value="hash"/>
+      <arg value="update/"/>
+      <arg value="${gitrev}"/>
+    </java>
+    <move file="ver" todir="update"/>
+  </target>
   
   <target name="deftgt" depends="jars, appletview" />
 
@@ -103,6 +154,6 @@
   </target>
   
   <target name="clean">
-    <delete dir="build" />
+
   </target>
 </project>

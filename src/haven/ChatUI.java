@@ -772,7 +772,7 @@ public class ChatUI extends Widget {
 		int gobid = (Integer)args[1];
 		String line = (String)args[2];
 		Color col = Color.WHITE;
-		synchronized(ui.sess.glob.party.memb) {
+		synchronized(ui.sess.glob.party) {
 		    Party.Member pm = ui.sess.glob.party.memb.get((long)gobid);
 		    if(pm != null)
 			col = pm.col;

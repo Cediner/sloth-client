@@ -26,6 +26,8 @@
 
 package haven;
 
+import haven.sloth.gui.MinimapWnd;
+
 import java.util.*;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
@@ -43,6 +45,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public MenuGrid menu; //The menu grid widget
     public MapView map; // The 3D world of hafen
     public LocalMiniMap mmap; //The minimap widget
+    private MinimapWnd mmapwnd; //The minimap window
     public Fightview fv; //Fightview widget
     private List<Widget> meters = new LinkedList<Widget>(); //Our meters
     private Text lastmsg;
@@ -519,8 +522,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		ui.destroy(mapfile);
 		mapfile = null;
 	    }
-	    mmap = blpanel.add(new LocalMiniMap(new Coord(133, 133), map), minimapc);
-	    mmap.lower();
+	    mmap = new LocalMiniMap(new Coord(133, 133), map);
+	    mmapwnd = adda(new MinimapWnd(mmap), new Coord(sz.x, 0), 1, 0);
 	    if(ResCache.global != null) {
 		MapFile file = MapFile.load(ResCache.global, mapfilename());
 		mmap.save(file);
@@ -901,6 +904,14 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    } else {
 		chat.sresize(0);
 	    }
+	}
+    }
+
+    void toggleMinimap() {
+        if(mmapwnd != null && mmapwnd.show(!mmapwnd.visible)) {
+            mmapwnd.raise();
+            fitwdg(mmapwnd);
+            setfocus(mmapwnd);
 	}
     }
 

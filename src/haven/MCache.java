@@ -44,12 +44,12 @@ public class MCache {
     private final Reference<Tileset>[] csets = new Reference[256];
     @SuppressWarnings("unchecked")
     private final Reference<Tiler>[] tiles = new Reference[256];
-    Map<Coord, Request> req = new HashMap<Coord, Request>();
-    Map<Coord, Grid> grids = new HashMap<Coord, Grid>();
+    Map<Coord, Request> req = new HashMap<>();
+    final Map<Coord, Grid> grids = new HashMap<>();
     Session sess;
-    Set<Overlay> ols = new HashSet<Overlay>();
+    Set<Overlay> ols = new HashSet<>();
     public int olseq = 0;
-    Map<Integer, Defrag> fragbufs = new TreeMap<Integer, Defrag>();
+    Map<Integer, Defrag> fragbufs = new TreeMap<>();
 
     public static class LoadingMap extends Loading {
 	public final Coord gc;
@@ -453,6 +453,19 @@ public class MCache {
 		}
 	    }
 	    return(cached);
+	}
+    }
+
+    public Optional<Grid> getgrido(final Coord gc) {
+	synchronized(grids) {
+	    if((cached == null) || !cached.gc.equals(gc)) {
+		cached = grids.get(gc);
+		if(cached == null) {
+		    request(gc);
+		    return Optional.empty();
+		}
+	    }
+	    return Optional.of(cached);
 	}
     }
 

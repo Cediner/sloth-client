@@ -40,7 +40,6 @@ import haven.sloth.util.Images;
 import java.util.*;
 import java.util.function.Consumer;
 
-//TODO: Not happy with the way custom pagina are currently, would be more ideal to match normal Pagina
 public class MenuGrid extends MovableWidget {
     public final static Tex bg = Resource.loadtex("gfx/hud/invsq");
     public final static Coord bgsz = bg.sz().add(-1, -1);
@@ -76,7 +75,7 @@ public class MenuGrid extends MovableWidget {
 	public String name() {return(res.layer(Resource.action).name);}
 	public char hotkey() {return(res.layer(Resource.action).hk);}
 	public void use() {
-	    pag.scm.wdgmsg("act", (Object[])res.layer(Resource.action).ad);
+	    pag.use();
 	}
 
 	public String sortkey() {
@@ -124,42 +123,6 @@ public class MenuGrid extends MovableWidget {
 	}
     }
 
-    public static class CustomButton extends PagButton {
-        private final BufferedImage img;
-        private final Consumer<CustomButton> onUse;
-        public CustomButton(final CustomPagina pag, final BufferedImage img, final Consumer<CustomButton> onUse) {
-            super(pag);
-            this.img = img;
-            this.onUse = onUse;
-	}
-
-	@Override
-	public String name() {
-	    return ((CustomPagina)pag).tt;
-	}
-
-	@Override
-	public char hotkey() {
-	    return ((CustomPagina)pag).hk;
-	}
-
-	@Override
-	public String sortkey() {
-            return "\0"+((CustomPagina)pag).tt;
-	}
-
-	@Override
-	public BufferedImage img() { return img; }
-
-	@Override
-	public void use() { onUse.accept(this); }
-
-	@Override
-	public BufferedImage rendertt(boolean withpg) {
-            return ((CustomPagina)pag).rendertt().img;
-	}
-    }
-
     public final PagButton next = new PagButton(new Pagina(this, Resource.local().loadwait("gfx/hud/sc-next").indir())) {
 	    public void use() {
 		if((curoff + 14) >= curbtns.size())
@@ -192,6 +155,7 @@ public class MenuGrid extends MovableWidget {
 	public Indir<Tex> img;
 	public int newp;
 	public Object[] rawinfo = {};
+	private final Consumer<Pagina> onUse;
 
 	public static enum State {
 	    ENABLED, DISABLED {
@@ -209,6 +173,14 @@ public class MenuGrid extends MovableWidget {
 	    this.scm = scm;
 	    this.res = res;
 	    state(State.ENABLED);
+	    this.onUse = (me) -> scm.wdgmsg("act", (Object[])res().layer(Resource.action).ad);
+	}
+
+	public Pagina(MenuGrid scm, Indir<Resource> res, final Consumer<Pagina> onUse) {
+	    this.scm = scm;
+	    this.res = res;
+	    state(State.ENABLED);
+	    this.onUse = onUse;
 	}
 
 	public Resource res() {
@@ -217,6 +189,10 @@ public class MenuGrid extends MovableWidget {
 
 	public Resource.AButton act() {
 	    return(res().layer(Resource.action));
+	}
+
+	public void use() {
+	    onUse.accept(this);
 	}
 
 	private PagButton button = null;
@@ -238,89 +214,33 @@ public class MenuGrid extends MovableWidget {
 	}
     }
 
-    public static class CustomPagina extends Pagina {
-        private final String name;
-        private final String tt;
-        private final char hk;
-        private final PagButton button;
-	private final List<PagButton> children;
-
-        CustomPagina(final MenuGrid scm, final String name, final char hk,
-		     final BufferedImage img, final Consumer<CustomButton> onUse) {
-            super(scm, Resource.fake.indir());
-            this.name = "shortcut:"+name;
-            this.tt = name;
-            this.hk = hk;
-            this.children = null;
-            this.button = new CustomButton(this, img, onUse);
-	}
-
-	CustomPagina(final MenuGrid scm, final String name, final char hk,
-		     final BufferedImage img, final Pagina... children) {
-	    super(scm, Resource.fake.indir());
-	    this.name = "shortcut:"+name;
-	    this.tt = name;
-	    this.hk = hk;
-	    this.button = new CustomButton(this, img, null);
-	    this.children = new ArrayList<>(children.length);
-	    for(final Pagina child : children) {
-		this.children.add(child.button());
-	    }
-	}
-
-	Optional<List<PagButton>> children() { return Optional.ofNullable(children); }
-
-	Text rendertt() {
-	    String tt = this.tt;
-	    if(hk != '\0') {
-		int pos = tt.toUpperCase().indexOf(Character.toUpperCase(hk));
-		if(pos >= 0)
-		    tt = tt.substring(0, pos) + "$b{$col[255,128,0]{" + tt.charAt(pos) + "}}" + tt.substring(pos + 1);
-	    }
-	    return ttfnd.render(tt, 300);
-	}
-
-	@Override
-	public PagButton button() {
-	    return button;
-	}
-
-	@Override
-	public AButton act() {
-	    if(hk != '\0') {
-	        return res.get().new AButton(null, name, hk);
-	    } else {
-		return res.get().new AButton(null, name);
-	    }
-	}
-    }
-
     public MenuGrid() {
 	super(bgsz.mul(gsz).add(1, 1), "Menugrid");
 
-	//Make custom stuff
-	final CustomPagina hidden_pag = new CustomPagina(this, "Hidden Objs", 'h',
-		Images.loadimg("menu/default/hide"), (btn) -> ui.gui.add(new HiddenManager()));
-	final CustomPagina deleted_pag = new CustomPagina(this, "Deleted Objs", 'd',
-		Images.loadimg("menu/default/deleted"), (btn) -> ui.gui.add(new DeletedManager()));
-	final CustomPagina sound_pag = new CustomPagina(this, "Alerted Objs", 'a',
-		Images.loadimg("menu/default/sound"), (btn) -> ui.gui.add(new SoundManager()));
-	//Hafen windows
-	final CustomPagina inv_pag = new CustomPagina(this, "Inventory", 'i',
-		Images.loadimg("menu/default/wnd/inventory"), (btn) -> ui.gui.toggleInv());
-	final CustomPagina kin_pag = new CustomPagina(this, "Kith & Kin", 'k',
-		Images.loadimg("menu/default/wnd/kithnkin"), (btn) -> ui.gui.toggleKin());
-	final CustomPagina chr_pag = new CustomPagina(this, "Chracter Sheet", 'c',
-		Images.loadimg("menu/default/wnd/charwnd"), (btn) -> ui.gui.toggleCharWnd());
-	final CustomPagina equ_pag = new CustomPagina(this, "Equipment", 'e',
-		Images.loadimg("menu/default/wnd/equipment"), (btn) -> ui.gui.toggleEquipment());
-	final CustomPagina opt_pag = new CustomPagina(this, "Options", 'o',
-		Images.loadimg("menu/default/wnd/options"), (btn) -> ui.gui.toggleOpts());
-	final CustomPagina mapf_pag = new CustomPagina(this, "Map", 'm',
-		Images.loadimg("menu/default/wnd/bigmap"), (btn) -> ui.gui.toggleMapfile());
-	//Can't use: A, B, C, E, T for base menus
-	paginae.add(new CustomPagina(this, "Management", 'm', Images.loadimg("menu/default/scripts"),
-		hidden_pag, deleted_pag, sound_pag, inv_pag, kin_pag, chr_pag, equ_pag, opt_pag, mapf_pag));
+	//Window toggles
+	paginae.add(paginafor(Resource.local().load("custom/paginae/default/management")));
+	//Custom windows
+	paginae.add(new Pagina(this, Resource.local().load("custom/paginae/default/wnd/alerted"),
+		(pag) -> ui.gui.add(new SoundManager())));
+	paginae.add(new Pagina(this, Resource.local().load("custom/paginae/default/wnd/deleted"),
+		(pag) -> ui.gui.add(new DeletedManager())));
+	paginae.add(new Pagina(this, Resource.local().load("custom/paginae/default/wnd/hidden"),
+		(pag) -> ui.gui.add(new HiddenManager())));
+	//Hafen Windows
+	paginae.add(new Pagina(this, Resource.local().load("custom/paginae/default/wnd/inv"),
+		(pag) -> ui.gui.toggleInv()));
+	paginae.add(new Pagina(this, Resource.local().load("custom/paginae/default/wnd/char"),
+		(pag) -> ui.gui.toggleCharWnd()));
+	paginae.add(new Pagina(this, Resource.local().load("custom/paginae/default/wnd/equ"),
+		(pag) -> ui.gui.toggleEquipment()));
+	paginae.add(new Pagina(this, Resource.local().load("custom/paginae/default/wnd/kithnkin"),
+		(pag) -> ui.gui.toggleKin()));
+	paginae.add(new Pagina(this, Resource.local().load("custom/paginae/default/wnd/lmap"),
+		(pag) -> ui.gui.toggleMapfile()));
+	paginae.add(new Pagina(this, Resource.local().load("custom/paginae/default/wnd/smap"),
+		(pag) -> ui.gui.toggleMinimap()));
+	paginae.add(new Pagina(this, Resource.local().load("custom/paginae/default/wnd/opts"),
+		(pag) -> ui.gui.toggleOpts()));
     }
 
 
@@ -334,31 +254,6 @@ public class MenuGrid extends MovableWidget {
 		pmap.put(res, p = new Pagina(this, res));
 	    return(p);
 	}
-    }
-
-    /**
-     * This is specifically for nested Custom Buttons
-     * Example:
-     * 	Management -> { Hidden, Deleted, Sound, ... }
-     */
-    private boolean cons(CustomPagina p, Collection<PagButton> buf) {
-	synchronized(paginae) {
-	    for(Pagina pag : paginae) {
-		if(pag.newp == 2) {
-		    pag.newp = 0;
-		    pag.fstart = 0;
-		}
-	    }
-	    for(Pagina pag : pmap.values()) {
-		if(pag.newp == 2) {
-		    pag.newp = 0;
-		    pag.fstart = 0;
-		}
-	    }
-	}
-
-	p.children().ifPresent(buf::addAll);
-        return true;
     }
 
     private boolean cons(Pagina p, Collection<PagButton> buf) {
@@ -408,10 +303,7 @@ public class MenuGrid extends MovableWidget {
     private void updlayout() {
 	synchronized(paginae) {
 	    List<PagButton> cur = new ArrayList<>();
-	    if(this.cur instanceof CustomPagina)
-	        recons = !cons((CustomPagina)this.cur, cur);
-	    else
-	    	recons = !cons(this.cur, cur);
+	    recons = !cons(this.cur, cur);
 	    cur.sort(Comparator.comparing(PagButton::sortkey));
 	    this.curbtns = cur;
 	    int i = curoff;
@@ -560,10 +452,7 @@ public class MenuGrid extends MovableWidget {
 
     private void use(PagButton r, boolean reset) {
 	Collection<PagButton> sub = new ArrayList<>();
-	if(r.pag instanceof CustomPagina)
-	    cons((CustomPagina)r.pag, sub);
-	else
-	    cons(r.pag, sub);
+	cons(r.pag, sub);
 	if(sub.size() > 0) {
 	    this.cur = r.pag;
 	    curoff = 0;

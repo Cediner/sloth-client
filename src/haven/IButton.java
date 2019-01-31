@@ -71,6 +71,11 @@ public class IButton extends SIWidget {
 	this(Resource.loadimg(base + up), Resource.loadimg(base + down), Resource.loadimg(base + (hover == null?up:hover)));
     }
 
+    public IButton(final String res, final String tooltip, final Runnable action) {
+	this(Resource.loadimg(res, 0), Resource.loadimg(res, 1), Resource.loadimg(res, 2), action);
+    	this.tooltip = tooltip;
+    }
+
     public void draw(BufferedImage buf) {
 	Graphics g = buf.getGraphics();
 	if(a)

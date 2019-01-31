@@ -135,17 +135,62 @@ public class MapWnd extends Window {
 	    return(super.mousedown(c, button));
 	}
 
+	/**
+	 * Draw gob icons relative to the players location
+	 */
+	private void drawicons(GOut g, final Location ploc) {
+	    final Coord pc = new Coord2d(mv.getcc()).floor(tilesz);
+	    OCache oc = ui.sess.glob.oc;
+	    synchronized(oc) {
+		for(Gob gob : oc) {
+		    try {
+			GobIcon icon = gob.getattr(GobIcon.class);
+			if(icon != null) {
+			    final Coord mc = new Coord2d(gob.getc()).floor(tilesz);
+			    final Coord gc = xlate(new Location(ploc.seg, ploc.tc.add(mc.sub(pc))));
+			    if(gc != null) {
+				icon.tex().ifPresent(tex -> g.image(tex, gc.sub(tex.sz().div(2))));
+			    }
+			}
+		    } catch(Loading l) {}
+		}
+	    }
+
+	    //draw party icons as well
+	    try {
+		synchronized(ui.sess.glob.party) {
+		    for(Party.Member m : ui.sess.glob.party.memb.values()) {
+			Coord2d ppc = m.getc();
+			if(ppc != null) {
+			    final Coord mc = new Coord2d(ppc).floor(tilesz);
+			    final Coord gc = xlate(new Location(ploc.seg, ploc.tc.add(mc.sub(pc))));
+			    g.chcolor(m.col.getRed(), m.col.getGreen(), m.col.getBlue(), 128);
+			    if(gc != null) {
+				g.image(plx.layer(Resource.imgc).tex(), gc.add(plx.layer(Resource.negc).cc.inv()));
+				g.chcolor();
+			    }
+			}
+		    }
+		}
+	    } catch(Loading l) {}
+	}
+
 	public void draw(GOut g) {
 	    g.chcolor(0, 0, 0, 128);
 	    g.frect(Coord.z, sz);
 	    g.chcolor();
 	    super.draw(g);
+
+	    //Draw the player
 	    try {
-		Coord ploc = xlate(resolve(player));
+	        final Location loc = resolve(player);
+		Coord ploc = xlate(loc);
 		if(ploc != null) {
 		    g.chcolor(255, 0, 0, 255);
 		    g.image(plx.layer(Resource.imgc), ploc.sub(plx.layer(Resource.negc).cc));
 		    g.chcolor();
+		    //Draw gob icons
+		    drawicons(g, loc);
 		}
 	    } catch(Loading l) {
 	    }
@@ -343,6 +388,7 @@ public class MapWnd extends Window {
     }
 
     public void markobj(long gobid, long oid, Indir<Resource> resid, String nm) {
+        System.out.println("markobj: " + gobid + " - " + oid);
 	synchronized(deferred) {
 	    deferred.add(new Runnable() {
 		    double f = 0;

@@ -74,4 +74,6 @@
         - Kith & Kin ('k') Ctrl+B
         - Map ('m') Ctrl+A
         - Inventory ('i') Tab
+        - Minimap ('n')
     - Bumped the radius circle height back to 10 units like default
+    - Control + hover over party member icons to see how far they are, limited to 1000 tiles..

@@ -26,6 +26,8 @@
 
 package haven;
 
+import java.lang.ref.Reference;
+import java.lang.ref.SoftReference;
 import java.util.*;
 import java.util.concurrent.locks.*;
 import java.io.*;
@@ -33,10 +35,12 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import haven.Defer.Future;
+import haven.resutil.Ridges;
+
 import static haven.MCache.cmaps;
 
 public class MapFile {
-    public static boolean debug = false;
+    public static boolean debug = true;
     public final ResCache store;
     public final String filename;
     public final Collection<Long> knownsegs = new HashSet<>();
@@ -538,7 +542,7 @@ public class MapFile {
 		    if(storedid != id)
 			throw(new Message.FormatError(String.format("Grid ID mismatch: expected %s, got %s", id, storedid)));
 		    long mtime = (ver >= 2) ? z.int64() : System.currentTimeMillis();
-		    List<TileInfo> tilesets = new ArrayList<TileInfo>();
+		    List<TileInfo> tilesets = new ArrayList<>();
 		    for(int i = 0, no = z.uint8(); i < no; i++)
 			tilesets.add(new TileInfo(new Resource.Spec(Resource.remote(), z.string(), z.uint16()), z.uint8()));
 		    byte[] tiles = z.bytes(cmaps.x * cmaps.y);
@@ -892,7 +896,7 @@ public class MapFile {
 	}
 
 	public Indir<? extends DataGrid> grid(int lvl, Coord gc) {
-	    if((lvl < 0) || ((gc.x & ((1 << lvl) - 1)) != 0) || ((gc.x & ((1 << lvl) - 1)) != 0))
+	    if((lvl < 0) || ((gc.x & ((1 << lvl) - 1)) != 0) || ((gc.y & ((1 << lvl) - 1)) != 0))
 		throw(new IllegalArgumentException(String.format("%s %s", gc, lvl)));
 	    if(lvl == 0)
 		return(grid(gc));
@@ -1037,6 +1041,7 @@ public class MapFile {
 			missing.add(g);
 			continue;
 		    }
+		    if(debug) Debug.log.printf("mapfile: found segment %x for grid %x\n", seg.id, g.id);
 		    mseg = seg.id;
 		    moff = info.sc.sub(g.gc);
 		}
@@ -1060,6 +1065,7 @@ public class MapFile {
 		    if(debug) Debug.log.printf("mapfile: creating new segment %x\n", seg.id);
 		} else {
 		    seg = segments.get(mseg);
+		    if(debug) Debug.log.printf("mapfile: use existing segment %x\n", seg.id);
 		}
 		synchronized(procmon) {
 		    dirty.add(seg);

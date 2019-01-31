@@ -30,7 +30,7 @@ import java.util.*;
 import java.awt.Color;
 
 public class Party {
-    Map<Long, Member> memb = new TreeMap<Long, Member>();
+    final Map<Long, Member> memb = new TreeMap<>();
     Member leader = null;
     public static final int PD_LIST = 0;
     public static final int PD_LEADER = 1;
@@ -55,8 +55,8 @@ public class Party {
 	    try {
 		if((gob = getgob()) != null)
 		    return(new Coord2d(gob.getc()));
-	    } catch(Loading e) {}
-	    return(c);
+	    } catch(Loading e) { return c; }
+	    return c;
 	}
     }
 	
@@ -64,14 +64,14 @@ public class Party {
 	while(!msg.eom()) {
 	    int type = msg.uint8();
 	    if(type == PD_LIST) {
-		ArrayList<Long> ids = new ArrayList<Long>();
+		ArrayList<Long> ids = new ArrayList<>();
 		while(true) {
 		    long id = msg.int32();
 		    if(id < 0)
 			break;
 		    ids.add(id);
 		}
-		Map<Long, Member> nmemb = new TreeMap<Long, Member>();
+		final Map<Long, Member> nmemb = new TreeMap<>();
 		for(long id : ids) {
 		    Member m = memb.get(id);
 		    if(m == null) {
@@ -81,8 +81,11 @@ public class Party {
 		    nmemb.put(id, m);
 		}
 		long lid = (leader == null)?-1:leader.gobid;
-		memb = nmemb;
-		leader = memb.get(lid);
+		synchronized (this) {
+		    memb.clear();
+		    memb.putAll(nmemb);
+		    leader = memb.get(lid);
+		}
 	    } else if(type == PD_LEADER) {
 		Member m = memb.get((long)msg.int32());
 		if(m != null)
@@ -95,8 +98,6 @@ public class Party {
 		    c = msg.coord().mul(OCache.posres);
 		Color col = msg.color();
 		if(m != null) {
-		    //If this member is on the same map as me c will be their actual coordinate
-		    //If they are not on the same map c should be null
 		    m.c = c;
 		    m.col = col;
 		}
