@@ -83,3 +83,4 @@
     - Hotkeys are now movable via ctrl+ drag. Options for F, numpad, and number belts in options -> Gameplay
     - Saving minimaps is now in as well.
     - Hidden, Deleted, Alerted are toggled now rather than new
+    - Minimap cache tiles don't keep grid references..

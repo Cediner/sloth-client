@@ -104,7 +104,7 @@ public class MapData {
     public void save(final LocalMiniMap.MapTile tile) {
     	//Only matters if we had an active segment
         if(center != null) {
-            final Coord offset = center.sub(tile.grid.gc);
+            final Coord offset = center.sub(tile.gc);
             Storage.dynamic.write(sql -> {
                 final ByteArrayOutputStream data = new ByteArrayOutputStream();
                 try {
@@ -116,7 +116,7 @@ public class MapData {
 
                 final PreparedStatement stmt = Storage.dynamic.prepare("INSERT OR REPLACE INTO map_grid VALUES (?, ?, ?, ?, ?)");
                 stmt.setLong(1, segment_id);
-                stmt.setLong(2, tile.grid.id);
+                stmt.setLong(2, tile.id);
                 stmt.setInt(3, offset.x);
                 stmt.setInt(4, offset.y);
                 stmt.setBytes(5, data.toByteArray());

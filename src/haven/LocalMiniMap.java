@@ -60,6 +60,8 @@ public class LocalMiniMap extends Widget {
     public final MapView mv;
     public MapFile save;
     //Current grids we know about
+    //TODO: Storing too many of these causes OOM... A MapTile should not keep reference to the Grid.
+    //      prevents it from being recycled when gone...
     private final Map<Coord, MapTile> mcache = new HashMap<>();
     //Grids we need to remake
     private final Map<Long, Future<MapTile>> queued = new HashMap<>();
@@ -83,12 +85,14 @@ public class LocalMiniMap extends Widget {
 
     public static class MapTile {
 	public final TexI img;
-	public final Grid grid;
+	public final long id;
+	public final Coord gc;
 	public final int seq;
 	
-	MapTile(TexI img, Grid grid, int seq) {
+	MapTile(TexI img, final long id, final Coord gc, int seq) {
 	    this.img = img;
-	    this.grid = grid;
+	    this.id = id;
+	    this.gc = gc;
 	    this.seq = seq;
 	}
     }
@@ -195,12 +199,12 @@ public class LocalMiniMap extends Widget {
 		    try {
 			//Replace the old tile
 			final MapTile tile = f.get();
-			mcache.put(tile.grid.gc, tile);
+			mcache.put(tile.gc, tile);
 			//Save it if we have a session
 			data.save(tile);
 			if(session != null) {
-			    final Coord offset = center.sub(tile.grid.gc);
-			    final String fn = session + offset.x + "," + offset.y + "," + tile.grid.id+".png";
+			    final Coord offset = center.sub(tile.gc);
+			    final String fn = session + offset.x + "," + offset.y + "," + tile.id+".png";
 			    try {
 				ImageIO.write(tile.img.back, "png", new java.io.File(fn));
 			    } catch (Exception io) {
@@ -224,7 +228,7 @@ public class LocalMiniMap extends Widget {
 		//This means we're not going to update the minimap if someone updates it in game
 		//Someone doing paving, etc -> lots of rerendering of the minimap -> slow, not worth it
 		if(!queued.containsKey(grid.id) && !mcache.containsKey(grid.gc)) {
-		    queued.put(grid.id, bgrenderer.submit(() -> new MapTile(new TexI(drawmap(grid)), grid, grid.seq)));
+		    queued.put(grid.id, bgrenderer.submit(() -> new MapTile(new TexI(drawmap(grid)), grid.id, grid.gc, grid.seq)));
 		    if(save != null) {
 		        //Also update loftar's stuff.
 			save.update(ui.sess.glob.map, grid.gc);
