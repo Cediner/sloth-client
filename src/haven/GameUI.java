@@ -27,6 +27,7 @@
 package haven;
 
 import haven.sloth.gui.MinimapWnd;
+import haven.sloth.gui.QuestWnd;
 
 import java.util.*;
 import java.awt.Color;
@@ -40,7 +41,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public final String chrid, genus;
     public final long plid; //Player Gob ID
     //Panels that can be hidden
-    private final Hidepanel urpanel, blpanel; //ur = fight, bl = minimap...
+    private final Hidepanel urpanel; //ur = fight...
     public Avaview portrait; //Avatar widget
     public MenuGrid menu; //The menu grid widget
     public MapView map; // The 3D world of hafen
@@ -54,7 +55,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public Inventory maininv; //Inventory widget
     public CharWnd chrwdg; //Character window
     public MapWnd mapfile; //Loftar's map window
-    private Widget qqview; //Current quest log widget ?
+    public Widget qqview; //Current quest log widget ?
+    private QuestWnd questwnd;
     public BuddyWnd buddies; //Buddy Window, tab of ZergWnd
     private Zergwnd zerg; //Buddy + Village window
     public final Collection<Polity> polities = new ArrayList<Polity>(); //Village widgets
@@ -109,8 +111,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    return(new GameUI(chrid, plid, genus));
 	}
     }
-    
-    private final Coord minimapc;
+
     public GameUI(String chrid, long plid, String genus) {
 	this.chrid = chrid;
 	this.plid = plid;
@@ -124,77 +125,17 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	}
 	beltwdg.raise();
 	urpanel = add(new Hidepanel("gui-ur", null, new Coord( 1, -1)));
-	blpanel = add(new Hidepanel("gui-bl", null, new Coord(-1,  1)));
-	Tex lbtnbg = Resource.loadtex("gfx/hud/lbtn-bg");
-	blpanel.add(new Img(Resource.loadtex("gfx/hud/blframe")), 0, lbtnbg.sz().y - 33);
-	blpanel.add(new Img(lbtnbg), 0, 0);
-	minimapc = new Coord(4, 34 + (lbtnbg.sz().y - 33));
-	mapbuttons();
 	foldbuttons();
 	syslog = chat.add(new ChatUI.Log("System"));
     }
 
-    private void mapbuttons() {
-	blpanel.add(new IButton("gfx/hud/lbtn-claim", "", "-d", "-h") {
-		{tooltip = Text.render("Display personal claims");}
-		public void click() {
-		    if((map != null) && !map.visol(0))
-			map.enol(0, 1);
-		    else
-			map.disol(0, 1);
-		}
-	    }, 0, 0);
-	blpanel.add(new IButton("gfx/hud/lbtn-vil", "", "-d", "-h") {
-		{tooltip = Text.render("Display village claims");}
-		public void click() {
-		    if((map != null) && !map.visol(2))
-			map.enol(2, 3);
-		    else
-			map.disol(2, 3);
-		}
-	    }, 0, 0);
-	blpanel.add(new IButton("gfx/hud/lbtn-rlm", "", "-d", "-h") {
-		{tooltip = Text.render("Display realms");}
-		public void click() {
-		    if((map != null) && !map.visol(4))
-			map.enol(4, 5);
-		    else
-			map.disol(4, 5);
-		}
-	    }, 0, 0);
-    }
-
     /* Ice cream */
-    private final IButton[] fold_bl = new IButton[2];
     private void updfold(boolean reset) {
-	fold_bl[1].show(!blpanel.tvis);
-
 	if(reset)
 	    resetui();
     }
 
     private void foldbuttons() {
-	final Tex lupbg = Resource.loadtex("gfx/hud/lbtn-upbg");
-	fold_bl[0] = new IButton("gfx/hud/lbtn-dwn", "", "-d", "-h") {
-		public void click() {
-		    blpanel.cshow(false);
-		    updfold(true);
-		}
-	    };
-	fold_bl[1] = new IButton("gfx/hud/lbtn-up", "", "-d", "-h") {
-		public void draw(GOut g) {g.image(lupbg, Coord.z); super.draw(g);}
-		public void click() {
-		    blpanel.cshow(true);
-		    updfold(true);
-		}
-		public void presize() {
-		    this.c = new Coord(0, parent.sz.y - sz.y);
-		}
-	    };
-	blpanel.add(fold_bl[0], 0, 0);
-	adda(fold_bl[1], 0, 1);
-	fold_bl[1].lower();
-
 	updfold(false);
     }
 
@@ -230,6 +171,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	opts.hide();
 	zerg = add(new Zergwnd(), new Coord(187, 50));
 	zerg.hide();
+	questwnd = add(new QuestWnd(), new Coord(0, sz.y-200));
     }
     
     public class Hidepanel extends Widget {
@@ -602,21 +544,11 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	} else if(place == "buff") {
 	    buffs.addchild(child);
 	} else if(place == "qq") {
-	    if(qqview != null)
+	    if(qqview != null) {
 		qqview.reqdestroy();
-	    final Widget cref = qqview = child;
-	    add(new AlignPanel() {
-		    {add(cref);}
-
-		    protected Coord getc() {
-			return(new Coord(10, GameUI.this.sz.y - blpanel.sz.y - this.sz.y - 10));
-		    }
-
-		    public void cdestroy(Widget ch) {
-			qqview = null;
-			destroy();
-		    }
-		});
+	    }
+	    qqview = child;
+	    questwnd.add(child, Coord.z);
 	} else if(place == "misc") {
 	    Coord c;
 	    if(args[1] instanceof Coord) {
@@ -866,7 +798,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 
     private int uimode = 1;
     public void toggleui(int mode) {
-	Hidepanel[] panels = {blpanel, urpanel};
+	Hidepanel[] panels = {urpanel};
 	switch(uimode = mode) {
 	case 0:
 	    for(Hidepanel p : panels)
@@ -884,7 +816,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     }
 
     public void resetui() {
-	Hidepanel[] panels = {blpanel, urpanel};
+	Hidepanel[] panels = {urpanel};
 	for(Hidepanel p : panels)
 	    p.cshow(p.tvis);
 	uimode = 1;

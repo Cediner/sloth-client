@@ -77,3 +77,4 @@
         - Minimap ('n')
     - Bumped the radius circle height back to 10 units like default
     - Control + hover over party member icons to see how far they are, limited to 1000 tiles..
+    - Quest log is now part of a window and movable
