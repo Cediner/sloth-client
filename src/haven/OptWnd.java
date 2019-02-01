@@ -349,27 +349,6 @@ public class OptWnd extends Window {
 			a = val;
 		    }
 		}, new Coord(0, y)).sz.y + spacer;
-		y += add(new Label("Tree Scale"), new Coord(0, y)).sz.y;
-		{
-		    final Label dpy = add(new Label(""), new Coord(165, y));
-		    y += dpy.sz.y;
-		    y += add(new HSlider(160, 0, 15, global.get(TREESCALE, Integer.class)) {
-			protected void added() {
-			    dpy();
-			    this.c.y = dpy.c.y + ((dpy.sz.y - this.sz.y) / 2);
-			}
-			void dpy() {
-			    if(val == 0)
-				dpy.settext("Default");
-			    else
-				dpy.settext(String.format("%d", val));
-			}
-			public void changed() {
-			    dpy();
-			    global.set(TREESCALE, val);
-			}
-		    }, new Coord(0, y)).sz.y;
-		}
 		y += add(new Button(200, "Reset to defaults") {
 			public void click() {
 			    DefSettings.resetgraphics();
