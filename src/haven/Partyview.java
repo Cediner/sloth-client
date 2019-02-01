@@ -61,72 +61,71 @@ public class Partyview extends Widget {
 	update();
     }
 	
-    private void update() {
-	if(party.memb != om) {
-	    Collection<Member> old = new HashSet<Member>(avs.keySet());
-	    for(final Member m : (om = party.memb).values()) {
-		if(m.gobid == ign)
-		    continue;
-		Avaview w = avs.get(m);
-		if(w == null) {
-		    w = add(new Avaview(new Coord(27, 27), m.gobid, "ptavacam") {
-			    private Tex tooltip = null;
-			    private Text.Line tt = null;
-			    private int dist;
-			    public Object tooltip(Coord c, Widget prev) {
-			        if(!ui.modctrl) {
-				    Gob gob = m.getgob();
-				    if (gob == null)
-					return (tooltip);
-				    KinInfo ki = gob.getattr(KinInfo.class);
-				    if (ki == null)
-					return (null);
-				    return (tooltip = ki.rendered());
-				} else {
-				    final Coord2d plc = ui.sess.glob.party.memb.get(ui.gui.map.plgob).getc();
-				    final Coord2d ppc = ui.sess.glob.party.memb.get(avagob).getc();
-				    if(ppc != null) {
-					final int cdist = (int) (Math.ceil(ppc.dist(plc) / 11.0));
-					if (tt != null && tt.tex() != null)
-					    tt.tex().dispose();
-					if (cdist != dist) {
-					    dist = cdist;
-					    return tt = Text.render("Distance: " + dist);
-					} else {
-					    return tt;
-					}
+    private void update() { //TODO: clean this up..
+	Collection<Member> old = new HashSet<>(avs.keySet());
+	for(final Member m : (om = party.memb).values()) {
+	    if(m.gobid == ign)
+		continue;
+	    Avaview w = avs.get(m);
+	    if(w == null) {
+		w = add(new Avaview(new Coord(27, 27), m.gobid, "ptavacam") {
+			private Tex tooltip = null;
+			private Text.Line tt = null;
+			private int dist;
+			public Object tooltip(Coord c, Widget prev) {
+			    if(!ui.modctrl) {
+				Gob gob = m.getgob();
+				if (gob == null)
+				    return (tooltip);
+				KinInfo ki = gob.getattr(KinInfo.class);
+				if (ki == null)
+				    return (null);
+				return (tooltip = ki.rendered());
+			    } else {
+				final Coord2d plc = ui.sess.glob.party.memb.get(ui.gui.map.plgob).getc();
+				final Coord2d ppc = ui.sess.glob.party.memb.get(avagob).getc();
+				if(ppc != null) {
+				    final int cdist = (int) (Math.ceil(ppc.dist(plc) / 11.0));
+				    if (tt != null && tt.tex() != null)
+					tt.tex().dispose();
+				    if (cdist != dist) {
+					dist = cdist;
+					return tt = Text.render("Distance: " + dist);
+				    } else {
+					return tt;
 				    }
 				}
-			        return null;
 			    }
-			});
-		    w.canactivate = true;
-		    avs.put(m, w);
-		} else {
-		    old.remove(m);
-		}
-	    }
-	    for(Member m : old) {
-		ui.destroy(avs.get(m));
-		avs.remove(m);
-	    }
-	    List<Map.Entry<Member, Avaview>> wl = new ArrayList<Map.Entry<Member, Avaview>>(avs.entrySet());
-	    Collections.sort(wl, new Comparator<Map.Entry<Member, Avaview>>() {
-		    public int compare(Entry<Member, Avaview> a, Entry<Member, Avaview> b) {
-			long aid = a.getKey().gobid, bid = b.getKey().gobid;
-			if(aid < bid)
-			    return(-1);
-			else if(bid > aid)
-			    return(1);
-			return(0);
-		    }
-		});
-	    int i = 0;
-	    for(Map.Entry<Member, Avaview> e : wl) {
-		e.getValue().c = new Coord((i % 2) * 43, (i / 2) * 43 + 24);
-		i++;
+			    return null;
+			}
+		    });
+		w.canactivate = true;
+		avs.put(m, w);
+	    } else {
+		old.remove(m);
 	    }
 	}
+	for(Member m : old) {
+	    ui.destroy(avs.get(m));
+	    avs.remove(m);
+	}
+	List<Map.Entry<Member, Avaview>> wl = new ArrayList<>(avs.entrySet());
+	Collections.sort(wl, new Comparator<Map.Entry<Member, Avaview>>() {
+		public int compare(Entry<Member, Avaview> a, Entry<Member, Avaview> b) {
+		    long aid = a.getKey().gobid, bid = b.getKey().gobid;
+		    if(aid < bid)
+			return(-1);
+		    else if(bid > aid)
+			return(1);
+		    return(0);
+		}
+	    });
+	int i = 0;
+	for(Map.Entry<Member, Avaview> e : wl) {
+	    e.getValue().c = new Coord((i % 2) * 43, (i / 2) * 43 + 24);
+	    i++;
+	}
+
 	for(Map.Entry<Member, Avaview> e : avs.entrySet()) {
 	    e.getValue().color = e.getKey().col;
 	}

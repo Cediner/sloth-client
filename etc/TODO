@@ -1,11 +1,8 @@
 TODO
+    - Save minimaps
     - UI
         - Fully Movable UI
             - Progress bar -> move to its own widget
-            - LocalMinimap
-            - Hotbar
-            - Chat Window
-        - Additonal hotkeys
         - Keybinds
         - Separate Study Window
         - (Low Priority) Themes

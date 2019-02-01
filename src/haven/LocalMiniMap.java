@@ -29,6 +29,9 @@ package haven;
 import static haven.MCache.cmaps;
 import static haven.MCache.tilesz;
 import static haven.OCache.posres;
+import static jogamp.common.os.elf.SectionArmAttributes.Tag.File;
+
+import com.google.common.flogger.FluentLogger;
 import haven.MCache.Grid;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
@@ -39,8 +42,13 @@ import java.util.concurrent.Future;
 
 import haven.resutil.Ridges;
 import haven.sloth.gob.Type;
+import haven.sloth.io.MapData;
+import haven.sloth.script.Context;
+
+import javax.imageio.ImageIO;
 
 public class LocalMiniMap extends Widget {
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     public static final Tex bg = Resource.loadtex("gfx/hud/mmap/ptex");
     public static final Tex nomap = Resource.loadtex("gfx/hud/mmap/nomap");
     public static final Resource plx = Resource.local().loadwait("gfx/hud/mmap/x");
@@ -67,17 +75,26 @@ public class LocalMiniMap extends Widget {
     private boolean showGrid = false;
     private boolean showView = false;
 
+    //Session data, folder name, coord that is our center
+    private String session = null;
+    private Coord center;
+    private MapData data = new MapData();
+
 
     public static class MapTile {
-	public final Tex img;
+	public final TexI img;
 	public final Grid grid;
 	public final int seq;
 	
-	MapTile(Tex img, Grid grid, int seq) {
+	MapTile(TexI img, Grid grid, int seq) {
 	    this.img = img;
 	    this.grid = grid;
 	    this.seq = seq;
 	}
+    }
+
+    public void addNaturalMarker(final long oid, final String nm, final long grid_id, final Coord offset) {
+        data.saveNaturalMarker(oid, nm, grid_id, offset);
     }
 
     private BufferedImage tileimg(int t, BufferedImage[] texes) {
@@ -98,7 +115,7 @@ public class LocalMiniMap extends Widget {
     private BufferedImage drawmap(final MCache.Grid g) {
 	BufferedImage[] texes = new BufferedImage[256];
 	MCache m = ui.sess.glob.map;
-	BufferedImage buf = TexI.mkbuf(sz);
+	BufferedImage buf = TexI.mkbuf(cmaps);
 	Coord c = new Coord();
 	int t;
 	for(c.y = 0; c.y < MCache.cmaps.y; ++c.y) {
@@ -179,6 +196,17 @@ public class LocalMiniMap extends Widget {
 			//Replace the old tile
 			final MapTile tile = f.get();
 			mcache.put(tile.grid.gc, tile);
+			//Save it if we have a session
+			data.save(tile);
+			if(session != null) {
+			    final Coord offset = center.sub(tile.grid.gc);
+			    final String fn = session + offset.x + "," + offset.y + "," + tile.grid.id+".png";
+			    try {
+				ImageIO.write(tile.img.back, "png", new java.io.File(fn));
+			    } catch (Exception io) {
+			        logger.atSevere().withCause(io).log("Failed to save maptile");
+			    }
+			}
 		    } catch (Exception e) {
 			//Ignore it if something broke
 		    }
@@ -188,6 +216,7 @@ public class LocalMiniMap extends Widget {
 
 	//Check for new maps around us, also check if we're even in the same segment anymore
 	final Set<Long> frameids = new HashSet<>();
+	Coord acenter = null; //a center coordinate if needed
 	boolean sameseg = false;
 	synchronized(ui.sess.glob.map.grids) {
 	    for(MCache.Grid grid : ui.sess.glob.map.grids.values()) {
@@ -202,6 +231,7 @@ public class LocalMiniMap extends Widget {
 		    }
 		}
 
+		acenter = grid.gc;
 		frameids.add(grid.id);
 
 		if(ids.contains(grid.id)) {
@@ -212,9 +242,16 @@ public class LocalMiniMap extends Widget {
 	//Update ids based off what we saw this frame
 	ids.clear();
 	ids.addAll(frameids);
-	if(!sameseg) {
+	if(!sameseg && acenter != null) {
 	    //Not in the same segment anymore, clear mcache
 	    mcache.clear();
+	    data.newSegment(acenter);
+	    session = "data/maps/" + Context.accname + "-" + Context.charname + "-" + System.currentTimeMillis() + "/";
+	    center = acenter;
+	    if (!(new java.io.File(session)).mkdirs()) {
+		logger.atSevere().log("Failed to make session directory " + session);
+	    	session = null;
+	    }
 	}
     }
 

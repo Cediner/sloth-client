@@ -502,8 +502,13 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 		}
 	    }
 	    Drawable d = getattr(Drawable.class);
-	    if (d != null)
-		d.setup(rl);
+	    try {
+		if (d != null)
+		    d.setup(rl);
+	    } catch (Exception e) {
+	        //TODO: This is a weird issue that can pop up on startup, need to look into it
+	        return false;
+	    }
 	    Speaking sp = getattr(Speaking.class);
 	    if (sp != null)
 		rl.add(sp.fx, null);

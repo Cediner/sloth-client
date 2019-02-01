@@ -670,6 +670,19 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		String nm = (String) args[3];
 		if (mapfile != null)
 		    mapfile.markobj(gobid, oid, res, nm);
+		if(mmap != null) {
+		    final Gob g = ui.sess.glob.oc.getgob(gobid);
+		    if(g != null) {
+		        Coord tc = g.rc.floor(MCache.tilesz);
+			try {
+			    final MCache.Grid grid = ui.sess.glob.map.getgridt(tc);
+			    final Coord offset = tc.sub(grid.ul);
+			    mmap.addNaturalMarker(oid, nm, grid.id, offset);
+			} catch (Resource.Loading l) {
+			    //DO nothing
+			}
+		    }
+		}
 	    } break;
 	    default:
 	        super.uimsg(msg, args);

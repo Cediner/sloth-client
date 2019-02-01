@@ -81,3 +81,4 @@
     - Quest log is now part of a window and movable
     - Chat is now part of a window and movable
     - Hotkeys are now movable via ctrl+ drag. Options for F, numpad, and number belts in options -> Gameplay
+    - Saving minimaps is now in as well.
