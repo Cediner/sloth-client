@@ -231,13 +231,13 @@ public class MenuGrid extends MovableWidget {
 	//Custom windows
 	addSpecial(new SpecialPagina(this, "management::alerted",
 		Resource.local().load("custom/paginae/default/wnd/alerted"),
-		(pag) -> ui.gui.add(new SoundManager())));
+		(pag) -> ui.gui.toggleAlerted()));
 	addSpecial(new SpecialPagina(this, "management::deleted",
 		Resource.local().load("custom/paginae/default/wnd/deleted"),
-		(pag) -> ui.gui.add(new DeletedManager())));
+		(pag) -> ui.gui.toggleDeleted()));
 	addSpecial(new SpecialPagina(this, "management::hidden",
 		Resource.local().load("custom/paginae/default/wnd/hidden"),
-		(pag) -> ui.gui.add(new HiddenManager())));
+		(pag) -> ui.gui.toggleHidden()));
 	//Hafen Windows
 	addSpecial(new SpecialPagina(this, "management::inv",
 		Resource.local().load("custom/paginae/default/wnd/inv"),

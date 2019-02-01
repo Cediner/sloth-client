@@ -26,10 +26,7 @@
 
 package haven;
 
-import haven.sloth.gui.BeltWnd;
-import haven.sloth.gui.ChatWnd;
-import haven.sloth.gui.MinimapWnd;
-import haven.sloth.gui.QuestWnd;
+import haven.sloth.gui.*;
 import haven.sloth.io.BeltData;
 import haven.sloth.script.Context;
 
@@ -71,6 +68,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     private ChatWnd chatwnd;
     public ChatUI chat; //Chat Widget
     public ChatUI.Channel syslog;
+    public Window hidden, deleted, alerted;
     public double prog = -1;
     private boolean afk = false;
     @SuppressWarnings("unchecked")
@@ -135,6 +133,12 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	questwnd = add(new QuestWnd(), new Coord(0, sz.y-200));
 	chatwnd = add(new ChatWnd(chat = new ChatUI(600, 150)), new Coord(20, sz.y-200));
 	syslog = chat.add(new ChatUI.Log("System"));
+	hidden = add(new HiddenManager());
+	hidden.hide();
+	deleted = add(new DeletedManager());
+	deleted.hide();
+	alerted = add(new SoundManager());
+    	alerted.hide();
     }
     
     public class Hidepanel extends Widget {
@@ -772,6 +776,30 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     
     public boolean mousedown(Coord c, int button) {
 	return(super.mousedown(c, button));
+    }
+
+    void toggleHidden() {
+	if(hidden != null && hidden.show(!hidden.visible)) {
+	    hidden.raise();
+	    fitwdg(hidden);
+	    setfocus(hidden);
+	}
+    }
+
+    void toggleDeleted() {
+	if(deleted != null && deleted.show(!deleted.visible)) {
+	    deleted.raise();
+	    fitwdg(deleted);
+	    setfocus(deleted);
+	}
+    }
+
+    void toggleAlerted() {
+	if(alerted != null && alerted.show(!alerted.visible)) {
+	    alerted.raise();
+	    fitwdg(alerted);
+	    setfocus(alerted);
+	}
     }
 
     void toggleChat() {
