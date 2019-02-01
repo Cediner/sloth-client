@@ -26,6 +26,8 @@
 
 package haven;
 
+import haven.sloth.script.Context;
+
 import java.util.*;
 
 public class Charlist extends Widget {
@@ -126,8 +128,10 @@ public class Charlist extends Widget {
 	if(sender instanceof Button) {
 	    synchronized(chars) {
 		for(Char c : chars) {
-		    if(sender == c.plb)
+		    if (sender == c.plb) {
 			wdgmsg("play", c.name);
+			Context.charname = c.name;
+		    }
 		}
 	    }
 	} else if(sender instanceof Avaview) {

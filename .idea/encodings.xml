@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding" addBOMForNewFiles="with NO BOM">
+    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/belt/default/down.res/image/0.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/belt/default/down.res/image/1.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/belt/default/down.res/image/2.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/belt/default/drag.res/image/0.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/belt/default/drag.res/image/1.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/belt/default/drag.res/image/2.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/belt/default/rotate.res/image/0.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/belt/default/rotate.res/image/0.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/belt/default/rotate.res/image/1.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/belt/default/rotate.res/image/1.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/belt/default/rotate.res/image/2.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/belt/default/rotate.res/image/2.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/belt/default/up.res/image/0.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/belt/default/up.res/image/1.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/belt/default/up.res/image/2.png" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/mm/hud/center.res/image/0.png" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/mm/hud/center.res/image/1.png" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/mm/hud/center.res/image/2.png" charset="windows-1252" />

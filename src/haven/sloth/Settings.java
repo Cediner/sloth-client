@@ -93,7 +93,7 @@ public class Settings {
 		String section = "";
 		Matcher find;
 
-		while ((ln = reader.readLine()) != null) {
+		read: while ((ln = reader.readLine()) != null) {
 		    ln = ln.trim();
 		    if (!ln.startsWith("#")) {
 			if (ln.startsWith("[") && ln.endsWith("]")) {
@@ -108,9 +108,11 @@ public class Settings {
 				    find = pat.matcher(val);
 				    if (find.find()) {
 					parsers.get(pat).parse(this, key, find);
-					break;
+					continue read;
 				    }
 				}
+				//Nothing matched -> String
+				settings.put(key, val);
 			    } else {
 				logger.atInfo().log("[%s] Unknown setting line: %s", filename, ln);
 			    }

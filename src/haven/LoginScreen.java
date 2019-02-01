@@ -26,6 +26,7 @@
 
 package haven;
 
+import haven.sloth.script.Context;
 import haven.sloth.security.AccountManagement;
 
 import java.awt.*;
@@ -116,6 +117,7 @@ public class LoginScreen extends Widget {
 
     private void login() {
         super.wdgmsg("login", data());
+	Context.accname = username.text;
     }
 
     private void save() {

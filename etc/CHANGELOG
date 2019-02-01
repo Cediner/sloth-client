@@ -80,4 +80,4 @@
     - Control + hover over party member icons to see how far they are, limited to 1000 tiles..
     - Quest log is now part of a window and movable
     - Chat is now part of a window and movable
-
+    - Hotkeys are now movable via ctrl+ drag. Options for F, numpad, and number belts in options -> Gameplay

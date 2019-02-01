@@ -28,7 +28,6 @@ package haven;
 
 import haven.sloth.DefSettings;
 import haven.sloth.gfx.HitboxMesh;
-import haven.sloth.gfx.HitboxSprite;
 import haven.sloth.gob.Movable;
 import haven.sloth.gui.ColorPreview;
 import haven.sloth.gui.RadioGroup;
@@ -38,10 +37,10 @@ import java.awt.*;
 import static haven.sloth.DefSettings.*;
 
 public class OptWnd extends Window {
-    public final Panel main, video, audio;
+    private final Panel main, video, audio;
     public Panel current;
 
-    public void chpanel(Panel p) {
+    void chpanel(Panel p) {
 	if(current != null)
 	    current.hide();
 	(current = p).show();
@@ -52,7 +51,7 @@ public class OptWnd extends Window {
 	public final Panel tgt;
 	public final int key;
 
-	public PButton(int w, String title, int key, Panel tgt) {
+	PButton(int w, String title, int key, Panel tgt) {
 	    super(w, title);
 	    this.tgt = tgt;
 	    this.key = key;
@@ -71,8 +70,8 @@ public class OptWnd extends Window {
 	}
     }
 
-    public class Panel extends Widget {
-	public Panel() {
+    class Panel extends Widget {
+        Panel() {
 	    visible = false;
 	    c = Coord.z;
 	}
@@ -86,16 +85,16 @@ public class OptWnd extends Window {
 
     public class VideoPanel extends Panel {
 	PButton bback;
-	public VideoPanel(Panel back) {
+	VideoPanel(Panel back) {
 	    super();
 	    bback = add(new PButton(200, "Back", 27, back), new Coord(0, 180));
 	    pack();
 	}
 
-	public class CPanel extends Widget {
-	    public final GLSettings cf;
+	class CPanel extends Widget {
+	    final GLSettings cf;
 
-	    public CPanel(GLSettings gcf) {
+	    CPanel(GLSettings gcf) {
 		this.cf = gcf;
 		final int spacer = 5;
 		int y = 0;
@@ -398,7 +397,7 @@ public class OptWnd extends Window {
 	}
     }
 
-    public OptWnd(boolean gopts) {
+    private OptWnd(boolean gopts) {
 	super(Coord.z, "Options", "Options",true);
 	main = add(new Panel());
 	video = add(new VideoPanel(main));
@@ -620,12 +619,44 @@ public class OptWnd extends Window {
 		    a = val;
 		}
 	    }, c.copy()).sz.y + spacer;
+	    c.y += gameplay.add(new CheckBox("Show F Key Belt") {
+		{a = global.get(SHOWFKBELT, Boolean.class);}
+
+		public void set(boolean val) {
+		    global.set(SHOWFKBELT, val);
+		    a = val;
+		    if(ui.gui != null && ui.gui.fbelt != null) {
+		        ui.gui.fbelt.setVisibile(val);
+		    }
+		}
+	    }, c.copy()).sz.y + spacer;
+	    c.y += gameplay.add(new CheckBox("Show NumPad Key Belt") {
+		{a = global.get(SHOWNPBELT, Boolean.class);}
+
+		public void set(boolean val) {
+		    global.set(SHOWNPBELT, val);
+		    a = val;
+		    if(ui.gui != null && ui.gui.npbelt != null) {
+			ui.gui.npbelt.setVisibile(val);
+		    }
+		}
+	    }, c.copy()).sz.y + spacer;
+	    c.y += gameplay.add(new CheckBox("Show Number Key Belt") {
+		{a = global.get(SHOWNBELT, Boolean.class);}
+
+		public void set(boolean val) {
+		    global.set(SHOWNBELT, val);
+		    a = val;
+		    if(ui.gui != null && ui.gui.nbelt != null) {
+			ui.gui.nbelt.setVisibile(val);
+		    }
+		}
+	    }, c.copy()).sz.y + spacer;
 	    gameplay.add(new PButton(200, "Back", 27, main), c.copy());
 	    gameplay.pack();
 	}
 
 	{ //Camera settings
-	    final int spacer = 5;
 	    final Coord c = new Coord(0, 0);
 	    final RadioGroup rgrp = camera.add(new RadioGroup("Camera Type:"), c.copy());
 	    rgrp.add("Ortho Cam", global.get(CAMERA, String.class).equals("sortho"), (val) -> {
@@ -660,12 +691,12 @@ public class OptWnd extends Window {
 	chpanel(main);
     }
 
-    public OptWnd() {
+    OptWnd() {
 	this(true);
     }
 
     public void wdgmsg(Widget sender, String msg, Object... args) {
-	if((sender == this) && (msg == "close")) {
+	if((sender == this) && (msg.equals("close"))) {
 	    hide();
 	} else {
 	    super.wdgmsg(sender, msg, args);

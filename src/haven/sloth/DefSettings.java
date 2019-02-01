@@ -2,6 +2,7 @@ package haven.sloth;
 
 import com.google.common.flogger.FluentLogger;
 import haven.sloth.gob.*;
+import haven.sloth.gui.BeltWnd;
 import haven.sloth.io.Storage;
 
 import java.awt.*;
@@ -29,6 +30,8 @@ import java.util.Optional;
  *   show-grass
  *  And every other section
  *
+ *
+ * TODO: There should be a distinction between global settings and character-specific
  */
 public class DefSettings {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
@@ -89,6 +92,16 @@ public class DefSettings {
     	SHOWHIDDEN = "gameplay.show-hidden",			//[Bool] Toggle hidden squares
     	HIDDENCOLOR = "gameplay.hidden-color",			//[RGBA] Color of hidden squares
     	SHOWQUALITY = "gameplay.show-item-quality",             //[Bool] Toggle item quality
+
+    	SHOWFKBELT = "belt.fk.show",				//[Bool] Toggle F key belt
+    	FKBELTPAGE = "belt.fk.page",				//[Int] Page F key belt is on
+    	FKBELTSTYLE = "belt.fk.style",				//[String] F key belt style
+    	SHOWNPBELT = "belt.np.show",	 			//[Bool] Toggle NumPad belt
+	NPBELTPAGE = "belt.np.page",				//[Int] Page F key belt is on
+	NPBELTSTYLE = "belt.np.style",				//[String] F key belt style
+    	SHOWNBELT = "belt.n.show",				//[Bool] Toggle Number belt
+	NBELTPAGE = "belt.n.page",				//[Int] Page F key belt is on
+	NBELTSTYLE = "belt.n.style",				//[String] F key belt style
 
     	CAMERA = "camera.camera-type",				//[String] Camera type, default: Ortho
 
@@ -164,6 +177,16 @@ public class DefSettings {
 	global.ensure(SHOWHIDDEN, true);
 	global.ensure(HIDDENCOLOR, Color.RED);
 	global.ensure(SHOWQUALITY, true);
+	//Belts
+	global.ensure(SHOWFKBELT, false);
+	global.ensure(FKBELTPAGE, 0);
+	global.ensure(FKBELTSTYLE, BeltWnd.Style.HORIZONTAL.toString());
+	global.ensure(SHOWNPBELT, false);
+	global.ensure(NPBELTPAGE, 0);
+	global.ensure(NPBELTSTYLE, BeltWnd.Style.HORIZONTAL.toString());
+	global.ensure(SHOWNBELT, true);
+	global.ensure(NBELTPAGE, 0);
+	global.ensure(NBELTSTYLE, BeltWnd.Style.HORIZONTAL.toString());
 	//Cameras
 	global.ensure(CAMERA, "sortho");
 	//Audio

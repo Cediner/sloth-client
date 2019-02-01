@@ -44,6 +44,7 @@ public class MenuGrid extends MovableWidget {
     public final static Tex bg = Resource.loadtex("gfx/hud/invsq");
     public final static Coord bgsz = bg.sz().add(-1, -1);
     public final static RichText.Foundry ttfnd = new RichText.Foundry(TextAttribute.FAMILY, "SansSerif", TextAttribute.SIZE, 10);
+    public final Map<String, SpecialPagina> specialpag = new HashMap<>();
     public final Set<Pagina> paginae = new HashSet<>();
     private static Coord gsz = new Coord(4, 4);
     private Pagina cur, dragging;
@@ -214,35 +215,59 @@ public class MenuGrid extends MovableWidget {
 	}
     }
 
+    public static class SpecialPagina extends Pagina {
+        public final String key;
+        public SpecialPagina(MenuGrid scm, String key, Indir<Resource> res, final Consumer<Pagina> onUse) {
+            super(scm, res, onUse);
+            this.key = key;
+	}
+    }
+
     public MenuGrid() {
 	super(bgsz.mul(gsz).add(1, 1), "Menugrid");
 
 	//Window toggles
 	paginae.add(paginafor(Resource.local().load("custom/paginae/default/management")));
 	//Custom windows
-	paginae.add(new Pagina(this, Resource.local().load("custom/paginae/default/wnd/alerted"),
+	addSpecial(new SpecialPagina(this, "management::alerted",
+		Resource.local().load("custom/paginae/default/wnd/alerted"),
 		(pag) -> ui.gui.add(new SoundManager())));
-	paginae.add(new Pagina(this, Resource.local().load("custom/paginae/default/wnd/deleted"),
+	addSpecial(new SpecialPagina(this, "management::deleted",
+		Resource.local().load("custom/paginae/default/wnd/deleted"),
 		(pag) -> ui.gui.add(new DeletedManager())));
-	paginae.add(new Pagina(this, Resource.local().load("custom/paginae/default/wnd/hidden"),
+	addSpecial(new SpecialPagina(this, "management::hidden",
+		Resource.local().load("custom/paginae/default/wnd/hidden"),
 		(pag) -> ui.gui.add(new HiddenManager())));
 	//Hafen Windows
-	paginae.add(new Pagina(this, Resource.local().load("custom/paginae/default/wnd/inv"),
+	addSpecial(new SpecialPagina(this, "management::inv",
+		Resource.local().load("custom/paginae/default/wnd/inv"),
 		(pag) -> ui.gui.toggleInv()));
-	paginae.add(new Pagina(this, Resource.local().load("custom/paginae/default/wnd/char"),
+	addSpecial(new SpecialPagina(this, "management::char",
+		Resource.local().load("custom/paginae/default/wnd/char"),
 		(pag) -> ui.gui.toggleCharWnd()));
-	paginae.add(new Pagina(this, Resource.local().load("custom/paginae/default/wnd/equ"),
+	addSpecial(new SpecialPagina(this,"management::equ",
+		Resource.local().load("custom/paginae/default/wnd/equ"),
 		(pag) -> ui.gui.toggleEquipment()));
-	paginae.add(new Pagina(this, Resource.local().load("custom/paginae/default/wnd/kithnkin"),
+	addSpecial(new SpecialPagina(this, "management::kithnkin",
+		Resource.local().load("custom/paginae/default/wnd/kithnkin"),
 		(pag) -> ui.gui.toggleKin()));
-	paginae.add(new Pagina(this, Resource.local().load("custom/paginae/default/wnd/lmap"),
+	addSpecial(new SpecialPagina(this, "management::lmap",
+		Resource.local().load("custom/paginae/default/wnd/lmap"),
 		(pag) -> ui.gui.toggleMapfile()));
-	paginae.add(new Pagina(this, Resource.local().load("custom/paginae/default/wnd/smap"),
+	addSpecial(new SpecialPagina(this, "management::smap",
+		Resource.local().load("custom/paginae/default/wnd/smap"),
 		(pag) -> ui.gui.toggleMinimap()));
-	paginae.add(new Pagina(this, Resource.local().load("custom/paginae/default/wnd/opts"),
+	addSpecial(new SpecialPagina(this, "management::opts",
+		Resource.local().load("custom/paginae/default/wnd/opts"),
 		(pag) -> ui.gui.toggleOpts()));
-	paginae.add(new Pagina(this, Resource.local().load("custom/paginae/default/wnd/chat"),
+	addSpecial(new SpecialPagina(this, "management::chat",
+		Resource.local().load("custom/paginae/default/wnd/chat"),
 		(pag) -> ui.gui.toggleChat()));
+    }
+
+    private void addSpecial(final SpecialPagina pag) {
+        paginae.add(pag);
+        specialpag.put(pag.key, pag);
     }
 
 
@@ -478,7 +503,11 @@ public class MenuGrid extends MovableWidget {
 	PagButton h = bhit(c);
 	if((button == 1) && (grab != null)) {
 	    if(dragging != null) {
-		ui.dropthing(ui.root, ui.mc, dragging.res());
+	        if(!(dragging instanceof SpecialPagina)) {
+		    ui.dropthing(ui.root, ui.mc, dragging.res());
+		} else {
+	            ui.dropthing(ui.root, ui.mc, dragging);
+		}
 		pressed = null;
 		dragging = null;
 	    } else if(pressed != null) {
