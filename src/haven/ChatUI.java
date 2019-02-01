@@ -54,7 +54,6 @@ public class ChatUI extends Widget {
     public Channel sel = null;
     public int urgency = 0;
     private final Selector chansel;
-    private Coord base = Coord.z;
     private QuickLine qline = null;
     private final LinkedList<Notification> notifs = new LinkedList<Notification>();
     private UI.Grab qgrab;
@@ -69,7 +68,6 @@ public class ChatUI extends Widget {
     }
 
     protected void added() {
-	base = this.c;
 	resize(this.sz);
     }
     
@@ -633,6 +631,7 @@ public class ChatUI extends Widget {
 	    if(in != null) {
 		in.c = new Coord(0, this.sz.y - in.sz.y);
 		in.resize(this.sz.x);
+		in.redraw();
 	    }
 	}
 	
@@ -1096,16 +1095,7 @@ public class ChatUI extends Widget {
     private static final Tex bmf = Resource.loadtex("gfx/hud/chat-mid");
     private static final Tex bcbd = Resource.loadtex("gfx/hud/chat-close-g");
     public void draw(GOut g) {
-	g.rimage(Window.bg, marg, sz.sub(marg.x * 2, marg.y));
 	super.draw(g);
-	g.image(bulc, new Coord(0, 0));
-	g.image(burc, new Coord(sz.x - burc.sz().x, 0));
-	g.rimagev(bvlb, new Coord(0, bulc.sz().y), sz.y - bulc.sz().y);
-	g.rimagev(bvrb, new Coord(sz.x - bvrb.sz().x, burc.sz().y), sz.y - burc.sz().y);
-	g.rimageh(bhb, new Coord(bulc.sz().x, 0), sz.x - bulc.sz().x - burc.sz().x);
-	g.aimage(bmf, new Coord(sz.x / 2, 0), 0.5, 0);
-	if((sel == null) || (sel.cb == null))
-	    g.aimage(bcbd, new Coord(sz.x, 0), 1, 0);
     }
 
     private static final Resource notifsfx = Resource.local().loadwait("sfx/hud/chat");
@@ -1135,7 +1125,6 @@ public class ChatUI extends Widget {
 
     public void resize(Coord sz) {
 	super.resize(sz);
-	this.c = base.add(0, -this.sz.y);
 	chansel.resize(new Coord(selw, this.sz.y - marg.y));
 	if(sel != null)
 	    sel.resize(new Coord(this.sz.x - marg.x - sel.c.x, this.sz.y - sel.c.y));
@@ -1157,7 +1146,6 @@ public class ChatUI extends Widget {
     }
     
     public void move(Coord base) {
-	this.c = (this.base = base).add(0, -sz.y);
     }
 
     public void expand() {

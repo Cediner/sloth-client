@@ -26,6 +26,7 @@
 
 package haven;
 
+import haven.sloth.gui.ChatWnd;
 import haven.sloth.gui.MinimapWnd;
 import haven.sloth.gui.QuestWnd;
 
@@ -64,6 +65,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public OptWnd opts; //Options Window
     public Collection<DraggedItem> hand = new LinkedList<DraggedItem>();
     public WItem vhand; //held item
+    private ChatWnd chatwnd;
     public ChatUI chat; //Chat Widget
     public ChatUI.Channel syslog;
     public double prog = -1;
@@ -118,15 +120,9 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	this.genus = genus;
 	setcanfocus(true);
 	setfocusctl(true);
-	chat = add(new ChatUI(0, 0));
-	if(Utils.getprefb("chatvis", true)) {
-	    chat.hresize(chat.savedh);
-	    chat.show();
-	}
 	beltwdg.raise();
 	urpanel = add(new Hidepanel("gui-ur", null, new Coord( 1, -1)));
 	foldbuttons();
-	syslog = chat.add(new ChatUI.Log("System"));
     }
 
     /* Ice cream */
@@ -172,6 +168,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	zerg = add(new Zergwnd(), new Coord(187, 50));
 	zerg.hide();
 	questwnd = add(new QuestWnd(), new Coord(0, sz.y-200));
+	chatwnd = add(new ChatWnd(chat = new ChatUI(600, 150)), new Coord(20, sz.y-200));
+	syslog = chat.add(new ChatUI.Log("System"));
     }
     
     public class Hidepanel extends Widget {
@@ -605,13 +603,11 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     }
 
     public void draw(GOut g) {
-	beltwdg.c = new Coord(chat.c.x, Math.min(chat.c.y - beltwdg.sz.y + 4, sz.y - beltwdg.sz.y));
+	beltwdg.c = new Coord(0, sz.y-beltwdg.sz.y);
 	super.draw(g);
 	if(prog >= 0)
 	    drawprog(g, prog);
 	int by = sz.y;
-	if(chat.visible)
-	    by = Math.min(by, chat.c.y);
 	if(beltwdg.visible)
 	    by = Math.min(by, beltwdg.c.y);
 	if(cmdline != null) {
@@ -827,15 +823,10 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     }
 
     void toggleChat() {
-	if(chat.visible && !chat.hasfocus) {
-	    setfocus(chat);
-	} else {
-	    if(chat.targeth == 0) {
-		chat.sresize(chat.savedh);
-		setfocus(chat);
-	    } else {
-		chat.sresize(0);
-	    }
+	if(chatwnd != null && chatwnd.show(!chatwnd.visible)) {
+	    chatwnd.raise();
+	    fitwdg(chatwnd);
+	    setfocus(chatwnd);
 	}
     }
 
@@ -899,8 +890,6 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 
     public void resize(Coord sz) {
 	this.sz = sz;
-	chat.resize(sz.x - blpw - brpw);
-	chat.move(new Coord(blpw, sz.y));
 	if(map != null)
 	    map.resize(sz);
 	beltwdg.c = new Coord(blpw + 10, sz.y - beltwdg.sz.y - 5);

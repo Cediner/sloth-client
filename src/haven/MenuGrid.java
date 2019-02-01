@@ -241,6 +241,8 @@ public class MenuGrid extends MovableWidget {
 		(pag) -> ui.gui.toggleMinimap()));
 	paginae.add(new Pagina(this, Resource.local().load("custom/paginae/default/wnd/opts"),
 		(pag) -> ui.gui.toggleOpts()));
+	paginae.add(new Pagina(this, Resource.local().load("custom/paginae/default/wnd/chat"),
+		(pag) -> ui.gui.toggleChat()));
     }
 
 
