@@ -682,7 +682,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 			    final MCache.Grid grid = ui.sess.glob.map.getgridt(tc);
 			    final Coord offset = tc.sub(grid.ul);
 			    mmap.addNaturalMarker(oid, nm, grid.id, offset);
-			} catch (Resource.Loading l) {
+			} catch (Loading l) {
 			    //DO nothing
 			}
 		    }

@@ -1556,9 +1556,11 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	private Coord2d mapcl;
 	private ClickInfo gobcl;
 	private int dfl = 0;
+	private final int flags;
 	
-	public Hittest(Coord c) {
+	public Hittest(Coord c, int flags) {
 	    clickc = c;
+	    this.flags = flags;
 	}
 	
 	public void run(GOut g) {
@@ -1633,8 +1635,8 @@ public class MapView extends PView implements DTarget, Console.Directory {
     private class Click extends Hittest {
 	int clickb;
 	
-	private Click(Coord c, int b) {
-	    super(c);
+	private Click(Coord c, int flags, int b) {
+	    super(c, flags);
 	    clickb = b;
 	}
 
@@ -1698,6 +1700,24 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    }
 	}
     }
+
+    private class Hover extends Hittest {
+	private Hover(Coord c) {
+	    super(c, 0);
+	}
+
+	protected void hit(Coord pc, Coord2d mc, ClickInfo inf) {
+	    if(inf != null) {
+		//tt = RichText.render("Res: " + inf.gob.details(), 300);
+	    } else {
+		MCache mcc = MapView.this.ui.sess.glob.map;
+		try {
+		    Resource res = mcc.tilesetr(mcc.gettile(mc.div(MCache.tilesz).floor()));
+		    //tt = "Tile: " + res.name + "[" + mcc.gettile_safe(mc.div(MCache.tilesz)) +"]";
+		} catch(Exception e) {}
+	    }
+	}
+    }
     
     public void grab(Grabber grab) {
 	this.grab = grab;
@@ -1719,7 +1739,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 		wdgmsg("place", placing.rc.floor(posres), (int)Math.round(placing.a * 32768 / Math.PI), button, ui.modflags());
 	} else if((grab != null) && grab.mmousedown(c, button)) {
 	} else {
-	    delay(new Click(c, button));
+	    delay(new Click(c, ui.modflags(), button));
 	}
 	return(true);
     }
@@ -1733,6 +1753,8 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    if((placing.lastmc == null) || !placing.lastmc.equals(c)) {
 		delay(placing.new Adjust(c, ui.modflags()));
 	    }
+	} else if(ui.modctrl) {
+	    delay(new Hover(c));
 	}
     }
     
@@ -1758,7 +1780,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
     }
     
     public boolean drop(final Coord cc, Coord ul) {
-	delay(new Hittest(cc) {
+	delay(new Hittest(cc, ui.modflags()) {
 		public void hit(Coord pc, Coord2d mc, ClickInfo inf) {
 		    wdgmsg("drop", pc, mc.floor(posres), ui.modflags());
 		}
@@ -1767,7 +1789,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
     }
     
     public boolean iteminteract(Coord cc, Coord ul) {
-	delay(new Hittest(cc) {
+	delay(new Hittest(cc, ui.modflags()) {
 		public void hit(Coord pc, Coord2d mc, ClickInfo inf) {
 		    Object[] args = {pc, mc.floor(posres), ui.modflags()};
 		    args = Utils.extend(args, gobclickargs(inf));

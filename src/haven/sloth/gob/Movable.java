@@ -66,40 +66,44 @@ public class Movable extends GAttrib implements Rendered {
 		(gob.type == Type.ANIMAL && global.get(SHOWANIMALPATH, Boolean.class))) {
 	    Moving mv = gob.getattr(Moving.class);
 	    if (mv != null) {
-		mv.getDest().ifPresent((t) -> {
-		    final Coord2d grc = new Coord2d(gob.getc());
-		    if (pathol == null || (pathol.dest != t || pathol.rc != grc)) {
-		        //We need a new path setup
-			final States.ColState col;
-			if(gob.type == Type.VEHICLE) {
-			    col = vehiclepathcol;
-			} else if(gob.type == Type.ANIMAL) {
-			    col = animalpathcol;
-			} else {
-			    //Humans, based off kin
-			    final KinInfo kin = gob.getattr(KinInfo.class);
-			    if(kin != null) {
-				col = buddycol[kin.group];
+		try {
+		    mv.getDest().ifPresent((t) -> {
+			final Coord2d grc = new Coord2d(gob.getc());
+			if (pathol == null || (pathol.dest != t || pathol.rc != grc)) {
+			    //We need a new path setup
+			    final States.ColState col;
+			    if (gob.type == Type.VEHICLE) {
+				col = vehiclepathcol;
+			    } else if (gob.type == Type.ANIMAL) {
+				col = animalpathcol;
 			    } else {
-			        col = unknowngobcol;
+				//Humans, based off kin
+				final KinInfo kin = gob.getattr(KinInfo.class);
+				if (kin != null) {
+				    col = buddycol[kin.group];
+				} else {
+				    col = unknowngobcol;
+				}
 			    }
-			}
 
-			double myz;
-			try {
-			    myz = gob.glob.map.getcz(gob.rc);
-			} catch (Loading l) {
-			    myz = 0;
+			    double myz;
+			    try {
+				myz = gob.glob.map.getcz(gob.rc);
+			    } catch (Loading l) {
+				myz = 0;
+			    }
+			    double oz;
+			    try {
+				oz = gob.glob.map.getcz(t);
+			    } catch (Loading l) {
+				oz = myz;
+			    }
+			    pathol = new GobPathSprite(t, grc, (float) grc.dist(t), (float) (oz - myz), col);
 			}
-			double oz;
-			try {
-			    oz = gob.glob.map.getcz(t);
-			} catch (Loading l) {
-			    oz = myz;
-			}
-			pathol = new GobPathSprite(t, grc, (float) grc.dist(t), (float) (oz - myz), col);
-		    }
-		});
+		    });
+		} catch (Loading l) {
+		    //Try again another frame, getc() likely error'd
+		}
 	    } else {
 		if (pathol != null)
 		    pathol.dispose();

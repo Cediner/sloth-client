@@ -84,3 +84,4 @@
     - Saving minimaps is now in as well.
     - Hidden, Deleted, Alerted are toggled now rather than new
     - Minimap cache tiles don't keep grid references..
+    - Fixes some bugs that caused crashes

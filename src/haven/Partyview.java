@@ -90,7 +90,7 @@ public class Partyview extends Widget {
 					tt.tex().dispose();
 				    if (cdist != dist) {
 					dist = cdist;
-					return tt = Text.render("Distance: " + dist);
+					return tt = Text.render("Distance: " + dist +"\nPosition: " + ppc);
 				    } else {
 					return tt;
 				    }

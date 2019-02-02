@@ -116,6 +116,7 @@ public class LoginScreen extends Widget {
     }
 
     private void login() {
+        super.wdgmsg("forget", new Object[0]);
         super.wdgmsg("login", data());
 	Context.accname = username.text;
     }
