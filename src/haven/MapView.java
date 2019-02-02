@@ -28,6 +28,7 @@ package haven;
 
 import static haven.MCache.tilesz;
 import static haven.OCache.posres;
+import static haven.sloth.DefSettings.DRAWGRIDRADIUS;
 
 import com.google.common.flogger.FluentLogger;
 import haven.GLProgram.VarID;
@@ -50,7 +51,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
     public long plgob = -1;
     public Coord2d cc;
     private final Glob glob;
-    private int view = 2;
+    public int view = DefSettings.global.get(DRAWGRIDRADIUS, Integer.class);
     private Collection<Delayed> delayed = new LinkedList<Delayed>();
     private Collection<Delayed> delayed2 = new LinkedList<Delayed>();
     private Collection<Rendered> extradraw = new LinkedList<Rendered>();

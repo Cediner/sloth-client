@@ -87,3 +87,6 @@
     - Fixes some bugs that caused crashes
     - Added in Pagina search window 'm' -> 's'
     - Can hover over tiles and gobs to get details -> ctrl + hover
+    - Party members have a different icon now on minimap. So do you.
+    - Sea is now blood red
+    - Change increase map view distance options-> video

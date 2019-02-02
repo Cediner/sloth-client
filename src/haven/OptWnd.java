@@ -308,6 +308,15 @@ public class OptWnd extends Window {
 			a = val;
 		    }
 		}, new Coord(0, y)).sz.y + spacer;
+		y += add(new Label("Map View Distance"), new Coord(0, y)).sz.y + spacer;
+		y += add(new HSlider(200, 2, 5, global.get(DRAWGRIDRADIUS, Integer.class)) {
+		    public void changed() {
+		        global.set(DRAWGRIDRADIUS, val);
+		        if(ui.gui != null && ui.gui.map != null) {
+		            ui.gui.map.view = val;
+			}
+		    }
+		}, new Coord(0, y)).sz.y + spacer;
 		y += add(new CheckBox("Show Transition Tiles") {
 		    {a = global.get(SHOWTRANTILES, Boolean.class);}
 

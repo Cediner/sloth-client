@@ -53,6 +53,7 @@ public class LocalMiniMap extends Widget {
     public static final Tex nomap = Resource.loadtex("gfx/hud/mmap/nomap");
     public static final Resource plx = Resource.local().loadwait("gfx/hud/mmap/x");
     private static final ExecutorService bgrenderer = Executors.newFixedThreadPool(1);
+    private static final Tex party = Resource.loadtex("custom/mm/pl/party");
     private static final Tex friend = Resource.loadtex("custom/mm/pl/friend");
     private static final Tex unknown = Resource.loadtex("custom/mm/pl/unknown");
     private static final Tex view = Resource.loadtex("custom/mm/hud/view", 3);
@@ -259,10 +260,10 @@ public class LocalMiniMap extends Widget {
 	}
     }
 
-    private void drawicons(final GOut g, final Coord base) {
+    private void drawicons(final GOut g, final Coord base, final Set<Long> ignore) {
 	synchronized(ui.sess.glob.oc) {
 	    for(Gob gob : ui.sess.glob.oc) {
-		if(gob.type == Type.HUMAN && gob.id != ui.gui.map.plgob) {
+		if(gob.type == Type.HUMAN && gob.id != ui.gui.map.plgob && !ignore.contains(gob.id)) {
 		    final Coord gc = base.add(gob.rc.div(tilesz).floor());
 		    final KinInfo kin = gob.getattr(KinInfo.class);
 		    if(kin != null) {
@@ -274,7 +275,7 @@ public class LocalMiniMap extends Widget {
 		    }
 		} else {
 		    GobIcon icon = gob.getattr(GobIcon.class);
-		    if (icon != null) {
+		    if (icon != null && !ignore.contains(gob.id)) {
 			final Coord gc = base.add(gob.rc.div(tilesz).floor());
 			icon.tex().ifPresent(tex -> {
 			    g.image(tex, gc.sub(tex.sz().div(2)));
@@ -307,7 +308,8 @@ public class LocalMiniMap extends Widget {
 	return(null);
     }
 
-    private void drawparty(final GOut g, final Coord base) {
+    private Set<Long> drawparty(final GOut g, final Coord base) {
+        final Set<Long> ignore = new HashSet<>();
 	synchronized(ui.sess.glob.party) {
 	    for(Party.Member m : ui.sess.glob.party.memb.values()) {
 		Coord2d ppc;
@@ -318,13 +320,15 @@ public class LocalMiniMap extends Widget {
 		}
 		if(ppc == null)
 		    continue;
+		ignore.add(m.gobid);
 		Coord ptc = base.add(ppc.div(tilesz).floor());
 		if(m.gobid != ui.gui.map.plgob)
 		    g.chcolor(m.col.getRed(), m.col.getGreen(), m.col.getBlue(), 255);
-		g.image(friend, ptc.sub(friend.sz().div(2)));
+		g.image(party, ptc.sub(party.sz().div(2)));
 		g.chcolor();
 	    }
 	}
+	return ignore;
     }
 
     private void drawView(final GOut g, final Coord base) {
@@ -385,11 +389,8 @@ public class LocalMiniMap extends Widget {
 	    g.chcolor();
 	}
 
-	//Draw party icons
-	drawparty(g, base);
-
-	//Draw gob icons
-	drawicons(g, base);
+	//Draw gob icons & party
+	drawicons(g, base, drawparty(g, base));
 
 	if(showView) {
 	    drawView(g, base);

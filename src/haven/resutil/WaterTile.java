@@ -316,8 +316,6 @@ public class WaterTile extends Tiler {
 
     public static class BottomFog extends GLState.StandAlone {
 	public static final double maxdepth = 8; /* XXX: These should be parameterized. */
-	public static final Color fogcolor = new Color(0, 16, 48);
-	public static final Expression mfogcolor = mul(col3(fogcolor), pick(fref(idx(ProgramContext.gl_LightSource.ref(), MapView.amblight.ref()), "diffuse"), "rgb"));
 	public static Function rgbmix = new Function.Def(Type.VEC4) {{
 	    Expression a = param(PDir.IN, Type.VEC4).ref();
 	    Expression b = param(PDir.IN, Type.VEC3).ref();
@@ -331,12 +329,13 @@ public class WaterTile extends Tiler {
 		}
 	    };
 
-	private final ShaderMacro shader = prog -> {
-	    prog.fctx.fragcol.mod(in -> rgbmix.call(in, mfogcolor, min(div(fragd.ref(), l(maxdepth)), l(1.0))), 1000);
-	};
+	public final Expression mfogcolor;
+	private final ShaderMacro shader;
 
-	private BottomFog() {
+	private BottomFog(final Color fogcolor) {
 	    super(Slot.Type.DRAW);
+	    mfogcolor = mul(col3(fogcolor), pick(fref(idx(ProgramContext.gl_LightSource.ref(), MapView.amblight.ref()), "diffuse"), "rgb"));
+	    shader = prog ->  prog.fctx.fragcol.mod(in -> rgbmix.call(in, mfogcolor, min(div(fragd.ref(), l(maxdepth)), l(1.0))), 1000);
 	}
 
 	public void apply(GOut g) {}
@@ -347,17 +346,15 @@ public class WaterTile extends Tiler {
 		super.prep(buf);
 	}
     }
-    public static final BottomFog waterfog = new BottomFog();
+
+
+    public static final BottomFog waterfog = new BottomFog(new Color(0, 16, 48));
+    public static final BottomFog deepfog = new BottomFog(new Color(128, 7, 7));
     private static final GLState boff = new States.DepthOffset(4, 4);
-    private static final GLState botmat = GLState.compose(waterfog, boff);
 
     public static final GLState obfog = new GLState.StandAlone(GLState.Slot.Type.DRAW) {
 	    {
-		slot.instanced = new GLState.Instancer<StandAlone>() {
-			public StandAlone inststate(StandAlone[] states) {
-			    return(null);
-			}
-		    };
+	        slot.instanced = (states) -> null;
 	    }
 	final AutoVarying fragd = new AutoVarying(Type.FLOAT) {
 		protected Expression root(VertexContext vctx) {
@@ -365,9 +362,9 @@ public class WaterTile extends Tiler {
 		}
 	    };
 
-	final ShaderMacro shader = prog -> {
-	    prog.fctx.fragcol.mod(in -> BottomFog.rgbmix.call(in, BottomFog.mfogcolor, clamp(div(fragd.ref(), l(BottomFog.maxdepth)), l(0.0), l(1.0))), 1000);
-	};
+	final ShaderMacro shader = prog ->
+	    prog.fctx.fragcol.mod(in -> BottomFog.rgbmix.call(in, waterfog.mfogcolor, clamp(div(fragd.ref(), l(BottomFog.maxdepth)), l(0.0), l(1.0))), 1000);
+
 	public void apply(GOut g) {}
 	public void unapply(GOut g) {}
 	public ShaderMacro shader() {return(shader);}
@@ -377,6 +374,8 @@ public class WaterTile extends Tiler {
     public static class Fac implements Factory {
 	public Tiler create(int id, Tileset set) {
 	    int a = 0;
+	    //int depth = id == 172 ? 60 : (Integer)set.ta[a];
+	    //a++
 	    int depth = (Integer)set.ta[a++];
 	    Tiler.MCons bottom = new GroundTile(id, set);
 	    while(a < set.ta.length) {
@@ -393,10 +392,20 @@ public class WaterTile extends Tiler {
 	}
     }
 
+    private final GLState mat;
+    private final GLState fog;
+
     public WaterTile(int id, Tiler.MCons bottom, int depth) {
 	super(id);
 	this.bottom = bottom;
 	this.depth = depth;
+	if(id == 172) {
+	    this.mat = GLState.compose(deepfog, boff);
+	    this.fog = obfog;
+	} else {
+	    this.mat = GLState.compose(waterfog, boff);
+	    this.fog = obfog;
+	}
     }
 
     @Deprecated
@@ -413,7 +422,7 @@ public class WaterTile extends Tiler {
 	smod.new Face(v[d.f[3]], v[d.f[4]], v[d.f[5]]);
 	Bottom b = m.data(Bottom.id);
 	MPart bd = MPart.splitquad(lc, gc, b.fortilea(lc), ms.split[ms.ts.o(lc)]);
-	bd.mat = botmat;
+	bd.mat = mat;
 	bottom.faces(m, bd);
     }
 
@@ -425,7 +434,7 @@ public class WaterTile extends Tiler {
 		MapMesh.MapSurface ms = m.data(MapMesh.gnd);
 		Bottom b = m.data(Bottom.id);
 		MPart d = MPart.splitquad(lc, gc, b.fortilea(lc), ms.split[ms.ts.o(lc)]);
-		d.mat = botmat;
+		d.mat = mat;
 		((CTrans)bottom).tcons(z, bmask, cmask).faces(m, d);
 	    }
 	} else {
@@ -435,8 +444,9 @@ public class WaterTile extends Tiler {
     }
 
     public GLState drawstate(Glob glob, GLConfig cfg, Coord3f c) {
-	if(cfg.pref.wsurf.val)
-	    return(obfog);
+	if(cfg.pref.wsurf.val) {
+	    return fog;
+	}
 	return(null);
     }
 }
