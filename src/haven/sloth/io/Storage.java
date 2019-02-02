@@ -91,6 +91,11 @@ public class Storage {
 	    callback.run(conn);
 	    conn.commit();
 	} catch (SQLException se) {
+	    try {
+		conn.rollback();
+	    } catch (SQLException se2) {
+		//Eat it.
+	    }
 	    se.printStackTrace();
 	    logger.atSevere().withCause(se).log("Failed to commit transaction");
 	    System.exit(0);
@@ -106,6 +111,11 @@ public class Storage {
 		callback.run(conn);
 		conn.commit();
 	    } catch (SQLException se) {
+		try {
+		    conn.rollback();
+		} catch (SQLException se2) {
+		    //Eat it.
+		}
 	        se.printStackTrace();
 		logger.atSevere().withCause(se).log("Failed to commit transaction");
 	    }
