@@ -1322,17 +1322,19 @@ public class MapView extends PView implements DTarget, Console.Directory {
     }
 
     private void partydraw(GOut g) {
-	for(Party.Member m : ui.sess.glob.party.memb.values()) {
-	    if(m.gobid == this.plgob)
-		continue;
-	    Coord2d mc = m.getc();
-	    if(mc == null)
-		continue;
-	    double a = screenangle(mc, true);
-	    if(Double.isNaN(a))
-		continue;
-	    g.chcolor(m.col);
-	    drawarrow(g, a);
+        synchronized (ui.sess.glob.party) {
+	    for (Party.Member m : ui.sess.glob.party.memb.values()) {
+		if (m.gobid == this.plgob)
+		    continue;
+		Coord2d mc = m.getc();
+		if (mc == null)
+		    continue;
+		double a = screenangle(mc, true);
+		if (Double.isNaN(a))
+		    continue;
+		g.chcolor(m.col);
+		drawarrow(g, a);
+	    }
 	}
 	g.chcolor();
     }
