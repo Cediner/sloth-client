@@ -12,7 +12,7 @@ public class HiddenManager extends Window implements ObservableListener<String> 
     private List<String> hidden = new ArrayList<>();
 
     public HiddenManager() {
-	super(Coord.z, "Hidden Manager");
+	super(Coord.z, "Hidden Manager", "Hidden Manager");
 	Coord c = new Coord(0, 0);
 	final Listbox<String> lst;
 	c.y += add(lst = new Listbox<String>(200, 20, 20) {

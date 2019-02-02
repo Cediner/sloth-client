@@ -303,6 +303,77 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 	    glob.oc.remove(id);
     }
 
+    public String details() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Res: " ); sb.append(resname().orElse(""));
+        sb.append(" ["); sb.append(id); sb.append("]\n");
+        sb.append("staticp: "); sb.append(staticp() != null ? "static" : "dynamic"); sb.append("\n");
+	ResDrawable dw = getattr(ResDrawable.class);
+	if (dw != null) {
+	    sb.append("sdt: "); sb.append(dw.sdtnum()); sb.append("\n");
+	    sb.append("Angle: "); sb.append(Math.toDegrees(a)); sb.append("\n");
+	} else {
+	    Composite comp = getattr(Composite.class);
+	    if (comp != null) {
+		sb.append(eq());
+		sb.append("\n");
+	    }
+	}
+	sb.append("Position: "); sb.append(rc); sb.append("\n");
+	return sb.toString();
+    }
+
+    private String rnm(Indir<Resource> r) {
+	try {
+	    if(r != null && r.get() != null)
+		return r.get().name;
+	    else
+		return "";
+	} catch(Exception e) {
+	    return "";
+	}
+    }
+
+    public String eq() {
+	Drawable d = getattr(Drawable.class);
+	if(d instanceof Composite) {
+	    Composite comp = (Composite)d;
+
+	    final StringBuilder sb = new StringBuilder();
+	    sb.append("Equipment:");
+	    if(comp.lastnequ != null)
+		for(Composited.ED eq : comp.lastnequ) {
+		    sb.append("\nEqu: "); sb.append(rnm(eq.res.res));
+		}
+
+	    if(comp.nmod != null)
+		for(Composited.MD md : comp.nmod) {
+		    sb.append("\nMod: ");
+		    sb.append(rnm(md.mod));
+		    for (ResData rd : md.tex) {
+			sb.append("\n  Tex: ");
+			sb.append(rnm(rd.res));
+		    }
+		}
+
+	    sb.append("Poses:");
+	    if(comp.oldposes != null) {
+		for (ResData res : comp.oldposes) {
+		    sb.append("\nPose: ");
+		    sb.append(rnm(res.res));
+		}
+	    }
+	    if(comp.oldtposes != null) {
+		for (ResData res : comp.oldtposes) {
+		    sb.append("\nTPose: ");
+		    sb.append(rnm(res.res));
+		}
+	    }
+	    return sb.toString();
+	}
+	return "";
+    }
+
     /* Intended for local code. Server changes are handled via OCache. */
     public void addol(Overlay ol) {
 	ols.add(ol);

@@ -76,6 +76,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public BeltWnd fbelt, nbelt, npbelt;
     public final Map<Integer, String> polowners = new HashMap<>();
     public Bufflist buffs; //Buff Widget
+    private ActWnd paginasearch;
     
     @RName("gameui")
     public static class $_ implements Factory {
@@ -446,6 +447,9 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    fbelt = add(new BeltWnd("fk", data, KeyEvent.VK_F1, KeyEvent.VK_F10,5,50), new Coord(0, 50));
 	    npbelt = add(new BeltWnd("np", data, KeyEvent.VK_NUMPAD0, KeyEvent.VK_NUMPAD9,4,100), new Coord(0, 100));
 	    nbelt = add(new BeltWnd("n", data, KeyEvent.VK_0, KeyEvent.VK_9, 5, 0), new Coord(0, 150));
+
+	    paginasearch = add(new ActWnd("Menu Search"));
+	    paginasearch.hide();
 	} else if(place == "fight") {
 	    fv = urpanel.add((Fightview)child, 0, 0);
 	} else if(place == "fsess") {
@@ -776,6 +780,14 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     
     public boolean mousedown(Coord c, int button) {
 	return(super.mousedown(c, button));
+    }
+
+    void toggleAct() {
+	if(paginasearch != null && paginasearch.show(!paginasearch.visible)) {
+	    paginasearch.raise();
+	    fitwdg(paginasearch);
+	    setfocus(paginasearch);
+	}
     }
 
     void toggleHidden() {

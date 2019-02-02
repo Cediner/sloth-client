@@ -27,15 +27,18 @@
 package haven;
 
 import java.awt.Color;
+import java.util.Optional;
 
 public abstract class Listbox<T> extends ListWidget<T> {
     public int h;
     public final Scrollbar sb;
+    private int selindex;
 
     public Listbox(int w, int h, int itemh) {
 	super(new Coord(w, h * itemh), itemh);
 	this.h = h;
 	this.sb = adda(new Scrollbar(sz.y, 0, 0), sz.x, 0, 1, 0);
+	selindex = -1;
     }
 
     protected void drawsel(GOut g) {
@@ -78,22 +81,42 @@ public abstract class Listbox<T> extends ListWidget<T> {
 	    change(item);
     }
 
-    public T itemat(Coord c) {
+    public void change(final int idx) {
+        if(idx >= 0 && idx < listitems()) {
+            sel = listitem(idx);
+            selindex = idx;
+            showsel();
+	}
+    }
+
+    public Optional<Integer> selindex() {
+        return selindex >= 0 ? Optional.of(selindex) : Optional.empty();
+    }
+
+    private Optional<Integer> itemat(Coord c) {
 	int idx = (c.y / itemh) + sb.val;
 	if(idx >= listitems())
-	    return(null);
-	return(listitem(idx));
+	    return Optional.empty();
+	return Optional.of(idx);
     }
 
     public boolean mousedown(Coord c, int button) {
 	if(super.mousedown(c, button))
 	    return(true);
-	T item = itemat(c);
-	if((item == null) && (button == 1))
-	    change(null);
-	else if(item != null)
+	final Optional<Integer> idx = itemat(c);
+	if(idx.isPresent()) {
+	    selindex = idx.get();
+	    T item = listitem(selindex);
 	    itemclick(item, button);
+	} else if(button == 1) {
+	    change(null);
+	    selindex = -1;
+	}
 	return(true);
+    }
+
+    public void showsel() {
+        selindex().ifPresent(this::display);
     }
 
     public void display(int idx) {

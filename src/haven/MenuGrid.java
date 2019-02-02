@@ -36,6 +36,7 @@ import haven.sloth.gui.HiddenManager;
 import haven.sloth.gui.MovableWidget;
 import haven.sloth.gui.SoundManager;
 import haven.sloth.util.Images;
+import haven.sloth.util.ObservableCollection;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -45,7 +46,7 @@ public class MenuGrid extends MovableWidget {
     public final static Coord bgsz = bg.sz().add(-1, -1);
     public final static RichText.Foundry ttfnd = new RichText.Foundry(TextAttribute.FAMILY, "SansSerif", TextAttribute.SIZE, 10);
     public final Map<String, SpecialPagina> specialpag = new HashMap<>();
-    public final Set<Pagina> paginae = new HashSet<>();
+    public final ObservableCollection<Pagina> paginae = new ObservableCollection<>(new HashSet<>());
     private static Coord gsz = new Coord(4, 4);
     private Pagina cur, dragging;
     private Collection<PagButton> curbtns = null;
@@ -263,6 +264,9 @@ public class MenuGrid extends MovableWidget {
 	addSpecial(new SpecialPagina(this, "management::chat",
 		Resource.local().load("custom/paginae/default/wnd/chat"),
 		(pag) -> ui.gui.toggleChat()));
+	addSpecial(new SpecialPagina(this, "management::search",
+		Resource.local().load("custom/paginae/default/wnd/search"),
+		(pag) -> ui.gui.toggleAct()));
     }
 
     private void addSpecial(final SpecialPagina pag) {
@@ -477,7 +481,7 @@ public class MenuGrid extends MovableWidget {
 	}
     }
 
-    private void use(PagButton r, boolean reset) {
+    public void use(PagButton r, boolean reset) {
 	Collection<PagButton> sub = new ArrayList<>();
 	cons(r.pag, sub);
 	if(sub.size() > 0) {

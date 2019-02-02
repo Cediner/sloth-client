@@ -16,7 +16,7 @@ public class SoundManager extends Window implements ObservableMapListener<String
     private final Listbox<String> objs;
 
     public SoundManager() {
-        super(Coord.z, "Sound Manager");
+        super(Coord.z, "Sound Manager", "Sound Manager");
 	Coord c = new Coord(0, 0);
 	c.x += add(objs = new Listbox<String>(200, 20, 20) {
 	    @Override

@@ -85,3 +85,5 @@
     - Hidden, Deleted, Alerted are toggled now rather than new
     - Minimap cache tiles don't keep grid references..
     - Fixes some bugs that caused crashes
+    - Added in Pagina search window 'm' -> 's'
+    - Can hover over tiles and gobs to get details -> ctrl + hover

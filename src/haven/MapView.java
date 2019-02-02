@@ -29,6 +29,7 @@ package haven;
 import static haven.MCache.tilesz;
 import static haven.OCache.posres;
 
+import com.google.common.flogger.FluentLogger;
 import haven.GLProgram.VarID;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
@@ -44,6 +45,7 @@ import haven.sloth.gob.Hidden;
 import haven.sloth.gui.SoundSelector;
 
 public class MapView extends PView implements DTarget, Console.Directory {
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     public static boolean clickdb = false;
     public long plgob = -1;
     public Coord2d cc;
@@ -62,6 +64,9 @@ public class MapView extends PView implements DTarget, Console.Directory {
     public static int plobgran = 8;
     private static final Map<String, Class<? extends Camera>> camtypes = new HashMap<String, Class<? extends Camera>>();
     public CPUProfile setupprof = new CPUProfile(300);
+    //Tooltip info
+    private String lasttt = "";
+    private Object tt;
     
     public interface Delayed {
 	public void run(GOut g);
@@ -1708,15 +1713,52 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    super(c, 0);
 	}
 
+	private Optional<Gob> gobFromClick(final ClickInfo inf) {
+	    if(inf == null)
+		return Optional.empty();
+	    Rendered[] st = inf.array();
+	    for(final Rendered g : st) {
+		if(g instanceof Gob) {
+		    return Optional.of((Gob)g);
+		}
+	    }
+	    return Optional.empty();
+	}
+
+	private void updatett(final String ntt) {
+	    if(!ntt.equals(lasttt)) {
+		lasttt = null;
+		try {
+		    tt = RichText.render(ntt, 300);
+		} catch (Exception e) {
+		    logger.atSevere().withCause(e).log("Failed to render tooltip\n%s", ntt);
+		    tt = null;
+		}
+	    }
+	}
+
 	protected void hit(Coord pc, Coord2d mc, ClickInfo inf) {
 	    if(inf != null) {
-		//tt = RichText.render("Res: " + inf.gob.details(), 300);
+	        final Optional<Gob> gob = gobFromClick(inf);
+	        if(gob.isPresent()) {
+	            updatett(gob.get().details());
+		} else {
+		    try {
+			Resource res = ui.sess.glob.map.tilesetr(ui.sess.glob.map.gettile(mc.div(MCache.tilesz).floor()));
+			updatett("Tile: " + res.name + "[" + ui.sess.glob.map.gettile_safe(mc.div(MCache.tilesz).floor()) +"]");
+		    } catch(Exception e) {
+		        lasttt = "";
+			tt = null;
+		    }
+		}
 	    } else {
-		MCache mcc = MapView.this.ui.sess.glob.map;
 		try {
-		    Resource res = mcc.tilesetr(mcc.gettile(mc.div(MCache.tilesz).floor()));
-		    //tt = "Tile: " + res.name + "[" + mcc.gettile_safe(mc.div(MCache.tilesz)) +"]";
-		} catch(Exception e) {}
+		    Resource res = ui.sess.glob.map.tilesetr(ui.sess.glob.map.gettile(mc.div(MCache.tilesz).floor()));
+		    updatett("Tile: " + res.name + "[" + ui.sess.glob.map.gettile_safe(mc.div(MCache.tilesz).floor()) +"]");
+		} catch(Exception e) {
+		    lasttt = "";
+		    tt = null;
+		}
 	    }
 	}
     }
@@ -1757,6 +1799,9 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    }
 	} else if(ui.modctrl) {
 	    delay(new Hover(c));
+	} else {
+	    lasttt = "";
+	    tt = null;
 	}
     }
     
@@ -1821,6 +1866,8 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	if(selection != null) {
 	    if(selection.tt != null)
 		return(selection.tt);
+	} else if(tt != null){
+	    return tt;
 	}
 	return(super.tooltip(c, prev));
     }

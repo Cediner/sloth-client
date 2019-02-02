@@ -12,7 +12,7 @@ public class DeletedManager extends Window implements ObservableListener<String>
     private List<String> deleted = new ArrayList<>();
 
     public DeletedManager() {
-        super(Coord.z, "Deleted Manager");
+        super(Coord.z, "Deleted Manager", "Deleted Manager");
         Coord c = new Coord(0, 0);
         final Listbox<String> lst;
 	c.y += add(lst = new Listbox<String>(200, 20, 20) {

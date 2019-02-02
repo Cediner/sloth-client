@@ -473,6 +473,20 @@ public class MCache {
 	return(getgrid(tc.div(cmaps)));
     }
 
+    public Optional<Grid> getgridto(Coord tc) {
+	return(getgrido(tc.div(cmaps)));
+    }
+
+    public int gettile_safe(Coord tc) {
+	final Optional<Grid> grid = getgridto(tc);
+	if (grid.isPresent()) {
+	    final Grid g = grid.get();
+	    return g.gettile(tc.sub(g.ul));
+	} else {
+	    return 0;
+	}
+    }
+
     public int gettile(Coord tc) {
 	Grid g = getgridt(tc);
 	return(g.gettile(tc.sub(g.ul)));

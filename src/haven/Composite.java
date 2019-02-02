@@ -37,12 +37,14 @@ public class Composite extends Drawable {
     public final Indir<Resource> base;
     public Composited comp;
     private Collection<ResData> nposes = null, tposes = null;
+    public Collection<ResData> oldposes = null, oldtposes;
     private boolean nposesold, retainequ = false;
     private float tptime;
     private WrapMode tpmode;
     public int pseq;
-    private List<MD> nmod;
+    public List<MD> nmod;
     private List<ED> nequ;
+    public List<ED> lastnequ;
     
     public Composite(Gob gob, Indir<Resource> base) {
 	super(gob);
@@ -93,6 +95,7 @@ public class Composite extends Drawable {
 	}
 	if(nequ != null) {
 	    comp.chequ(nequ);
+	    lastnequ = nequ;
 	    nequ = null;
 	}
     }
@@ -140,6 +143,7 @@ public class Composite extends Drawable {
 	if(tposes != null)
 	    tposes = null;
 	nposes = poses;
+	oldposes = poses;
 	nposesold = !interp;
     }
     
@@ -150,6 +154,7 @@ public class Composite extends Drawable {
 
     public void tposes(Collection<ResData> poses, WrapMode mode, float time) {
 	this.tposes = poses;
+	oldtposes = poses;
 	this.tpmode = mode;
 	this.tptime = time;
     }
