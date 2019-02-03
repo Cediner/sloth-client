@@ -448,6 +448,12 @@ public class OptWnd extends Window {
 		    ui.audio.amb.setvolume(val / 1000.0);
 		}
 	    }, new Coord(0, y)).sz.y + spacer;
+	    y += audio.add(new Label("Timer volume"), new Coord(0, y)).sz.y + spacer;
+	    y += audio.add(new HSlider(200, 0, 1000, global.get(TIMERVOLUME, Integer.class)) {
+		public void changed() {
+		    global.set(TIMERVOLUME, val);
+		}
+	    }, new Coord(0, y)).sz.y + spacer;
 	    y += audio.add(new CheckBox("No Gob Audio") {
 		{a = global.get(NOGOBAUDIO, Boolean.class);}
 

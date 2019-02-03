@@ -93,17 +93,24 @@ public abstract class Listbox<T> extends ListWidget<T> {
         return selindex >= 0 ? Optional.of(selindex) : Optional.empty();
     }
 
-    private Optional<Integer> itemat(Coord c) {
+    private Optional<Integer> itemato(Coord c) {
 	int idx = (c.y / itemh) + sb.val;
 	if(idx >= listitems())
 	    return Optional.empty();
 	return Optional.of(idx);
     }
 
+    public T itemat(Coord c) {
+	int idx = (c.y / itemh) + sb.val;
+	if(idx >= listitems())
+	    return null;
+	return listitem(idx);
+    }
+
     public boolean mousedown(Coord c, int button) {
 	if(super.mousedown(c, button))
 	    return(true);
-	final Optional<Integer> idx = itemat(c);
+	final Optional<Integer> idx = itemato(c);
 	if(idx.isPresent()) {
 	    selindex = idx.get();
 	    T item = listitem(selindex);

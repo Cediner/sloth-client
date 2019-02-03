@@ -388,7 +388,6 @@ public class MapWnd extends Window {
     }
 
     public void markobj(long gobid, long oid, Indir<Resource> resid, String nm) {
-        System.out.println("markobj: " + gobid + " - " + oid);
 	synchronized(deferred) {
 	    deferred.add(new Runnable() {
 		    double f = 0;

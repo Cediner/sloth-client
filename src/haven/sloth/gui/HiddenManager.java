@@ -42,8 +42,12 @@ public class HiddenManager extends Window implements ObservableListener<String> 
 
     @Override
     public void close() {
+        hide();
+    }
+
+    @Override
+    protected void removed() {
 	Hidden.unlisten(this);
-	ui.destroy(this);
     }
 
     @Override

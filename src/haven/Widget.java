@@ -290,6 +290,7 @@ public class Widget {
 
     protected void added() {}
     protected void binded() {}
+    protected void removed() {}
 
     public Coord2d relpos() {
         return new Coord2d(c.x/(double)parent.sz.x,

@@ -91,4 +91,6 @@
     - Sea is now blood red
     - Change increase map view distance options-> video
     - Progress bar shows %
-    -
+    - Timers added back in 'm' -> 'i'
+    - minimap grid, view, and pclaim/vclaim/kclaims settings are saved now
+    - item meters now show % in bottom left

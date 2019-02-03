@@ -92,6 +92,9 @@ public class DefSettings {
     	SHOWHIDDEN = "gameplay.show-hidden",			//[Bool] Toggle hidden squares
     	HIDDENCOLOR = "gameplay.hidden-color",			//[RGBA] Color of hidden squares
     	SHOWQUALITY = "gameplay.show-item-quality",             //[Bool] Toggle item quality
+    	SHOWPCLAIM = "gameplay.show-pclaim",			//[Bool] Toggle pclaims
+    	SHOWVCLAIM = "gameplay.show-vclaim",			//[Bool] Toggle vclaims
+    	SHOWKCLAIM = "gameplay.show-kclaim",			//[Bool] Toggle kingdom claims
 
     	SHOWFKBELT = "belt.fk.show",				//[Bool] Toggle F key belt
     	FKBELTPAGE = "belt.fk.page",				//[Int] Page F key belt is on
@@ -103,8 +106,12 @@ public class DefSettings {
 	NBELTPAGE = "belt.n.page",				//[Int] Page F key belt is on
 	NBELTSTYLE = "belt.n.style",				//[String] F key belt style
 
+    	MMSHOWGRID = "minimap.show-grid",			//[Bool] Toggle minimap grid
+    	MMSHOWVIEW = "minimap.show-view",			//[Bool] Toggle minimap view box
+
     	CAMERA = "camera.camera-type",				//[String] Camera type, default: Ortho
 
+    	TIMERVOLUME = "audio.timer-volume",			//[Int] Timer volume
     	NOGOBAUDIO = "audio.no-gob-audio"; 			//[Bool] Toggles Gob audio
 
     public static final String
@@ -177,6 +184,9 @@ public class DefSettings {
 	global.ensure(SHOWHIDDEN, true);
 	global.ensure(HIDDENCOLOR, Color.RED);
 	global.ensure(SHOWQUALITY, true);
+	global.ensure(SHOWPCLAIM, false);
+	global.ensure(SHOWVCLAIM, false);
+	global.ensure(SHOWKCLAIM, false);
 	//Belts
 	global.ensure(SHOWFKBELT, false);
 	global.ensure(FKBELTPAGE, 0);
@@ -187,9 +197,13 @@ public class DefSettings {
 	global.ensure(SHOWNBELT, true);
 	global.ensure(NBELTPAGE, 0);
 	global.ensure(NBELTSTYLE, BeltWnd.Style.HORIZONTAL.toString());
+	//Minimap
+	global.ensure(MMSHOWGRID, false);
+	global.ensure(MMSHOWVIEW, false);
 	//Cameras
 	global.ensure(CAMERA, "sortho");
 	//Audio
+	global.ensure(TIMERVOLUME, 1000);
 	global.ensure(NOGOBAUDIO, false);
 
 	//Session based globals

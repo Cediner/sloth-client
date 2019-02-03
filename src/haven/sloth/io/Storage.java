@@ -106,6 +106,7 @@ public class Storage {
      * These are done async
      */
     public synchronized void write(final SQLCallback callback) {
+        final StackTraceElement[] stack = Thread.currentThread().getStackTrace();
 	writerHandler.execute(() -> {
 	    try {
 		callback.run(conn);
@@ -116,7 +117,9 @@ public class Storage {
 		} catch (SQLException se2) {
 		    //Eat it.
 		}
-	        se.printStackTrace();
+		for(final StackTraceElement ele : stack) {
+		    logger.atSevere().log(ele.toString());
+		}
 		logger.atSevere().withCause(se).log("Failed to commit transaction");
 	    }
 	});

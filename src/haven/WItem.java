@@ -194,7 +194,14 @@ public class WItem extends Widget implements DTarget {
 		g.chcolor(255, 255, 255, 64);
 		Coord half = sz.div(2);
 		g.prect(half, half.inv(), half, meter * Math.PI * 2);
+		final int width = FastText.textw((int)(meter*100)+"%");
+		final Coord tsz = new Coord(width, 15);
+		final Coord c = new Coord(0, sz.y - tsz.y);
 		g.chcolor();
+		g.chcolor(new Color(128, 128, 128, 128));
+		g.frect(c, c.add(tsz.x,0), c.add(tsz), c.add(0, tsz.y));
+		g.chcolor();
+		FastText.printf(g, c, "%s%%", (int)(meter*100));
 	    }
 
 	    if(item.quality > 0 && DefSettings.global.get(DefSettings.SHOWQUALITY, Boolean.class)) {

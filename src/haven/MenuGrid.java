@@ -267,6 +267,9 @@ public class MenuGrid extends MovableWidget {
 	addSpecial(new SpecialPagina(this, "management::search",
 		Resource.local().load("custom/paginae/default/wnd/search"),
 		(pag) -> ui.gui.toggleAct()));
+	addSpecial(new SpecialPagina(this, "management::timers",
+		Resource.local().load("custom/paginae/default/wnd/timers"),
+		(pag) -> ui.gui.toggleTimers()));
     }
 
     private void addSpecial(final SpecialPagina pag) {

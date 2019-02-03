@@ -203,11 +203,13 @@ public class UI {
     }
 
     private void removeid(Widget wdg) {
+        wdg.removed();
 	if(rwidgets.containsKey(wdg)) {
 	    int id = rwidgets.get(wdg);
 	    widgets.remove(id);
 	    rwidgets.remove(wdg);
 	}
+
 	for(Widget child = wdg.child; child != null; child = child.next)
 	    removeid(child);
     }

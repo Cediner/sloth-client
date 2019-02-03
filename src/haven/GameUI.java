@@ -27,6 +27,7 @@
 package haven;
 
 import haven.sloth.gui.*;
+import haven.sloth.gui.Timer.TimersWnd;
 import haven.sloth.io.BeltData;
 import haven.sloth.script.Context;
 
@@ -77,6 +78,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public final Map<Integer, String> polowners = new HashMap<>();
     public Bufflist buffs; //Buff Widget
     private ActWnd paginasearch;
+    private TimersWnd timers;
     
     @RName("gameui")
     public static class $_ implements Factory {
@@ -140,6 +142,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	deleted.hide();
 	alerted = add(new SoundManager());
     	alerted.hide();
+    	timers = add(new TimersWnd());
+    	timers.hide();
     }
     
     public class Hidepanel extends Widget {
@@ -784,6 +788,14 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     
     public boolean mousedown(Coord c, int button) {
 	return(super.mousedown(c, button));
+    }
+
+    void toggleTimers() {
+	if(timers != null && timers.show(!timers.visible)) {
+	    timers.raise();
+	    fitwdg(timers);
+	    setfocus(timers);
+	}
     }
 
     void toggleAct() {

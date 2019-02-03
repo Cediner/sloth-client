@@ -93,8 +93,7 @@ public class ActWnd extends Window implements ObservableListener<MenuGrid.Pagina
     }
 
     @Override
-    public void destroy() {
-	super.destroy();
+    protected void removed() {
     	ui.gui.menu.paginae.removeListener(this);
     }
 

@@ -42,8 +42,12 @@ public class DeletedManager extends Window implements ObservableListener<String>
 
     @Override
     public void close() {
-        Deleted.unlisten(this);
-	ui.destroy(this);
+        hide();
+    }
+
+    @Override
+    protected void removed() {
+	Deleted.unlisten(this);
     }
 
     @Override

@@ -3,6 +3,7 @@ package haven.sloth.gui;
 import haven.Coord;
 import haven.IButton;
 import haven.LocalMiniMap;
+import haven.sloth.DefSettings;
 
 public class MinimapWnd extends ResizableWnd {
     private LocalMiniMap minimap;
@@ -13,22 +14,31 @@ public class MinimapWnd extends ResizableWnd {
         final int spacer = 5;
 
         final IButton claim = add(new IButton("custom/mm/hud/claim", "Show Personal Claims", () ->{
-	    if((ui.gui.map != null) && !ui.gui.map.visol(0))
+	    if((ui.gui.map != null) && !ui.gui.map.visol(0)) {
+		DefSettings.global.set(DefSettings.SHOWPCLAIM, true);
 		ui.gui.map.enol(0, 1);
-	    else
+	    } else {
+		DefSettings.global.set(DefSettings.SHOWPCLAIM, false);
 		ui.gui.map.disol(0, 1);
+	    }
 	}), new Coord(0, 0));
 	final IButton vclaim = add(new IButton("custom/mm/hud/vclaim", "Show Village Claims", () ->{
-	    if((ui.gui.map != null) && !ui.gui.map.visol(2))
+	    if((ui.gui.map != null) && !ui.gui.map.visol(2)) {
+		DefSettings.global.set(DefSettings.SHOWVCLAIM, true);
 		ui.gui.map.enol(2, 3);
-	    else
+	    } else {
+		DefSettings.global.set(DefSettings.SHOWVCLAIM, false);
 		ui.gui.map.disol(2, 3);
+	    }
 	}), claim.c.add(claim.sz.x + spacer, 0));
 	final IButton rlm = add(new IButton("custom/mm/hud/realm", "Show Kingdom Claims", () ->{
-	    if((ui.gui.map != null) && !ui.gui.map.visol(4))
+	    if((ui.gui.map != null) && !ui.gui.map.visol(4)) {
 		ui.gui.map.enol(4, 5);
-	    else
+		DefSettings.global.set(DefSettings.SHOWKCLAIM, true);
+	    } else {
+		DefSettings.global.set(DefSettings.SHOWKCLAIM, false);
 		ui.gui.map.disol(4, 5);
+	    }
 	}), vclaim.c.add(vclaim.sz.x + spacer, 0));
 	final IButton center = add(new IButton("custom/mm/hud/center", "Center map on player", () -> minimap.center()),
 		rlm.c.add(rlm.sz.x + spacer, 0));

@@ -41,6 +41,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import haven.resutil.Ridges;
+import haven.sloth.DefSettings;
 import haven.sloth.gob.Type;
 import haven.sloth.io.MapData;
 import haven.sloth.script.Context;
@@ -75,8 +76,8 @@ public class LocalMiniMap extends Widget {
     private UI.Grab dm = null;
     private Coord doff;
     //Some extras
-    private boolean showGrid = false;
-    private boolean showView = false;
+    private boolean showGrid = DefSettings.global.get(DefSettings.MMSHOWGRID, Boolean.class);
+    private boolean showView = DefSettings.global.get(DefSettings.MMSHOWVIEW, Boolean.class);
 
     //Session data, folder name, coord that is our center
     private String session = null;
@@ -410,10 +411,12 @@ public class LocalMiniMap extends Widget {
 
     public void toggleGrid() {
         showGrid = !showGrid;
+        DefSettings.global.set(DefSettings.MMSHOWGRID, showGrid);
     }
 
     public void toggleView() {
         showView = !showView;
+	DefSettings.global.set(DefSettings.MMSHOWVIEW, showView);
     }
 
     public boolean mousedown(Coord c, int button) {

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding" addBOMForNewFiles="with NO BOM">
+    <file url="file://$PROJECT_DIR$/etc/res/built/custom/sfx/timer.res" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/belt/default/down.res/image/0.png" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/belt/default/down.res/image/1.png" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/belt/default/down.res/image/2.png" charset="windows-1252" />
@@ -34,6 +35,11 @@
     <file url="file://$PROJECT_DIR$/src/haven/sloth/gui/ActWnd.java" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/src/haven/sloth/gui/ColorPicker.java" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/src/haven/sloth/gui/ColorPreview.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/src/haven/sloth/gui/Timer/Timer.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/src/haven/sloth/gui/Timer/TimerEditWnd.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/src/haven/sloth/gui/Timer/TimerWdg.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/src/haven/sloth/gui/Timer/TimersThread.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/src/haven/sloth/gui/Timer/TimersWnd.java" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/src/haven/sloth/security/AccountManagement.java" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/src/haven/sloth/security/Crypto.java" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/src/haven/sloth/security/DerivedKeyGen.java" charset="windows-1252" />

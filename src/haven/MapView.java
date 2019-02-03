@@ -441,6 +441,16 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	this.plgob = plgob;
 	this.gobs = new Gobs();
 	setcanfocus(true);
+
+	if(DefSettings.global.get(DefSettings.SHOWPCLAIM, Boolean.class)) {
+	    enol(0, 1);
+	}
+	if(DefSettings.global.get(DefSettings.SHOWVCLAIM, Boolean.class)) {
+	    enol(2, 3);
+	}
+	if(DefSettings.global.get(DefSettings.SHOWKCLAIM, Boolean.class)) {
+	    enol(4, 5);
+	}
     }
     
     public boolean visol(int ol) {

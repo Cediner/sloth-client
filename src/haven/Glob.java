@@ -138,7 +138,7 @@ public class Glob {
     private final double timefac = 3.0;
     private double lastrep = 0, rgtime = 0;
     public double globtime() {
-	double now = Utils.rtime();
+	double now = Utils.rtime(); //nanotime
 	double raw = ((now - epoch) * timefac) + time;
 	if(lastrep == 0) {
 	    rgtime = raw;

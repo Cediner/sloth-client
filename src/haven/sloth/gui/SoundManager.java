@@ -93,8 +93,12 @@ public class SoundManager extends Window implements ObservableMapListener<String
 
     @Override
     public void close() {
+	hide();
+    }
+
+    @Override
+    protected void removed() {
 	Alerted.unlisten(this);
-	ui.destroy(this);
     }
 
     @Override
