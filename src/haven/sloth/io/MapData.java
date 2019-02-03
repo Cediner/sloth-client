@@ -82,23 +82,26 @@ public class MapData {
     private Coord center = null;
 
     public void newSegment(final Coord center) {
-        try {
-            final PreparedStatement stmt = Storage.dynamic.prepare("INSERT INTO map_segment (x, y) VALUES (?, ?)");
-            stmt.setInt(1, center.x);
-            stmt.setInt(2, center.y);
-            stmt.executeUpdate();
-            try(final ResultSet key = stmt.getGeneratedKeys()) {
-                if(key.next()) {
-                    segment_id = key.getLong(1);
-		    this.center = center;
-		} else {
-                    this.center = null;
+        Storage.dynamic.write(sql -> {
+	    try {
+		final PreparedStatement stmt = Storage.dynamic.prepare("INSERT INTO map_segment (x, y) VALUES (?, ?)");
+		stmt.setInt(1, center.x);
+		stmt.setInt(2, center.y);
+		stmt.executeUpdate();
+		try (final ResultSet key = stmt.getGeneratedKeys()) {
+		    if (key.next()) {
+			segment_id = key.getLong(1);
+			this.center = center;
+		    } else {
+			this.center = null;
+		    }
 		}
+	    } catch (SQLException se) {
+		logger.atSevere().withCause(se).log("Failed to create new segment");
+		this.center = null;
+		throw se;
 	    }
-        } catch (SQLException sql) {
-            logger.atSevere().withCause(sql).log("Failed to create new segment");
-            this.center = null;
-	}
+	});
     }
 
     public void save(final LocalMiniMap.MapTile tile) {
@@ -128,7 +131,6 @@ public class MapData {
     public void saveNaturalMarker(final long oid, final String nm, final long grid_id, final Coord offset) {
 	if(center != null) {
 	    Storage.dynamic.write(sql -> {
-
 		final PreparedStatement stmt = Storage.dynamic.prepare("INSERT OR REPLACE INTO map_marker VALUES (?, ?, ?, ?, ?, ?, ?)");
 		stmt.setLong(1, oid);
 		stmt.setBoolean(2, true);
