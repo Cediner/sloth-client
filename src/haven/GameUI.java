@@ -577,6 +577,10 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    curprog = new TexI(PUtils.rasterimg(buf)); curprogf = fr; curprogb = bf;
 	}
 	g.aimage(curprog, new Coord(sz.x / 2, (sz.y * 4) / 10), 0.5, 0.5);
+	g.chcolor(new java.awt.Color(128, 128, 128, 128));
+	g.frect(new Coord(sz.x/2+30, (sz.y*4)/10), new Coord(40, 15));
+	g.chcolor();
+	FastText.print(g, new Coord(sz.x/2+30, (sz.y*4)/10), (prog*100)+"%");
     }
 
     public void draw(GOut g) {

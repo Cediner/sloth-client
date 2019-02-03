@@ -1,5 +1,10 @@
 TODO
-    - Save minimaps
+    - Timers
+    - Save minimap settings
+    - % shown for progress bars (all of them)
+    - Grid View + tooltips = non-bold lines. Something from tooltips must be causing an extra GL command to fuck over lines
+    - Infinite zoom out on Overview map
+        - This has more to do with merging the overview map with the minimap -> probably won't happen
     - UI
         - Fully Movable UI
             - Progress bar -> move to its own widget
@@ -27,8 +32,6 @@ TODO
     - Alt + Right Click Obj FlowerMenu
         - Edit Gob (Low Priority)
     - Auto Hearth (Not really needed)
-    - Infinite zoom out on Overview map
-        - This has more to do with merging the overview map with the minimap -> probably won't happen
     - Graphics
         - Low priority
             - Colorful Cave Dust ("colorful-cave-dust" -> True)
