@@ -167,8 +167,7 @@ public class Settings {
 		    }
 		    writer.newLine();
 		} catch (Exception e) {
-	            logger.atSevere().withCause(e).log("Setting [%s] is invalid.");
-	            continue;
+	            logger.atSevere().withCause(e).log("Setting [%s] is invalid.", skey);
 		}
 	    }
 	} catch (Exception e) {
