@@ -54,7 +54,7 @@ public class LocalMiniMap extends Widget {
     public static final Tex nomap = Resource.loadtex("gfx/hud/mmap/nomap");
     public static final Resource plx = Resource.local().loadwait("gfx/hud/mmap/x");
     private static final ExecutorService bgrenderer = Executors.newFixedThreadPool(1);
-    private static final Tex party = Resource.loadtex("custom/mm/pl/party");
+    public static final Tex party = Resource.loadtex("custom/mm/pl/party");
     private static final Tex friend = Resource.loadtex("custom/mm/pl/friend");
     private static final Tex unknown = Resource.loadtex("custom/mm/pl/unknown");
     private static final Tex view = Resource.loadtex("custom/mm/hud/view", 3);

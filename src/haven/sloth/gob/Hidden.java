@@ -2,7 +2,6 @@ package haven.sloth.gob;
 
 import haven.*;
 import haven.sloth.gfx.HitboxMesh;
-import haven.sloth.gfx.HitboxSprite;
 import haven.sloth.io.Storage;
 import haven.sloth.util.ObservableCollection;
 import haven.sloth.util.ObservableListener;

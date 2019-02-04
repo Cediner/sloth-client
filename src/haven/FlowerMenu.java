@@ -39,6 +39,7 @@ public class FlowerMenu extends Widget {
     public static final Color pink = new Color(255, 0, 128);
     public static final Color ptc = Color.YELLOW;
     public static final Text.Foundry ptf = new Text.Foundry(Text.dfont, 12);
+    public static final Coord customBoxPadding = new Coord(4,4);
     public static final IBox pbox = Window.wbox;
     public static final Tex pbg = Window.bg;
     public static final int ph = 30, ppl = 8;
@@ -59,12 +60,12 @@ public class FlowerMenu extends Widget {
 
     public class Petal extends Widget {
 	public String name;
-	public double ta, tr;
+	double ta, tr;
 	public int num;
-	private Text text;
-	private double a = 1;
+	public Text text;
+	public double a = 1;
 
-	public Petal(String name) {
+	private Petal(String name) {
 	    super(Coord.z);
 	    this.name = name;
 	    text = ptf.render(name, ptc);
@@ -90,34 +91,10 @@ public class FlowerMenu extends Widget {
 	    choose(this);
 	    return(true);
 	}
-
-	public Area ta(Coord tc) {
-	    return(Area.sized(tc.sub(sz.div(2)), sz));
-	}
-
-	public Area ta(double a, double r) {
-	    return(ta(Coord.sc(a, r)));
-	}
     }
 
     private static double nxf(double a) {
 	return(-1.8633 * a * a + 2.8633 * a);
-    }
-
-    public class Opening extends NormAnim {
-	Opening() {super(0.25);}
-	
-	public void ntick(double s) {
-	    double ival = 0.8;
-	    double off = (opts.length == 1) ? 0.0 : ((1.0 - ival) / (opts.length - 1));
-	    for(int i = 0; i < opts.length; i++) {
-		Petal p = opts[i];
-		double a = Utils.clip((s - (off * i)) * (1.0 / ival), 0, 1);
-		double b = nxf(a);
-		p.move(p.ta + ((1 - b) * PI), p.tr * b);
-		p.a = a;
-	    }
-	}
     }
 
     public class Chosen extends NormAnim {
@@ -173,38 +150,59 @@ public class FlowerMenu extends Widget {
 	}
     }
 
-    private void organize(Petal[] opts) {
-	Area bounds = parent.area().xl(c.inv());
-	int l = 1, p = 0, i = 0, mp = 0, ml = 1, t = 0, tt = -1;
-	boolean muri = false;
-	while(i < opts.length) {
-	    place: {
-		double ta = (PI / 2) - (p * (2 * PI / (l * ppl)));
-		double tr = 75 + (50 * (l - 1));
-		if(!muri && !bounds.contains(opts[i].ta(ta, tr))) {
-		    if(tt < 0) {
-			tt = ppl * l;
-			t = 1;
-			mp = p;
-			ml = l;
-		    } else if(++t >= tt) {
-			muri = true;
-			p = mp;
-			l = ml;
-			continue;
-		    }
-		    break place;
-		}
-		tt = -1;
-		opts[i].ta = ta;
-		opts[i].tr = tr;
-		i++;
-	    }
-	    if(++p >= (ppl * l)) {
-		l++;
-		p = 0;
-	    }
+    public class CustomPetal extends Petal {
+	boolean h = false;
+
+	private CustomPetal(String name) {
+	    super(name);
+	    sz = new Coord(text.sz().x + 35, 30);
 	}
+
+	@Override
+	public void draw(GOut g) {
+	    g.chcolor(new Color(255, 255, 255, (int)(255 * a)));
+	    Coord bgc = new Coord();
+	    for(bgc.y = 0; bgc.y < sz.y; bgc.y += pbg.sz().y) {
+		for(bgc.x = 0; bgc.x < sz.x; bgc.x += pbg.sz().x)
+		    g.image(pbg, bgc, Coord.z, sz);
+	    }
+	    g.chcolor();
+	    //
+	    if (h) {
+		g.chcolor(0, 0, 0, (int)(128 * a));
+		g.frect(Coord.z, sz);
+		g.chcolor(new Color(255, 255, 255, (int)(255 * a)));
+	    }
+	    FastText.print(g, new Coord(10, 7), Integer.toString((num + 1) % 10));
+	    g.image(text.tex(), sz.sub(8, 0).sub(text.sz()).div(2).add(8, 0));
+	    g.chcolor();
+	}
+
+	@Override
+	public void move(double a, double r) {
+	}
+
+	@Override
+	public void mousemove(Coord c) {
+	    h = c.isect(Coord.z, sz.sub(1, 1));
+	}
+    }
+
+    private void organize(Petal[] opts) {
+	int width = 80;
+	for (Petal petal : opts)
+	    width = Math.max(width, petal.sz.x);
+	Coord c = new Coord(customBoxPadding);
+	for (Petal petal : opts) {
+	    petal.c = new Coord(c);
+	    petal.resize(width, petal.sz.y);
+	    c.y += petal.sz.y - 1;
+	}
+	pack();
+	// clip to parent
+	int x = Utils.clip(this.c.x, 0, parent.sz.x - sz.x);
+	int y = Utils.clip(this.c.y, 0, parent.sz.y - sz.y);
+	this.c = new Coord(x,y);
     }
 
     public FlowerMenu(final Consumer<Integer> callback, final String... options) {
@@ -212,7 +210,7 @@ public class FlowerMenu extends Widget {
 	this.callback = callback;
 	opts = new Petal[options.length];
 	for(int i = 0; i < options.length; i++) {
-	    add(opts[i] = new Petal(options[i]));
+	    add(opts[i] = new CustomPetal(options[i]));
 	    opts[i].num = i;
 	}
     }
@@ -227,7 +225,6 @@ public class FlowerMenu extends Widget {
 	mg = ui.grabmouse(this);
 	kg = ui.grabkeys(this);
 	organize(opts);
-	new Opening().ntick(0);
     }
 
     public boolean mousedown(Coord c, int button) {
@@ -241,14 +238,17 @@ public class FlowerMenu extends Widget {
     }
 
     public void uimsg(String msg, Object... args) {
-	if(msg == "cancel") {
-	    new Cancel();
-	    mg.remove();
-	    kg.remove();
-	} else if(msg == "act") {
-	    new Chosen(opts[(Integer)args[0]]);
-	    mg.remove();
-	    kg.remove();
+        switch (msg) {
+	    case "cancel":
+		new Cancel();
+		mg.remove();
+		kg.remove();
+	        break;
+	    case "act":
+		new Chosen(opts[(Integer)args[0]]);
+		mg.remove();
+		kg.remove();
+	        break;
 	}
     }
 

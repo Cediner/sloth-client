@@ -94,3 +94,9 @@
     - Timers added back in 'm' -> 'i'
     - minimap grid, view, and pclaim/vclaim/kclaims settings are saved now
     - item meters now show % in bottom left
+    - lp/h lp/h/weight added to tooltips & in character tab for study
+    - wolverine/adder/beaver added to dangerous animal list for circle
+    - Can toggle hitboxes on and off in Options -> gameplay. Will only work for objs that have valid hitboxes via res file.
+    - Flowermenu is back to being a list
+    - PvP avatars should now show in top right if they weren't before for you.
+    - party icons on loftar map should be right icons now.

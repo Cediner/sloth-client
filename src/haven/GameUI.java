@@ -43,7 +43,6 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public final String chrid, genus;
     public final long plid; //Player Gob ID
     //Panels that can be hidden
-    private final Hidepanel urpanel; //ur = fight...
     public Avaview portrait; //Avatar widget
     public MenuGrid menu; //The menu grid widget
     public MapView map; // The 3D world of hafen
@@ -98,7 +97,6 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	this.genus = genus;
 	setcanfocus(true);
 	setfocusctl(true);
-	urpanel = add(new Hidepanel("gui-ur", null, new Coord( 1, -1)));
     }
 
     protected void added() {
@@ -455,7 +453,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    paginasearch = add(new ActWnd("Menu Search"));
 	    paginasearch.hide();
 	} else if(place == "fight") {
-	    fv = urpanel.add((Fightview)child, 0, 0);
+	    fv = adda((Fightview)child, sz.x, 0, 1.0, 0.0);
 	} else if(place == "fsess") {
 	    add(child, Coord.z);
 	} else if(place == "inv") {
@@ -584,7 +582,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	g.chcolor(new java.awt.Color(128, 128, 128, 128));
 	g.frect(new Coord(sz.x/2+30, (sz.y*4)/10), new Coord(40, 15));
 	g.chcolor();
-	FastText.print(g, new Coord(sz.x/2+30, (sz.y*4)/10), (prog*100)+"%");
+	FastText.printf(g, new Coord(sz.x/2+30, (sz.y*4)/10), "%.2f%%", (prog*100));
     }
 
     public void draw(GOut g) {

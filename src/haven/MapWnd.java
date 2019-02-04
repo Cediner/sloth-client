@@ -35,6 +35,8 @@ import haven.MapFile.PMarker;
 import haven.MapFile.SMarker;
 import haven.MapFileWidget.*;
 import haven.BuddyWnd.GroupSelector;
+
+import static haven.LocalMiniMap.party;
 import static haven.LocalMiniMap.plx;
 import static haven.MCache.tilesz;
 import static haven.MCache.cmaps;
@@ -166,7 +168,7 @@ public class MapWnd extends Window {
 			    final Coord gc = xlate(new Location(ploc.seg, ploc.tc.add(mc.sub(pc))));
 			    g.chcolor(m.col.getRed(), m.col.getGreen(), m.col.getBlue(), 128);
 			    if(gc != null) {
-				g.image(plx.layer(Resource.imgc).tex(), gc.add(plx.layer(Resource.negc).cc.inv()));
+				g.image(party, gc.sub(party.sz().div(2)));
 				g.chcolor();
 			    }
 			}

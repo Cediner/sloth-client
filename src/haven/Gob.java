@@ -28,6 +28,7 @@ package haven;
 
 import com.google.common.flogger.FluentLogger;
 import haven.sloth.DefSettings;
+import haven.sloth.gfx.HitboxMesh;
 import haven.sloth.gob.*;
 
 import java.util.*;
@@ -48,6 +49,13 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 	    this.res = res;
 	    this.sdt = new MessageBuf(sdt);
 	    spr = null;
+	}
+
+	public Overlay(int id, Sprite spr) {
+	    this.id = id;
+	    this.res = null;
+	    this.sdt = null;
+	    this.spr = spr;
 	}
 
 	public Overlay(Sprite spr) {
@@ -229,8 +237,11 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 	    return(super.add(item));
 	}
     };
+    private List<Overlay> dols = new ArrayList<>();
+
     private final Collection<ResAttr.Cell<?>> rdata = new LinkedList<ResAttr.Cell<?>>();
     private final Collection<ResAttr.Load> lrdata = new LinkedList<ResAttr.Load>();
+    private HitboxMesh hitbox;
 
     private boolean discovered = false;
     public Type type;
@@ -272,6 +283,16 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 	    if(Hidden.isHidden(name)) {
 	        setattr(new Hidden(this));
 	    }
+
+	    res().ifPresent((res) -> { //should always be present once name is discovered
+		final Resource.Neg neg = res.layer(Resource.negc);
+		if (neg != null) {
+		    Coord hsz = new Coord(Math.abs(neg.bc.x) + Math.abs(neg.bs.x),
+			    Math.abs(neg.bc.y) + Math.abs(neg.bc.y));
+		    Coord hoff = neg.bc;
+		    hitbox = HitboxMesh.makehb(hsz, hoff);
+		}
+	    });
 	} else {
 	    //We don't care about these gobs, tell OCache to start the removal process
 	    dispose();
@@ -298,6 +319,11 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 		if((!ol.delign || (ol.spr instanceof Overlay.CDel)) && done)
 		    i.remove();
 	    }
+	}
+	for(Iterator<Overlay> i = dols.iterator(); i.hasNext();) {
+	    Overlay ol = i.next();
+	    ols.add(ol);
+	    i.remove();
 	}
 	if(virtual && ols.isEmpty())
 	    glob.oc.remove(id);
@@ -381,11 +407,20 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
     public void addol(Sprite ol) {
 	addol(new Overlay(ol));
     }
+    public Overlay daddol(int id, Sprite spr) {
+        final Overlay ol = new Overlay(id, spr);
+        dols.add(ol);
+        return ol;
+    }
 
     public Overlay findol(int id) {
 	for(Overlay ol : ols) {
 	    if(ol.id == id)
 		return(ol);
+	}
+	for(Overlay ol : dols) {
+	    if(ol.id == id)
+	        return ol;
 	}
 	return(null);
     }
@@ -589,6 +624,10 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 
 	    for (final haven.sloth.gob.Rendered attr : renderedattrs) {
 		attr.setup(rl);
+	    }
+
+	    if(DefSettings.global.get(DefSettings.SHOWHITBOX, Boolean.class) && hitbox != null) {
+	        rl.add(hitbox, null);
 	    }
 	} else {
 	    //hidden gob, only show its square if allowed

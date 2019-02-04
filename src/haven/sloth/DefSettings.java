@@ -89,6 +89,7 @@ public class DefSettings {
     	ANIMALPATHCOL = "gameplay.animal-path-color",		//[RBGA] Path color for animals
     	SHOWANIMALRADIUS = "gameplay.show-animal-radius",	//[Bool] Toggle radius on dangerous animals
     	SHOWFARMRADIUS = "gameplay.show-farming-radius",	//[Bool] Toggle radius on farming equipment (beehive/trough)
+    	SHOWHITBOX = "gameplay.show-hitbox",			//[Bool] Toggle hitbox squares
     	SHOWHIDDEN = "gameplay.show-hidden",			//[Bool] Toggle hidden squares
     	HIDDENCOLOR = "gameplay.hidden-color",			//[RGBA] Color of hidden squares
     	SHOWQUALITY = "gameplay.show-item-quality",             //[Bool] Toggle item quality
@@ -181,6 +182,7 @@ public class DefSettings {
 	global.ensure(ANIMALPATHCOL, new Color(144,255,171,146));
 	global.ensure(SHOWANIMALRADIUS, false);
 	global.ensure(SHOWFARMRADIUS, false);
+	global.ensure(SHOWHITBOX, false);
 	global.ensure(SHOWHIDDEN, true);
 	global.ensure(HIDDENCOLOR, Color.RED);
 	global.ensure(SHOWQUALITY, true);

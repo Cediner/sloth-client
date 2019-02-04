@@ -49,7 +49,7 @@ public class Avaview extends PView {
     private UI.Grab dm;
     private Coord doff;
     private final String camnm;
-    private final boolean player, party;
+    private final boolean player, party, fight;
 
 
     @RName("av")
@@ -74,15 +74,24 @@ public class Avaview extends PView {
 	    case "plavacam":
 	        player = true;
 	        party = false;
+	        fight = false;
 	        this.camnm = "avacam";
 	        break;
 	    case "ptavacam":
 	        player = false;
 	        party = true;
+		fight = false;
+		this.camnm = "avacam";
+		break;
+	    case "fightcam":
+		player = false;
+		party = false;
+		fight = true;
 		this.camnm = "avacam";
 		break;
 	    default:
 		player = false;
+		fight = false;
 		party = false;
 	        this.camnm = camnm;
 	}

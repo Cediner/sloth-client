@@ -81,6 +81,12 @@ public class OCache implements Iterable<Gob> {
 	    cb.changed(ob);
     }
 
+    synchronized void changeAllGobs() {
+	for(final Gob g : this) {
+	    changed(g);
+	}
+    }
+
     synchronized void changeHiddenGobs() {
 	for(final Gob g : this) {
 	    if(g.getattr(Hidden.class) != null) {

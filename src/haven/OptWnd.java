@@ -580,6 +580,17 @@ public class OptWnd extends Window {
 		    a = val;
 		}
 	    }, c.copy()).sz.y + spacer;
+	    c.y += gameplay.add(new CheckBox("Show Hitbox") {
+		{a = global.get(SHOWHITBOX, Boolean.class);}
+
+		public void set(boolean val) {
+		    global.set(SHOWHITBOX, val);
+		    a = val;
+		    if(ui.sess != null) {
+			ui.sess.glob.oc.changeAllGobs();
+		    }
+		}
+	    }, c.copy()).sz.y + spacer;
 	    c.y += gameplay.add(new CheckBox("Show Hidden") {
 		{a = global.get(SHOWHIDDEN, Boolean.class);}
 
