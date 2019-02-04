@@ -144,27 +144,32 @@ public class Settings {
         String lastSection = "";
 	try (final BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
 	    for (final String skey : settings.keySet()) {
-	        final String section = skey.substring(0, skey.indexOf("."));
-	        final String key = skey.substring(skey.indexOf(".")+1);
-	        if(!lastSection.equals(section)) {
-		    writer.write('[');
-		    writer.write(section);
-		    writer.write(']');
-		    writer.newLine();
-		    lastSection = section;
-		}
+	        try {
+		    final String section = skey.substring(0, skey.indexOf("."));
+		    final String key = skey.substring(skey.indexOf(".") + 1);
+		    if (!lastSection.equals(section)) {
+			writer.write('[');
+			writer.write(section);
+			writer.write(']');
+			writer.newLine();
+			lastSection = section;
+		    }
 
-		writer.write(key);
-		writer.write(" = ");
-		if(!(settings.get(skey) instanceof Color)) {
-		    writer.write(settings.get(skey).toString());
-		} else {
-		    //Default Color toString leaves out alpha... and doesn't match what we wanted
-		    final Color c = (Color)settings.get(skey);
-		    writer.write(String.format("%d,%d,%d,%d",
-			    c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()));
+		    writer.write(key);
+		    writer.write(" = ");
+		    if (!(settings.get(skey) instanceof Color)) {
+			writer.write(settings.get(skey).toString());
+		    } else {
+			//Default Color toString leaves out alpha... and doesn't match what we wanted
+			final Color c = (Color) settings.get(skey);
+			writer.write(String.format("%d,%d,%d,%d",
+				c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()));
+		    }
+		    writer.newLine();
+		} catch (Exception e) {
+	            logger.atSevere().withCause(e).log("Setting [%s] is invalid.");
+	            continue;
 		}
-		writer.newLine();
 	    }
 	} catch (Exception e) {
 	    logger.atSevere().withCause(e).log("Failed to save settings for %s", filename);
