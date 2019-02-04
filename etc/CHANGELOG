@@ -100,3 +100,5 @@
     - Flowermenu is back to being a list
     - PvP avatars should now show in top right if they weren't before for you.
     - party icons on loftar map should be right icons now.
+    - Quest pointer icon should be fixed now to not disappear or show wrong direction, i believe. You can also click the
+    icon to go to it (up to 1000 tiles at a time) or interact with it (right click menu) if in view distance.
