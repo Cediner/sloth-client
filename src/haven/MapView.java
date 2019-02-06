@@ -352,6 +352,8 @@ public class MapView extends PView implements DTarget, Console.Directory {
 
 	public void tick2(double dt) {
 	    Coord3f mc = getcc();
+	    if(DefSettings.global.get(DefSettings.FLATWORLD, Boolean.class))
+		mc.z = 0;
 	    mc.y = -mc.y;
 	    if((cc == null) || (Math.hypot(mc.x - cc.x, mc.y - cc.y) > 250))
 		cc = mc;

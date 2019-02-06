@@ -657,6 +657,17 @@ public class OptWnd extends Window {
 		    }
 		}
 	    }, c.copy()).sz.y + spacer;
+	    c.y += gameplay.add(new CheckBox("Colorful cavedust") {
+		{a = global.get(COLORFULDUST, Boolean.class);}
+
+		public void set(boolean val) {
+		    global.set(COLORFULDUST, val);
+		    a = val;
+		    if(ui.gui != null && ui.gui.nbelt != null) {
+			ui.gui.nbelt.setVisibile(val);
+		    }
+		}
+	    }, c.copy()).sz.y + spacer;
 	    gameplay.add(new PButton(200, "Back", 27, main), c.copy());
 	    gameplay.pack();
 	}

@@ -334,8 +334,11 @@ public class LocalMiniMap extends Widget {
 
     private void drawView(final GOut g, final Coord base) {
         if(ui.gui != null && ui.gui.map != null) {
-	    final Coord gc = base.add(ui.sess.glob.oc.getgob(ui.gui.map.plgob).rc.div(tilesz).floor());
-	    g.image(view, gc.sub(view.sz().div(2)));
+            final Gob pl = ui.sess.glob.oc.getgob(ui.gui.map.plgob);
+            if(pl != null) {
+		final Coord gc = base.add(pl.rc.div(tilesz).floor());
+		g.image(view, gc.sub(view.sz().div(2)));
+	    }
 	}
     }
 
