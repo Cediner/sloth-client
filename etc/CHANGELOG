@@ -107,3 +107,4 @@
     - Added back the land manager 'm' -> 'l', still has some work to be done on it tho
     - Added back the base for themes, may notice some window changes
     - Can now mouse over avatars to see their equipment. Friends list avatar is now full size too.
+    - Buffs now show % on the middle of them

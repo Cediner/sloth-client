@@ -53,6 +53,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     private Text lastmsg;
     private double msgtime;
     private Window invwnd, equwnd, makewnd; //Main Inventory window, Equipment Window, Make window
+    public Equipory equ;
     public Inventory maininv; //Inventory widget
     public CharWnd chrwdg; //Character window
     public MapWnd mapfile; //Loftar's map window
@@ -469,6 +470,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	} else if(place == "equ") {
 	    equwnd = new Hidewnd(Coord.z, "Equipment");
 	    equwnd.add(child, Coord.z);
+	    equ = (Equipory) child;
 	    equwnd.pack();
 	    equwnd.hide();
 	    add(equwnd, new Coord(400, 10));
