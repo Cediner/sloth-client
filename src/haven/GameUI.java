@@ -564,7 +564,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	meters.remove(w);
     }
     
-    private static final Resource.Anim progt = Resource.local().loadwait("gfx/hud/prog").layer(Resource.animc);
+    private static final Resource.Anim progt = Resource.local().loadwait("custom/hud/default/prog").layer(Resource.animc);
     private Tex curprog = null;
     private int curprogf, curprogb;
     private void drawprog(GOut g, double prog) {

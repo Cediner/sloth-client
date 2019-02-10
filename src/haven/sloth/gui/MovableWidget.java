@@ -69,6 +69,8 @@ public abstract class MovableWidget extends Widget {
 
     public void toggleLock() { lock = !lock; }
 
+    public boolean locked() { return lock; }
+
     private void loadPosition() {
         if(key != null && knownPositions.containsKey(key)) {
             setPosRel(knownPositions.get(key));
@@ -103,10 +105,12 @@ public abstract class MovableWidget extends Widget {
             //Give preference to the Widget using this
             return true;
 	} else if(moveHit(mc, button)) {
-            dm = ui.grabmouse(this);
-            doff = mc;
-	    parent.setfocus(this);
-            raise();
+            if(!lock) {
+		dm = ui.grabmouse(this);
+		doff = mc;
+		parent.setfocus(this);
+		raise();
+	    }
             return true;
 	} else {
             return false;

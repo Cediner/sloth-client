@@ -27,6 +27,7 @@
 package haven;
 
 public class MapMod extends Window implements MapView.Grabber {
+    public final static String fmt = "Selected: %d" + (char)(0xD7) + "%d";
     MapView mv;
     MapView.GrabXL grab;
     UI.Grab mgrab;
@@ -38,24 +39,27 @@ public class MapMod extends Window implements MapView.Grabber {
     Label text;
     Coord sc, c1, c2;
     TextEntry tilenm;
-    public final static String fmt = "Selected: %d" + (char)(0xD7) + "%d";
+    private final boolean fake;
     
     @RName("mapmod")
     public static class $_ implements Factory {
 	public Widget create(UI ui, Object[] args) {
-	    return(new MapMod());
+	    return(new MapMod(false));
 	}
     }
 
-    public MapMod() {
-        super(new Coord(200, 100), "Kartlasskostning");
+    public MapMod(final boolean fake) {
+        super(new Coord(200, 100), "Land Manager", "Land Manager");
         walkmod = false;
         cbox = add(new CheckBox("Walk drawing", true), Coord.z);
 	cbox.canactivate = true;
         btn = add(new Button(40, "Change"), asz.add(-50, -30));
         text = add(new Label(String.format(fmt, 0, 0)), 0, 0);
-        tilenm = add(new TextEntry(50, ""), new Coord(0, 40));
-        tilenm.canactivate = true;
+        if(!fake) {
+            tilenm = add(new TextEntry(50, ""), new Coord(0, 40));
+            tilenm.canactivate = true;
+        }
+        this.fake = fake;
     }
 
     protected void added() {
@@ -127,9 +131,18 @@ public class MapMod extends Window implements MapView.Grabber {
         text.settext(String.format(fmt, c2.x - c1.x + 1, c2.y - c1.y + 1));
     }
 
+    @Override
+    public void close() {
+        if(fake) {
+            ui.destroy(this);
+        } else {
+            super.close();
+        }
+    }
+
     public void wdgmsg(Widget sender, String msg, Object... args) {
         if(sender == btn) {
-            if((c1 != null) && (c2 != null))
+            if((c1 != null) && (c2 != null) && !fake)
                 wdgmsg("mod", c1, c2);
             return;
         }
@@ -143,11 +156,13 @@ public class MapMod extends Window implements MapView.Grabber {
                 ol = null;
                 mv.release(grab);
             }
-            wdgmsg("wm", walkmod?1:0);
+            if(!fake)
+                wdgmsg("wm", walkmod?1:0);
             return;
         }
         if(sender == tilenm) {
-            wdgmsg("tilenm", tilenm.text);
+            if(!fake)
+                wdgmsg("tilenm", tilenm.text);
             return;
         }
         super.wdgmsg(sender, msg, args);

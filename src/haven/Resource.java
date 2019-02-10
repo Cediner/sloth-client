@@ -837,7 +837,7 @@ public class Resource implements Serializable {
     @LayerName("image")
     public class Image extends Layer implements Comparable<Image>, IDLayer<Integer> {
 	public transient BufferedImage img;
-	transient private Tex tex;
+	transient private TexI tex;
 	public final int z, subz;
 	public final boolean nooff;
 	public final int id;
@@ -871,6 +871,17 @@ public class Resource implements Serializable {
 			return("TexI(" + Resource.this.name + ", " + id + ")");
 		    }
 		};
+	    return(tex);
+	}
+
+	public synchronized TexI texi() {
+	    if(tex != null)
+		return(tex);
+	    tex = new TexI(img) {
+		public String toString() {
+		    return("TexI(" + Resource.this.name + ", " + id + ")");
+		}
+	    };
 	    return(tex);
 	}
 		

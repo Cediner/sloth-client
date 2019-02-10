@@ -103,3 +103,7 @@
     - Quest pointer icon should be fixed now to not disappear or show wrong direction, i believe. You can also click the
     icon to go to it (up to 1000 tiles at a time) or interact with it (right click menu) if in view distance.
     - Logout fixes, Cavein dust back to 30m + colorful
+    - Now wolverine, adders, and beavers should show their circle
+    - Added back the land manager 'm' -> 'l', still has some work to be done on it tho
+    - Added back the base for themes, may notice some window changes
+    - Can now mouse over avatars to see their equipment. Friends list avatar is now full size too.

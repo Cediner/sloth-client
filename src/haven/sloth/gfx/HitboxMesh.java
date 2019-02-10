@@ -45,7 +45,7 @@ public class HitboxMesh extends FastMesh {
 	    ShortBuffer sa = Utils.mksbuf(6);
 
 	    int i = 0;
-	    float h = 0.1f;
+	    float h = 0.2f;
 	    float
 		    rx = off.x, ry = off.y,
 		    lx = rec.x, ly = rec.y;

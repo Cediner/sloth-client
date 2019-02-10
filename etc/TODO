@@ -1,4 +1,6 @@
 TODO
+    - Make window -> tabbed or built in search bar for craftables only
+    - Fight view, color boxes instead of pagina icons, display % on them, etc.
     - Grid View + tooltips = non-bold lines. Something from tooltips must be causing an extra GL command to fuck over lines
     - Infinite zoom out on Overview map
         - This has more to do with merging the overview map with the minimap -> probably won't happen

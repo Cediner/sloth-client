@@ -144,6 +144,9 @@ public class Buff extends Widget implements ItemInfo.ResOwner {
 		g.chcolor(255, 255, 255, a);
 	    }
 	} catch(Loading e) {}
+	if(ameter != null) {
+	    FastText.aprintf(g, sz.div(2), 0.5, 0.5, "%.1f", ameter);
+	}
     }
 
     private BufferedImage shorttip() {

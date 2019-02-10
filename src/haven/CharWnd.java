@@ -44,9 +44,9 @@ import haven.resutil.Curiosity;
  * */
 public class CharWnd extends Window {
     public static final RichText.Foundry ifnd = new RichText.Foundry(Resource.remote(), java.awt.font.TextAttribute.FAMILY, "SansSerif", java.awt.font.TextAttribute.SIZE, 9).aa(true);
-    public static final Text.Furnace catf = new BlurFurn(new TexFurn(new Text.Foundry(Text.fraktur, 25).aa(true), Window.ctex), 3, 2, new Color(96, 48, 0));
-    public static final Text.Furnace failf = new BlurFurn(new TexFurn(new Text.Foundry(Text.fraktur, 25).aa(true), Resource.loadimg("gfx/hud/fontred")), 3, 2, new Color(96, 48, 0));
-    public static final Text.Foundry attrf = new Text.Foundry(Text.fraktur, 18).aa(true);
+    public static final Text.Furnace catf = new BlurFurn(new TexFurn(new Text.Foundry(Text.sans, 25).aa(true), Window.ctex), 3, 2, new Color(96, 48, 0));
+    public static final Text.Furnace failf = new BlurFurn(new TexFurn(new Text.Foundry(Text.sans, 25).aa(true), Resource.loadimg("gfx/hud/fontred")), 3, 2, new Color(96, 48, 0));
+    public static final Text.Foundry attrf = new Text.Foundry(Text.sans, 13).aa(true);
     public static final Color debuff = new Color(255, 128, 128);
     public static final Color buff = new Color(128, 255, 128);
     public static final Color tbuff = new Color(128, 128, 255);
@@ -1429,7 +1429,7 @@ public class CharWnd extends Window {
 	public final Coord crsz = new Coord(70, 88);
 	public final Tex credoufr = new TexI(convolvedown(Resource.loadimg("gfx/hud/chr/yrkirframe"), crsz, iconfilter));
 	public final Tex credosfr = new TexI(convolvedown(Resource.loadimg("gfx/hud/chr/yrkirsframe"), crsz, iconfilter));
-	public final Text.Foundry prsf = new Text.Foundry(Text.fraktur, 15).aa(true);
+	public final Text.Foundry prsf = new Text.Foundry(Text.sans, 15).aa(true);
 	public List<Credo> ncr = Collections.emptyList(), ccr = Collections.emptyList();
 	public Credo pcr = null;
 	public int pcl, pclt, pcql, pcqlt, pqid;

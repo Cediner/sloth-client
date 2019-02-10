@@ -324,7 +324,13 @@ public class UI {
     public void mousedown(MouseEvent ev, Coord c, int button) {
 	setmods(ev);
 	lcc = mc = c;
-	for(Grab g : c(mousegrab)) {
+	grabs: for(Grab g : c(mousegrab)) {
+	    //Make sure this wdg is visible the entire way up
+	    for(Widget wdg = g.wdg; wdg.parent != null; wdg = wdg.parent) {
+	        if(!wdg.visible) {
+	            continue grabs;
+		}
+	    }
 	    if(g.wdg.mousedown(wdgxlate(c, g.wdg), button))
 		return;
 	}
@@ -334,7 +340,13 @@ public class UI {
     public void mouseup(MouseEvent ev, Coord c, int button) {
 	setmods(ev);
 	mc = c;
-	for(Grab g : c(mousegrab)) {
+	grabs: for(Grab g : c(mousegrab)) {
+	    //Make sure this wdg is visible the entire way up
+	    for(Widget wdg = g.wdg; wdg.parent != null; wdg = wdg.parent) {
+		if(!wdg.visible) {
+		    continue grabs;
+		}
+	    }
 	    if(g.wdg.mouseup(wdgxlate(c, g.wdg), button))
 		return;
 	}

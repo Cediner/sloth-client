@@ -89,6 +89,12 @@ public class Avaview extends PView {
 		fight = true;
 		this.camnm = "avacam";
 		break;
+	    case "bdavacam":
+	        player = false;
+	        party = false;
+	        fight = true;
+	        this.camnm = "equcam";
+	        break;
 	    default:
 		player = false;
 		fight = false;
@@ -265,6 +271,34 @@ public class Avaview extends PView {
 	} else {
 	    return super.mousedown(c, button);
 	}
+    }
+
+
+    private String rnm(Indir<Resource> r) {
+	try {
+	    if(r != null && r.get() != null)
+		return r.get().name;
+	} catch(Exception e) { return ""; }
+	return "";
+    }
+
+    public Object tooltip(Coord cc, Widget prev) {
+	if(!camnm.equals("equcam") || fight) {
+	    StringBuilder base = new StringBuilder();
+
+	    if(cequ != null)
+		for(Composited.ED eq : cequ) {
+		    base.append("\nEqu: "); base.append(rnm(eq.res.res));
+		}
+
+	    if(cmod != null)
+		for(Composited.MD md : cmod) {
+		    base.append("\nMod: "); base.append(rnm(md.mod));
+		}
+
+	    return RichText.render(base.toString(), 300);
+	}
+	return null;
     }
 
 

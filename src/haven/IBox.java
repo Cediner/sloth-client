@@ -52,6 +52,17 @@ public class IBox {
 	     Resource.loadtex(base + "/" + bb));
     }
 
+    public IBox(final String res) {
+        this(Resource.loadtex(res, 0),
+		Resource.loadtex(res, 1),
+		Resource.loadtex(res, 2),
+		Resource.loadtex(res, 3),
+		Resource.loadtex(res, 4),
+		Resource.loadtex(res, 5),
+		Resource.loadtex(res, 6),
+		Resource.loadtex(res, 7));
+    }
+
     public Coord btloff() {
 	return(new Coord(bl.sz().x, bt.sz().y));
     }

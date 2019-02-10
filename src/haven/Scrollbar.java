@@ -27,8 +27,8 @@
 package haven;
 
 public class Scrollbar extends Widget {
-    static final Tex schain = Resource.loadtex("gfx/hud/schain");
-    static final Tex sflarp = Resource.loadtex("gfx/hud/sflarp");
+    static final Tex schain = Resource.loadtex("custom/hud/default/vscrollbar", 0);
+    static final Tex sflarp = Resource.loadtex("custom/hud/default/vscrollbar", 1);
     public int val, min, max;
     private UI.Grab drag = null;
     

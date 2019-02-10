@@ -67,7 +67,7 @@ public class ResizableWnd extends Window {
 
     @Override
     public boolean mousedown(Coord c, int button) {
-	if (button == 1 && c.isect(ctl.add(csz).sub(sizer.sz()), sizer.sz())) {
+	if (!locked() && button == 1 && c.isect(ctl.add(csz).sub(sizer.sz()), sizer.sz())) {
 	    dm = ui.grabmouse(this);
 	    dragc = asz.sub(c);
 	    parent.setfocus(this);

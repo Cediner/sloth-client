@@ -32,13 +32,13 @@ import java.awt.Font;
 import java.awt.image.BufferedImage;
 
 public class Button extends SIWidget {
-    public static final BufferedImage bl = Resource.loadimg("gfx/hud/buttons/tbtn/left");
-    public static final BufferedImage br = Resource.loadimg("gfx/hud/buttons/tbtn/right");
-    public static final BufferedImage bt = Resource.loadimg("gfx/hud/buttons/tbtn/top");
-    public static final BufferedImage bb = Resource.loadimg("gfx/hud/buttons/tbtn/bottom");
-    public static final BufferedImage dt = Resource.loadimg("gfx/hud/buttons/tbtn/dtex");
-    public static final BufferedImage ut = Resource.loadimg("gfx/hud/buttons/tbtn/utex");
-    public static final BufferedImage bm = Resource.loadimg("gfx/hud/buttons/tbtn/mid");
+    public static final BufferedImage bl = Resource.loadimg("custom/hud/default/buttons/textbtn", 0);
+    public static final BufferedImage br = Resource.loadimg("custom/hud/default/buttons/textbtn", 1);
+    public static final BufferedImage bb = Resource.loadimg("custom/hud/default/buttons/textbtn", 2);
+    public static final BufferedImage bt = Resource.loadimg("custom/hud/default/buttons/textbtn", 3);
+    public static final BufferedImage dt = Resource.loadimg("custom/hud/default/buttons/textbtn", 4);
+    public static final BufferedImage ut = Resource.loadimg("custom/hud/default/buttons/textbtn", 5);
+    public static final BufferedImage bm = Resource.loadimg("custom/hud/default/buttons/textbtn", 6);
     public static final int hs = bl.getHeight(), hl = bm.getHeight();
     public static final Resource click = Loading.waitfor(Resource.local().load("sfx/hud/btn"));
     public static final Resource.Audio lbtdown = Loading.waitfor(Resource.local().load("sfx/hud/lbtn")).layer(Resource.audio, "down");
