@@ -34,6 +34,7 @@ public class HiddenManager extends Window implements ObservableListener<String> 
 	add(new Button(200, "Stop Hiding", () -> {
 	    if(lst.sel != null) {
 		Hidden.remove(lst.sel);
+		ui.sess.glob.oc.unhideAll(lst.sel);
 	    }
 	}), c.copy());
 	pack();
@@ -53,11 +54,13 @@ public class HiddenManager extends Window implements ObservableListener<String> 
     @Override
     public void init(Collection<String> base) {
 	hidden.addAll(base);
+	hidden.sort(String::compareTo);
     }
 
     @Override
     public void added(String item) {
 	hidden.add(item);
+	hidden.sort(String::compareTo);
     }
 
     @Override

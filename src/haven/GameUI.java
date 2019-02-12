@@ -69,7 +69,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     private ChatWnd chatwnd;
     public ChatUI chat; //Chat Widget
     public ChatUI.Channel syslog;
-    public Window hidden, deleted, alerted;
+    public Window hidden, deleted, alerted, highlighted;
     public double prog = -1;
     private boolean afk = false;
     @SuppressWarnings("unchecked")
@@ -143,6 +143,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     	alerted.hide();
     	timers = add(new TimersWnd());
     	timers.hide();
+    	highlighted = add(new HighlightManager());
+    	highlighted.hide();
     }
     
     public class Hidepanel extends Widget {
@@ -806,6 +808,13 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	}
     }
 
+    void toggleHighlight() {
+	if(highlighted != null && highlighted.show(!highlighted.visible)) {
+	    highlighted.raise();
+	    fitwdg(highlighted);
+	    setfocus(highlighted);
+	}
+    }
     void toggleHidden() {
 	if(hidden != null && hidden.show(!hidden.visible)) {
 	    hidden.raise();

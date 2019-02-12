@@ -3,6 +3,7 @@ package haven.sloth;
 import com.google.common.flogger.FluentLogger;
 import haven.sloth.gob.*;
 import haven.sloth.gui.BeltWnd;
+import haven.sloth.io.HighlightData;
 import haven.sloth.io.Storage;
 
 import java.awt.*;
@@ -221,6 +222,7 @@ public class DefSettings {
 	    Alerted.init(optint.get());
 	    Deleted.init();
 	    Hidden.init();
+	    HighlightData.init();
 	    //Internal lookups are no longer needed
 	    optint.get().close();
 	} else {

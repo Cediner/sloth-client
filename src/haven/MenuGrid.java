@@ -273,6 +273,9 @@ public class MenuGrid extends MovableWidget {
 	addSpecial(new SpecialPagina(this, "management::landmanager",
 		Resource.local().load("custom/paginae/default/wnd/selector"),
 		(pag) -> ui.gui.add(new MapMod(true))));
+	addSpecial(new SpecialPagina(this, "management::highlightmanager",
+		Resource.local().load("custom/paginae/default/wnd/highlight"),
+		(pag) -> ui.gui.toggleHighlight()));
     }
 
     private void addSpecial(final SpecialPagina pag) {

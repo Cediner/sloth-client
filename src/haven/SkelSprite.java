@@ -57,7 +57,7 @@ public class SkelSprite extends Sprite implements Gob.Overlay.CUpd, Skeleton.Has
 	    }
 	};
     
-    private SkelSprite(Owner owner, Resource res, Message sdt) {
+    protected SkelSprite(Owner owner, Resource res, Message sdt) {
 	super(owner, res);
 	skel = res.layer(Skeleton.Res.class).s;
 	pose = skel.new Pose(skel.bindpose);

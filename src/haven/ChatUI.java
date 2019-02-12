@@ -26,6 +26,8 @@
 
 package haven;
 
+import haven.sloth.gob.Mark;
+
 import java.util.*;
 import java.awt.Color;
 import java.awt.Font;
@@ -771,6 +773,23 @@ public class ChatUI extends Widget {
 		int gobid = (Integer)args[1];
 		String line = (String)args[2];
 		Color col = Color.WHITE;
+
+		try {
+		    final Matcher match = Mark.CHAT_FMT_PAT.matcher(line);
+		    if(match.find()) {
+			final long gid = Long.parseLong(match.group(1));
+			final int life = Integer.parseInt(match.group(2));
+			final Gob g = ui.sess.glob.oc.getgob(gid);
+			if(g != null) {
+			    g.mark(life);
+			    return;
+			}
+		    }
+		} catch (Exception e) {
+		    e.printStackTrace();
+		    //Ignore any people trying to crash the client with this
+		}
+
 		synchronized(ui.sess.glob.party) {
 		    Party.Member pm = ui.sess.glob.party.memb.get((long)gobid);
 		    if(pm != null)

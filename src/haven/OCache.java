@@ -87,6 +87,34 @@ public class OCache implements Iterable<Gob> {
 	}
     }
 
+    public synchronized void highlightGobs(final String gname) {
+        for(final Gob g : this) {
+            g.resname().ifPresent(name -> {
+                if(gname.equals(name)) {
+                    g.mark(-1);
+		}
+	    });
+	}
+    }
+
+    public synchronized void unhighlightGobs(final String gname) {
+	for(final Gob g : this) {
+	    g.resname().ifPresent(name -> {
+		if(gname.equals(name)) {
+		    g.unmark();
+		}
+	    });
+	}
+    }
+
+    synchronized void changeGobsWith(final Class<? extends GAttrib> cls) {
+        for(final Gob g : this) {
+            if(g.getattr(cls) != null) {
+                changed(g);
+	    }
+	}
+    }
+
     synchronized void changeHiddenGobs() {
 	for(final Gob g : this) {
 	    if(g.getattr(Hidden.class) != null) {
@@ -139,7 +167,7 @@ public class OCache implements Iterable<Gob> {
         }
     }
 
-    synchronized void unhideAll(final String name) {
+    public synchronized void unhideAll(final String name) {
 	for(final Gob g : this) {
 	    g.resname().ifPresent(gname -> {
 		if(gname.equals(name)) {

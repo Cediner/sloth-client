@@ -53,11 +53,13 @@ public class DeletedManager extends Window implements ObservableListener<String>
     @Override
     public void init(Collection<String> base) {
 	deleted.addAll(base);
+	deleted.sort(String::compareTo);
     }
 
     @Override
     public void added(String item) {
 	deleted.add(item);
+	deleted.sort(String::compareTo);
     }
 
     @Override

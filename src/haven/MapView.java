@@ -40,10 +40,9 @@ import java.lang.ref.*;
 import java.lang.reflect.*;
 import com.jogamp.opengl.*;
 import haven.sloth.DefSettings;
-import haven.sloth.gob.Alerted;
-import haven.sloth.gob.Deleted;
-import haven.sloth.gob.Hidden;
+import haven.sloth.gob.*;
 import haven.sloth.gui.SoundSelector;
+import haven.sloth.io.HighlightData;
 
 public class MapView extends PView implements DTarget, Console.Directory {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
@@ -1676,7 +1675,25 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    g.resname().ifPresent((name) -> {
 		final FlowerMenu modmenu = new FlowerMenu((selection) -> {
 		    switch (selection) {
-			case 0: //Toggle hide
+			case 0: //Mark for party
+			    g.mark(20000);
+			    for(Widget wdg = ui.gui.chat.lchild; wdg != null; wdg = wdg.prev) {
+			        if(wdg instanceof ChatUI.PartyChat) {
+			            final ChatUI.PartyChat chat = (ChatUI.PartyChat) wdg;
+				    chat.send(String.format(Mark.CHAT_FMT, g.id, 20000));
+				}
+			    }
+			    break;
+			case 1: //Highlight for yourself
+			    if(!HighlightData.isHighlighted(name)) {
+				HighlightData.add(name);
+				ui.sess.glob.oc.highlightGobs(name);
+			    } else {
+				HighlightData.remove(name);
+				ui.sess.glob.oc.unhighlightGobs(name);
+			    }
+			    break;
+			case 2: //Toggle hide
 			    if(Hidden.isHidden(name)) {
 			        Hidden.remove(name);
 			        ui.sess.glob.oc.unhideAll(name);
@@ -1685,23 +1702,25 @@ public class MapView extends PView implements DTarget, Console.Directory {
 			        ui.sess.glob.oc.hideAll(name);
 			    }
 			    break;
-			case 1: //Toggle Sound
+			case 3: //Toggle Sound
 			    if(Alerted.shouldAlert(name)) {
 				Alerted.remove(name);
 			    } else {
 				ui.gui.add(new SoundSelector(name), ui.mc);
 			    }
 			    break;
-			case 2: //Delete all gobs like this one
+			case 4: //Delete all gobs like this one
 			    Deleted.add(name);
 			    ui.sess.glob.oc.removeAll(name);
 			    break;
-			case 3: //Delete this specific gob
+			case 5: //Delete this specific gob
 			    g.dispose();
 			    ui.sess.glob.oc.remove(g.id);
 			    break;
 		    }
-		},  Hidden.isHidden(name) ? "Unhide" : "Hide",
+		},  "Mark for party",
+			!HighlightData.isHighlighted(name) ? "Highlight" : "Remove Highlight",
+			Hidden.isHidden(name) ? "Unhide" : "Hide",
 			Alerted.shouldAlert(name) ? "Remove Sound" : "Add Sound",
 			"Delete",
 			"Delete this");

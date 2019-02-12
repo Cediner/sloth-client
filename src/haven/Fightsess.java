@@ -99,7 +99,7 @@ public class Fightsess extends Widget {
 	Gob gob = ui.sess.glob.oc.getgob(gobid);
 	if((map == null) || (gob == null))
 	    return;
-	Pair<Long, Resource> id = new Pair<Long, Resource>(gobid, fx);
+	Pair<Long, Resource> id = new Pair<>(gobid, fx);
 	Sprite spr = cfx.get(id);
 	if(spr == null)
 	    cfx.put(id, spr = Sprite.create(null, fx, Message.nil));

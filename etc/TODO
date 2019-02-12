@@ -1,6 +1,13 @@
 TODO
+    - Proximity aggroing with keybind or menugrid shortcut
+        - click button -> aggro everything within 10 tiles? 5 tiles? customizable!
+            - Works on Humans (unknown or RED) and Animals
+    - GameUI mousewheel when Fightview is active = switch through enemies in order for fasting switching
+    - Mark gobs: alt right click -> mark for party members
+    - Turn on flashing highlight for gobs you're trying to find.
+        - Should be able to alt right click -> highlight
+        - OR manually put in res name in manager window
     - Make window -> tabbed or built in search bar for craftables only
-    - Fight view, color boxes instead of pagina icons, display % on them, etc.
     - Grid View + tooltips = non-bold lines. Something from tooltips must be causing an extra GL command to fuck over lines
     - Infinite zoom out on Overview map
         - This has more to do with merging the overview map with the minimap -> probably won't happen
@@ -9,10 +16,8 @@ TODO
             - Progress bar -> move to its own widget
         - Keybinds
         - Separate Study Window
-        - (Low Priority) Themes
     - Lock building objs (Ctrl + Middle click)
     - Smart Aim
-    - Flowermenu as a list rather than circle
     - Scripting
     - Inventories
         - Drop all of one kind (Shift + Ctrl + Right Click), being lock aware

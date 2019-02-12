@@ -30,6 +30,7 @@ import com.google.common.flogger.FluentLogger;
 import haven.sloth.DefSettings;
 import haven.sloth.gfx.HitboxMesh;
 import haven.sloth.gob.*;
+import haven.sloth.io.HighlightData;
 
 import java.util.*;
 
@@ -283,6 +284,9 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 	    if(Hidden.isHidden(name)) {
 	        setattr(new Hidden(this));
 	    }
+	    if(HighlightData.isHighlighted(name)) {
+	        mark(-1);
+	    }
 
 	    res().ifPresent((res) -> { //should always be present once name is discovered
 		final Resource.Neg neg = res.layer(Resource.negc);
@@ -299,6 +303,20 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 	    glob.oc.remove(id);
 	}
 	discovered = true;
+    }
+
+    public void mark(final int life) {
+        if(findol(Mark.id) == null) {
+	    daddol(Mark.id, new Mark(life));
+	} else {
+	    ((Mark) (findol(Mark.id).spr)).setLife(life);
+	}
+    }
+
+    public void unmark() {
+        if(findol(Mark.id) != null) {
+	    ((Mark) (findol(Mark.id).spr)).revoke();
+	}
     }
 
     public void ctick(int dt) {
@@ -407,9 +425,13 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
     public void addol(Sprite ol) {
 	addol(new Overlay(ol));
     }
+    public Overlay daddol(final Overlay ol) {
+	dols.add(ol);
+	return ol;
+    }
     public Overlay daddol(int id, Sprite spr) {
         final Overlay ol = new Overlay(id, spr);
-        dols.add(ol);
+        daddol(ol);
         return ol;
     }
 
@@ -596,10 +618,12 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 	if(hid == null) {
 	    for (Overlay ol : ols)
 		rl.add(ol, null);
+
 	    for (Overlay ol : ols) {
 		if (ol.spr instanceof Overlay.SetupMod)
 		    ((Overlay.SetupMod) ol.spr).setupmain(rl);
 	    }
+
 	    GobHealth hlt = getattr(GobHealth.class);
 	    if (hlt != null) {
 		rl.prepc(hlt.getfx());
@@ -607,6 +631,11 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 		    rl.add(hlt.hpfx, null);
 		}
 	    }
+
+	    for (final haven.sloth.gob.Rendered attr : renderedattrs) {
+		attr.setup(rl);
+	    }
+
 	    Drawable d = getattr(Drawable.class);
 	    try {
 		if (d != null)
@@ -621,10 +650,6 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 	    KinInfo ki = getattr(KinInfo.class);
 	    if (ki != null)
 		rl.add(ki.fx, null);
-
-	    for (final haven.sloth.gob.Rendered attr : renderedattrs) {
-		attr.setup(rl);
-	    }
 
 	    if(DefSettings.global.get(DefSettings.SHOWHITBOX, Boolean.class) && hitbox != null) {
 	        rl.add(hitbox, null);

@@ -105,12 +105,14 @@ public class SoundManager extends Window implements ObservableMapListener<String
     public void init(Map<String, Resource.Named> base) {
 	map.putAll(base);
 	keys.addAll(map.keySet());
+	keys.sort(String::compareTo);
     }
 
     public void put(String key, Resource.Named val) {
         if(!map.containsKey(key)) {
 	    map.put(key, val);
 	    keys.add(key);
+	    keys.sort(String::compareTo);
 	} else {
             //only an update
             map.put(key, val);

@@ -108,3 +108,7 @@
     - Added back the base for themes, may notice some window changes
     - Can now mouse over avatars to see their equipment. Friends list avatar is now full size too.
     - Buffs now show % on the middle of them
+    - Added in marking for party members, alt right click -> Mark for party
+    - Added in Highlighting to find things easier. alt right click -> Highlight or open Highlight manager 'm' -> 'g' and
+    manually add in the res name
+    - All of the managers should now sort their lists alphabetically
