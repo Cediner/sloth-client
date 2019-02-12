@@ -137,6 +137,13 @@ public class Fightview extends Widget {
 	}
 	current = rel;
     }
+
+    public void scroll(final int amount) {
+        //final int idx = lsrel.indexOf(current);
+        //final Relation rel = lsrel.get((idx + amount) % lsrel.size());
+	//ui.gui.menu.wdgmsg("act", (Object[])new String[]{"aggro"});
+	//wdgmsg("click", (int)rel.gobid, 1);
+    }
     
     public void destroy() {
 	setcur(null);
@@ -153,7 +160,15 @@ public class Fightview extends Widget {
 		rel.show(false);
                 continue;
 	    }
-            g.image(bg, new Coord(x, y));
+            /*
+            if(rel == current) {
+                g.chcolor(Color.YELLOW);
+		g.image(bg, new Coord(x, y));
+		g.chcolor();
+	    } else {
+	    }
+	    */
+	    g.image(bg, new Coord(x, y));
             rel.ava.c = new Coord(x + 25, ((bg.sz().y - rel.ava.sz.y) / 2) + y);
 	    rel.give.c = new Coord(x + 5, 4 + y);
 	    rel.purs.c = new Coord(rel.ava.c.x + rel.ava.sz.x + 5, 4 + y);

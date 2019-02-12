@@ -792,6 +792,18 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	return(super.mousedown(c, button));
     }
 
+    @Override
+    public boolean mousewheel(Coord c, int amount) {
+	return super.mousewheel(c, amount);
+	/*
+        if(fv != null && ui.modctrl) {
+            fv.scroll(amount);
+            return true;
+	} else {
+
+	}*/
+    }
+
     void toggleTimers() {
 	if(timers != null && timers.show(!timers.visible)) {
 	    timers.raise();
