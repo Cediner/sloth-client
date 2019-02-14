@@ -455,6 +455,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 
 	    paginasearch = add(new ActWnd("Menu Search"));
 	    paginasearch.hide();
+	    makewnd = add(new MakeWnd());
 	} else if(place == "fight") {
 	    fv = adda((Fightview)child, sz.x, 0, 1.0, 0.0);
 	} else if(place == "fsess") {
@@ -485,28 +486,9 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    chrwdg = add((CharWnd)child, new Coord(300, 50));
 	    chrwdg.hide();
 	} else if(place == "craft") {
-	    final Widget mkwdg = child;
-	    makewnd = new Window(Coord.z, "Crafting", "Crafting", true) {
-		    public void wdgmsg(Widget sender, String msg, Object... args) {
-			if((sender == this) && msg.equals("close")) {
-			    mkwdg.wdgmsg("close");
-			    return;
-			}
-			super.wdgmsg(sender, msg, args);
-		    }
-		    public void cdestroy(Widget w) {
-			if(w == mkwdg) {
-			    ui.destroy(this);
-			    makewnd = null;
-			}
-		    }
-		    public void destroy() {
-			super.destroy();
-		    }
-		};
-	    makewnd.add(mkwdg, Coord.z);
+	    makewnd.add(child, new Coord(MakeWnd.WIDTH + 10, 0));
 	    makewnd.pack();
-	    fitwdg(add(makewnd, new Coord(400, 200)));
+	    makewnd.show();
 	} else if(place == "buddy") {
 	    zerg.ntab(buddies = (BuddyWnd)child, zerg.kin);
 	} else if(place == "pol") {
@@ -794,14 +776,20 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 
     @Override
     public boolean mousewheel(Coord c, int amount) {
-	return super.mousewheel(c, amount);
-	/*
         if(fv != null && ui.modctrl) {
             fv.scroll(amount);
             return true;
 	} else {
+	    return super.mousewheel(c, amount);
+	}
+    }
 
-	}*/
+    void toggleMakeWnd() {
+	if(makewnd != null && makewnd.show(!makewnd.visible)) {
+	    makewnd.raise();
+	    fitwdg(makewnd);
+	    setfocus(makewnd);
+	}
     }
 
     void toggleTimers() {

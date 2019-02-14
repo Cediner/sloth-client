@@ -26,27 +26,24 @@
 
 package haven;
 
+import java.awt.*;
 import java.util.*;
 
+import static haven.OCache.posres;
+
 public class Fightview extends Widget {
-    static Tex bg = Resource.loadtex("gfx/hud/bosq");
+    static Tex bg = Resource.loadtex("custom/hud/default/bosq");
     static int height = 5;
     static int ymarg = 5;
     static int width = 165;
     static Coord avasz = new Coord(27, 27);
-    static Coord cavac = new Coord(width - Avaview.dasz.x - 10, 10);
-    static Coord cgivec = new Coord(cavac.x - 35, cavac.y);
-    static Coord cpursc = new Coord(cavac.x - 75, cgivec.y + 35);
     public LinkedList<Relation> lsrel = new LinkedList<>();
     public Relation current = null;
     public Indir<Resource> blk, batk, iatk;
     public double atkcs, atkct;
     public Indir<Resource> lastact = null;
     public double lastuse = 0;
-    private GiveButton curgive;
-    private Avaview curava;
-    private Button curpurs;
-    public final Bufflist buffs = add(new Bufflist()); {buffs.hide();}
+    public final Bufflist buffs = add(new Bufflist()); {buffs.hide();} //your buffs
     
     public class Relation {
         public final long gobid;
@@ -66,8 +63,6 @@ public class Fightview extends Widget {
         }
 	
 	public void give(int state) {
-	    if(this == current)
-		curgive.state = state;
 	    this.give.state = state;
 	}
 	
@@ -119,30 +114,22 @@ public class Fightview extends Widget {
     }
 
     private void setcur(Relation rel) {
-	if((current == null) && (rel != null)) {
-	    add(curgive = new GiveButton(0), cgivec);
-	    add(curava = new Avaview(Avaview.dasz, rel.gobid, "avacam"), cavac).canactivate = true;
-	    add(curpurs = new Button(70, "Pursue"), cpursc);
-	    curgive.state = rel.give.state;
-	} else if((current != null) && (rel == null)) {
-	    ui.destroy(curgive);
-	    ui.destroy(curava);
-	    ui.destroy(curpurs);
-	    curgive = null;
-	    curava = null;
-	    curpurs = null;
-	} else if((current != null) && (rel != null)) {
-	    curgive.state = rel.give.state;
-	    curava.avagob = rel.gobid;
-	}
 	current = rel;
     }
 
     public void scroll(final int amount) {
-        //final int idx = lsrel.indexOf(current);
-        //final Relation rel = lsrel.get((idx + amount) % lsrel.size());
-	//ui.gui.menu.wdgmsg("act", (Object[])new String[]{"aggro"});
-	//wdgmsg("click", (int)rel.gobid, 1);
+	if (current != null) {
+	    final int idx = lsrel.indexOf(current);
+	    final Relation rel;
+	    if (idx + amount < 0)
+		rel = lsrel.get(lsrel.size() - 1);
+	    else
+		rel = lsrel.get((idx + amount) % lsrel.size());
+
+	    if (rel != null) {
+		wdgmsg("bump", (int) rel.gobid);
+	    }
+	}
     }
     
     public void destroy() {
@@ -152,27 +139,35 @@ public class Fightview extends Widget {
     
     public void draw(GOut g) {
         int y = 10;
-	if(curava != null)
-	    y = curava.c.y + curava.sz.y + 10;
 	int x = width - bg.sz().x - 10;
         for(Relation rel : lsrel) {
-            if(rel == current) {
-		rel.show(false);
-                continue;
-	    }
-            /*
             if(rel == current) {
                 g.chcolor(Color.YELLOW);
 		g.image(bg, new Coord(x, y));
 		g.chcolor();
 	    } else {
+		g.image(bg, new Coord(x, y));
 	    }
-	    */
-	    g.image(bg, new Coord(x, y));
-            rel.ava.c = new Coord(x + 25, ((bg.sz().y - rel.ava.sz.y) / 2) + y);
-	    rel.give.c = new Coord(x + 5, 4 + y);
-	    rel.purs.c = new Coord(rel.ava.c.x + rel.ava.sz.x + 5, 4 + y);
+
+            rel.ava.c = new Coord(x + 115,  y + 3);
+	    rel.give.c = new Coord(x + 125, y + 41);
+	    rel.purs.c = new Coord(x + 43, y + 6);
 	    rel.show(true);
+	    g.chcolor(Color.GREEN);
+	    FastText.printf(g, new Coord(12, y + 3), "IP %d", rel.ip);
+	    g.chcolor(Color.RED);
+	    FastText.printf(g, new Coord(12, y + 15), "IP %d", rel.oip);
+	    g.chcolor();
+	    final Coord c = new Coord(13, y + 32);
+	    for(Widget wdg = rel.buffs.child; wdg != null; wdg = wdg.next) {
+		if (!(wdg instanceof Buff))
+		    continue;
+		final Buff buf = (Buff) wdg;
+		if(buf.ameter >= 0) {
+		    buf.fightdraw(g.reclip(c.copy(), Buff.scframe.sz()));
+		    c.x += Buff.scframe.sz().x + 2;
+		}
+	    }
             y += bg.sz().y + ymarg;
         }
         super.draw(g);
@@ -196,16 +191,6 @@ public class Fightview extends Widget {
     }
     
     public void wdgmsg(Widget sender, String msg, Object... args) {
-	if(sender == curava) {
-	    wdgmsg("click", (int)current.gobid, args[0]);
-	    return;
-	} else if(sender == curgive) {
-	    wdgmsg("give", (int)current.gobid, args[0]);
-	    return;
-	} else if(sender == curpurs) {
-	    wdgmsg("prs", (int)current.gobid);
-	    return;
-	}
 	for(Relation rel : lsrel) {
 	    if(sender == rel.ava) {
 		wdgmsg("click", (int)rel.gobid, args[0]);
@@ -259,8 +244,6 @@ public class Fightview extends Widget {
 	    case "cur":
 		try {
 		    Relation rel = getrel((Integer)args[0]);
-		    lsrel.remove(rel);
-		    lsrel.addFirst(rel);
 		    setcur(rel);
 		} catch(Notfound e) {
 		    setcur(null);

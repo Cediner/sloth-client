@@ -112,3 +112,9 @@
     - Added in Highlighting to find things easier. alt right click -> Highlight or open Highlight manager 'm' -> 'g' and
     manually add in the res name
     - All of the managers should now sort their lists alphabetically
+    - Fixed crash bug if you clicked in very specific areas of a window to move it
+    - Changed how the list of combat opponents looks, your current target has its boxed highlighted in yellow now
+    - Logging back into combat won't screw up keybinds now
+    - Can switch between targets with scroll wheel
+    - You won't click through the menugrid now if you miss a button
+    - Crafting window now has a search built into it for crafting items only. Can toggle crafting window with 'm' -> 'r'

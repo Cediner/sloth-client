@@ -782,8 +782,8 @@ public class ChatUI extends Widget {
 			final Gob g = ui.sess.glob.oc.getgob(gid);
 			if(g != null) {
 			    g.mark(life);
-			    return;
 			}
+			return;
 		    }
 		} catch (Exception e) {
 		    e.printStackTrace();

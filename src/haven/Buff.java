@@ -35,8 +35,10 @@ public class Buff extends Widget implements ItemInfo.ResOwner {
     public static final Text.Foundry nfnd = new Text.Foundry(Text.dfont, 10);
     public static final Tex frame = Resource.loadtex("gfx/hud/buffs/frame");
     public static final Tex cframe = Resource.loadtex("gfx/hud/buffs/cframe");
+    public static final Tex scframe = Resource.loadtex("custom/hud/default/scframe");
     public static final Coord imgoff = new Coord(3, 3);
     public static final Coord ameteroff = new Coord(3, 37), ametersz = new Coord(32, 3);
+    public static final Coord sameteroff = new Coord(3, 27), sametersz = new Coord(22, 2);
     public Indir<Resource> res;
     public double cmeter = -1;
     public double cmrem = -1;
@@ -105,6 +107,42 @@ public class Buff extends Widget implements ItemInfo.ResOwner {
     private final AttrCache<Double> ameteri = new AttrCache<>(this::info, AttrCache.map1(AMeterInfo.class, minf -> minf::ameter));
     private final AttrCache<Tex> nmeteri = new AttrCache<>(this::info, AttrCache.map1s(GItem.NumberInfo.class, ninf -> new TexI(GItem.NumberInfo.numrender(ninf.itemnum(), ninf.numcolor()))));
     private final AttrCache<Double> cmeteri = new AttrCache<>(this::info, AttrCache.map1(GItem.MeterInfo.class, minf -> minf::meter));
+
+    /**
+     * Only for Fightview to see the buffs in the list, nothing fancy.
+     * Fight Buffs don't have meters aside from the ameter.
+     * Fight buffs also use the cframe always
+     */
+    void fightdraw(final GOut g) {
+	final Coord sz = scframe.sz();
+	g.chcolor(255, 255, 255, a);
+	Double ameter = (this.ameter >= 0) ? (this.ameter / 100.0) : ameteri.get();
+	if(ameter != null) {
+	    g.image(scframe, Coord.z);
+	    g.chcolor(0, 0, 0, a);
+	    g.frect(sameteroff, sametersz);
+	    g.chcolor(255, 255, 255, a);
+	    g.frect(sameteroff, new Coord((int)Math.floor(ameter * sametersz.x), sametersz.y));
+	}
+
+	try {
+	    Tex img = res.get().layer(Resource.imgc).tex();
+	    g.image(img, imgoff, new Coord(22, 21));
+	} catch (Loading l) {
+	    //do nothing
+	}
+
+	if(this.ameter >= 0) {
+	    final int width = FastText.textw(this.ameter+"");
+	    final Coord c = new Coord(sz.x/2-width/2, sz.y/2 - 5);
+	    final Coord tc = c.sub(0, 3);
+	    final Coord tsz = new Coord(width, 10);
+	    g.chcolor(new Color(64, 64, 64, 215));
+	    g.frect(c, c.add(tsz.x,0), c.add(tsz), c.add(0, tsz.y));
+	    g.chcolor();
+	    FastText.printf(g, tc, "%d", this.ameter);
+	}
+    }
 
     public void draw(GOut g) {
 	g.chcolor(255, 255, 255, a);

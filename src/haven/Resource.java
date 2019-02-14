@@ -884,7 +884,7 @@ public class Resource implements Serializable {
 	    };
 	    return(tex);
 	}
-		
+
 	private boolean detectgay() {
 	    for(int y = 0; y < sz.y; y++) {
 		for(int x = 0; x < sz.x; x++) {

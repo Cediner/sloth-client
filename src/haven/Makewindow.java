@@ -38,6 +38,7 @@ public class Makewindow extends Widget {
     static final Text qmodl = Text.render("Quality:");
     static Coord boff = new Coord(7, 9);
     final int xoff = 45, qmy = 38, outy = 65;
+    final int width;
     public static final Text.Foundry nmf = new Text.Foundry(Text.serif, 20).aa(true);
 
     @RName("make")
@@ -151,10 +152,11 @@ public class Makewindow extends Widget {
     public Makewindow(String rcpnm) {
 	add(new Label("Input:"), new Coord(0, 8));
 	add(new Label("Result:"), new Coord(0, outy + 8));
-	obtn = add(new Button(85, "Craft"), new Coord(265, 75));
-	cbtn = add(new Button(85, "Craft All"), new Coord(360, 75));
+	obtn = add(new Button(85, "Craft"), new Coord(0, 210));
+	cbtn = add(new Button(85, "Craft All"), new Coord(90, 210));
 	pack();
 	adda(new Label(rcpnm, nmf), sz.x, 0, 1, 0);
+	width = sz.x;
     }
 	
     public void uimsg(String msg, Object... args) {
@@ -170,6 +172,7 @@ public class Makewindow extends Widget {
 		inputs.add(new Spec(ui.sess.getres(resid), sdt, num, info));
 	    }
 	    this.inputs = inputs;
+	    fixsz();
 	} else if(msg == "opop") {
 	    List<Spec> outputs = new LinkedList<Spec>();
 	    for(int i = 0; i < args.length;) {
@@ -182,14 +185,44 @@ public class Makewindow extends Widget {
 		outputs.add(new Spec(ui.sess.getres(resid), sdt, num, info));
 	    }
 	    this.outputs = outputs;
+	    fixsz();
 	} else if(msg == "qmod") {
 	    List<Indir<Resource>> qmod = new ArrayList<Indir<Resource>>();
 	    for(Object arg : args)
 		qmod.add(ui.sess.getres((Integer)arg));
 	    this.qmod = qmod;
+	    fixsz();
 	} else {
 	    super.uimsg(msg, args);
 	}
+    }
+
+    private void fixsz() {
+        int width = this.width;
+	Coord c = new Coord(xoff, 0);
+	for(Spec s : inputs) {
+	    c = c.add(Inventory.sqsz.x, 0);
+	    width = Math.max(width, c.x);
+	}
+	if(qmod != null) {
+	    c = new Coord(xoff, 0);
+	    for(Indir<Resource> qm : qmod) {
+		try {
+		    Tex t = qm.get().layer(Resource.imgc).tex();
+		    c = c.add(t.sz().x + 1, 0);
+		    width = Math.max(width, c.x);
+		} catch(Loading l) {
+		    //ignore
+		}
+	    }
+	}
+	c = new Coord(xoff, 0);
+	for(Spec s : outputs) {
+	    c = c.add(Inventory.sqsz.x, 0);
+	    width = Math.max(width, c.x);
+	}
+	resize(width, sz.y);
+	parent.pack();
     }
 	
     public void draw(GOut g) {

@@ -298,7 +298,7 @@ public class Window extends MovableWidget implements DTarget {
 		(c.isect(new Coord(sz.x - cr.sz().x, 0), cr.sz()) &&
 			cr.back.getRaster().getSample(cprc.x % cr.back.getWidth(), cprc.y, 3) >= 128) ||
 		//or mid caption
-		(c.isect(new Coord(cl.sz().x, 0), new Coord(sz.x - cr.sz().x, cr.sz().y)) &&
+		(c.isect(new Coord(cl.sz().x, 0), new Coord(sz.x - cr.sz().x - cl.sz().x, cm.sz().y)) &&
 			(cm.back.getRaster().getSample(cpc.x % cm.back.getWidth(), cpc.y, 3) >= 128));
     }
 

@@ -135,6 +135,10 @@ public class Fightsess extends Widget {
     private Text lastacttip1 = null, lastacttip2 = null;
     public void draw(GOut g) {
 	updatepos();
+	if(parent.focused != this) {
+	    raise();
+	    parent.setfocus(this);
+	}
 	double now = Utils.rtime();
 
 	for(Buff buff : fv.buffs.children(Buff.class))
@@ -355,14 +359,6 @@ public class Fightsess extends Widget {
 		}
 		return(true);
 	    }
-	} else if((key == 9) && ((ev.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) != 0)) {
-	    Fightview.Relation cur = fv.current;
-	    if(cur != null) {
-		fv.lsrel.remove(cur);
-		fv.lsrel.addLast(cur);
-	    }
-	    fv.wdgmsg("bump", (int)fv.lsrel.get(0).gobid);
-	    return(true);
 	}
 	return(super.globtype(key, ev));
     }

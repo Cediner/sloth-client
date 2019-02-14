@@ -1,8 +1,5 @@
 TODO
-    - Proximity aggroing with keybind or menugrid shortcut
-        - click button -> aggro everything within 10 tiles? 5 tiles? customizable!
-            - Works on Humans (unknown or RED) and Animals
-    - GameUI mousewheel when Fightview is active = switch through enemies in order for fasting switching
+    - Fightsess move icons clickable
     - Make window -> tabbed or built in search bar for craftables only
     - Grid View + tooltips = non-bold lines. Something from tooltips must be causing an extra GL command to fuck over lines
     - Infinite zoom out on Overview map
@@ -15,6 +12,9 @@ TODO
     - Lock building objs (Ctrl + Middle click)
     - Smart Aim
     - Scripting
+        - Proximity aggroing with keybind or menugrid shortcut (SCRIPT)
+            - click button -> aggro everything within 10 tiles? 5 tiles? customizable!
+                - Works on Humans (unknown or RED) and Animals
     - Inventories
         - Drop all of one kind (Shift + Ctrl + Right Click), being lock aware
         - Transfer all of one kind (Shift + Right click), being lock aware

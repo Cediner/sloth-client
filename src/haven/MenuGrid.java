@@ -276,6 +276,9 @@ public class MenuGrid extends MovableWidget {
 	addSpecial(new SpecialPagina(this, "management::highlightmanager",
 		Resource.local().load("custom/paginae/default/wnd/highlight"),
 		(pag) -> ui.gui.toggleHighlight()));
+	addSpecial(new SpecialPagina(this, "management::crafting",
+		Resource.local().load("custom/paginae/default/wnd/crafting"),
+		(pag) -> ui.gui.toggleMakeWnd()));
     }
 
     private void addSpecial(final SpecialPagina pag) {
@@ -477,7 +480,7 @@ public class MenuGrid extends MovableWidget {
 	    grab = ui.grabmouse(this);
 	    return(true);
 	}
-	return super.mousedown(c, button);
+	return true;
     }
 
     public void mousemove(Coord c) {
