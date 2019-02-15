@@ -26,6 +26,8 @@
 
 package haven;
 
+import haven.sloth.DefSettings;
+
 import java.util.*;
 
 public class AnimSprite extends Sprite {
@@ -78,12 +80,14 @@ public class AnimSprite extends Sprite {
     public boolean tick(int idt) {
 	boolean ret = false;
 	float dt = idt / 1000.0f;
-	for(MeshAnim.Anim anim : anims)
-	    ret = ret | anim.tick(dt);
+	if(DefSettings.global.get(DefSettings.ANIMATIONS, Boolean.class)) {
+	    for (MeshAnim.Anim anim : anims)
+		ret = ret | anim.tick(dt);
+	}
 	return(ret);
     }
 
     public Object staticp() {
-	return((anims.length == 0)?CONSTANS:null);
+	return((!DefSettings.global.get(DefSettings.ANIMATIONS, Boolean.class) || anims.length == 0)?CONSTANS:null);
     }
 }

@@ -30,6 +30,7 @@ import java.util.*;
 import haven.Skeleton.Pose;
 import haven.Skeleton.PoseMod;
 import haven.MorphedMesh.Morpher;
+import haven.sloth.DefSettings;
 
 public class SkelSprite extends Sprite implements Gob.Overlay.CUpd, Skeleton.HasPose {
     public static final GLState
@@ -185,31 +186,39 @@ public class SkelSprite extends Sprite implements Gob.Overlay.CUpd, Skeleton.Has
     
     public boolean tick(int idt) {
 	float dt = idt / 1000.0f;
-	if(!stat || (ipold > 0)) {
-	    boolean done = true;
-	    for(PoseMod m : mods) {
-		m.tick(dt);
-		done = done && m.done();
-	    }
-	    if(done)
-		stat = true;
-	    if(ipold > 0) {
-		if((ipold -= (dt / ipollen)) < 0) {
-		    ipold = 0;
-		    oldpose = null;
+	if(DefSettings.global.get(DefSettings.ANIMATIONS, Boolean.class)) {
+	    if(!stat || (ipold > 0)) {
+		boolean done = true;
+		for(PoseMod m : mods) {
+		    m.tick(dt);
+		    done = done && m.done();
 		}
+		if(done)
+		    stat = true;
+		if(ipold > 0) {
+		    if((ipold -= (dt / ipollen)) < 0) {
+			ipold = 0;
+			oldpose = null;
+		    }
+		}
+		rebuild();
 	    }
-	    rebuild();
+	    for (MeshAnim.Anim anim : manims)
+		anim.tick(dt);
 	}
-	for(MeshAnim.Anim anim : manims)
-	    anim.tick(dt);
 	return(false);
     }
 
     public Object staticp() {
-	if(!stat || (manims.length > 0) || (ipold > 0))
-	    return(null);
-	return(Gob.SemiStatic.class);
+	if (DefSettings.global.get(DefSettings.ANIMATIONS, Boolean.class)) {
+	    if (!stat || (manims.length > 0) || (ipold > 0)) {
+		return (null);
+	    } else {
+		return (Gob.SemiStatic.class);
+	    }
+	} else {
+	    return CONSTANS;
+	}
     }
 
     public Pose getpose() {

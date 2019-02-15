@@ -26,6 +26,9 @@
 
 package haven;
 
+import haven.res.ui.tt.Armor;
+
+import java.awt.*;
 import java.util.*;
 import static haven.Inventory.invsq;
 
@@ -201,6 +204,26 @@ public class Equipory extends Widget implements DTarget {
     public void draw(GOut g) {
 	drawslots(g);
 	super.draw(g);
+
+	try {
+	    int h = 0, s = 0;
+	    for(final GItem itm : wmap.keySet()) {
+	        for(final ItemInfo info : itm.info()) {
+	            if(info instanceof Armor) {
+	                h += ((Armor)info).hard;
+	                s += ((Armor)info).soft;
+	                break;
+		    }
+		}
+	    }
+	    final int width = FastText.textw(String.format("Armor Class %,d/%,d", h, s));
+	    g.chcolor(new Color(64, 64, 64, 215));
+	    g.frect(new Coord(invsq.sz().x + 5, sz.y - 15), new Coord(width, 15));
+	    g.chcolor();
+	    FastText.aprintf(g, new Coord(invsq.sz().x + 5, sz.y), 0.0, 1.0, "Armor Class %,d/%,d", h, s);
+	} catch (Exception e) {
+	    //fail silently
+	}
     }
 
     public boolean iteminteract(Coord cc, Coord ul) {

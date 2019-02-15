@@ -204,9 +204,7 @@ public class MeshAnim {
 		this.time -= len;
 		ret = true;
 	    }
-	    if(DefSettings.global.get(DefSettings.ANIMATIONS, Boolean.class)) {
-		aupdate(this.time);
-	    }
+	    aupdate(this.time);
 	    return(ret);
 	}
     }

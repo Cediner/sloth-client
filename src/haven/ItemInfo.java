@@ -27,6 +27,7 @@
 package haven;
 
 import com.google.common.flogger.FluentLogger;
+import haven.res.ui.tt.ArmorFactory;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -325,6 +326,11 @@ public abstract class ItemInfo {
 	return(null);
     }
 
+    private static final Map<String, ItemInfo.InfoFactory> builtinfacts = new HashMap<>();
+    static {
+        builtinfacts.put("ui/tt/armor", new ArmorFactory());
+    }
+
     public static List<ItemInfo> buildinfo(Owner owner, Raw raw) {
 	List<ItemInfo> ret = new ArrayList<ItemInfo>();
 	for(Object o : raw.data) {
@@ -340,7 +346,12 @@ public abstract class ItemInfo {
 		} else {
 		    throw(new ClassCastException("Unexpected info specification " + a[0].getClass()));
 		}
-		InfoFactory f = ttres.getcode(InfoFactory.class, true);
+		final InfoFactory f;
+		if(builtinfacts.containsKey(ttres.name)) {
+		    f = builtinfacts.get(ttres.name);
+		} else {
+		    f = ttres.getcode(InfoFactory.class, true);
+		}
 		ItemInfo inf = f.build(owner, raw, a);
 		if(inf != null) {
 		    ret.add(inf);

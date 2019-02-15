@@ -169,5 +169,11 @@ public class MakeWnd extends Window implements ObservableListener<MenuGrid.Pagin
     @Override
     public void close() {
 	hide();
+	for(Widget wdg = lchild; wdg != null; wdg = wdg.prev) {
+	    if(wdg instanceof Makewindow) {
+	        wdg.wdgmsg("close");
+	        break;
+	    }
+	}
     }
 }

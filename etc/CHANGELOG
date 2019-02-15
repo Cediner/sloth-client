@@ -118,3 +118,6 @@
     - Can switch between targets with scroll wheel
     - You won't click through the menugrid now if you miss a button
     - Crafting window now has a search built into it for crafting items only. Can toggle crafting window with 'm' -> 'r'
+    - Show Animations now properly stops animations like beehives, flies, etc. Human animations still display...
+    - Closing the crafting window closes the current craft item
+    - Overall AC is now displayed in bottom left of equip screen

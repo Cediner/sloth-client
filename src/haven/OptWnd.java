@@ -298,6 +298,9 @@ public class OptWnd extends Window {
 		    public void set(boolean val) {
 			global.set(ANIMATIONS, val);
 			a = val;
+			if(ui.sess != null) {
+			    ui.sess.glob.oc.changeAllGobs();
+			}
 		    }
 		}, new Coord(0, y)).sz.y + spacer;
 		y += add(new CheckBox("Show Map") {

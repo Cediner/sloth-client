@@ -52,6 +52,16 @@ public class ActList extends Listbox<ActList.ActItem> {
     }
 
     @Override
+    public Object tooltip(Coord c, Widget prev) {
+	final ActItem itm = itemat(c);
+	if (itm != null) {
+	    return itm.pagina.button().rendertt(true);
+	} else {
+	    return super.tooltip(c, prev);
+	}
+    }
+
+    @Override
     protected void drawitem(GOut g, ActItem item, int i) {
 	g.image(item.icon, Coord.z);
 	g.aimage(item.name.tex(), new Coord(itemh + 5, itemh / 2), 0, 0.5);
