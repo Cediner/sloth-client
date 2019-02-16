@@ -152,6 +152,16 @@ public class Glob {
 	return(rgtime);
     }
 
+    private static final long secinday = 60 * 60 * 24;
+    public String servertimecalc() {
+	long secs = (long)globtime();
+	long day = secs / secinday;
+	long secintoday = secs % secinday;
+	long hours = secintoday / 3600;
+	long mins = (secintoday % 3600) / 60;
+	return String.format("Day %d, %02d:%02d", day, hours, mins);
+    }
+
     public void blob(Message msg) {
 	boolean inc = msg.uint8() != 0;
 	while(!msg.eom()) {

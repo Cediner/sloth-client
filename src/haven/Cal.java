@@ -37,11 +37,11 @@ public class Cal extends MovableWidget {
     static Tex dsky = Resource.loadtex("gfx/hud/calendar/daysky");
     static Tex nlnd = Resource.loadtex("gfx/hud/calendar/nightscape");
     static Tex nsky = Resource.loadtex("gfx/hud/calendar/nightsky");
-    static Resource.Anim sun = Resource.local().loadwait("gfx/hud/calendar/sun").layer(Resource.animc);
-    static Resource.Anim moon = Resource.local().loadwait("gfx/hud/calendar/moon").layer(Resource.animc);
+    static Resource.Anim sun = Resource.local().loadwait("custom/sun").layer(Resource.animc);
+    static Resource.Anim moon = Resource.local().loadwait("custom/moon").layer(Resource.animc);
 
     public Cal() {
-	super(bg.sz(), "Calendar");
+	super(bg.sz().add(0, 15), "Calendar");
     }
 
     public void draw(GOut g) {
@@ -59,6 +59,9 @@ public class Cal extends MovableWidget {
 	g.image(sun, sc);
 	g.image(a.night?nlnd:dlnd, Coord.z);
 	g.image(bg, Coord.z);
+	final String date = ui.sess.glob.servertimecalc();
+	final int width = FastText.textw(date);
+	FastText.print(g, new Coord(sz.x/2 - width/2, sz.y-15), ui.sess.glob.servertimecalc());
     }
 
     @Override
