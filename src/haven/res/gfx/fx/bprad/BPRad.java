@@ -29,7 +29,7 @@ public class BPRad extends Sprite {
 	    float s = (float)Math.sin(6.283185307179586D * i / per);
 	    float c = (float)Math.cos(6.283185307179586D * i / per);
 	    verts.put(i * 3, c * radius).put(i * 3 + 1, s * radius).put(i * 3 + 2, height);
-	    verts.put((per + i) * 3, c * radius).put((per + i) * 3 + 1, s * radius).put((per + i) * 3 + 2, -height);
+	    verts.put((per + i) * 3, c * radius).put((per + i) * 3 + 1, s * radius).put((per + i) * 3 + 2, 0);
 	    normals.put(i * 3, c).put(i * 3 + 1, s).put(i * 3 + 2, 0.0F);
 	    normals.put((per + i) * 3, c).put((per + i) * 3 + 1, s).put((per + i) * 3 + 2, 0.0F);
 	    int v = i * 6;
