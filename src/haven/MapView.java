@@ -888,6 +888,11 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	}
     }
 
+
+    void resetshadows() {
+	smap = null;
+    }
+
     public DirLight amb = null;
     public Outlines outlines = new Outlines(DefSettings.global.get(DefSettings.SYMMETRICOUTLINES, Boolean.class));
     public void setup(RenderList rl) {

@@ -18,7 +18,9 @@ public class MakeWnd extends Window implements ObservableListener<MenuGrid.Pagin
 	setfocusctl(true);
 	entry = add(new TextEntry(WIDTH, "") {
 	    public void activate(String text) {
-		act(list.sel.pagina);
+	        if(list.sel != null) {
+		    act(list.sel.pagina);
+		}
 	    }
 
 	    protected void changed() {

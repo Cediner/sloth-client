@@ -128,3 +128,5 @@
     - Added howl/timer sounds to sounds for Alerting
     - Circle radius no longer is half in the ground
     - Dead animals shouldn't show a ring anymore, if you find one that does ctrl + hover of it and show me the tooltip
+    - Added back Shadow quality under Options -> Graphics. Anything under 1024 is basically all shadow. Highest setting
+      is near perfect shadows

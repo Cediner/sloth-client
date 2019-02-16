@@ -174,14 +174,17 @@ public class OptWnd extends Window {
 			a = val;
 		    }
 		}, new Coord(0, y)).sz.y + spacer;
-		y += add(new CheckBox("Render shadows") {
-			{a = cf.lshadow.val;}
+		{
+		    y += add(new CheckBox("Render shadows") {
+			{
+			    a = cf.lshadow.val;
+			}
 
 			public void set(boolean val) {
-			    if(val) {
+			    if (val) {
 				try {
 				    cf.lshadow.set(true);
-				} catch(GLSettings.SettingException e) {
+				} catch (GLSettings.SettingException e) {
 				    error(e.getMessage());
 				    return;
 				}
@@ -192,6 +195,26 @@ public class OptWnd extends Window {
 			    a = val;
 			}
 		    }, new Coord(0, y)).sz.y + spacer;
+		    {
+			y += add(new Label("Shadow quality"), new Coord(0, y)).sz.y + spacer;
+			final Label dpy = add(new Label(""), new Coord(165, y));
+			y += dpy.sz.y;
+			y += add(new HSlider(160, 0, MapView.shadowmap.length-1, global.get(SHADOWSQUALITY, Integer.class)) {
+			    protected void added() {
+				dpy();
+				this.c.y = dpy.c.y + ((dpy.sz.y - this.sz.y) / 2);
+			    }
+			    void dpy() {
+				dpy.settext(String.format("%d", MapView.shadowmap[val]));
+			    }
+			    public void changed() {
+				global.set(SHADOWSQUALITY, val);
+				ui.gui.map.resetshadows();
+				dpy();
+			    }
+			}, new Coord(0, y)).sz.y + spacer;
+		    }
+		}
 		y += add(new CheckBox("Antialiasing") {
 			{a = cf.fsaa.val;}
 
