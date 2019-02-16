@@ -127,4 +127,4 @@
     - gfx/borka/body sounds only on unknown gobs or "bad" kins. By default bad kin = RED. Can be changed in options -> gameplay
     - Added howl/timer sounds to sounds for Alerting
     - Circle radius no longer is half in the ground
-    -
+    - Dead animals shouldn't show a ring anymore, if you find one that does ctrl + hover of it and show me the tooltip

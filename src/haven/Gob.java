@@ -278,7 +278,7 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 	    if(Movable.isMovable(name)) {
 		setattr(new Movable(this));
 	    }
-	    if(Range.hasRange(name)) {
+	    if(Range.hasRange(name) && (type != Type.ANIMAL || !isDead())) {
 		setattr(new Range(this, name));
 	    }
 	    if(Hidden.isHidden(name)) {
@@ -378,6 +378,22 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 	}
     }
 
+    public boolean isDead() {
+        Drawable d = getattr(Drawable.class);
+        if(d instanceof Composite) {
+	    Composite comp = (Composite)d;
+	    if(comp.oldposes != null) {
+	        for(ResData res : comp.oldposes) {
+	            final String nm = rnm(res.res).toLowerCase();
+	            if(nm.endsWith("knock") || nm.endsWith("dead")) {
+	                return true;
+		    }
+		}
+	    }
+	}
+        return false;
+    }
+
     public String eq() {
 	Drawable d = getattr(Drawable.class);
 	if(d instanceof Composite) {
@@ -400,7 +416,7 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 		    }
 		}
 
-	    sb.append("Poses:");
+	    sb.append("\nPoses:");
 	    if(comp.oldposes != null) {
 		for (ResData res : comp.oldposes) {
 		    sb.append("\nPose: ");
