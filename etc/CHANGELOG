@@ -121,3 +121,6 @@
     - Show Animations now properly stops animations like beehives, flies, etc. Human animations still display...
     - Closing the crafting window closes the current craft item
     - Overall AC is now displayed in bottom left of equip screen
+2/16/19
+    - Softcap added in crafting window
+    -

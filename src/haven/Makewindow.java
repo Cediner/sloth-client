@@ -37,7 +37,7 @@ public class Makewindow extends Widget {
     List<Indir<Resource>> qmod = null;
     static final Text qmodl = Text.render("Quality:");
     static Coord boff = new Coord(7, 9);
-    final int xoff = 45, qmy = 38, outy = 65;
+    final int xoff = 45, qmy = 38, softy = 65, outy = softy + 20;
     final int width;
     public static final Text.Foundry nmf = new Text.Foundry(Text.serif, 20).aa(true);
 
@@ -51,6 +51,7 @@ public class Makewindow extends Widget {
     private static final OwnerContext.ClassResolver<Makewindow> ctxr = new OwnerContext.ClassResolver<Makewindow>()
 	.add(Glob.class, wdg -> wdg.ui.sess.glob)
 	.add(Session.class, wdg -> wdg.ui.sess);
+
     public class Spec implements GSprite.Owner, ItemInfo.SpriteOwner {
 	public Indir<Resource> res;
 	public MessageBuf sdt;
@@ -160,40 +161,45 @@ public class Makewindow extends Widget {
     }
 	
     public void uimsg(String msg, Object... args) {
-	if(msg == "inpop") {
-	    List<Spec> inputs = new LinkedList<Spec>();
-	    for(int i = 0; i < args.length;) {
-		int resid = (Integer)args[i++];
-		Message sdt = (args[i] instanceof byte[])?new MessageBuf((byte[])args[i++]):MessageBuf.nil;
-		int num = (Integer)args[i++];
-		Object[] info = {};
-		if((i < args.length) && (args[i] instanceof Object[]))
-		    info = (Object[])args[i++];
-		inputs.add(new Spec(ui.sess.getres(resid), sdt, num, info));
-	    }
-	    this.inputs = inputs;
-	    fixsz();
-	} else if(msg == "opop") {
-	    List<Spec> outputs = new LinkedList<Spec>();
-	    for(int i = 0; i < args.length;) {
-		int resid = (Integer)args[i++];
-		Message sdt = (args[i] instanceof byte[])?new MessageBuf((byte[])args[i++]):MessageBuf.nil;
-		int num = (Integer)args[i++];
-		Object[] info = {};
-		if((i < args.length) && (args[i] instanceof Object[]))
-		    info = (Object[])args[i++];
-		outputs.add(new Spec(ui.sess.getres(resid), sdt, num, info));
-	    }
-	    this.outputs = outputs;
-	    fixsz();
-	} else if(msg == "qmod") {
-	    List<Indir<Resource>> qmod = new ArrayList<Indir<Resource>>();
-	    for(Object arg : args)
-		qmod.add(ui.sess.getres((Integer)arg));
-	    this.qmod = qmod;
-	    fixsz();
-	} else {
-	    super.uimsg(msg, args);
+        switch (msg) {
+	    case "inpop":
+		List<Spec> inputs = new LinkedList<>();
+		for(int i = 0; i < args.length;) {
+		    int resid = (Integer)args[i++];
+		    Message sdt = (args[i] instanceof byte[])?new MessageBuf((byte[])args[i++]):MessageBuf.nil;
+		    int num = (Integer)args[i++];
+		    Object[] info = {};
+		    if((i < args.length) && (args[i] instanceof Object[]))
+			info = (Object[])args[i++];
+		    inputs.add(new Spec(ui.sess.getres(resid), sdt, num, info));
+		}
+		this.inputs = inputs;
+		fixsz();
+		break;
+	    case "opop":
+		List<Spec> outputs = new LinkedList<>();
+		for(int i = 0; i < args.length;) {
+		    int resid = (Integer)args[i++];
+		    Message sdt = (args[i] instanceof byte[])?new MessageBuf((byte[])args[i++]):MessageBuf.nil;
+		    int num = (Integer)args[i++];
+		    Object[] info = {};
+		    if((i < args.length) && (args[i] instanceof Object[]))
+			info = (Object[])args[i++];
+		    outputs.add(new Spec(ui.sess.getres(resid), sdt, num, info));
+		}
+		this.outputs = outputs;
+		fixsz();
+		break;
+	    case "qmod":
+		List<Indir<Resource>> qmod = new ArrayList<>();
+		for(Object arg : args)
+		    qmod.add(ui.sess.getres((Integer)arg));
+		this.qmod = qmod;
+		fixsz();
+	    	break;
+	    default:
+		super.uimsg(msg, args);
+
 	}
     }
 
@@ -244,6 +250,8 @@ public class Makewindow extends Widget {
 	    c = c.add(Inventory.sqsz.x, 0);
 	    popt = opt;
 	}
+
+	final List<Integer> mods = new ArrayList<>();
 	if(qmod != null) {
 	    g.image(qmodl.tex(), new Coord(0, qmy + 4));
 	    c = new Coord(xoff, qmy);
@@ -252,10 +260,38 @@ public class Makewindow extends Widget {
 		    Tex t = qm.get().layer(Resource.imgc).tex();
 		    g.image(t, c);
 		    c = c.add(t.sz().x + 1, 0);
+		    if(ui.gui.chrwdg != null) {
+		        final String name = qm.get().basename();
+		        for(CharWnd.SAttr attr : ui.gui.chrwdg.skill) {
+		            if(name.equals(attr.attr.nm)) {
+		                final int width = FastText.textw(attr.attr.comp+"");
+		                FastText.printf(g, c, "%d", attr.attr.comp);
+		                c = c.add(width + 8, 0);
+		                mods.add(attr.attr.comp);
+		                break;
+			    }
+			}
+			for(CharWnd.Attr attr : ui.gui.chrwdg.base) {
+			    if(name.equals(attr.attr.nm)) {
+				final int width = FastText.textw(attr.attr.comp+"");
+				FastText.printf(g, c, "%d", attr.attr.comp);
+				c = c.add(width + 8, 0);
+				mods.add(attr.attr.comp);
+				break;
+			    }
+			}
+		    }
 		} catch(Loading l) {
 		}
 	    }
 	}
+
+	c = new Coord(xoff, softy);
+	if(mods.size() > 0) {
+	    int product = (int)Math.pow(mods.stream().reduce((x, y) -> x * y).get(), 1.0 / mods.size());
+	    FastText.printf(g, c, "Softcap: %d", product);
+	}
+
 	c = new Coord(xoff, outy);
 	for(Spec s : outputs) {
 	    GOut sg = g.reclip(c, Inventory.invsq.sz());
@@ -346,12 +382,12 @@ public class Makewindow extends Widget {
 
     public void wdgmsg(Widget sender, String msg, Object... args) {
 	if(sender == obtn) {
-	    if(msg == "activate")
+	    if(msg.equals("activate"))
 		wdgmsg("make", 0);
 	    return;
 	}
 	if(sender == cbtn) {
-	    if(msg == "activate")
+	    if(msg.equals("activate"))
 		wdgmsg("make", 1);
 	    return;
 	}
