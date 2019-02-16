@@ -363,14 +363,38 @@ public class OptWnd extends Window {
 			a = val;
 		    }
 		}, new Coord(0, y)).sz.y + spacer;
-		y += add(new CheckBox("Nightvision") {
-		    {a = global.get(NIGHTVISION, Boolean.class);}
+		{
+		    y += add(new CheckBox("Custom Global Light") {
+			{
+			    a = global.get(NIGHTVISION, Boolean.class);
+			}
 
-		    public void set(boolean val) {
-			global.set(NIGHTVISION, val);
-			a = val;
+			public void set(boolean val) {
+			    global.set(NIGHTVISION, val);
+			    a = val;
+			}
+		    }, new Coord(0, y)).sz.y + spacer;
+		    {
+			final Label lamb = new Label("Ambient");
+			final Label ldif = new Label("Diffuse");
+			final Label lspc = new Label("Specular");
+			final ColorPreview amb = new ColorPreview(new Coord(lamb.sz.x, 16), global.get(NVAMBIENTCOL, Color.class),
+				(color -> global.set(NVAMBIENTCOL, color)));
+			final ColorPreview dif = new ColorPreview(new Coord(ldif.sz.x, 16), global.get(NVDIFFUSECOL, Color.class),
+				(color -> global.set(NVDIFFUSECOL, color)));
+			final ColorPreview spc = new ColorPreview(new Coord(lspc.sz.x, 16), global.get(NVSPECCOC, Color.class),
+				(color -> global.set(NVSPECCOC, color)));
+			add(lamb, new Coord(0, y));
+			add(ldif, new Coord(100-ldif.sz.x/2, y));
+			add(lspc, new Coord(200-lspc.sz.x, y));
+			y += lamb.sz.y + spacer;
+			add(amb, new Coord(lamb.c.x, y));
+			add(dif, new Coord(ldif.c.x, y));
+			add(spc, new Coord(lspc.c.x, y));
+
+			y += 16 + spacer;
 		    }
-		}, new Coord(0, y)).sz.y + spacer;
+		}
 		y += add(new CheckBox("Flatworld (Legacy)") {
 		    {a = global.get(FLATWORLD, Boolean.class);}
 

@@ -18,7 +18,7 @@ public class ColorPicker extends Window {
     private final Consumer<Color> callback;
 
     ColorPicker(final Color def, final Consumer<Color> callback){
-	super(Coord.z, "Color Picker");
+	super(Coord.z, "Color Picker", "Color Picker");
 	this.callback = callback;
 	this.col = def;
 	int w = 0;
@@ -100,38 +100,44 @@ public class ColorPicker extends Window {
 	} else if(sender == gte){
 	    if(msg.equals("activate")) {
 		int val;
-		val = Integer.parseInt((String) args[0]);
-		if (val < 0) {
-		    val = 0;
-		} else if (val > 255) {
-		    val = 255;
+		if (args[0] != null) {
+			val = Integer.parseInt((String) args[0]);
+		    if (val < 0) {
+			val = 0;
+		    } else if (val > 255) {
+			val = 255;
+		    }
+		    gsb.val = val;
+		    updateColor(col.getRed(), val, col.getBlue(), col.getAlpha());
 		}
-		gsb.val = val;
-		updateColor(col.getRed(), val, col.getBlue(), col.getAlpha());
 	    }
 	} else if(sender == bte){
 	    if(msg.equals("activate")) {
 		int val;
-		val = Integer.parseInt((String) args[0]);
-		if (val < 0) {
-		    val = 0;
-		} else if (val > 255) {
-		    val = 255;
+		if (args[0] != null) {
+		    val = Integer.parseInt((String) args[0]);
+		    if (val < 0) {
+			val = 0;
+		    } else if (val > 255) {
+			val = 255;
+		    }
+		    bsb.val = val;
+		    updateColor(col.getRed(), col.getGreen(), val, col.getAlpha());
 		}
-		bsb.val = val;
-		updateColor(col.getRed(), col.getGreen(), val, col.getAlpha());
 	    }
 	} else if(sender == ate){
 	    if(msg.equals("activate")) {
 		int val;
-		val = Integer.parseInt((String) args[0]);
-		if (val < 0) {
-		    val = 0;
-		} else if (val > 255) {
-		    val = 255;
+		if (args[0] != null) {
+		    val = Integer.parseInt((String) args[0]);
+		    if (val < 0) {
+			val = 0;
+		    } else if (val > 255) {
+			val = 255;
+		    }
+		    asb.val = val;
+		    updateColor(col.getRed(), col.getGreen(), col.getBlue(), val);
 		}
-		asb.val = val;
-		updateColor(col.getRed(), col.getGreen(), col.getBlue(), val);
 	    }
 	} else super.wdgmsg(sender,msg,args);
     }

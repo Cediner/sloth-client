@@ -75,6 +75,9 @@ public class DefSettings {
     	SKYBOXRANGE = "graphics.skybox-range",			//[Int ] Skybox range, default -> 1500?
     	KEEPGRIDS = "graphics.dont-delete-grids",		//[Bool] Don't delete map grids
     	DRAWGRIDRADIUS = "graphics.map-grid-draw-radius",	//[Int ] Map grid draw radius, default -> 2
+    	NVAMBIENTCOL = "graphics.nightvision-ambient",		//[RBGA] Nightvision ambient color
+    	NVDIFFUSECOL = "graphics.diffuse-color",		//[RGBA] Nightvision diffuse color
+    	NVSPECCOC = "graphics.specular-color",			//[RGBA] Nightvision specular color
 
     	QUICKMENU = "gameplay.quick-flowermenu", 		//[Bool] Toggle quick flowermenu
     	BUGGEDMENU = "gameplay.bugged-flowermenu",		//[Bool] Whether not flowermenu should close on clicks outside of it
@@ -160,6 +163,9 @@ public class DefSettings {
 	global.ensure(SHOWMAP, true);
 	global.ensure(SHOWGOBS, true);
 	global.ensure(NIGHTVISION, false);
+	global.ensure(NVAMBIENTCOL, Color.WHITE);
+	global.ensure(NVDIFFUSECOL, Color.WHITE);
+	global.ensure(NVSPECCOC, Color.WHITE);
 	global.ensure(FLATWORLD, false);
 	global.ensure(SHOWTRANTILES, true);
 	global.ensure(TREESCALE, 1);

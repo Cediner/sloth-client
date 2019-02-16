@@ -68,7 +68,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
     //Tooltip info
     private String lasttt = "";
     private Object tt;
-    
+
     public interface Delayed {
 	public void run(GOut g);
     }
@@ -905,9 +905,9 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	synchronized(glob) {
 	    if(glob.lightamb != null) {
 	        final boolean nightvision = DefSettings.global.get(DefSettings.NIGHTVISION, Boolean.class);
-		final Color lamb = nightvision ? Color.WHITE : glob.lightamb;
-		final Color ldif = nightvision ? Color.WHITE : glob.lightdif;
-		final Color lspc = nightvision ? Color.WHITE : glob.lightspc;
+		final Color lamb = nightvision ? DefSettings.global.get(DefSettings.NVAMBIENTCOL, Color.class) : glob.lightamb;
+		final Color ldif = nightvision ? DefSettings.global.get(DefSettings.NVDIFFUSECOL, Color.class) : glob.lightdif;
+		final Color lspc = nightvision ? DefSettings.global.get(DefSettings.NVSPECCOC, Color.class) : glob.lightspc;
 
 		DirLight light = new DirLight(lamb, ldif, lspc,
 			Coord3f.o.sadd((float)glob.lightelev, (float)glob.lightang, 1f));

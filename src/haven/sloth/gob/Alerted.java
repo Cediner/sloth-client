@@ -86,7 +86,7 @@ public class Alerted {
         if(sfxmap.containsKey(name)) {
             if(!name.equals("gfx/borka/body")) {
 		Audio.play(sfxmap.get(name));
-	    } else if(g.id != MapView.plgobid){
+	    } else if(MapView.plgobid != -1 && g.id != MapView.plgobid){
                 //For bodies only play on unknown or RED
                 final KinInfo kin = g.getattr(KinInfo.class);
                 if(kin == null || kin.group == DefSettings.global.get(DefSettings.BADKIN, Integer.class)) {
