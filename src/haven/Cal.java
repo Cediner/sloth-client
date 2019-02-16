@@ -66,6 +66,6 @@ public class Cal extends MovableWidget {
 
     @Override
     protected boolean moveHit(Coord c, int btn) {
-	return bg.back.getRaster().getSample(c.x % bg.back.getWidth(), c.y, 3) > 0;
+	return c.isect(Coord.z, bg.sz()) && bg.back.getRaster().getSample(c.x % bg.back.getWidth(), c.y, 3) > 0;
     }
 }
