@@ -124,3 +124,5 @@
 2/16/19
     - Softcap added in crafting window
     - Updated Calendar to be somewhat better
+    - gfx/borka/body sounds only on unknown gobs or "bad" kins. By default bad kin = RED. Can be changed in options -> gameplay
+    - Added howl/timer sounds to sounds for Alerting

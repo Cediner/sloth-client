@@ -1,8 +1,8 @@
 package haven.sloth.gob;
 
 import com.google.common.flogger.FluentLogger;
-import haven.Audio;
-import haven.Resource;
+import haven.*;
+import haven.sloth.DefSettings;
 import haven.sloth.io.Storage;
 import haven.sloth.util.ObservableMap;
 import haven.sloth.util.ObservableMapListener;
@@ -39,6 +39,7 @@ public class Alerted {
 		    }
 		}
 	    }
+	    sounds.sort(Comparator.comparing(Resource.Named::name));
 	});
 
 	for(final Resource.Named sound : sounds) {
@@ -81,9 +82,17 @@ public class Alerted {
 	sfxmap.removeListener(listener);
     }
 
-    public static void checkAlert(final String name) {
+    public static void checkAlert(final String name, final Gob g) {
         if(sfxmap.containsKey(name)) {
-	    Audio.play(sfxmap.get(name));
+            if(!name.equals("gfx/borka/body")) {
+		Audio.play(sfxmap.get(name));
+	    } else if(g.id != MapView.plgobid){
+                //For bodies only play on unknown or RED
+                final KinInfo kin = g.getattr(KinInfo.class);
+                if(kin == null || kin.group == DefSettings.global.get(DefSettings.BADKIN, Integer.class)) {
+		    Audio.play(sfxmap.get(name));
+		}
+	    }
 	}
     }
 

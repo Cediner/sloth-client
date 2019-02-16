@@ -271,7 +271,7 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 	    type = Type.getType(name);
 
 	    //Check for any special attributes we should attach
-	    Alerted.checkAlert(name);
+	    Alerted.checkAlert(name, this);
 	    if(Growth.isGrowth(name)) {
 		setattr(new Growth(this));
 	    }

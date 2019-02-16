@@ -79,6 +79,8 @@ public class Resource implements Serializable {
 	    ret = (ret * 31) + ver;
 	    return(ret);
 	}
+
+	public String name() { return name; }
     }
 
     public static class Spec extends Named implements Serializable {

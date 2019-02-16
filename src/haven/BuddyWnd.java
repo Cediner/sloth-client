@@ -29,6 +29,7 @@ package haven;
 import java.awt.Color;
 import java.util.*;
 import java.text.Collator;
+import java.util.function.Consumer;
 
 public class BuddyWnd extends Widget implements Iterable<BuddyWnd.Buddy> {
     private List<Buddy> buddies = new ArrayList<Buddy>();
@@ -171,10 +172,16 @@ public class BuddyWnd extends Widget implements Iterable<BuddyWnd.Buddy> {
 
     public static class GroupSelector extends Widget {
 	public int group;
-	
+	private Consumer<Integer> changed;
+
 	public GroupSelector(int group) {
+	    this(group, (x) -> {});
+	}
+
+	public GroupSelector(int group, Consumer<Integer> changed) {
 	    super(new Coord((gc.length * 20) + 20, 20));
 	    this.group = group;
+	    this.changed = changed;
 	}
 	
 	public void draw(GOut g) {
@@ -202,6 +209,7 @@ public class BuddyWnd extends Widget implements Iterable<BuddyWnd.Buddy> {
 	
 	protected void changed(int group) {
 	    this.group = group;
+	    changed.accept(group);
 	}
     }
 
@@ -225,11 +233,7 @@ public class BuddyWnd extends Widget implements Iterable<BuddyWnd.Buddy> {
 			commit();
 		    }
 		}, 10, ava.c.y + ava.sz.y + 10);
-	    this.grp = add(new GroupSelector(buddy.group) {
-		    public void changed(int group) {
-			buddy.chgrp(group);
-		    }
-		}, 15, nick.c.y + nick.sz.y + 10);
+	    this.grp = add(new GroupSelector(buddy.group, buddy::chgrp), 15, nick.c.y + nick.sz.y + 10);
 	    setopts();
 	    pack();
 	}

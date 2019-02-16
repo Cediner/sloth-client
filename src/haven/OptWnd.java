@@ -671,6 +671,11 @@ public class OptWnd extends Window {
 		    }
 		}
 	    }, c.copy()).sz.y + spacer;
+	    {
+	        c.y += gameplay.add(new Label("Bad Kin group:"), c.copy()).sz.y + spacer;
+	        c.y += gameplay.add(new BuddyWnd.GroupSelector(global.get(BADKIN, Integer.class),
+			group -> global.set(BADKIN, group)), c.copy()).sz.y + spacer;
+	    }
 	    gameplay.add(new PButton(200, "Back", 27, main), c.copy());
 	    gameplay.pack();
 	}

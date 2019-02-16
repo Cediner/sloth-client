@@ -275,6 +275,8 @@ INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/terobjs/thud-wood', (SE
 INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/terobjs/woodcrash', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
 INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/terobjs/woodcrash2', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
 INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/terobjs/woodspin', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('custom/sfx/howl', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('custom/csfx/timer', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
 
 CREATE TABLE IF NOT EXISTS growth (
     object_id   INTEGER,    -- Objects that can grow and have stages

@@ -1,4 +1,7 @@
 TODO
+    - range rings don't show on dead bodies... (knock / dead) poses
+    - customizable shadow options
+    - customizable nightvision color
     - Fightsess move icons clickable
     - Grid View + tooltips = non-bold lines. Something from tooltips must be causing an extra GL command to fuck over lines
     - Infinite zoom out on Overview map

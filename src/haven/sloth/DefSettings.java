@@ -97,6 +97,7 @@ public class DefSettings {
     	SHOWPCLAIM = "gameplay.show-pclaim",			//[Bool] Toggle pclaims
     	SHOWVCLAIM = "gameplay.show-vclaim",			//[Bool] Toggle vclaims
     	SHOWKCLAIM = "gameplay.show-kclaim",			//[Bool] Toggle kingdom claims
+    	BADKIN = "gameplay.bad-kin-color",			//[Int] Bad kin color, default: 2 (red)
 
     	SHOWFKBELT = "belt.fk.show",				//[Bool] Toggle F key belt
     	FKBELTPAGE = "belt.fk.page",				//[Int] Page F key belt is on
@@ -190,6 +191,7 @@ public class DefSettings {
 	global.ensure(SHOWPCLAIM, false);
 	global.ensure(SHOWVCLAIM, false);
 	global.ensure(SHOWKCLAIM, false);
+	global.ensure(BADKIN, 2);
 	//Belts
 	global.ensure(SHOWFKBELT, false);
 	global.ensure(FKBELTPAGE, 0);

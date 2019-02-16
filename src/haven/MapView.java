@@ -45,6 +45,7 @@ import haven.sloth.gui.SoundSelector;
 import haven.sloth.io.HighlightData;
 
 public class MapView extends PView implements DTarget, Console.Directory {
+    public static long plgobid;
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     public static boolean clickdb = false;
     public long plgob = -1;
@@ -440,6 +441,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	this.glob = glob;
 	this.cc = cc;
 	this.plgob = plgob;
+	plgobid = plgob;
 	this.gobs = new Gobs();
 	setcanfocus(true);
 
@@ -1512,6 +1514,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 		plgob = -1;
 	    else
 		plgob = (Integer)args[0];
+	    plgobid = plgob;
 	} else if(msg == "flashol") {
 	    unflashol();
 	    olflash = (Integer)args[0];
