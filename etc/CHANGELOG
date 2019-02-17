@@ -133,3 +133,4 @@
       is near perfect shadows
     - Changed nightvision -> Custom global light. Added in options to customize the color to your liking. Pure black of
     everything for maximum larp of course. Default is pure white for the cowards.
+    - Skip Loading now works properly. Should no longer black screen, etc.

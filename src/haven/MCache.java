@@ -497,13 +497,23 @@ public class MCache {
 	return(g.getz(tc.sub(g.ul)));
     }
 
+    public int getz_safe(Coord tc) {
+	final Optional<Grid> grid = getgridto(tc);
+	if (grid.isPresent()) {
+	    final Grid g = grid.get();
+	    return g.getz(tc.sub(g.ul));
+	} else {
+	    return 0;
+	}
+    }
+
     public double getcz(double px, double py) {
 	double tw = tilesz.x, th = tilesz.y;
 	Coord ul = new Coord(Utils.floordiv(px, tw), Utils.floordiv(py, th));
 	double sx = Utils.floormod(px, tw) / tw;
 	double sy = Utils.floormod(py, th) / th;
-	return(((1.0f - sy) * (((1.0f - sx) * getz(ul)) + (sx * getz(ul.add(1, 0))))) +
-	       (sy * (((1.0f - sx) * getz(ul.add(0, 1))) + (sx * getz(ul.add(1, 1))))));
+	return(((1.0f - sy) * (((1.0f - sx) * getz_safe(ul)) + (sx * getz_safe(ul.add(1, 0))))) +
+	       (sy * (((1.0f - sx) * getz_safe(ul.add(0, 1))) + (sx * getz_safe(ul.add(1, 1))))));
     }
 
     public double getcz(Coord2d pc) {

@@ -604,7 +604,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 				    olcut = glob.map.getolcut(i, cc.add(o));
 				    if (olcut != null)
 					rl.add(olcut, GLState.compose(Location.xlate(new Coord3f((float) pc.x, -(float) pc.y, 0)), mats[i]));
-				} catch (Resource.Loading e) {}
+				} catch (Loading e) {}
 			    }
 			}
 		    }
@@ -1386,6 +1386,9 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    if(!DefSettings.global.get(DefSettings.SKIPLOADING, Boolean.class)) {
 		g.chcolor(Color.BLACK);
 		g.frect(Coord.z, sz);
+	    } else {
+	        System.out.println(text);
+	        e.printStackTrace();
 	    }
 	    g.chcolor(Color.WHITE);
 	    g.atext(text, sz.div(2), 0.5, 0.5);

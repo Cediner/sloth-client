@@ -27,6 +27,8 @@
 package haven;
 
 import haven.GLState.Buffer;
+import haven.sloth.DefSettings;
+
 import java.util.*;
 
 public class RenderList {
@@ -434,6 +436,12 @@ public class RenderList {
 		return;
 	    else
 		throw(l);
+	} catch (Defer.NotDoneException e) {
+	    if(DefSettings.global.get(DefSettings.SKIPLOADING, Boolean.class)) {
+	        return;
+	    } else {
+	        throw(e);
+	    }
 	}
     }
 

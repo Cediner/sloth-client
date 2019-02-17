@@ -57,7 +57,7 @@ public class GridMesh extends FastMesh {
     }
 
     private static Coord3f mapToScreen(Coord c, Coord ul, MCache map) {
-	return new Coord3f((float)((c.x - ul.x) * tilesz.x), (float)(-(c.y - ul.y) * tilesz.y), map.getz(c));
+	return new Coord3f((float)((c.x - ul.x) * tilesz.x), (float)(-(c.y - ul.y) * tilesz.y), map.getz_safe(c));
     }
 
     public static FastMesh build(MCache mc, Coord ul, Coord sz) {
