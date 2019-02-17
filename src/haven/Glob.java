@@ -30,6 +30,7 @@ import java.util.*;
 import java.awt.Color;
 
 public class Glob {
+    public UI ui; //TODO: Glob should honestly make the ui, not have the UI attach onto it.
     public double time, epoch = Utils.rtime();
     public Astronomy ast;
     public final OCache oc = new OCache(this);

@@ -114,6 +114,8 @@ public class UI {
 	widgets.put(0, root);
 	rwidgets.put(root, 0);
 	this.sess = sess;
+	if(sess != null)
+	    this.sess.glob.ui = this;
     }
 	
     public void setreceiver(Receiver rcvr) {
