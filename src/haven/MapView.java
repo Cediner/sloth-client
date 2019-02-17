@@ -29,6 +29,7 @@ package haven;
 import static haven.MCache.tilesz;
 import static haven.OCache.posres;
 import static haven.sloth.DefSettings.DRAWGRIDRADIUS;
+import static haven.sloth.DefSettings.SKIPLOADING;
 
 import com.google.common.flogger.FluentLogger;
 import haven.GLProgram.VarID;
@@ -921,11 +922,17 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    if(curf != null)
 		curf.tick("light");
 	    if(DefSettings.global.get(DefSettings.WEATHER, Boolean.class)) {
-		for (Glob.Weather w : glob.weather)
-		    w.gsetup(rl);
-		for (Glob.Weather w : glob.weather) {
-		    if (w instanceof Rendered)
-			rl.add((Rendered) w, null);
+	        try {
+		    for (Glob.Weather w : glob.weather)
+			w.gsetup(rl);
+		    for (Glob.Weather w : glob.weather) {
+			if (w instanceof Rendered)
+			    rl.add((Rendered) w, null);
+		    }
+		} catch (Exception e) {
+	            if(!DefSettings.global.get(SKIPLOADING, Boolean.class)) {
+	                throw e;
+		    } //otherwise ignore
 		}
 	    }
 	    if(curf != null)
