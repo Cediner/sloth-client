@@ -16,7 +16,7 @@ public class DowseWnd extends Window {
         super(Coord.z, "Dowse", "Dowse");
         this.onClose = onClose;
         final Label la1 = new Label(String.format("Left Angle: %.2f", Math.toDegrees(a1)));
-        final Label la2 = new Label(String.format(" Right Angle: %.2f", Math.toDegrees(a2)));
+        final Label la2 = new Label(String.format("Right Angle: %.2f", Math.toDegrees(a2)));
         final Label lcol = new Label("Dowse Color:");
         final ColorPreview col = new ColorPreview(new Coord(16, 16),
 		new Color(255, 0, 0, (int)(255*.30)),

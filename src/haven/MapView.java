@@ -1795,7 +1795,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 		} else {
 		    try {
 			Resource res = ui.sess.glob.map.tilesetr(ui.sess.glob.map.gettile(mc.div(MCache.tilesz).floor()));
-			updatett("Tile: " + res.name + "[" + ui.sess.glob.map.gettile_safe(mc.div(MCache.tilesz).floor()) +"]");
+			updatett("Tile: " + res.name + "[" + ui.sess.glob.map.gettile_safe(mc.div(MCache.tilesz).floor()) +"]\n" + mc);
 		    } catch(Exception e) {
 		        lasttt = "";
 			tt = null;
@@ -1804,7 +1804,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    } else {
 		try {
 		    Resource res = ui.sess.glob.map.tilesetr(ui.sess.glob.map.gettile(mc.div(MCache.tilesz).floor()));
-		    updatett("Tile: " + res.name + "[" + ui.sess.glob.map.gettile_safe(mc.div(MCache.tilesz).floor()) +"]");
+		    updatett("Tile: " + res.name + "[" + ui.sess.glob.map.gettile_safe(mc.div(MCache.tilesz).floor()) +"]\n" + mc);
 		} catch(Exception e) {
 		    lasttt = "";
 		    tt = null;

@@ -9,13 +9,19 @@ import java.awt.*;
  * You'll be able to customize the color in the window
  *
  * TODO: optimize with a FastMesh or something
+ * TODO: As the owner gob moves around a1, a2 should update
+ *       On constructor once we have a1, a2 get our coordinate
+ *       multiple this coordinate out by 10000? tiles in the direction of each angle to get c1, c2
+ *       Anytime the owner gob moves update a1, a2 by getting the angles from new coordinate to c1, c2.
+ *       - not worth the time right now due to the coordinate systems being different..
  */
 public class DowseFx extends Sprite {
     public static final double ln = 2.0D;
     public static final double r = 100.0D;
-    public final double a1; //Arc is a1 to a2
+    public final double a1; //Arc is a1 to a2, a1 < a2
     public final double a2;
-    private States.ColState col = new States.ColState(new Color(255, 0, 0, (int)(255*0.3)));
+
+    private States.ColState col = new States.ColState(new Color(255, 0, 0, 128));
     private boolean delete = false;
 
     public DowseFx(Sprite.Owner owner, Resource res, Message msg) {
@@ -47,7 +53,6 @@ public class DowseFx extends Sprite {
         g.apply();
 	//render just the arrow 100 units out from us in an arc
 	//The color
-	//g.gl.glColor4f(col.getRed()/255f, col.getGreen()/255f, col.getBlue()/255f, col.getAlpha()/255f);
 	g.gl.glBegin(GL.GL_TRIANGLE_FAN);
 	//center point, our gob
 	g.gl.glVertex3f(0.0F, 0.0F, 0.0F);
@@ -64,7 +69,7 @@ public class DowseFx extends Sprite {
 	//color vertex with our color
 	rl.prepo(States.vertexcolor);
 	rl.prepo(States.presdepth);
-	//Base location is at our gob
+	//Remove our gob's angle from affecting this, just keep it relative to position
 	rl.prepo(Location.goback("gobx"));
 	rl.prepo(Rendered.eyesort);
 	//Don't apply lighting to us
