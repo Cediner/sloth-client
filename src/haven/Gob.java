@@ -264,45 +264,48 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
      * @param name The res name
      */
     private void discovered(final String name) {
-        //Before we do anything make sure we care about this
-	if(!Deleted.isDeleted(name)) {
-	    //Gobs we care about
-	    //Figure out our type first
-	    type = Type.getType(name);
+        //Don't try to discover anything until we know who the plgob is.
+        if(glob.ui.gui != null && glob.ui.gui.map != null && glob.ui.gui.map.plgob != -1) {
+	    //Before we do anything make sure we care about this
+	    if (!Deleted.isDeleted(name)) {
+		//Gobs we care about
+		//Figure out our type first
+		type = Type.getType(name);
 
-	    //Check for any special attributes we should attach
-	    Alerted.checkAlert(name, this);
-	    if(Growth.isGrowth(name)) {
-		setattr(new Growth(this));
-	    }
-	    if(Movable.isMovable(name)) {
-		setattr(new Movable(this));
-	    }
-	    if(Range.hasRange(name) && (type != Type.ANIMAL || !isDead())) {
-		setattr(new Range(this, name));
-	    }
-	    if(Hidden.isHidden(name)) {
-	        setattr(new Hidden(this));
-	    }
-	    if(HighlightData.isHighlighted(name)) {
-	        mark(-1);
-	    }
-
-	    res().ifPresent((res) -> { //should always be present once name is discovered
-		final Resource.Neg neg = res.layer(Resource.negc);
-		if (neg != null) {
-		    Coord hsz = new Coord(Math.abs(neg.bc.x) + Math.abs(neg.bs.x),
-			    Math.abs(neg.bc.y) + Math.abs(neg.bc.y));
-		    Coord hoff = neg.bc;
-		    hitbox = HitboxMesh.makehb(hsz, hoff);
+		//Check for any special attributes we should attach
+		Alerted.checkAlert(name, this);
+		if (Growth.isGrowth(name)) {
+		    setattr(new Growth(this));
 		}
-	    });
-	} else {
-	    //We don't care about these gobs, tell OCache to start the removal process
-	    dispose();
-	    glob.oc.remove(id);
+		if (Movable.isMovable(name)) {
+		    setattr(new Movable(this));
+		}
+		if (Range.hasRange(name) && (type != Type.ANIMAL || !isDead())) {
+		    setattr(new Range(this, name));
+		}
+		if (Hidden.isHidden(name)) {
+		    setattr(new Hidden(this));
+		}
+		if (HighlightData.isHighlighted(name)) {
+		    mark(-1);
+		}
+
+		res().ifPresent((res) -> { //should always be present once name is discovered
+		    final Resource.Neg neg = res.layer(Resource.negc);
+		    if (neg != null) {
+			Coord hsz = new Coord(Math.abs(neg.bc.x) + Math.abs(neg.bs.x),
+				Math.abs(neg.bc.y) + Math.abs(neg.bc.y));
+			Coord hoff = neg.bc;
+			hitbox = HitboxMesh.makehb(hsz, hoff);
+		    }
+		});
+	    } else {
+		//We don't care about these gobs, tell OCache to start the removal process
+		dispose();
+		glob.oc.remove(id);
+	    }
+	    discovered = true;
 	}
-	discovered = true;
     }
 
     public void mark(final int life) {

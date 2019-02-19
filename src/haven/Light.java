@@ -115,16 +115,19 @@ public class Light implements Rendered {
 	}
     }
 
+    //Lighting based on vertex
     private static final ShaderMacro vlight = prog -> {
 	new Phong(prog.vctx);
     };
+    //Lighting based on fragments
     private static final ShaderMacro plight = prog -> {
 	new Phong(prog.fctx);
     };
 
     public static final GLState vlights = new BaseLights(vlight);
     public static final GLState plights = new BaseLights(plight);
-    
+
+    //CelShaded lighting
     public static class CelShade extends GLState {
 	public static final Slot<CelShade> slot = new Slot<CelShade>(Slot.Type.DRAW, CelShade.class, lighting);
 
