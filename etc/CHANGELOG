@@ -1,139 +1,143 @@
-1.0.0
-    - Initial setup
-1.0.1
-    - Cleaned up old code not needed
-    - Added in flogger for logging
-    - Introduced ini configs for settings
-1.0.2
-    - Upgraded jogl to latest (2.3.2)
-    - Cleaned up code to work with jogl 2.3.2
-    - Changed ARB calls to normal GLSL calls
-        - Primarily affected GLShader & GLProgram
-        - Also removed ARB extension checks for VAOs/Instancing since the ARB functions weren't used either way
-          thus making VAO support only for OpenGL 3.0+ users, and Instancing for OpenGL 3.3+ users
-    - Removed unused imports in various locations
-1.0.3
-    - Added RGB to possible settings
-    - Added additional profiling to MapView
-1.0.4
-    - Back to Java 8 since it's become clear that certain code outside of my reach can't support it
-1.0.5
-    - Added back a lot of Ape graphics settings, all of these can be found in the Options window
-        - Skip loading screens
-        - Toggle flavor objects
-        - Display more flavor objects
-        - Symmetric Outlines
-        - Cel Shading via options
-        - Shadow quality/size
-        - MSAA levels
-        - Wireframe mode
-        - Toggle weather
-        - Toggle animations
-        - Toggle map grids on/off
-        - Toggle transition tiles
-        - Toggle gobs on/off
-        - Nightvision
-    - Settings should create automatically if the file doesn't exist, minor issues with loading fixed
-    - Pushed GLSettings configurations to Settings
-    - :gl commands are no longer a thing, use the options menu
-    - Fixed mistake that would cause a gl error when deleting glPrograms since it was calling the wrong function
-    - Pushed anisotropic validation off into TexGL
-    - Added in pausing via 'p' key
-    - Added back the "No Gob Audio" option under Audio Options.
-    - Added back in the Grid mode via 'g' key
-    - Added back flatworld, can be toggled in the Options window under Graphics.
-    - Added back quick flower menus, can be toggled under Options window under Gameplay
-    - Added back bugged flower menus (aka: don't close them when you click outside them). Options -> Gameplay
-    - Added back simple crops. Options -> Gameplay
-    - Added back showing of crop/tree/bush stage. Options -> Gameplay
-    - Added back Showing of Gob HP. Options -> Gameplay
-    - Added back tree scaling. Options -> Graphics
-    - Added back in Gob and Animal paths. Options -> Gameplay
-    - Added Camera settings to switch easily. Options -> Camera, also modified the maximum zoom out of ortho and speed of free cam
-    - Added back Animal/Trough/Beehive radius. Options -> Gameplay
-    - Added back the special menu when you alt + right click objects.
-        - This will let you hide, add sound, or delete objects
-    - Added in MenuGrid custom menus. Management windows are under the "Management" icon or 'm' key at the top level of menugrid
-        - Under this is the Management icons for Hidden, Deleted, and Alerted items to see and modify (keys: 'h', 'd', 'a' respectively)
-1.0.6
-    - Added in Account management
-    - Can now see how far you are from quests by looking at their tooltip when mousing over the pointer icon.
-        - This is only accurate to within ~1000 tiles.
-    - Can now lock items again in inventory and on mouse via ctrl+right click or '`' for mouse item
-    - Added back in movable UI and converted over to my own position saving system. This covers:
-        - Your main inventory, equipment window, character window, kith & kin window, map window, Calendar widget,
-          Help Window, Your avatar, The Party view via right click, Bufflist (alt+right click drag buff icons)
-    - Made it so that anything that is movable has to have a certain percentage of its width or height exposed otherwise
-      it will rebound back into the clients window. This is to avoid people dragging windows off into oblivion and
-      having to manually reset them in the settings
-    - The buttons to bring up windows have been moved to the menugrid under management ('m'). You can still toggle them
-      via the old keybinds as well
-        - Equipment ('e')  Ctrl+E
-        - Character Sheet ('t') Ctrl+T
-        - Options ('o') Ctrl+O
-        - Kith & Kin ('k') Ctrl+B
-        - Map ('m') Ctrl+A
-        - Inventory ('i') Tab
-        - Minimap ('n')
-        - Chat ('c') Ctrl + C
-    - Bumped the radius circle height back to 10 units like default
-    - Control + hover over party member icons to see how far they are, limited to 1000 tiles..
-    - Quest log is now part of a window and movable
-    - Chat is now part of a window and movable
-    - Hotkeys are now movable via ctrl+ drag. Options for F, numpad, and number belts in options -> Gameplay
-    - Saving minimaps is now in as well.
-    - Hidden, Deleted, Alerted are toggled now rather than new
-    - Minimap cache tiles don't keep grid references..
-    - Fixes some bugs that caused crashes
-    - Added in Pagina search window 'm' -> 's'
-    - Can hover over tiles and gobs to get details -> ctrl + hover
-    - Party members have a different icon now on minimap. So do you.
-    - Sea is now blood red
-    - Change increase map view distance options-> video
-    - Progress bar shows %
-    - Timers added back in 'm' -> 'i'
-    - minimap grid, view, and pclaim/vclaim/kclaims settings are saved now
-    - item meters now show % in bottom left
-    - lp/h lp/h/weight added to tooltips & in character tab for study
-    - wolverine/adder/beaver added to dangerous animal list for circle
-    - Can toggle hitboxes on and off in Options -> gameplay. Will only work for objs that have valid hitboxes via res file.
-    - Flowermenu is back to being a list
-    - PvP avatars should now show in top right if they weren't before for you.
-    - party icons on loftar map should be right icons now.
-    - Quest pointer icon should be fixed now to not disappear or show wrong direction, i believe. You can also click the
-    icon to go to it (up to 1000 tiles at a time) or interact with it (right click menu) if in view distance.
-    - Logout fixes, Cavein dust back to 30m + colorful
-    - Now wolverine, adders, and beavers should show their circle
-    - Added back the land manager 'm' -> 'l', still has some work to be done on it tho
-    - Added back the base for themes, may notice some window changes
-    - Can now mouse over avatars to see their equipment. Friends list avatar is now full size too.
-    - Buffs now show % on the middle of them
-    - Added in marking for party members, alt right click -> Mark for party
-    - Added in Highlighting to find things easier. alt right click -> Highlight or open Highlight manager 'm' -> 'g' and
-    manually add in the res name
-    - All of the managers should now sort their lists alphabetically
-    - Fixed crash bug if you clicked in very specific areas of a window to move it
-    - Changed how the list of combat opponents looks, your current target has its boxed highlighted in yellow now
-    - Logging back into combat won't screw up keybinds now
-    - Can switch between targets with scroll wheel
-    - You won't click through the menugrid now if you miss a button
-    - Crafting window now has a search built into it for crafting items only. Can toggle crafting window with 'm' -> 'r'
-    - Show Animations now properly stops animations like beehives, flies, etc. Human animations still display...
-    - Closing the crafting window closes the current craft item
-    - Overall AC is now displayed in bottom left of equip screen
-2/16/19
-    - Softcap added in crafting window
-    - Updated Calendar to be somewhat better
-    - gfx/borka/body sounds only on unknown gobs or "bad" kins. By default bad kin = RED. Can be changed in options -> gameplay
-        - May still hear yourself when loading in the game..
-    - Added howl/timer sounds to sounds for Alerting
-    - Circle radius no longer is half in the ground
-    - Dead animals shouldn't show a ring anymore, if you find one that does ctrl + hover of it and show me the tooltip
-    - Added back Shadow quality under Options -> Graphics. Anything under 1024 is basically all shadow. Highest setting
-      is near perfect shadows
-    - Changed nightvision -> Custom global light. Added in options to customize the color to your liking. Pure black of
-    everything for maximum larp of course. Default is pure white for the cowards.
-    - Skip Loading now works properly. Should no longer black screen, etc.
-2/17/19
+    - Brought back themes for the main hud elements. By default you use sloth theme. You can change theme under Options
+    "Theme Settings". You can also tint the color of windows in those options as well to colorize your theme to your
+    liking.
+2/20/19
     - Any tracking/dowsing use now spawns a window "Drowse" that tells you the angles and lets you change the color
       The angle will be visible until you close this window
+2/17/19
+    - Skip Loading now works properly. Should no longer black screen, etc.
+    - Changed nightvision -> Custom global light. Added in options to customize the color to your liking. Pure black of
+    everything for maximum larp of course. Default is pure white for the cowards.
+    - Added back Shadow quality under Options -> Graphics. Anything under 1024 is basically all shadow. Highest setting
+      is near perfect shadows
+    - Dead animals shouldn't show a ring anymore, if you find one that does ctrl + hover of it and show me the tooltip
+    - Circle radius no longer is half in the ground
+    - Added howl/timer sounds to sounds for Alerting
+    - gfx/borka/body sounds only on unknown gobs or "bad" kins. By default bad kin = RED. Can be changed in options -> gameplay
+        - May still hear yourself when loading in the game..
+    - Updated Calendar to be somewhat better
+    - Softcap added in crafting window
+2/16/19
+    - Overall AC is now displayed in bottom left of equip screen
+    - Closing the crafting window closes the current craft item
+    - Show Animations now properly stops animations like beehives, flies, etc. Human animations still display...
+    - Crafting window now has a search built into it for crafting items only. Can toggle crafting window with 'm' -> 'r'
+    - You won't click through the menugrid now if you miss a button
+    - Can switch between targets with scroll wheel
+    - Logging back into combat won't screw up keybinds now
+    - Changed how the list of combat opponents looks, your current target has its boxed highlighted in yellow now
+    - Fixed crash bug if you clicked in very specific areas of a window to move it
+    - All of the managers should now sort their lists alphabetically
+    - Added in Highlighting to find things easier. alt right click -> Highlight or open Highlight manager 'm' -> 'g' and
+    manually add in the res name
+    - Added in marking for party members, alt right click -> Mark for party
+    - Buffs now show % on the middle of them
+    - Can now mouse over avatars to see their equipment. Friends list avatar is now full size too.
+    - Added back the base for themes, may notice some window changes
+    - Added back the land manager 'm' -> 'l', still has some work to be done on it tho
+    - Now wolverine, adders, and beavers should show their circle
+    - Logout fixes, Cavein dust back to 30m + colorful
+    - Quest pointer icon should be fixed now to not disappear or show wrong direction, i believe. You can also click the
+    icon to go to it (up to 1000 tiles at a time) or interact with it (right click menu) if in view distance.
+    - party icons on loftar map should be right icons now.
+    - PvP avatars should now show in top right if they weren't before for you.
+    - Flowermenu is back to being a list
+    - Can toggle hitboxes on and off in Options -> gameplay. Will only work for objs that have valid hitboxes via res file.
+    - wolverine/adder/beaver added to dangerous animal list for circle
+    - lp/h lp/h/weight added to tooltips & in character tab for study
+    - item meters now show % in bottom left
+    - minimap grid, view, and pclaim/vclaim/kclaims settings are saved now
+    - Timers added back in 'm' -> 'i'
+    - Progress bar shows %
+    - Change increase map view distance options-> video
+    - Sea is now blood red
+    - Party members have a different icon now on minimap. So do you.
+    - Can hover over tiles and gobs to get details -> ctrl + hover
+    - Added in Pagina search window 'm' -> 's'
+    - Fixes some bugs that caused crashes
+    - Minimap cache tiles don't keep grid references..
+    - Hidden, Deleted, Alerted are toggled now rather than new
+    - Saving minimaps is now in as well.
+    - Hotkeys are now movable via ctrl+ drag. Options for F, numpad, and number belts in options -> Gameplay
+    - Chat is now part of a window and movable
+    - Quest log is now part of a window and movable
+    - Control + hover over party member icons to see how far they are, limited to 1000 tiles..
+    - Bumped the radius circle height back to 10 units like default
+    - The buttons to bring up windows have been moved to the menugrid under management ('m'). You can still toggle them
+        - Chat ('c') Ctrl + C
+        - Minimap ('n')
+        - Inventory ('i') Tab
+        - Map ('m') Ctrl+A
+        - Kith & Kin ('k') Ctrl+B
+        - Options ('o') Ctrl+O
+        - Character Sheet ('t') Ctrl+T
+        - Equipment ('e')  Ctrl+E
+      via the old keybinds as well
+    - Made it so that anything that is movable has to have a certain percentage of its width or height exposed otherwise
+      having to manually reset them in the settings
+      it will rebound back into the clients window. This is to avoid people dragging windows off into oblivion and
+    - Added back in movable UI and converted over to my own position saving system. This covers:
+          Help Window, Your avatar, The Party view via right click, Bufflist (alt+right click drag buff icons)
+        - Your main inventory, equipment window, character window, kith & kin window, map window, Calendar widget,
+    - Can now lock items again in inventory and on mouse via ctrl+right click or '`' for mouse item
+    - Can now see how far you are from quests by looking at their tooltip when mousing over the pointer icon.
+        - This is only accurate to within ~1000 tiles.
+    - Added in Account management
+1.0.6
+    - Added in MenuGrid custom menus. Management windows are under the "Management" icon or 'm' key at the top level of menugrid
+        - Under this is the Management icons for Hidden, Deleted, and Alerted items to see and modify (keys: 'h', 'd', 'a' respectively)
+    - Added back the special menu when you alt + right click objects.
+        - This will let you hide, add sound, or delete objects
+    - Added back Animal/Trough/Beehive radius. Options -> Gameplay
+    - Added Camera settings to switch easily. Options -> Camera, also modified the maximum zoom out of ortho and speed of free cam
+    - Added back in Gob and Animal paths. Options -> Gameplay
+    - Added back tree scaling. Options -> Graphics
+    - Added back Showing of Gob HP. Options -> Gameplay
+    - Added back showing of crop/tree/bush stage. Options -> Gameplay
+    - Added back simple crops. Options -> Gameplay
+    - Added back bugged flower menus (aka: don't close them when you click outside them). Options -> Gameplay
+    - Added back quick flower menus, can be toggled under Options window under Gameplay
+    - Added back flatworld, can be toggled in the Options window under Graphics.
+    - Added back in the Grid mode via 'g' key
+    - Added back the "No Gob Audio" option under Audio Options.
+    - Added in pausing via 'p' key
+    - Pushed anisotropic validation off into TexGL
+    - Fixed mistake that would cause a gl error when deleting glPrograms since it was calling the wrong function
+    - :gl commands are no longer a thing, use the options menu
+    - Pushed GLSettings configurations to Settings
+    - Settings should create automatically if the file doesn't exist, minor issues with loading fixed
+    - Added back a lot of Ape graphics settings, all of these can be found in the Options window
+        - Nightvision
+        - Toggle gobs on/off
+        - Toggle transition tiles
+        - Toggle map grids on/off
+        - Toggle animations
+        - Toggle weather
+        - Wireframe mode
+        - MSAA levels
+        - Shadow quality/size
+        - Cel Shading via options
+        - Symmetric Outlines
+        - Display more flavor objects
+        - Toggle flavor objects
+        - Skip loading screens
+1.0.5
+    - Back to Java 8 since it's become clear that certain code outside of my reach can't support it
+1.0.4
+    - Added additional profiling to MapView
+    - Added RGB to possible settings
+1.0.3
+    - Removed unused imports in various locations
+    - Changed ARB calls to normal GLSL calls
+          thus making VAO support only for OpenGL 3.0+ users, and Instancing for OpenGL 3.3+ users
+        - Also removed ARB extension checks for VAOs/Instancing since the ARB functions weren't used either way
+        - Primarily affected GLShader & GLProgram
+    - Cleaned up code to work with jogl 2.3.2
+    - Upgraded jogl to latest (2.3.2)
+1.0.2
+    - Introduced ini configs for settings
+    - Added in flogger for logging
+    - Cleaned up old code not needed
+1.0.1
+    - Initial setup
+1.0.0

@@ -7,6 +7,8 @@ import haven.sloth.io.HighlightData;
 import haven.sloth.io.Storage;
 
 import java.awt.*;
+import java.io.File;
+import java.util.ArrayList;
 import java.util.Optional;
 
 /**
@@ -117,6 +119,12 @@ public class DefSettings {
 
     	CAMERA = "camera.camera-type",				//[String] Camera type, default: Ortho
 
+    	HUDTHEME = "theme.hud",					//[String] Hud theme to use, default: sloth
+    	MENUTHEME = "theme.menu",				//[String] Menu theme to use, default: default
+    	THEMES = "theme.themes",				//[String[]] Session only
+    	//Not listed: theme.<theme-name>.wnd.color		//[RGBA] Window overlay color, default: White (no change)
+    	WNDCOLFMT = "theme.%s.wnd.color",
+
     	TIMERVOLUME = "audio.timer-volume",			//[Int] Timer volume
     	NOGOBAUDIO = "audio.no-gob-audio"; 			//[Bool] Toggles Gob audio
 
@@ -213,6 +221,26 @@ public class DefSettings {
 	global.ensure(MMSHOWVIEW, false);
 	//Cameras
 	global.ensure(CAMERA, "sortho");
+	//Figure out our themes
+	global.ensure(HUDTHEME, "sloth");
+	global.ensure(MENUTHEME, "default");
+	{
+	    final ArrayList<String> huds = new ArrayList<>();
+	    final File dir = new File("data/res/custom/hud/");
+	    if (dir.exists()) {
+		final File[] files = dir.listFiles();
+		if(files != null) {
+		    for (final File f : files) {
+		        huds.add(f.getName());
+		        //Window color defaults to white if there is none.
+		        global.ensure(String.format(WNDCOLFMT, f.getName()), Color.WHITE);
+		    }
+		}
+	    }
+	    //For options window
+	    session.set(THEMES, huds.toArray(new String[0]));
+	}
+
 	//Audio
 	global.ensure(TIMERVOLUME, 1000);
 	global.ensure(NOGOBAUDIO, false);

@@ -26,12 +26,14 @@
 
 package haven;
 
+import haven.sloth.Theme;
+
 public class Scrollbar extends Widget {
     static final Tex schain = Resource.loadtex("gfx/hud/schain"); //Just incase for hidden dependencies...
-    private static final Tex schainl = Resource.loadtex("custom/hud/default/scroll/vertical", 0);
-    private static final Tex schainm = Resource.loadtex("custom/hud/default/scroll/vertical", 1);
-    private static final Tex schainr = Resource.loadtex("custom/hud/default/scroll/vertical", 2);
-    static final Tex sflarp = Resource.loadtex("custom/hud/default/scroll/vertical", 3);
+    private static final Tex schainb = Theme.tex("scroll/vertical", 0);
+    private static final Tex schainm = Theme.tex("scroll/vertical", 1);
+    private static final Tex schaint = Theme.tex("scroll/vertical", 2);
+    static final Tex sflarp = Theme.tex("scroll/vertical", 3);
     public int val, min, max;
     private UI.Grab drag = null;
     
@@ -49,14 +51,14 @@ public class Scrollbar extends Widget {
     public void draw(GOut g) {
 	if(vis()) {
 	    //x offset incase sflarp.sz.x > schain.sz.x
-	    int cx = (sflarp.sz().x / 2) - (schainl.sz().x / 2);
+	    int cx = (sflarp.sz().x / 2) - (schaint.sz().x / 2);
 	    //Top
-	    g.image(schainl, new Coord(cx, 0));
+	    g.image(schaint, new Coord(cx, 0));
 	    //middle
-	    for(int y = schainl.sz().y; y < sz.y - schainr.sz().y; y += schainm.sz().y)
+	    for(int y = schainb.sz().y; y < sz.y - schaint.sz().y; y += schainm.sz().y)
 		g.image(schainm, new Coord(cx, y));
 	    //bottom
-	    g.image(schainr, new Coord(cx, sz.y - schainr.sz().y));
+	    g.image(schainb, new Coord(cx, sz.y - schainb.sz().y));
 	    //slider
 	    double a = (double)val / (double)(max - min);
 	    int fy = (int)((sz.y - sflarp.sz().y) * a);

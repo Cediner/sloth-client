@@ -26,6 +26,8 @@
 
 package haven;
 
+import haven.sloth.Theme;
+
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
@@ -34,9 +36,9 @@ import java.util.function.Consumer;
 public class TextEntry extends SIWidget {
     public static final Color defcol = new Color(255, 205, 109), dirtycol = new Color(255, 232, 209);
     public static final Text.Foundry fnd = new Text.Foundry(Text.serif, 12).aa(true);
-    public static final BufferedImage lcap = Resource.loadimg("custom/hud/default/textedit", 0);
-    public static final BufferedImage mext = Resource.loadimg("custom/hud/default/textedit", 1);
-    public static final BufferedImage rcap = Resource.loadimg("custom/hud/default/textedit", 2);
+    public static final BufferedImage lcap = Theme.img("textedit", 0);
+    public static final BufferedImage mext = Theme.img("textedit", 1);
+    public static final BufferedImage rcap = Theme.img("textedit", 2);
     public static final BufferedImage caret = Resource.loadimg("gfx/hud/text/caret");
     public static final Coord toff = new Coord(lcap.getWidth() - 1, 3);
     public static final Coord coff = new Coord(-3, -1);
@@ -121,12 +123,12 @@ public class TextEntry extends SIWidget {
 	Graphics g = img.getGraphics();
 	String dtext = dtext();
 	tcache = fnd.render(dtext, (dshow && dirty)?dirtycol:defcol);
-	g.drawImage(mext, 0, 0, sz.x, sz.y, null);
-
-	g.drawImage(tcache.img, toff.x - sx, toff.y, null);
 
 	g.drawImage(lcap, 0, 0, null);
+	g.drawImage(mext, lcap.getWidth(), 0, sz.x - lcap.getWidth() - rcap.getWidth(), sz.y, null);
 	g.drawImage(rcap, sz.x - rcap.getWidth(), 0, null);
+
+	g.drawImage(tcache.img, toff.x - sx, toff.y, null);
 
 	g.dispose();
     }

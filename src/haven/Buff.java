@@ -30,12 +30,13 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import haven.ItemInfo.AttrCache;
+import haven.sloth.Theme;
 
 public class Buff extends Widget implements ItemInfo.ResOwner {
     public static final Text.Foundry nfnd = new Text.Foundry(Text.dfont, 10);
     public static final Tex frame = Resource.loadtex("gfx/hud/buffs/frame");
     public static final Tex cframe = Resource.loadtex("gfx/hud/buffs/cframe");
-    public static final Tex scframe = Resource.loadtex("custom/hud/default/scframe");
+    public static final Tex scframe = Theme.tex("scframe");
     public static final Coord imgoff = new Coord(3, 3);
     public static final Coord ameteroff = new Coord(3, 37), ametersz = new Coord(32, 3);
     public static final Coord sameteroff = new Coord(3, 27), sametersz = new Coord(22, 2);

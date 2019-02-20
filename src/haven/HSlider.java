@@ -26,11 +26,13 @@
 
 package haven;
 
+import haven.sloth.Theme;
+
 public class HSlider extends Widget {
-    private static final Tex schainl = Resource.loadtex("custom/hud/default/scroll/horizontal", 0);
-    private static final Tex schainm = Resource.loadtex("custom/hud/default/scroll/horizontal", 1);
-    private static final Tex schainr = Resource.loadtex("custom/hud/default/scroll/horizontal", 2);
-    private static final Tex sflarp = Resource.loadtex("custom/hud/default/scroll/horizontal", 3);
+    private static final Tex schainl = Theme.tex("scroll/horizontal", 0);
+    private static final Tex schainm = Theme.tex("scroll/horizontal", 1);
+    private static final Tex schainr = Theme.tex("scroll/horizontal", 2);
+    private static final Tex sflarp = Theme.tex("scroll/horizontal", 3);
     public int val, min, max;
     private UI.Grab drag = null;
 

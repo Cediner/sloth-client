@@ -26,6 +26,8 @@
 
 package haven;
 
+import haven.sloth.DefSettings;
+import haven.sloth.Theme;
 import haven.sloth.gui.MovableWidget;
 
 import java.awt.Color;
@@ -57,7 +59,7 @@ public class Window extends MovableWidget implements DTarget {
     // 3 = capl, 4 = capm, 5 = capr
     // 6 = bl, 7 = br
     // 8 = l, 9 = r, 10 = b
-    private static final Resource res = Resource.local().loadwait("custom/hud/default/window");
+    private static final Resource res = Theme.res("window");
 
     //bg, left bg, right bg
     public static final TexI bg = res.layer(Resource.imgc, 0).texi();
@@ -79,7 +81,7 @@ public class Window extends MovableWidget implements DTarget {
     public static final WindowConfig cfg = res.layer(WindowConfig.class);
 
     //Large margin vs small margin
-    public static final Coord dlmrgn = new Coord(23, 14), dsmrgn = new Coord(9, 9);
+    public static final Coord dlmrgn = new Coord(23, 14), dsmrgn = new Coord(3, 3);
     //caption foundry
     public static final BufferedImage ctex = Resource.loadimg("gfx/hud/fonttex");
     public static final Text.Furnace cf = new Text.Imager(new PUtils.TexFurn(new Text.Foundry(Text.sans, 15).aa(true), ctex)) {
@@ -88,7 +90,7 @@ public class Window extends MovableWidget implements DTarget {
 	    }
 	};
     //Basic frame box
-    public static final IBox wbox = new IBox("custom/hud/default/frame") {
+    public static final IBox wbox = new IBox(Theme.fullres("frame")) {
 	    final Coord co = new Coord(3, 3), bo = new Coord(2, 2);
 
 	    public Coord btloff() {return(super.btloff().sub(bo));}
@@ -123,7 +125,7 @@ public class Window extends MovableWidget implements DTarget {
 
     public Window(Coord sz, String cap, boolean lg, Coord tlo, Coord rbo) {
 	this.mrgn = lg?dlmrgn:dsmrgn;
-	cbtn = add(new IButton("custom/hud/default/buttons/close", null, this::close));
+	cbtn = add(new IButton(Theme.fullres("buttons/close"), null, this::close));
 	lbtn = null;
 	on = off = null;
 	chcap(cap);
@@ -134,8 +136,8 @@ public class Window extends MovableWidget implements DTarget {
     public Window(Coord sz, String cap, final String moveKey, boolean lg, Coord tlo, Coord rbo) {
         super(moveKey);
 	this.mrgn = lg?dlmrgn:dsmrgn;
-	cbtn = add(new IButton("custom/hud/default/buttons/close", null, this::close));
-	lbtn = add(new IButton("custom/hud/default/buttons/lock", null, this::toggleLock));
+	cbtn = add(new IButton(Theme.fullres("buttons/close"), null, this::close));
+	lbtn = add(new IButton(Theme.fullres("buttons/lock"), null, this::toggleLock));
 	on = lbtn.hover;
 	off = lbtn.up;
 	chcap(cap);
@@ -187,6 +189,7 @@ public class Window extends MovableWidget implements DTarget {
     }
 
     protected void drawframe(GOut g) {
+	g.chcolor(DefSettings.global.get(String.format(DefSettings.WNDCOLFMT, DefSettings.global.get(DefSettings.HUDTHEME, String.class)), Color.class));
         //corners
         g.image(cl, Coord.z);
         g.image(bl, new Coord(0, sz.y-bl.sz().y));
@@ -196,13 +199,14 @@ public class Window extends MovableWidget implements DTarget {
 	//draw background
 	g.rimagev(bgl, ctl, csz.y);
 	g.rimagev(bgr, ctl.add(csz.x-bgr.sz().x, 0), csz.y);
-	g.rimage(bg, ctl, csz);
+	g.rimage(bg, ctl.add(bgl.sz().x, 0), csz.sub(bgl.sz().x + bgr.sz().x, 0));
 
        	//horizontal and vertical tiling of the long parts
 	g.rimagev(lm, new Coord(0, cl.sz().y), sz.y - bl.sz().y - cl.sz().y);
 	g.rimagev(rm, new Coord(sz.x - rm.sz().x, cr.sz().y), sz.y - br.sz().y - cr.sz().y);
 	g.rimageh(bm, new Coord(bl.sz().x, sz.y - bm.sz().y), sz.x - br.sz().x - bl.sz().x);
 	g.rimageh(cm, new Coord(cl.sz().x, 0), sz.x - cl.sz().x - cr.sz().x);
+	g.chcolor();
 
 	//caption if applies
 	if(cap != null) {

@@ -26,11 +26,13 @@
 
 package haven;
 
+import haven.sloth.Theme;
+
 import java.awt.Color;
 
 public class VMeter extends Widget {
-    static Tex bg = Resource.loadtex("custom/hud/default/vm", 0);
-    static Tex fg = Resource.loadtex("custom/hud/default/vm", 1);
+    static Tex bg = Theme.tex("vm", 0);
+    static Tex fg = Theme.tex("vm", 1);
     Color cl;
     int amount;
 	

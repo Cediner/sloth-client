@@ -443,33 +443,35 @@ public class OptWnd extends Window {
 	audio = add(new Panel());
 	final Panel gameplay = add(new Panel());
 	final Panel camera = add(new Panel());
+	final Panel theme = add(new Panel());
+	final int spacer = 5;
 	int y;
 
 	main.add(new PButton(200, "Video settings", 'v', video), new Coord(0, 0));
 	main.add(new PButton(200, "Audio settings", 'a', audio), new Coord(0, 30));
 	main.add(new PButton(200, "Gameplay settings", 'g', gameplay), new Coord(0, 60));
 	main.add(new PButton(200, "Camera settings", 'c', camera), new Coord(0, 90));
+	main.add(new PButton(200, "Theme settings", 'c', theme), new Coord(0, 120));
 	if(gopts) {
 	    main.add(new Button(200, "Switch character") {
 		    public void click() {
 			getparent(GameUI.class).act("lo", "cs");
 		    }
-		}, new Coord(0, 120));
+		}, new Coord(0, 150));
 	    main.add(new Button(200, "Log out") {
 		    public void click() {
 			getparent(GameUI.class).act("lo");
 		    }
-		}, new Coord(0, 150));
+		}, new Coord(0, 180));
 	}
 	main.add(new Button(200, "Close") {
 		public void click() {
 		    OptWnd.this.hide();
 		}
-	    }, new Coord(0, 180));
+	    }, new Coord(0, 210));
 	main.pack();
 
 	{ //Audio
-	    int spacer = 5;
 	    y = 0;
 	    y += audio.add(new Label("Master audio volume"), new Coord(0, y)).sz.y + spacer;
 	    y += audio.add(new HSlider(200, 0, 1000, (int) (Audio.volume * 1000)) {
@@ -518,7 +520,6 @@ public class OptWnd extends Window {
 	}
 
 	{ //Gameplay settings
-	    final int spacer = 5;
 	    final Coord c = new Coord(0, 0);
 	    c.y += gameplay.add(new CheckBox("Quick flowermenu") {
 		{a = global.get(QUICKMENU, Boolean.class);}
@@ -758,6 +759,29 @@ public class OptWnd extends Window {
 	    c.y += rgrp.sz.y;
 	    camera.add(new PButton(200, "Back", 27, main), c.copy());
 	    camera.pack();
+	}
+
+	{// Theme settings
+	    final Coord c = new Coord(0, 0);
+	    {
+	        final String ctheme = global.get(HUDTHEME, String.class);
+	        final Label lbl = new Label("Window Color: ");
+	        final ColorPreview col = new ColorPreview(new Coord(16, 16), global.get(String.format(WNDCOLFMT, ctheme), Color.class),
+			ncol -> global.set(String.format(WNDCOLFMT, global.get(HUDTHEME, String.class)), ncol));
+		final RadioGroup rgrp = theme.add(new RadioGroup("Main Hud Theme:"), c.copy());
+		for(final String name : session.get(THEMES, String[].class)) {
+		    rgrp.add(name, global.get(HUDTHEME, String.class).equals(name), (val) -> {
+			global.set(HUDTHEME, name);
+			col.setColor(global.get(String.format(WNDCOLFMT, global.get(HUDTHEME, String.class)), Color.class));
+		    });
+		}
+		c.y += rgrp.sz.y;
+		theme.add(lbl, c.copy());
+		theme.adda(col, lbl.c.add(lbl.sz.x, lbl.sz.y/2), 0.0, 0.5);
+		c.y += Math.max(lbl.sz.y, col.sz.y);
+	    }
+	    theme.add(new PButton(200, "Back", 27, main), c.copy());
+	    theme.pack();
 	}
 
 	chpanel(main);

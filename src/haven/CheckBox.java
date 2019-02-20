@@ -26,13 +26,15 @@
 
 package haven;
 
+import haven.sloth.Theme;
+
 import java.util.function.Consumer;
 
 public class CheckBox extends Widget {
-    public static final Tex lbox = Resource.loadtex("custom/hud/default/chkbox/large", 0),
-	    lmark = Resource.loadtex("custom/hud/default/chkbox/large", 1);
-    public static final Tex sbox = Resource.loadtex("custom/hud/default/chkbox/small", 0),
-	    smark = Resource.loadtex("custom/hud/default/chkbox/small", 1);
+    public static final Tex lbox = Theme.tex("chkbox/large", 0),
+	    lmark = Theme.tex("chkbox/large", 1);
+    public static final Tex sbox = Theme.tex("chkbox/small", 0),
+	    smark = Theme.tex("chkbox/small", 1);
     public final Tex box, mark;
     public final Coord loff;
     public boolean a = false;

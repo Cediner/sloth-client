@@ -26,6 +26,7 @@
 
 package haven;
 
+import haven.sloth.Theme;
 import haven.sloth.gui.*;
 import haven.sloth.gui.Timer.TimersWnd;
 import haven.sloth.io.BeltData;
@@ -550,7 +551,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	meters.remove(w);
     }
     
-    private static final Resource.Anim progt = Resource.local().loadwait("custom/hud/default/prog").layer(Resource.animc);
+    private static final Resource.Anim progt = Theme.res("prog").layer(Resource.animc);
     private Tex curprog = null;
     private int curprogf, curprogb;
     private void drawprog(GOut g, double prog) {

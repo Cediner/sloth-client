@@ -479,8 +479,9 @@ public class MenuGrid extends MovableWidget {
 	    pressed = h;
 	    grab = ui.grabmouse(this);
 	    return(true);
+	} else {
+	    return super.mousedown(c, button);
 	}
-	return true;
     }
 
     public void mousemove(Coord c) {

@@ -26,13 +26,15 @@
 
 package haven;
 
+import haven.sloth.Theme;
+
 import java.awt.*;
 import java.util.*;
 
 import static haven.OCache.posres;
 
 public class Fightview extends Widget {
-    static Tex bg = Resource.loadtex("custom/hud/default/bosq");
+    static Tex bg = Theme.tex("bosq");
     static int height = 5;
     static int ymarg = 5;
     static int width = 165;
