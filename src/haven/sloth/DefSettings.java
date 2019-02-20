@@ -225,6 +225,7 @@ public class DefSettings {
 	global.ensure(HUDTHEME, "sloth");
 	global.ensure(MENUTHEME, "default");
 	{
+	    global.ensure(String.format(WNDCOLFMT, "sloth"), new Color(255, 255, 255, 198));
 	    final ArrayList<String> huds = new ArrayList<>();
 	    final File dir = new File("data/res/custom/hud/");
 	    if (dir.exists()) {
