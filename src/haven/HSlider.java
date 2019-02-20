@@ -26,23 +26,13 @@
 
 package haven;
 
-import java.awt.image.BufferedImage;
-
 public class HSlider extends Widget {
-    static final Tex sflarp = Resource.loadtex("gfx/hud/sflarp");
-    static final Tex schain;
+    private static final Tex schainl = Resource.loadtex("custom/hud/default/scroll/horizontal", 0);
+    private static final Tex schainm = Resource.loadtex("custom/hud/default/scroll/horizontal", 1);
+    private static final Tex schainr = Resource.loadtex("custom/hud/default/scroll/horizontal", 2);
+    private static final Tex sflarp = Resource.loadtex("custom/hud/default/scroll/horizontal", 3);
     public int val, min, max;
     private UI.Grab drag = null;
-
-    static {
-	BufferedImage vc = Resource.loadimg("gfx/hud/schain");
-	BufferedImage hc = TexI.mkbuf(new Coord(vc.getHeight(), vc.getWidth()));
-	for(int y = 0; y < vc.getHeight(); y++) {
-	    for(int x = 0; x < vc.getWidth(); x++)
-		hc.setRGB(y, x, vc.getRGB(x, y));
-	}
-	schain = new TexI(hc);
-    }
 
     public HSlider(int w, int min, int max, int val) {
 	super(new Coord(w, sflarp.sz().y));
@@ -52,9 +42,16 @@ public class HSlider extends Widget {
     }
 
     public void draw(GOut g) {
-	int cy = (sflarp.sz().y - schain.sz().y) / 2;
-	for(int x = 0; x < sz.x; x += schain.sz().x)
-	    g.image(schain, new Coord(x, cy));
+	//y offset incase sflarp.sz.y > schain.sz.y
+	int cy = (sflarp.sz().y / 2) - (schainl.sz().y / 2);
+	//Top
+	g.image(schainl, new Coord(0, cy));
+	//middle
+	for(int x = schainl.sz().x; x < sz.x - schainr.sz().x; x += schainm.sz().x)
+	    g.image(schainm, new Coord(x, cy));
+	//bottom
+	g.image(schainr, new Coord(sz.x-schainr.sz().x, cy));
+	//slider
 	int fx = ((sz.x - sflarp.sz().x) * (val - min)) / (max - min);
 	g.image(sflarp, new Coord(fx, 0));
     }

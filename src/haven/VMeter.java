@@ -29,8 +29,8 @@ package haven;
 import java.awt.Color;
 
 public class VMeter extends Widget {
-    static Tex bg = Resource.loadtex("gfx/hud/vm-frame");
-    static Tex fg = Resource.loadtex("gfx/hud/vm-tex");
+    static Tex bg = Resource.loadtex("custom/hud/default/vm", 0);
+    static Tex fg = Resource.loadtex("custom/hud/default/vm", 1);
     Color cl;
     int amount;
 	

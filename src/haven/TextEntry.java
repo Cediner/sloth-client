@@ -34,9 +34,9 @@ import java.util.function.Consumer;
 public class TextEntry extends SIWidget {
     public static final Color defcol = new Color(255, 205, 109), dirtycol = new Color(255, 232, 209);
     public static final Text.Foundry fnd = new Text.Foundry(Text.serif, 12).aa(true);
-    public static final BufferedImage lcap = Resource.loadimg("gfx/hud/text/l");
-    public static final BufferedImage rcap = Resource.loadimg("gfx/hud/text/r");
-    public static final BufferedImage mext = Resource.loadimg("gfx/hud/text/m");
+    public static final BufferedImage lcap = Resource.loadimg("custom/hud/default/textedit", 0);
+    public static final BufferedImage mext = Resource.loadimg("custom/hud/default/textedit", 1);
+    public static final BufferedImage rcap = Resource.loadimg("custom/hud/default/textedit", 2);
     public static final BufferedImage caret = Resource.loadimg("gfx/hud/text/caret");
     public static final Coord toff = new Coord(lcap.getWidth() - 1, 3);
     public static final Coord coff = new Coord(-3, -1);

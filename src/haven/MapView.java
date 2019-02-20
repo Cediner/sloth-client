@@ -1669,6 +1669,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	return(new Object[0]);
     }
 
+    private static int next = -900000;
     private class Click extends Hittest {
 	int clickb;
 	
@@ -1745,10 +1746,41 @@ public class MapView extends PView implements DTarget, Console.Directory {
 		ui.gui.add(modmenu, ui.mc);
 	    });
 	}
+
+
+
+	private void showSpecialMenu(final Coord2d mc) {
+	    final FlowerMenu modmenu = new FlowerMenu((selection) -> {
+	        if(selection >= 0 && selection <= 3) {
+		    final Gob g = ui.sess.glob.oc.getgob(next--, 0);
+		    ui.sess.glob.oc.move(g, mc, Math.toRadians(130));
+		    ui.sess.glob.oc.composite(g, Resource.remote().load("gfx/kritter/spermwhale/spermwhale"));
+		    final List<ResData> data = new ArrayList<>();
+		    data.add(new ResData(Resource.remote().load("gfx/kritter/spermwhale/spermwhale"), Message.nil));
+		    final List<Composited.MD> mds = new ArrayList<>();
+		    mds.add(new Composited.MD(Resource.remote().load("gfx/kritter/spermwhale/spermwhale"), data));
+		    ui.sess.glob.oc.cmpmod(g, mds);
+		    final List<ResData> pose = new ArrayList<>();
+		    switch (selection) {
+			case 0: pose.add(new ResData(Resource.remote().load("gfx/kritter/spermwhale/knock"), Message.nil)); break;
+			case 1: pose.add(new ResData(Resource.remote().load("gfx/kritter/spermwhale/waterdead"), Message.nil)); break;
+			case 2: pose.add(new ResData(Resource.remote().load("gfx/kritter/spermwhale/swimming"), Message.nil)); break;
+			case 3: pose.add(new ResData(Resource.remote().load("gfx/kritter/spermwhale/atk0"), Message.nil)); break;
+		    }
+		    ui.sess.glob.oc.cmppose(g, 11, pose, null, false, 0);
+		}
+	    }, "Add Whale (KO'd)", "Add Whale (Dead)", "Add Whale (Swimming)", "Add Whale (Attacking)");
+	    ui.gui.add(modmenu, ui.mc);
+	}
 	
 	protected void hit(Coord pc, Coord2d mc, ClickInfo inf) {
 	    if (clickb == MouseEvent.BUTTON3 && ui.modmeta) {
-	        gobFromClick(inf).ifPresent(this::showSpecialMenu);
+	        final Optional<Gob> gob = gobFromClick(inf);
+	        if(gob.isPresent()) {
+	            showSpecialMenu(gob.get());
+		} else {
+	            showSpecialMenu(mc);
+		}
 	    } else {
 		final Object[] gobargs = gobclickargs(inf);
 		Object[] args = {pc, mc.floor(posres), clickb, ui.modflags()};

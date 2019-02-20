@@ -209,7 +209,8 @@ public class OptWnd extends Window {
 			    }
 			    public void changed() {
 				global.set(SHADOWSQUALITY, val);
-				ui.gui.map.resetshadows();
+				if(ui.gui != null && ui.gui.map != null)
+					ui.gui.map.resetshadows();
 				dpy();
 			    }
 			}, new Coord(0, y)).sz.y + spacer;

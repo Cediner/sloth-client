@@ -406,7 +406,7 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 	    sb.append("Equipment:");
 	    if(comp.lastnequ != null)
 		for(Composited.ED eq : comp.lastnequ) {
-		    sb.append("\nEqu: "); sb.append(rnm(eq.res.res));
+		    sb.append("\nEqu: "); sb.append(rnm(eq.res.res)); sb.append(" @ "); sb.append(eq.at);
 		}
 
 	    if(comp.nmod != null)

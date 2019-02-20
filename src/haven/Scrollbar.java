@@ -27,8 +27,11 @@
 package haven;
 
 public class Scrollbar extends Widget {
-    static final Tex schain = Resource.loadtex("custom/hud/default/vscrollbar", 0);
-    static final Tex sflarp = Resource.loadtex("custom/hud/default/vscrollbar", 1);
+    static final Tex schain = Resource.loadtex("gfx/hud/schain"); //Just incase for hidden dependencies...
+    private static final Tex schainl = Resource.loadtex("custom/hud/default/scroll/vertical", 0);
+    private static final Tex schainm = Resource.loadtex("custom/hud/default/scroll/vertical", 1);
+    private static final Tex schainr = Resource.loadtex("custom/hud/default/scroll/vertical", 2);
+    static final Tex sflarp = Resource.loadtex("custom/hud/default/scroll/vertical", 3);
     public int val, min, max;
     private UI.Grab drag = null;
     
@@ -45,9 +48,16 @@ public class Scrollbar extends Widget {
     
     public void draw(GOut g) {
 	if(vis()) {
-	    int cx = (sflarp.sz().x / 2) - (schain.sz().x / 2);
-	    for(int y = 0; y < sz.y; y += schain.sz().y - 1)
-		g.image(schain, new Coord(cx, y));
+	    //x offset incase sflarp.sz.x > schain.sz.x
+	    int cx = (sflarp.sz().x / 2) - (schainl.sz().x / 2);
+	    //Top
+	    g.image(schainl, new Coord(cx, 0));
+	    //middle
+	    for(int y = schainl.sz().y; y < sz.y - schainr.sz().y; y += schainm.sz().y)
+		g.image(schainm, new Coord(cx, y));
+	    //bottom
+	    g.image(schainr, new Coord(cx, sz.y - schainr.sz().y));
+	    //slider
 	    double a = (double)val / (double)(max - min);
 	    int fy = (int)((sz.y - sflarp.sz().y) * a);
 	    g.image(sflarp, new Coord(0, fy));

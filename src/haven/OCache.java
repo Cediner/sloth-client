@@ -497,6 +497,7 @@ public class OCache implements Iterable<Gob> {
 	cmp.chequ(equ);
 	changed(g);
     }
+
     public void cmpequ(Gob gob, Message msg) {
 	List<Composited.ED> equ = new LinkedList<Composited.ED>();
 	int eseq = 0;

@@ -30,6 +30,7 @@ import java.util.*;
 import java.io.*;
 import java.nio.channels.*;
 import java.net.URI;
+import java.util.regex.Pattern;
 
 public class HashDirCache implements ResCache {
     private final File base;
@@ -343,9 +344,12 @@ public class HashDirCache implements ResCache {
 	    cache = new HashDirCache(args[0]);
 	switch(args[1]) {
 	case "ls":
+	    final Pattern reg = Pattern.compile(args.length > 2 ? args[2] : ".+");
 	    for(Iterator<String> i = cache.list(); i.hasNext();) {
 		String nm = i.next();
-		System.out.println(nm);
+		if(reg.matcher(nm).matches()) {
+		    System.out.println(nm);
+		}
 	    }
 	    break;
 	case "cat":
