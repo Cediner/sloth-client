@@ -1,10 +1,14 @@
+
+
     - Brought back themes for the main hud elements. By default you use sloth theme. You can change theme under Options
     "Theme Settings". You can also tint the color of windows in those options as well to colorize your theme to your
     liking.
 2/20/19
+
     - Any tracking/dowsing use now spawns a window "Drowse" that tells you the angles and lets you change the color
       The angle will be visible until you close this window
 2/17/19
+
     - Skip Loading now works properly. Should no longer black screen, etc.
     - Changed nightvision -> Custom global light. Added in options to customize the color to your liking. Pure black of
     everything for maximum larp of course. Default is pure white for the cowards.
@@ -18,6 +22,7 @@
     - Updated Calendar to be somewhat better
     - Softcap added in crafting window
 2/16/19
+
     - Overall AC is now displayed in bottom left of equip screen
     - Closing the crafting window closes the current craft item
     - Show Animations now properly stops animations like beehives, flies, etc. Human animations still display...
@@ -84,6 +89,7 @@
         - This is only accurate to within ~1000 tiles.
     - Added in Account management
 1.0.6
+
     - Added in MenuGrid custom menus. Management windows are under the "Management" icon or 'm' key at the top level of menugrid
         - Under this is the Management icons for Hidden, Deleted, and Alerted items to see and modify (keys: 'h', 'd', 'a' respectively)
     - Added back the special menu when you alt + right click objects.
@@ -122,11 +128,14 @@
         - Toggle flavor objects
         - Skip loading screens
 1.0.5
+
     - Back to Java 8 since it's become clear that certain code outside of my reach can't support it
 1.0.4
+
     - Added additional profiling to MapView
     - Added RGB to possible settings
 1.0.3
+
     - Removed unused imports in various locations
     - Changed ARB calls to normal GLSL calls
           thus making VAO support only for OpenGL 3.0+ users, and Instancing for OpenGL 3.3+ users
@@ -135,9 +144,11 @@
     - Cleaned up code to work with jogl 2.3.2
     - Upgraded jogl to latest (2.3.2)
 1.0.2
+
     - Introduced ini configs for settings
     - Added in flogger for logging
     - Cleaned up old code not needed
 1.0.1
+
     - Initial setup
 1.0.0
