@@ -794,7 +794,7 @@ public class OptWnd extends Window {
 		    ncol -> global.set(String.format(TXBCOLFMT, global.get(HUDTHEME, String.class)), ncol));
 	    final ColorPreview scol = new ColorPreview(new Coord(16, 16), global.get(String.format(SLIDERCOLFMT, ctheme), Color.class),
 		    ncol -> global.set(String.format(SLIDERCOLFMT, global.get(HUDTHEME, String.class)), ncol));
-	    final RadioGroup rgrp = theme.add(new RadioGroup("Main Hud Theme:"), c.copy());
+	    final RadioGroup rgrp = theme.add(new RadioGroup("Main Hud Theme (requires restart)"), c.copy());
 	    for(final String name : session.get(THEMES, String[].class)) {
 		rgrp.add(name, global.get(HUDTHEME, String.class).equals(name), (val) -> {
 		    global.set(HUDTHEME, name);
