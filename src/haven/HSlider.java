@@ -26,7 +26,10 @@
 
 package haven;
 
+import haven.sloth.DefSettings;
 import haven.sloth.Theme;
+
+import java.awt.*;
 
 public class HSlider extends Widget {
     private static final Tex schainl = Theme.tex("scroll/horizontal", 0);
@@ -44,6 +47,7 @@ public class HSlider extends Widget {
     }
 
     public void draw(GOut g) {
+	g.chcolor(DefSettings.global.get(String.format(DefSettings.SLIDERCOLFMT, DefSettings.global.get(DefSettings.HUDTHEME, String.class)), Color.class));
 	//y offset incase sflarp.sz.y > schain.sz.y
 	int cy = (sflarp.sz().y / 2) - (schainl.sz().y / 2);
 	//Top
@@ -56,6 +60,7 @@ public class HSlider extends Widget {
 	//slider
 	int fx = ((sz.x - sflarp.sz().x) * (val - min)) / (max - min);
 	g.image(sflarp, new Coord(fx, 0));
+	g.chcolor();
     }
     
     public boolean mousedown(Coord c, int button) {

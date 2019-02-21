@@ -118,12 +118,17 @@ public class DefSettings {
     	MMSHOWVIEW = "minimap.show-view",			//[Bool] Toggle minimap view box
 
     	CAMERA = "camera.camera-type",				//[String] Camera type, default: Ortho
+    	FREECAMREXAXIS = "camera.free.reverse-x-axis",		//[Bool] Reverse free cam x axis on drag or not
+    	FREECAMREYAXIS = "camera.free.reverse-y-axis",		//[Bool] Reverse free cam y axis on drag or not
 
     	HUDTHEME = "theme.hud",					//[String] Hud theme to use, default: sloth
     	MENUTHEME = "theme.menu",				//[String] Menu theme to use, default: default
     	THEMES = "theme.themes",				//[String[]] Session only
     	//Not listed: theme.<theme-name>.wnd.color		//[RGBA] Window overlay color, default: White (no change)
     	WNDCOLFMT = "theme.%s.wnd.color",
+	BTNCOLFMT = "theme.%s.button.color",
+	TXBCOLFMT = "theme.%s.textbox.color",
+	SLIDERCOLFMT = "theme.%s.slider.color",
 
     	TIMERVOLUME = "audio.timer-volume",			//[Int] Timer volume
     	NOGOBAUDIO = "audio.no-gob-audio"; 			//[Bool] Toggles Gob audio
@@ -221,11 +226,14 @@ public class DefSettings {
 	global.ensure(MMSHOWVIEW, false);
 	//Cameras
 	global.ensure(CAMERA, "sortho");
+	global.ensure(FREECAMREXAXIS, false);
+	global.ensure(FREECAMREYAXIS, false);
 	//Figure out our themes
 	global.ensure(HUDTHEME, "sloth");
 	global.ensure(MENUTHEME, "default");
 	{
-	    global.ensure(String.format(WNDCOLFMT, "sloth"), new Color(85, 144, 87, 228));
+	    final Color slothc = new Color(85, 144, 87, 228);
+	    global.ensure(String.format(WNDCOLFMT, "sloth"), slothc);
 	    final ArrayList<String> huds = new ArrayList<>();
 	    final File dir = new File("data/res/custom/hud/");
 	    if (dir.exists()) {
@@ -235,6 +243,9 @@ public class DefSettings {
 		        huds.add(f.getName());
 		        //Window color defaults to white if there is none.
 		        global.ensure(String.format(WNDCOLFMT, f.getName()), Color.WHITE);
+			global.ensure(String.format(BTNCOLFMT, f.getName()), Color.WHITE);
+			global.ensure(String.format(TXBCOLFMT, f.getName()), Color.WHITE);
+			global.ensure(String.format(SLIDERCOLFMT, f.getName()), Color.WHITE);
 		    }
 		}
 	    }

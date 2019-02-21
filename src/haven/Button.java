@@ -26,6 +26,7 @@
 
 package haven;
 
+import haven.sloth.DefSettings;
 import haven.sloth.Theme;
 
 import java.awt.Graphics;
@@ -134,7 +135,14 @@ public class Button extends SIWidget {
 
 	g.dispose();
     }
-	
+
+    @Override
+    public void draw(GOut g) {
+	g.chcolor(DefSettings.global.get(String.format(DefSettings.BTNCOLFMT, DefSettings.global.get(DefSettings.HUDTHEME, String.class)), Color.class));
+	super.draw(g);
+	g.chcolor();
+    }
+
     public void change(String text, Color col) {
 	this.text = tf.render(text, col);
 	this.cont = this.text.img;

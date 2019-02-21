@@ -1,9 +1,7 @@
 package haven.sloth.gui;
 
-import haven.CheckBox;
-import haven.Coord;
-import haven.Label;
-import haven.Widget;
+import haven.*;
+import haven.sloth.Theme;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,12 +37,20 @@ public class RadioGroup extends Widget {
 	}
     }
 
+    public static final IBox box = new IBox(Theme.fullres("frame"));
     private final static int SPACER = 5;
     private List<RadioButton> btns = new ArrayList<>();
-    private Coord nc = new Coord(0, 0);
+    private Coord nc = new Coord(box.ctloff());
+    private final Label title;
 
     public RadioGroup(final String lbl) {
-	nc.y += add(new Label(lbl), Coord.z).sz.y;
+	nc.y += add(title = new Label(lbl), nc.copy()).sz.y;
+    }
+
+    @Override
+    public void draw(GOut g) {
+        box.draw(g, Coord.z, sz);
+	super.draw(g);
     }
 
     private void select(final RadioButton btn) {
@@ -58,6 +64,8 @@ public class RadioGroup extends Widget {
 	if (selected)
 	    select(btn);
 	pack();
+	resize(sz.add(box.cbr.sz()));
+	title.c.x = sz.x/2 - title.sz.x/2;
     }
 
     public void add(final String lbl, final Consumer<Boolean> callback) {

@@ -1,5 +1,4 @@
 TODO
-    - sloth themed scrollbars are a bit hard to see when window color is white.
     - Fightsess move icons clickable
     - Grid View + tooltips = non-bold lines. Something from tooltips must be causing an extra GL command to fuck over lines
     - Infinite zoom out on Overview map

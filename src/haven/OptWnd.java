@@ -731,7 +731,7 @@ public class OptWnd extends Window {
 
 	{ //Camera settings
 	    final Coord c = new Coord(0, 0);
-	    final RadioGroup rgrp = camera.add(new RadioGroup("Camera Type:"), c.copy());
+	    final RadioGroup rgrp = camera.add(new RadioGroup("Camera Type"), c.copy());
 	    rgrp.add("Ortho Cam", global.get(CAMERA, String.class).equals("sortho"), (val) -> {
 	        global.set(CAMERA, "sortho");
 	        if(ui.gui != null) {
@@ -756,30 +756,72 @@ public class OptWnd extends Window {
 		    ui.gui.map.setcam("follow");
 		}
 	    });
-	    c.y += rgrp.sz.y;
+	    c.y += rgrp.sz.y + spacer;
+	    c.y += camera.add(new CheckBox("Reverse X Axis for Free Cam") {
+		{a = global.get(FREECAMREXAXIS, Boolean.class);}
+
+		public void set(boolean val) {
+		    global.set(FREECAMREXAXIS, val);
+		    a = val;
+		}
+	    }, c.copy()).sz.y + spacer;
+	    c.y += camera.add(new CheckBox("Reverse Y Axis for Free Cam") {
+		{a = global.get(FREECAMREYAXIS, Boolean.class);}
+
+		public void set(boolean val) {
+		    global.set(FREECAMREYAXIS, val);
+		    a = val;
+		}
+	    }, c.copy()).sz.y + spacer;
+
 	    camera.add(new PButton(200, "Back", 27, main), c.copy());
 	    camera.pack();
 	}
 
 	{// Theme settings
 	    final Coord c = new Coord(0, 0);
-	    {
-	        final String ctheme = global.get(HUDTHEME, String.class);
-	        final Label lbl = new Label("Window Color: ");
-	        final ColorPreview col = new ColorPreview(new Coord(16, 16), global.get(String.format(WNDCOLFMT, ctheme), Color.class),
-			ncol -> global.set(String.format(WNDCOLFMT, global.get(HUDTHEME, String.class)), ncol));
-		final RadioGroup rgrp = theme.add(new RadioGroup("Main Hud Theme:"), c.copy());
-		for(final String name : session.get(THEMES, String[].class)) {
-		    rgrp.add(name, global.get(HUDTHEME, String.class).equals(name), (val) -> {
-			global.set(HUDTHEME, name);
-			col.setColor(global.get(String.format(WNDCOLFMT, global.get(HUDTHEME, String.class)), Color.class));
-		    });
-		}
-		c.y += rgrp.sz.y;
-		theme.add(lbl, c.copy());
-		theme.adda(col, lbl.c.add(lbl.sz.x, lbl.sz.y/2), 0.0, 0.5);
-		c.y += Math.max(lbl.sz.y, col.sz.y);
+	    final String ctheme = global.get(HUDTHEME, String.class);
+	    final Label title = new Label("Settings for " + ctheme);
+	    final Label lbl = new Label("Window Color: ");
+	    final Label blbl = new Label("Button Color: ");
+	    final Label tlbl = new Label("Textbox Color: ");
+	    final Label slbl = new Label("Slider Color: ");
+	    final ColorPreview wcol = new ColorPreview(new Coord(16, 16), global.get(String.format(WNDCOLFMT, ctheme), Color.class),
+		    ncol -> global.set(String.format(WNDCOLFMT, global.get(HUDTHEME, String.class)), ncol));
+	    final ColorPreview bcol = new ColorPreview(new Coord(16, 16), global.get(String.format(BTNCOLFMT, ctheme), Color.class),
+		    ncol -> global.set(String.format(BTNCOLFMT, global.get(HUDTHEME, String.class)), ncol));
+	    final ColorPreview tcol = new ColorPreview(new Coord(16, 16), global.get(String.format(TXBCOLFMT, ctheme), Color.class),
+		    ncol -> global.set(String.format(TXBCOLFMT, global.get(HUDTHEME, String.class)), ncol));
+	    final ColorPreview scol = new ColorPreview(new Coord(16, 16), global.get(String.format(SLIDERCOLFMT, ctheme), Color.class),
+		    ncol -> global.set(String.format(SLIDERCOLFMT, global.get(HUDTHEME, String.class)), ncol));
+	    final RadioGroup rgrp = theme.add(new RadioGroup("Main Hud Theme:"), c.copy());
+	    for(final String name : session.get(THEMES, String[].class)) {
+		rgrp.add(name, global.get(HUDTHEME, String.class).equals(name), (val) -> {
+		    global.set(HUDTHEME, name);
+		    title.settext("Settings for " + name);
+		    wcol.setColor(global.get(String.format(WNDCOLFMT, global.get(HUDTHEME, String.class)), Color.class));
+		    bcol.setColor(global.get(String.format(BTNCOLFMT, global.get(HUDTHEME, String.class)), Color.class));
+		    tcol.setColor(global.get(String.format(TXBCOLFMT, global.get(HUDTHEME, String.class)), Color.class));
+		    scol.setColor(global.get(String.format(SLIDERCOLFMT, global.get(HUDTHEME, String.class)), Color.class));
+		});
 	    }
+	    c.y += rgrp.sz.y + spacer;
+	    c.y += theme.add(title, c.copy()).sz.y + spacer;
+	    theme.add(lbl, c.copy());
+	    theme.adda(wcol, lbl.c.add(lbl.sz.x, lbl.sz.y/2), 0.0, 0.5);
+	    c.y += Math.max(lbl.sz.y, wcol.sz.y) + spacer;
+
+	    theme.add(blbl, c.copy());
+	    theme.adda(bcol, blbl.c.add(blbl.sz.x, blbl.sz.y/2), 0.0, 0.5);
+	    c.y += Math.max(blbl.sz.y, bcol.sz.y) + spacer;
+
+	    theme.add(tlbl, c.copy());
+	    theme.adda(tcol, tlbl.c.add(tlbl.sz.x, tlbl.sz.y/2), 0.0, 0.5);
+	    c.y += Math.max(tlbl.sz.y, tcol.sz.y) + spacer;
+
+	    theme.add(slbl, c.copy());
+	    theme.adda(scol, slbl.c.add(slbl.sz.x, slbl.sz.y/2), 0.0, 0.5);
+	    c.y += Math.max(slbl.sz.y, scol.sz.y) + spacer;
 	    theme.add(new PButton(200, "Back", 27, main), c.copy());
 	    theme.pack();
 	}

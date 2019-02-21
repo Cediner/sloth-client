@@ -26,6 +26,7 @@
 
 package haven;
 
+import haven.sloth.DefSettings;
 import haven.sloth.Theme;
 
 import java.awt.*;
@@ -134,7 +135,9 @@ public class TextEntry extends SIWidget {
     }
 
     public void draw(GOut g) {
+	g.chcolor(DefSettings.global.get(String.format(DefSettings.TXBCOLFMT, DefSettings.global.get(DefSettings.HUDTHEME, String.class)), Color.class));
 	super.draw(g);
+	g.chcolor();
 	if(hasfocus) {
 	    int cx = tcache.advance(buf.point);
 	    int lx = cx - sx + 1;

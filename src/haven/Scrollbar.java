@@ -26,7 +26,10 @@
 
 package haven;
 
+import haven.sloth.DefSettings;
 import haven.sloth.Theme;
+
+import java.awt.*;
 
 public class Scrollbar extends Widget {
     static final Tex schain = Resource.loadtex("gfx/hud/schain"); //Just incase for hidden dependencies...
@@ -50,6 +53,7 @@ public class Scrollbar extends Widget {
     
     public void draw(GOut g) {
 	if(vis()) {
+	    g.chcolor(DefSettings.global.get(String.format(DefSettings.SLIDERCOLFMT, DefSettings.global.get(DefSettings.HUDTHEME, String.class)), Color.class));
 	    //x offset incase sflarp.sz.x > schain.sz.x
 	    int cx = (sflarp.sz().x / 2) - (schaint.sz().x / 2);
 	    //Top
@@ -63,6 +67,7 @@ public class Scrollbar extends Widget {
 	    double a = (double)val / (double)(max - min);
 	    int fy = (int)((sz.y - sflarp.sz().y) * a);
 	    g.image(sflarp, new Coord(0, fy));
+	    g.chcolor();
 	}
     }
     
