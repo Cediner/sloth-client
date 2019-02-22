@@ -39,7 +39,7 @@ public class ISlots extends ItemInfo.Tip implements GItem.NumberInfo {
 	    int left = ((Integer)args[(i++)]);
 	    ISlots islots = new ISlots(owner, left, pmin, pmax, resources.toArray(new Resource[0]));
 
-	    for (; i < args.length;) {
+	    while (i < args.length) {
 		final Indir<Resource> res = resolver.getres(((Integer)args[(i++)]));
 		final Message msg;
 		if ((args[i] instanceof byte[])) {

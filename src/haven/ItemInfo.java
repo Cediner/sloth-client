@@ -346,7 +346,9 @@ public abstract class ItemInfo {
 		} else if(a[0] instanceof Resource) {
 		    ttres = (Resource)a[0];
 		} else if(a[0] instanceof Indir) {
-		    ttres = (Resource)((Indir)a[0]).get();
+		    ttres = (Resource) ((Indir) a[0]).get();
+		} else if(a[0] instanceof DefName) {
+		    ttres = Resource.remote().loadwait("ui/tt/defn");
 		} else {
 		    throw(new ClassCastException("Unexpected info specification " + a[0].getClass()));
 		}
