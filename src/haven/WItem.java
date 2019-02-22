@@ -30,6 +30,7 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import haven.ItemInfo.AttrCache;
+import haven.res.ui.tt.Wear;
 import haven.sloth.DefSettings;
 import haven.sloth.util.Images;
 
@@ -175,6 +176,12 @@ public class WItem extends Widget implements DTarget {
 	}
     }
 
+    public static final Color[] wearclr = new Color[]{
+	    new Color(233, 0, 14),
+	    new Color(218, 128, 87),
+	    new Color(246, 233, 87),
+	    new Color(145, 225, 60)
+    };
     public void draw(GOut g) {
 	GSprite spr = item.spr();
 	if(spr != null) {
@@ -211,6 +218,16 @@ public class WItem extends Widget implements DTarget {
 		g.frect(c, c.add(tsz.x,0), c.add(tsz), c.add(0, tsz.y));
 		g.chcolor();
 	        g.image(item.q_tex, c);
+	    }
+
+	    if(DefSettings.global.get(DefSettings.SHOWWEAR, Boolean.class)) {
+	        item.getinfo(Wear.class).ifPresent(wear -> {
+		    double p = wear.percent();
+		    int h = (int) (p * (double) sz.y);
+		    g.chcolor(wearclr[p == 1.0 ? 3 : (int) (p / 0.25)]);
+		    g.frect(new Coord(0, sz.y - h), new Coord(3, h));
+		    g.chcolor();
+		});
 	    }
 
 	    if(locked) {

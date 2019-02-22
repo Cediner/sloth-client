@@ -100,6 +100,7 @@ public class DefSettings {
     	SHOWHIDDEN = "gameplay.show-hidden",			//[Bool] Toggle hidden squares
     	HIDDENCOLOR = "gameplay.hidden-color",			//[RGBA] Color of hidden squares
     	SHOWQUALITY = "gameplay.show-item-quality",             //[Bool] Toggle item quality
+    	SHOWWEAR = "gameplay.show-item-wear",			//[Bool] Toggle item wear bar
     	SHOWPCLAIM = "gameplay.show-pclaim",			//[Bool] Toggle pclaims
     	SHOWVCLAIM = "gameplay.show-vclaim",			//[Bool] Toggle vclaims
     	SHOWKCLAIM = "gameplay.show-kclaim",			//[Bool] Toggle kingdom claims
@@ -211,6 +212,7 @@ public class DefSettings {
 	global.ensure(SHOWHIDDEN, true);
 	global.ensure(HIDDENCOLOR, Color.RED);
 	global.ensure(SHOWQUALITY, true);
+	global.ensure(SHOWWEAR, true);
 	global.ensure(SHOWPCLAIM, false);
 	global.ensure(SHOWVCLAIM, false);
 	global.ensure(SHOWKCLAIM, false);

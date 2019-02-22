@@ -28,10 +28,13 @@ package haven;
 
 import java.awt.Color;
 import java.util.*;
+
+import com.google.common.flogger.FluentLogger;
 import com.jogamp.opengl.*;
 import haven.sloth.DefSettings;
 
 public abstract class PView extends Widget {
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     public RenderList rls;
     public static final GLState.Slot<RenderContext> ctx = new GLState.Slot<RenderContext>(GLState.Slot.Type.SYS, RenderContext.class);
     public static final GLState.Slot<RenderState> wnd = new GLState.Slot<RenderState>(GLState.Slot.Type.SYS, RenderState.class, HavenPanel.proj2d, GLFrameBuffer.slot);
@@ -219,49 +222,53 @@ public abstract class PView extends Widget {
 	try {
 	    lm.prep(def);
 	    new Light.LightList().prep(def);
-	    rls.setup(scene, def);
+	    try {
+		rls.setup(scene, def);
 
-	    if(DefSettings.global.get(DefSettings.WIREFRAMEMODE, Boolean.class))
-	        g.gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_LINE);
-	    if(curf != null)
-		curf.tick("setup");
-	    rls.fin();
-	    if(curf != null)
-		curf.tick("sort");
-	    GOut rg;
-	    if(cstate.cur.fb != null) {
-		GLState.Buffer gb = g.basicstate();
-		HavenPanel.OrthoState.fixed(cstate.cur.fb.sz()).prep(gb);
-		cstate.cur.fb.prep(gb);
-		cstate.cur.fb.prep(def);
-		rg = new GOut(g.gl, g.curgl, g.gc, g.st, gb, cstate.cur.fb.sz());
-	    } else {
-		rg = g;
-	    }
-	    rg.st.set(def);
-	    Color cc = clearcolor();
-	    if((cc == null) && (cstate.cur.fb != null))
-		cc = new Color(0, 0, 0, 0);
-	    rg.apply();
-	    BGL gl = rg.gl;
-	    if(cc == null) {
-		gl.glClear(GL.GL_DEPTH_BUFFER_BIT);
-	    } else {
-		gl.glClearColor((float)cc.getRed() / 255f, (float)cc.getGreen() / 255f, (float)cc.getBlue() / 255f, (float)cc.getAlpha() / 255f);
-		gl.glClear(GL.GL_DEPTH_BUFFER_BIT | GL.GL_COLOR_BUFFER_BIT);
-	    }
-	    if(curf != null)
-		curf.tick("cls");
-	    g.st.time = 0;
-	    rls.render(rg);
-	    if(DefSettings.global.get(DefSettings.WIREFRAMEMODE, Boolean.class))
-		g.gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_FILL);
+		if (DefSettings.global.get(DefSettings.WIREFRAMEMODE, Boolean.class))
+		    g.gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_LINE);
+		if (curf != null)
+		    curf.tick("setup");
+		rls.fin();
+		if (curf != null)
+		    curf.tick("sort");
+		GOut rg;
+		if (cstate.cur.fb != null) {
+		    GLState.Buffer gb = g.basicstate();
+		    HavenPanel.OrthoState.fixed(cstate.cur.fb.sz()).prep(gb);
+		    cstate.cur.fb.prep(gb);
+		    cstate.cur.fb.prep(def);
+		    rg = new GOut(g.gl, g.curgl, g.gc, g.st, gb, cstate.cur.fb.sz());
+		} else {
+		    rg = g;
+		}
+		rg.st.set(def);
+		Color cc = clearcolor();
+		if ((cc == null) && (cstate.cur.fb != null))
+		    cc = new Color(0, 0, 0, 0);
+		rg.apply();
+		BGL gl = rg.gl;
+		if (cc == null) {
+		    gl.glClear(GL.GL_DEPTH_BUFFER_BIT);
+		} else {
+		    gl.glClearColor((float) cc.getRed() / 255f, (float) cc.getGreen() / 255f, (float) cc.getBlue() / 255f, (float) cc.getAlpha() / 255f);
+		    gl.glClear(GL.GL_DEPTH_BUFFER_BIT | GL.GL_COLOR_BUFFER_BIT);
+		}
+		if (curf != null)
+		    curf.tick("cls");
+		g.st.time = 0;
+		rls.render(rg);
+		if (DefSettings.global.get(DefSettings.WIREFRAMEMODE, Boolean.class))
+		    g.gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_FILL);
 
-	    if(cstate.cur.fb != null)
-		cstate.cur.resolve(g);
-	    if(curf != null) {
-		curf.add("apply", g.st.time);
-		curf.tick("render", g.st.time);
+		if (cstate.cur.fb != null)
+		    cstate.cur.resolve(g);
+		if (curf != null) {
+		    curf.add("apply", g.st.time);
+		    curf.tick("render", g.st.time);
+		}
+	    } catch (Exception e) {
+	        logger.atSevere().withCause(e).log("Skipped a frame due to error");
 	    }
 	} finally {
 	    g.st.set(bk);

@@ -92,6 +92,28 @@ public class ShadowMap extends GLState implements GLState.GlobalState, GLState.G
 	tgt.dispose();
     }
 
+    /**
+     * Exception in thread "Haven UI thread" java.lang.ArrayIndexOutOfBoundsException: 43
+     *         at haven.GLState$Buffer.copy(GLState.java:240)
+     *         at haven.ShadowMap$1.setup(ShadowMap.java:79)
+     *         at haven.RenderList.setup(RenderList.java:172)
+     *         at haven.RenderList.setup(RenderList.java:199)
+     *         at haven.FBView.render(FBView.java:81)
+     *         at haven.ShadowMap.prerender(ShadowMap.java:125)
+     *         at haven.RenderList.render(RenderList.java:492)
+     *         at haven.PView.draw(PView.java:256)
+     *         at haven.MapView.draw(MapView.java:1391)
+     *         at haven.Widget.draw(Widget.java:702)
+     *         at haven.Widget.draw(Widget.java:707)
+     *         at haven.GameUI.draw(GameUI.java:576)
+     *         at haven.Widget.draw(Widget.java:702)
+     *         at haven.Widget.draw(Widget.java:707)
+     *         at haven.RootWidget.draw(RootWidget.java:76)
+     *         at haven.UI.draw(UI.java:144)
+     *         at haven.HavenPanel.rootdraw(HavenPanel.java:296)
+     *         at haven.HavenPanel.run(HavenPanel.java:548)
+     *         at java.lang.Thread.run(Unknown Source)
+     */
     public void prerender(RenderList rl, GOut g) {
 	parts.clear();
 	Light.LightList ll = null;
@@ -111,8 +133,8 @@ public class ShadowMap extends GLState implements GLState.GlobalState, GLState.G
 
 	slidx = -1;
 	if((ll != null) && (cam != null)) {
-	    for(int i = 0; i < ll.ll.size(); i++) {
-		if(ll.ll.get(i) == light) {
+	    for (int i = 0; i < ll.ll.size(); i++) {
+		if (ll.ll.get(i) == light) {
 		    slidx = i;
 		    break;
 		}
@@ -122,6 +144,7 @@ public class ShadowMap extends GLState implements GLState.GlobalState, GLState.G
 		    .mul(lproj.fin(Matrix4f.id))
 		    .mul(lcam.fin(Matrix4f.id))
 		    .mul(cm);
+
 	    tgt.render(scene, g);
 	}
     }
