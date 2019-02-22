@@ -317,9 +317,9 @@ public class WaterTile extends Tiler {
     public static class BottomFog extends GLState.StandAlone {
 	public static final double maxdepth = 8; /* XXX: These should be parameterized. */
 	public static Function rgbmix = new Function.Def(Type.VEC4) {{
-	    Expression a = param(PDir.IN, Type.VEC4).ref();
-	    Expression b = param(PDir.IN, Type.VEC3).ref();
-	    Expression m = param(PDir.IN, Type.FLOAT).ref();
+	    Expression a = param(PDir.IN, Type.VEC4).ref(); //frag col
+	    Expression b = param(PDir.IN, Type.VEC3).ref(); //fog col
+	    Expression m = param(PDir.IN, Type.FLOAT).ref(); //depth from camera
 	    code.add(new Return(vec4(mix(pick(a, "rgb"), b, m), pick(a, "a"))));
 	}};
 	public static final Attribute depth = new Attribute(Type.FLOAT);

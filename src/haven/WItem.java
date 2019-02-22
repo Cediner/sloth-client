@@ -120,7 +120,7 @@ public class WItem extends Widget implements DTarget {
 		shorttip = longtip = null;
 		ttinfo = info;
 	    }
-	    if(now - hoverstart < 1.0) {
+	    if(now - hoverstart < 1.0 && !DefSettings.global.get(DefSettings.ALWAYSLONGTIP, Boolean.class)) {
 		if(shorttip == null)
 		    shorttip = new ShortTip(info);
 		return(shorttip);

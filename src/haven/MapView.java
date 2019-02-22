@@ -254,9 +254,11 @@ public class MapView extends PView implements DTarget, Console.Directory {
 		c = new Coord(c.x + (dragorig.x - c.x) * 2, c.y);
 	    if (DefSettings.global.get(DefSettings.FREECAMREYAXIS, Boolean.class))
 		c = new Coord(c.x, c.y + (dragorig.y - c.y) * 2);
-	    elev = elevorig - ((float)(c.y - dragorig.y) / 100.0f);
-	    if(elev < 0.0f) elev = 0.0f;
-	    if(elev > (Math.PI / 2.0)) elev = (float)Math.PI / 2.0f;
+	    if(ui.modshift || !DefSettings.global.get(DefSettings.FREECAMLOCKELAV, Boolean.class)) {
+		elev = elevorig - ((float) (c.y - dragorig.y) / 100.0f);
+		if (elev < 0.0f) elev = 0.0f;
+		if (elev > (Math.PI / 2.0)) elev = (float) Math.PI / 2.0f;
+	    }
 	    angl = anglorig + ((float)(c.x - dragorig.x) / 100.0f);
 	    angl = angl % ((float)Math.PI * 2.0f);
 	}
@@ -911,10 +913,11 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    this.cc = new Coord2d(pl.getc());
 	synchronized(glob) {
 	    if(glob.lightamb != null) {
+	        final boolean darkmode = DefSettings.global.get(DefSettings.DARKMODE, Boolean.class);
 	        final boolean nightvision = DefSettings.global.get(DefSettings.NIGHTVISION, Boolean.class);
-		final Color lamb = nightvision ? DefSettings.global.get(DefSettings.NVAMBIENTCOL, Color.class) : glob.lightamb;
-		final Color ldif = nightvision ? DefSettings.global.get(DefSettings.NVDIFFUSECOL, Color.class) : glob.lightdif;
-		final Color lspc = nightvision ? DefSettings.global.get(DefSettings.NVSPECCOC, Color.class) : glob.lightspc;
+		final Color lamb = darkmode ? Color.BLACK : nightvision ? DefSettings.global.get(DefSettings.NVAMBIENTCOL, Color.class) : glob.lightamb;
+		final Color ldif = darkmode ? Color.BLACK : nightvision ? DefSettings.global.get(DefSettings.NVDIFFUSECOL, Color.class) : glob.lightdif;
+		final Color lspc = darkmode ? Color.BLACK : nightvision ? DefSettings.global.get(DefSettings.NVSPECCOC, Color.class) : glob.lightspc;
 
 		DirLight light = new DirLight(lamb, ldif, lspc,
 			Coord3f.o.sadd((float)glob.lightelev, (float)glob.lightang, 1f));
@@ -1832,8 +1835,10 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	            updatett(gob.get().details());
 		} else {
 		    try {
-			Resource res = ui.sess.glob.map.tilesetr(ui.sess.glob.map.gettile(mc.div(MCache.tilesz).floor()));
-			updatett("Tile: " + res.name + "[" + ui.sess.glob.map.gettile_safe(mc.div(MCache.tilesz).floor()) +"]\n" + mc);
+		        final int tile_id = ui.sess.glob.map.gettile_safe(mc.div(MCache.tilesz).floor());
+			final Resource res = ui.sess.glob.map.tilesetr(tile_id);
+			final String name = ui.sess.glob.map.tiler(tile_id).getClass().getSimpleName();
+			updatett("Tile: " + res.name + "[" + tile_id +"] of type " + name + "\n" + mc);
 		    } catch(Exception e) {
 		        lasttt = "";
 			tt = null;
@@ -1841,8 +1846,10 @@ public class MapView extends PView implements DTarget, Console.Directory {
 		}
 	    } else {
 		try {
-		    Resource res = ui.sess.glob.map.tilesetr(ui.sess.glob.map.gettile(mc.div(MCache.tilesz).floor()));
-		    updatett("Tile: " + res.name + "[" + ui.sess.glob.map.gettile_safe(mc.div(MCache.tilesz).floor()) +"]\n" + mc);
+		    final int tile_id = ui.sess.glob.map.gettile_safe(mc.div(MCache.tilesz).floor());
+		    final Resource res = ui.sess.glob.map.tilesetr(tile_id);
+		    final String name = ui.sess.glob.map.tiler(tile_id).getClass().getSimpleName();
+		    updatett("Tile: " + res.name + "[" + tile_id +"] of type " + name + "\n" + mc);
 		} catch(Exception e) {
 		    lasttt = "";
 		    tt = null;

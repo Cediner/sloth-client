@@ -396,6 +396,14 @@ public class OptWnd extends Window {
 			y += 16 + spacer;
 		    }
 		}
+		y += add(new CheckBox("Dark Mode (overrides custom lighting)") {
+		    {a = global.get(DARKMODE, Boolean.class);}
+
+		    public void set(boolean val) {
+			global.set(DARKMODE, val);
+			a = val;
+		    }
+		}, new Coord(0, y)).sz.y + spacer;
 		y += add(new CheckBox("Flatworld (Legacy)") {
 		    {a = global.get(FLATWORLD, Boolean.class);}
 
@@ -725,6 +733,14 @@ public class OptWnd extends Window {
 	        c.y += gameplay.add(new BuddyWnd.GroupSelector(global.get(BADKIN, Integer.class),
 			group -> global.set(BADKIN, group)), c.copy()).sz.y + spacer;
 	    }
+	    c.y += gameplay.add(new CheckBox("Always show longtip on items") {
+		{a = global.get(ALWAYSLONGTIP, Boolean.class);}
+
+		public void set(boolean val) {
+		    global.set(ALWAYSLONGTIP, val);
+		    a = val;
+		}
+	    }, c.copy()).sz.y + spacer;
 	    gameplay.add(new PButton(200, "Back", 27, main), c.copy());
 	    gameplay.pack();
 	}
@@ -770,6 +786,14 @@ public class OptWnd extends Window {
 
 		public void set(boolean val) {
 		    global.set(FREECAMREYAXIS, val);
+		    a = val;
+		}
+	    }, c.copy()).sz.y + spacer;
+	    c.y += camera.add(new CheckBox("Free Cam lock elevation") {
+		{a = global.get(FREECAMLOCKELAV, Boolean.class);}
+
+		public void set(boolean val) {
+		    global.set(FREECAMLOCKELAV, val);
 		    a = val;
 		}
 	    }, c.copy()).sz.y + spacer;

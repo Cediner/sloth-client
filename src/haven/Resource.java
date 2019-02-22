@@ -1044,7 +1044,7 @@ public class Resource implements Serializable {
 	}
     }
 
-    private final static ExecutorService codesaver = Executors.newSingleThreadExecutor();
+    public final static ExecutorService codesaver = Executors.newSingleThreadExecutor();
     @LayerName("code")
     public class Code extends Layer {
 	public final String name;

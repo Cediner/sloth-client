@@ -33,7 +33,10 @@ import haven.Tileset.Tile;
 import haven.Surface.MeshVertex;
 
 public class GroundTile extends Tiler implements Tiler.MCons, Tiler.CTrans {
-    private static final Material.Colors gcol = new Material.Colors(new Color(128, 128, 128), new Color(255, 255, 255), new Color(0, 0, 0), new Color(0, 0, 0));
+    private static final Material.Colors gcol = new Material.Colors(new Color(128, 128, 128), //amb
+	    new Color(255, 255, 255), //dif
+	    new Color(0, 0, 0), //spc
+	    new Color(0, 0, 0)); //emi
     public final Tileset set;
 
     @ResName("gnd")

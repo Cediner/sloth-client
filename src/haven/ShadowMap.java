@@ -33,25 +33,36 @@ import haven.GLProgram.VarID;
 import static haven.glsl.Cons.*;
 import static haven.glsl.Type.*;
 
+/**
+ * Single light source shadow mapping with a directional light
+ */
 public class ShadowMap extends GLState implements GLState.GlobalState, GLState.Global {
-    public final static Slot<ShadowMap> smap = new Slot<ShadowMap>(Slot.Type.DRAW, ShadowMap.class, Light.lighting);
+    public final static Slot<ShadowMap> smap = new Slot<>(Slot.Type.DRAW, ShadowMap.class, Light.lighting);
+    //Our light source
     public DirLight light;
+    //Our depth map
     public final TexE lbuf;
+    //Light space projection
     private final Projection lproj;
+    //Our light source camera
     private final DirCam lcam;
+    //Our frame buffer
     private final FBView tgt;
+    //texture bias to remove acne shadows
     private final static Matrix4f texbias = new Matrix4f(0.5f, 0.0f, 0.0f, 0.5f,
 							 0.0f, 0.5f, 0.0f, 0.5f,
 							 0.0f, 0.0f, 0.5f, 0.5f,
 							 0.0f, 0.0f, 0.0f, 1.0f);
-    private final List<RenderList.Slot> parts = new ArrayList<RenderList.Slot>();
+    private final List<RenderList.Slot> parts = new ArrayList<>();
     private int slidx;
     private Matrix4f txf;
 
+    //Shadow Quality, 750, 5000, 1
     public ShadowMap(Coord res, float size, float depth, float dthr) {
 	lbuf = new TexE(res, GL2.GL_DEPTH_COMPONENT, GL2.GL_DEPTH_COMPONENT, GL.GL_UNSIGNED_INT);
-	lbuf.magfilter = GL.GL_LINEAR;
-	lbuf.wrapmode = GL2.GL_CLAMP;
+	lbuf.minfilter(GL.GL_LINEAR);
+	lbuf.magfilter(GL.GL_LINEAR);
+	lbuf.wrapmode(GL2.GL_REPEAT);
 	shader = new Shader(1.0 / res.x, 1.0 / res.y, 4, dthr / depth);
 	lproj = Projection.ortho(-size, size, -size, size, 1, depth);
 	lcam = new DirCam();
@@ -107,30 +118,13 @@ public class ShadowMap extends GLState implements GLState.GlobalState, GLState.G
 		}
 	    }
 	    Matrix4f cm = Transform.rxinvert(cam.fin(Matrix4f.id));
-	    /*
-	      txf = cm;
-	      barda(txf);
-	      txf = lcam.fin(Matrix4f.id).mul(txf);
-	      barda(txf);
-	      txf = lproj.fin(Matrix4f.id).mul(txf);
-	      barda(txf);
-	      txf = texbias.mul(txf);
-	      barda(txf);
-	    */
 	    txf = texbias
-		.mul(lproj.fin(Matrix4f.id))
-		.mul(lcam.fin(Matrix4f.id))
-		.mul(cm);
+		    .mul(lproj.fin(Matrix4f.id))
+		    .mul(lcam.fin(Matrix4f.id))
+		    .mul(cm);
 	    tgt.render(scene, g);
 	}
     }
-
-    /*
-      static void barda(Matrix4f m) {
-      float[] a = m.mul4(new float[] {0, 0, 0, 1});
-      System.err.println(String.format("(%f, %f, %f, %f)", a[0], a[1], a[2], a[3]));
-      }
-    */
 
     public Global global(RenderList rl, Buffer ctx) {return(this);}
 
@@ -152,28 +146,35 @@ public class ShadowMap extends GLState implements GLState.GlobalState, GLState.G
 	    };
 
 	public final Function.Def shcalc;
+	//xd = 1 / Shadow Quality, yd = 1 / Shadow Quality, res = 4, thr = 1 / 5000
 	public Shader(final double xd, final double yd, final int res, final double thr) {
 	    shcalc = new Function.Def(FLOAT) {
 		    {
+		        //sdw = 0.0;
 			LValue sdw = code.local(FLOAT, l(0.0)).ref();
+			//Vec3 mapc = fragPosLightSpace.xyz / fragPosLightSpace.w;
 			Expression mapc = code.local(VEC3, div(pick(stc.ref(), "xyz"), pick(stc.ref(), "w"))).ref();
 			double xr = xd * (res - 1), yr = yd * (res - 1);
-			boolean unroll = false;
-			if(!unroll) {
-			    LValue xo = code.local(FLOAT, null).ref();
-			    LValue yo = code.local(FLOAT, null).ref();
-			    code.add(new For(ass(yo, l(-yr / 2)), lt(yo, l((yr / 2) + (yd / 2))), aadd(yo, l(yd)),
-					     new For(ass(xo, l(-xr / 2)), lt(xo, l((xr / 2) + (xd / 2))), aadd(xo, l(xd)),
-						     new If(gt(add(pick(texture2D(map.ref(), add(pick(mapc, "xy"), vec2(xo, yo))), "z"), l(thr)), pick(mapc, "z")),
-							    stmt(aadd(sdw, l(1.0 / (res * res))))))));
-			} else {
-			    for(double yo = -yr / 2; yo < (yr / 2) + (yd / 2); yo += yd) {
-				for(double xo = -xr / 2; xo < (xr / 2) + (xd / 2); xo += xd) {
-				    code.add(new If(gt(add(pick(texture2D(map.ref(), add(pick(mapc, "xy"), vec2(l(xo), l(yo)))), "z"), l(thr)), pick(mapc, "z")),
-						    stmt(aadd(sdw, l(1.0 / (res * res))))));
-				}
-			    }
-			}
+
+			//Basically sampling from around our mapc and adding up how many points are not a shadow
+			//to give us our final shadow value
+			//
+			// for (yo = -yr /2 , yo < yr /2 + yd /2 ; y += 1) {
+			//     for (xo = - xr / 2, xo < xr /2 + xd /2 ; x += 1) {
+			//         projCoords = mapc + { xo, yo }
+			//         if ( texture(shadowMap,  projCoords.xy).z + thr > mapc.z ) {
+			//             sdw += 1.0 / ( res * res );
+			//         }
+			//     }
+			// }
+			// return sdw;
+			LValue xo = code.local(FLOAT, null).ref();
+			LValue yo = code.local(FLOAT, null).ref();
+			code.add(new For(ass(yo, l(-yr / 2)), lt(yo, l((yr / 2) + (yd / 2))), aadd(yo, l(yd)),
+					 new For(ass(xo, l(-xr / 2)), lt(xo, l((xr / 2) + (xd / 2))), aadd(xo, l(xd)),
+						 new If(gt(add(pick(texture2D(map.ref(), add(pick(mapc, "xy"), vec2(xo, yo))), "z"), l(thr)), pick(mapc, "z")),
+							stmt(aadd(sdw, l(1.0 / (res * res))))))));
+
 			code.add(new Return(sdw));
 		    }
 		};
@@ -184,13 +185,10 @@ public class ShadowMap extends GLState implements GLState.GlobalState, GLState.G
 	    if((ph == null) || !ph.pfrag)
 		return;
 	    
-	    ph.dolight.mod(new Runnable() {
-		    public void run() {
-			ph.dolight.dcalc.add(new If(eq(sl.ref(), ph.dolight.i),
-						    stmt(amul(ph.dolight.dl.tgt, shcalc.call()))),
-					     ph.dolight.dcurs);
-		    }
-		}, 0);
+	    ph.dolight.mod(() ->
+		ph.dolight.dcalc.add(new If(eq(sl.ref(), ph.dolight.i),
+				stmt(amul(ph.dolight.dl.tgt, shcalc.call()))),
+			ph.dolight.dcurs), 0);
 	}
     }
 

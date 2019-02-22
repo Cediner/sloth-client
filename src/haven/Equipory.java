@@ -27,13 +27,19 @@
 package haven;
 
 import haven.res.ui.tt.Armor;
+import haven.res.ui.tt.ISlots;
+import haven.res.ui.tt.attrmod.AttrMod;
 
 import java.awt.*;
 import java.util.*;
+import java.util.List;
+
 import static haven.Inventory.invsq;
 
 public class Equipory extends Widget implements DTarget {
     private static final Tex bg = Resource.loadtex("gfx/hud/equip/bg");
+    private static final Color debuff = new Color(255, 128, 128);
+    private static final Color buff = new Color(128, 255, 128);
     private static final int rx = 34 + bg.sz().x;
     public static final Coord ecoords[] = {
 	new Coord(0, 0),
@@ -205,6 +211,7 @@ public class Equipory extends Widget implements DTarget {
 	drawslots(g);
 	super.draw(g);
 
+	//Show Armor class in bottom left
 	try {
 	    int h = 0, s = 0;
 	    for(final GItem itm : wmap.keySet()) {
@@ -221,6 +228,64 @@ public class Equipory extends Widget implements DTarget {
 	    g.frect(new Coord(invsq.sz().x + 5, sz.y - 15), new Coord(width, 15));
 	    g.chcolor();
 	    FastText.aprintf(g, new Coord(invsq.sz().x + 5, sz.y), 0.0, 1.0, "Armor Class %,d/%,d", h, s);
+	} catch (Exception e) {
+	    //fail silently
+	}
+	//Show Buffs/Debuffs from gear in bottom right
+	try {
+	    final HashMap<String, Integer> mods = new HashMap<>();
+	    int w = 0;
+	    for(final GItem itm : wmap.keySet()) {
+		for (final ItemInfo info : itm.info()) {
+		    if (info instanceof AttrMod) {
+		        for(final AttrMod.Mod mod : ((AttrMod)info).mods) {
+		            mods.put(mod.name(), mods.getOrDefault(mod.name(), 0) + mod.mod);
+		            if(mods.get(mod.name()) != 0) {
+				w = Math.max(w, FastText.textw(mod.name() + ": " + mods.get(mod.name())));
+			    } else {
+		                mods.remove(mod.name());
+			    }
+			}
+		    } else if(info instanceof ISlots) {
+		        final ISlots slots = (ISlots) info;
+		        for(final ISlots.SItem sitm : slots.s) {
+		            for(final ItemInfo sinfo : sitm.info) {
+				if (sinfo instanceof AttrMod) {
+				    for(final AttrMod.Mod mod : ((AttrMod)sinfo).mods) {
+					mods.put(mod.name(), mods.getOrDefault(mod.name(), 0) + mod.mod);
+					if(mods.get(mod.name()) != 0) {
+					    w = Math.max(w, FastText.textw(mod.name() + ": " + mods.get(mod.name())));
+					} else {
+					    mods.remove(mod.name());
+					}
+				    }
+				}
+			    }
+			}
+		    }
+		}
+	    }
+
+	    if(w > 0) {
+		final List<String> names = new ArrayList<>(mods.keySet());
+		names.sort(String::compareTo);
+		final int h = names.size() * 15;
+		final int x = invsq.sz().x + 5;
+		//background
+		g.chcolor(new Color(64, 64, 64, 215));
+		g.frect(sz.sub(x + w, h), new Coord(w, h));
+		g.chcolor();
+
+		//
+		int y = 0;
+		for(final String mod : names) {
+		    final int val = mods.get(mod);
+		    g.chcolor(val >= 0 ? buff : debuff);
+		    FastText.aprintf(g, sz.sub(x, y), 1.0, 1.0, "%s: %d", mod, val);
+		    g.chcolor();
+		    y += 15;
+		}
+	    }
 	} catch (Exception e) {
 	    //fail silently
 	}

@@ -1,3 +1,11 @@
+2/22/19
+    - Added in Dark mode for a different kind of experience, will expand on this further later on
+    - Freecam can have its angle locked now, when locked use shift to move around. Camera -> Free Cam lock elevation
+    - Stockpiles have the take all, add all, take #, add # buttons and entry added back. For the entry box you can scroll
+      to change the number easily or use the buttons or type it..
+    - Option to always show the long tooltip for items. Gameplay -> "Always show longtip..". By default it's on.
+    - The equipment screen will now show all buffs/debuffs from gear listed out in the bottom right
+
 2/21/19
     - Added in options for reversing Freecam drag axis. Under Camera Settings.
     - Frame now inherits Window color for themes.

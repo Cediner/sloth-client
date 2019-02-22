@@ -33,6 +33,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.function.Consumer;
+import java.util.regex.Pattern;
 
 public class TextEntry extends SIWidget {
     public static final Color defcol = new Color(255, 205, 109), dirtycol = new Color(255, 232, 209);
@@ -48,6 +49,8 @@ public class TextEntry extends SIWidget {
     public LineEdit buf;
     public int sx;
     public boolean pw = false;
+    private final static Pattern numpat = Pattern.compile("(-)|(-?[0-9]+)");
+    public boolean numeric = false;
     public String text;
     private boolean dirty = false;
     private double focusstart;
@@ -75,9 +78,14 @@ public class TextEntry extends SIWidget {
 		}
 		
 		protected void changed() {
-		    redraw();
-		    TextEntry.this.text = line;
-		    TextEntry.this.changed();
+		    if(!numeric || (line.length() == 0 || numpat.matcher(line).matches())) {
+			redraw();
+			TextEntry.this.text = line;
+			TextEntry.this.changed();
+		    } else {
+		        //deny
+		        line = TextEntry.this.text;
+		    }
 		}
 	    };
 	redraw();
@@ -106,6 +114,19 @@ public class TextEntry extends SIWidget {
 	    commit();
 	} else {
 	    super.uimsg(name, args);
+	}
+    }
+
+    public int numvalue() {
+        if(numeric) {
+            if(text.length() == 0)
+                return 0;
+            else if(text.equals("-"))
+                return 0;
+            else
+                return Integer.parseInt(text);
+	} else {
+            return 0;
 	}
     }
 

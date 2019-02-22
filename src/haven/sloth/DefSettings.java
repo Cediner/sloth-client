@@ -80,6 +80,7 @@ public class DefSettings {
     	NVAMBIENTCOL = "graphics.nightvision-ambient",		//[RBGA] Nightvision ambient color
     	NVDIFFUSECOL = "graphics.diffuse-color",		//[RGBA] Nightvision diffuse color
     	NVSPECCOC = "graphics.specular-color",			//[RGBA] Nightvision specular color
+    	DARKMODE = "graphics.dark-mode",			//[Bool] Toggle dark mode, overrides Nightvision
 
     	QUICKMENU = "gameplay.quick-flowermenu", 		//[Bool] Toggle quick flowermenu
     	BUGGEDMENU = "gameplay.bugged-flowermenu",		//[Bool] Whether not flowermenu should close on clicks outside of it
@@ -103,6 +104,7 @@ public class DefSettings {
     	SHOWVCLAIM = "gameplay.show-vclaim",			//[Bool] Toggle vclaims
     	SHOWKCLAIM = "gameplay.show-kclaim",			//[Bool] Toggle kingdom claims
     	BADKIN = "gameplay.bad-kin-color",			//[Int] Bad kin color, default: 2 (red)
+    	ALWAYSLONGTIP = "gameplay.always-show-longtip",		//[Bool] Toggle only longtips on item tooltips
 
     	SHOWFKBELT = "belt.fk.show",				//[Bool] Toggle F key belt
     	FKBELTPAGE = "belt.fk.page",				//[Int] Page F key belt is on
@@ -120,6 +122,7 @@ public class DefSettings {
     	CAMERA = "camera.camera-type",				//[String] Camera type, default: Ortho
     	FREECAMREXAXIS = "camera.free.reverse-x-axis",		//[Bool] Reverse free cam x axis on drag or not
     	FREECAMREYAXIS = "camera.free.reverse-y-axis",		//[Bool] Reverse free cam y axis on drag or not
+    	FREECAMLOCKELAV = "camera.free.lock-elevation",		//[Bool] Lock freecam elevation angle
 
     	HUDTHEME = "theme.hud",					//[String] Hud theme to use, default: sloth
     	MENUTHEME = "theme.menu",				//[String] Menu theme to use, default: default
@@ -188,6 +191,7 @@ public class DefSettings {
 	global.ensure(SKYBOXRANGE, 15000);
 	global.ensure(KEEPGRIDS, false);
 	global.ensure(DRAWGRIDRADIUS, 2);
+	global.ensure(DARKMODE, false);
 	//Gameplay
 	global.ensure(QUICKMENU, false);
 	global.ensure(BUGGEDMENU, false);
@@ -211,6 +215,7 @@ public class DefSettings {
 	global.ensure(SHOWVCLAIM, false);
 	global.ensure(SHOWKCLAIM, false);
 	global.ensure(BADKIN, 2);
+	global.ensure(ALWAYSLONGTIP, true);
 	//Belts
 	global.ensure(SHOWFKBELT, false);
 	global.ensure(FKBELTPAGE, 0);
@@ -228,6 +233,7 @@ public class DefSettings {
 	global.ensure(CAMERA, "sortho");
 	global.ensure(FREECAMREXAXIS, false);
 	global.ensure(FREECAMREYAXIS, false);
+	global.ensure(FREECAMLOCKELAV, false);
 	//Figure out our themes
 	global.ensure(HUDTHEME, "sloth");
 	global.ensure(MENUTHEME, "default");

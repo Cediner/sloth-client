@@ -28,6 +28,8 @@ package haven;
 
 import com.google.common.flogger.FluentLogger;
 import haven.res.ui.tt.ArmorFactory;
+import haven.res.ui.tt.ISlots;
+import haven.res.ui.tt.defn.DefName;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -329,6 +331,8 @@ public abstract class ItemInfo {
     private static final Map<String, ItemInfo.InfoFactory> builtinfacts = new HashMap<>();
     static {
         builtinfacts.put("ui/tt/armor", new ArmorFactory());
+        builtinfacts.put("ui/tt/slots", new ISlots.Fac());
+        builtinfacts.put("ui/tt/defn", new DefName());
     }
 
     public static List<ItemInfo> buildinfo(Owner owner, Raw raw) {
