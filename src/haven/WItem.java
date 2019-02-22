@@ -222,7 +222,7 @@ public class WItem extends Widget implements DTarget {
 
 	    if(DefSettings.global.get(DefSettings.SHOWWEAR, Boolean.class)) {
 	        item.getinfo(Wear.class).ifPresent(wear -> {
-		    double p = wear.percent();
+		    double p = 1 - wear.percent();
 		    int h = (int) (p * (double) sz.y);
 		    g.chcolor(wearclr[p == 1.0 ? 3 : (int) (p / 0.25)]);
 		    g.frect(new Coord(0, sz.y - h), new Coord(3, h));
