@@ -6,6 +6,7 @@
     - Option to always show the long tooltip for items. Gameplay -> "Always show longtip..". By default it's on.
     - The equipment screen will now show all buffs/debuffs from gear listed out in the bottom right
     - Added back the wear meter to items, it's on by default.
+    - Hitbox are now raised 2 units and boxy now
 
 2/21/19
     - Added in options for reversing Freecam drag axis. Under Camera Settings.

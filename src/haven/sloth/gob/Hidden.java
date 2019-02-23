@@ -73,6 +73,7 @@ public class Hidden extends GAttrib {
 
     public void setup(RenderList rl) {
         if(mesh != null) {
+            rl.prepo(States.xray);
             rl.add(mesh, null);
         }
     }
