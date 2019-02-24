@@ -1,6 +1,8 @@
 2/24/19
     - Unless you're switching between moves rapidly the client will only send up to 10 moves per second roughly
     - Random keys that are not caught by the client and sent to the server are also delayed if it's the same key, like above
+    - Fixed ui bugs on the crafting window
+    -
 
 2/22/19
     - Added in Dark mode for a different kind of experience, will expand on this further later on

@@ -355,6 +355,7 @@ public class Fightsess extends Widget {
 	    if(mvc.isect(Coord.z, map.sz)) {
 		map.delay(map.new Maptest(mvc) {
 			protected void hit(Coord pc, Coord2d mc) {
+				// moves that depend on where your mouse pointer is???
 			    wdgmsg("use", fn, 1, ui.modflags(), mc.floor(OCache.posres));
 			}
 

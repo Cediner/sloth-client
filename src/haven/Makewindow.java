@@ -37,7 +37,8 @@ public class Makewindow extends Widget {
     List<Indir<Resource>> qmod = null;
     static final Text qmodl = Text.render("Quality:");
     static Coord boff = new Coord(7, 9);
-    final int xoff = 45, qmy = 38, softy = 65, outy = softy + 20;
+    final int xoff = 45, qmy = 38, softy = 75, outy = softy + 20;
+    final int modspacer = 5;
     final int width;
     public static final Text.Foundry nmf = new Text.Foundry(Text.serif, 20).aa(true);
 
@@ -215,7 +216,7 @@ public class Makewindow extends Widget {
 	    for(Indir<Resource> qm : qmod) {
 		try {
 		    Tex t = qm.get().layer(Resource.imgc).tex();
-		    c = c.add(t.sz().x + 1, 0);
+		    c = c.add(t.sz().x + modspacer, 0);
 		    width = Math.max(width, c.x);
 		} catch(Loading l) {
 		    //ignore
@@ -259,28 +260,24 @@ public class Makewindow extends Widget {
 		try {
 		    Tex t = qm.get().layer(Resource.imgc).tex();
 		    g.image(t, c);
-		    c = c.add(t.sz().x + 1, 0);
 		    if(ui.gui.chrwdg != null) {
 		        final String name = qm.get().basename();
 		        for(CharWnd.SAttr attr : ui.gui.chrwdg.skill) {
 		            if(name.equals(attr.attr.nm)) {
-		                final int width = FastText.textw(attr.attr.comp+"");
-		                FastText.printf(g, c, "%d", attr.attr.comp);
-		                c = c.add(width + 8, 0);
+		                FastText.printf(g, c.add(0, t.sz().y + 2), "%d", attr.attr.comp);
 		                mods.add(attr.attr.comp);
 		                break;
 			    }
 			}
 			for(CharWnd.Attr attr : ui.gui.chrwdg.base) {
 			    if(name.equals(attr.attr.nm)) {
-				final int width = FastText.textw(attr.attr.comp+"");
-				FastText.printf(g, c, "%d", attr.attr.comp);
-				c = c.add(width + 8, 0);
+				FastText.printf(g, c.add(0, t.sz().y + 2), "%d", attr.attr.comp);
 				mods.add(attr.attr.comp);
 				break;
 			    }
 			}
 		    }
+		    c = c.add(t.sz().x + modspacer, 0);
 		} catch(Loading l) {
 		}
 	    }
@@ -315,7 +312,7 @@ public class Makewindow extends Widget {
 		    Tex t = qm.get().layer(Resource.imgc).tex();
 		    if(mc.isect(c, t.sz()))
 			return(qm.get().layer(Resource.tooltip).t);
-		    c = c.add(t.sz().x + 1, 0);
+		    c = c.add(t.sz().x + modspacer, 0);
 		}
 	    } catch(Loading l) {
 	    }
