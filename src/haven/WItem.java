@@ -230,6 +230,10 @@ public class WItem extends Widget implements DTarget {
 		});
 	    }
 
+	    if(DefSettings.global.get(DefSettings.SHOWCMETER, Boolean.class)) {
+
+	    }
+
 	    if(locked) {
 	        g.image(lockt, Coord.z);
 	    }

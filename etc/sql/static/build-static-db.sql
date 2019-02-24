@@ -356,3 +356,38 @@ INSERT OR IGNORE INTO move VALUES ((SELECT object_id FROM object WHERE name = 'g
 INSERT OR IGNORE INTO move VALUES ((SELECT object_id FROM object WHERE name = 'gfx/terobjs/vehicle/wagon'));
 -- all the animals
 INSERT OR IGNORE INTO move SELECT object_id FROM object WHERE type_id = (SELECT type_id FROM type WHERE name_key = 'ANIMAL');
+
+
+
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+-- Item details
+CREATE TABLE IF NOT EXISTS item_type (
+    item_type_id     INTEGER,    -- Alias for ROWID
+    name_key         TEXT,       -- All Caps name of this type
+    CONSTRAINT item_type_pk_type_id PRIMARY KEY (type_id),
+    CONSTRAINT item_type_un_name_key UNIQUE (name_key)
+);
+
+CREATE TABLE IF NOT EXISTS item (
+    item_id      INTEGER,   --Alias for RowID
+    item_type_id INTEGER,   --Item type
+    name_key     TEXT,      --Item 'Name' ItemInfo, all lowercase
+    CONSTRAINT item_pk_item_id PRIMARY KEY (item_id)
+    CONSTRAINT item_un_name UNIQUE (name)
+);
+
+-- Items that allow liquids/seeds, etc
+CREATE TABLE IF NOT EXISTS item_contents (
+    item_id      INTEGER,   --Alias for RowID
+    liquid_max   INTEGER,
+    weight_max   INTEGER,
+    seed_max     INTEGER,
+    CONSTRAINT item_contents_pk_item_id PRIMARY KEY (item_id)
+);
+
+INSERT OR IGNORE INTO item_type (name_key) VALUES ("CONTAINER");
+INSERT OR IGNORE INTO item_type (name_key) VALUES ("ARMOR");
+INSERT OR IGNORE INTO item_type (name_key) VALUES ("WEAPON");
+INSERT OR IGNORE INTO item_type (name_key) VALUES ("TOOL");

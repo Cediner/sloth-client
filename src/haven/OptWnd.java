@@ -684,11 +684,19 @@ public class OptWnd extends Window {
 		    a = val;
 		}
 	    }, c.copy()).sz.y + spacer;
-	    c.y += gameplay.add(new CheckBox("Show Item Wear") {
+	    c.y += gameplay.add(new CheckBox("Show Item Wear Bar") {
 		{a = global.get(SHOWWEAR, Boolean.class);}
 
 		public void set(boolean val) {
 		    global.set(SHOWWEAR, val);
+		    a = val;
+		}
+	    }, c.copy()).sz.y + spacer;
+	    c.y += gameplay.add(new CheckBox("Show Item Contents Bar") {
+		{a = global.get(SHOWCMETER, Boolean.class);}
+
+		public void set(boolean val) {
+		    global.set(SHOWCMETER, val);
 		    a = val;
 		}
 	    }, c.copy()).sz.y + spacer;

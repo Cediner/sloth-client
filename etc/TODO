@@ -1,4 +1,7 @@
 TODO
+    - Lock placing object (Ape)
+    - Movable Fightsess (split into two parts maybe?)
+    - water meter
     - Fightsess move icons clickable
     - Grid View + tooltips = non-bold lines. Something from tooltips must be causing an extra GL command to fuck over lines
     - Infinite zoom out on Overview map
