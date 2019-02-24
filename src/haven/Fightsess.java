@@ -345,25 +345,24 @@ public class Fightsess extends Widget {
 	    if((n >= 0) && ((ev.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) != 0))
 		n += 5;
 	    int fn = n;
-	    if ((n >= 0) && (n < actions.length) && (last_button != n || (System.currentTimeMillis() - last_sent) >= 100)) {
+	    if ((n >= 0) && (n < actions.length) && (last_button != fn || (System.currentTimeMillis() - last_sent) >= 100)) {
 		wdgmsg("use", fn, 1, ui.modflags());
-		System.out.println("Use: " + fn);
 		last_button = fn;
 		last_sent = System.currentTimeMillis();
-	    /*MapView map = getparent(GameUI.class).map;
-	    Coord mvc = map.rootxlate(ui.mc);
-	    if(mvc.isect(Coord.z, map.sz)) {
-		map.delay(map.new Maptest(mvc) {
-			protected void hit(Coord pc, Coord2d mc) {
-				// moves that depend on where your mouse pointer is???
-			    wdgmsg("use", fn, 1, ui.modflags(), mc.floor(OCache.posres));
-			}
+		/*MapView map = getparent(GameUI.class).map;
+		Coord mvc = map.rootxlate(ui.mc);
+		if(mvc.isect(Coord.z, map.sz)) {
+		    map.delay(map.new Maptest(mvc) {
+			    protected void hit(Coord pc, Coord2d mc) {
+				    // moves that depend on where your mouse pointer is???
+				wdgmsg("use", fn, 1, ui.modflags(), mc.floor(OCache.posres));
+			    }
 
-			protected void nohit(Coord pc) {
-			    wdgmsg("use", fn, 1, ui.modflags());
-			}
-		    });
-	    }*/
+			    protected void nohit(Coord pc) {
+				wdgmsg("use", fn, 1, ui.modflags());
+			    }
+			});
+		}*/
 	    }
 	    return (true);
 	}

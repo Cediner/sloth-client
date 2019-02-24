@@ -1,4 +1,5 @@
 TODO
+    - Search all open inventories based off name, isFood, isEquipment, etc, etc
     - Lock placing object (Ape)
     - Movable Fightsess (split into two parts maybe?)
     - water meter
