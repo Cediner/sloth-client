@@ -1471,6 +1471,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 
     public class Plob extends Gob {
 	public PlobAdjust adjust = new StdPlace();
+	boolean locked = false;
 	Coord lastmc = null;
 
 	private Plob(Indir<Resource> res, Message sdt) {
@@ -1479,6 +1480,21 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    if(ui.mc.isect(rootpos(), sz)) {
 		delay(new Adjust(ui.mc.sub(rootpos()), 0));
 	    }
+	}
+
+	final PView.Draw2D lockt = new PView.Draw2D() {
+	    final Tex t = Text.renderstroked("locked", Color.WHITE, Color.BLACK, Gob.gobhpf).tex();
+	    public void draw2d(GOut g) {
+		if(sc != null) {
+		    g.image(t, sc);
+		}
+	    }
+	};
+
+	public boolean setup(RenderList rl) {
+	    if(locked)
+	        rl.add(lockt, null);
+	    return super.setup(rl);
 	}
 
 	public MapView mv() {return(MapView.this);}
@@ -1870,12 +1886,13 @@ public class MapView extends PView implements DTarget, Console.Directory {
     public boolean mousedown(Coord c, int button) {
 	parent.setfocus(this);
 	if(button == 2) {
-	    if(((Camera)camera).click(c)) {
+	    if (((Camera) camera).click(c)) {
 		camdrag = ui.grabmouse(this);
 	    }
-	} else if(placing != null) {
-	    if(placing.lastmc != null)
-		wdgmsg("place", placing.rc.floor(posres), (int)Math.round(placing.a * 32768 / Math.PI), button, ui.modflags());
+	} else if(placing != null && ui.modctrl && button == 3) {
+	    placing.locked = !placing.locked;
+	} else if(placing != null && !placing.locked) {
+	    wdgmsg("place", placing.rc.floor(posres), (int)Math.round(placing.a * 32768 / Math.PI), button, ui.modflags());
 	} else if((grab != null) && grab.mmousedown(c, button)) {
 	} else {
 	    delay(new Click(c, ui.modflags(), button));

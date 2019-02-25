@@ -8,6 +8,8 @@
     - Added back the content meter for items that can store other items. By default it's on. Can be turned off in
       Gameplay settings
     - FPS will now display in top right, can be turned off in Gameplay settings
+    - You can now lock placing objects again with ctrl + right click. This also means for things like stockpile items
+      you can lock one as a stockpile and carry another one as an item and lock both on your mouse to move around.
 
 2/22/19
     - Added in Dark mode for a different kind of experience, will expand on this further later on
