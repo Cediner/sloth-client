@@ -26,12 +26,17 @@
 
 package haven;
 
-import java.awt.Color;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.*;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import haven.ItemInfo.AttrCache;
 import haven.res.ui.tt.Wear;
 import haven.sloth.DefSettings;
+import haven.sloth.io.ItemData;
 import haven.sloth.util.Images;
 
 import static haven.Inventory.sqsz;
@@ -176,12 +181,18 @@ public class WItem extends Widget implements DTarget {
 	}
     }
 
-    public static final Color[] wearclr = new Color[]{
+    private static final Color[] wearclr = new Color[]{
 	    new Color(233, 0, 14),
 	    new Color(218, 128, 87),
 	    new Color(246, 233, 87),
 	    new Color(145, 225, 60)
     };
+    private static final Pattern liquid_pat = Pattern.compile("([0-9]+\\.[0-9]+) l of (.+)");
+    private static final Pattern weight_pat = Pattern.compile("([0-9]+\\.[0-9]+) kg of (.+)");
+    private static final Pattern seed_pat = Pattern.compile("([0-9]+) seeds of (.+)");
+    private static final Pattern[] contpats = {liquid_pat, weight_pat, seed_pat};
+    private static final ItemData.ContainerType[] conttypes = {ItemData.ContainerType.LIQUID, ItemData.ContainerType.WEIGHT, ItemData.ContainerType.SEED};
+
     public void draw(GOut g) {
 	GSprite spr = item.spr();
 	if(spr != null) {
@@ -231,7 +242,27 @@ public class WItem extends Widget implements DTarget {
 	    }
 
 	    if(DefSettings.global.get(DefSettings.SHOWCMETER, Boolean.class)) {
-
+		item.getinfo(ItemInfo.Contents.class).ifPresent(cont ->
+		    item.getinfo(ItemInfo.Name.Name.class, cont.sub).ifPresent(contname ->
+			item.name().ifPresent(name -> {
+			    for(int i = 0; i < contpats.length; ++i) {
+				final Matcher match = contpats[i].matcher(contname.str.text);
+				if(match.find()) {
+				    final double cur = Double.parseDouble(match.group(1));
+				    final double max = ItemData.maxContent(name, conttypes[i]);
+				    if(max > 0) {
+				        double p = (cur / max);
+					int h = (int) (p * (double) sz.y);
+					g.chcolor(Color.BLUE);
+					g.frect(new Coord(0, sz.y - h), new Coord(3, h));
+					g.chcolor();
+				    }
+				    break;
+				}
+			    }
+			})
+		    )
+		);
 	    }
 
 	    if(locked) {
@@ -260,7 +291,22 @@ public class WItem extends Widget implements DTarget {
 	        locked = !locked;
 	        return true;
 	    } else {
-		item.wdgmsg("iact", c, ui.modflags());
+	        final Optional<String> name = item.name();
+	        if(name.isPresent()) {
+		    if (ui.modmeta && DefSettings.global.get(DefSettings.AUTOEQUIP, Boolean.class) &&
+			    ItemData.isEquipable(name.get())) {
+		        if(!(parent instanceof Equipory)) {
+			    item.wdgmsg("take", c);
+			    ui.gui.equ.wdgmsg("drop", -1);
+			} else {
+		            item.wdgmsg("transfer", c);
+			}
+		    } else {
+			item.wdgmsg("iact", c, ui.modflags());
+		    }
+		} else {
+		    item.wdgmsg("iact", c, ui.modflags());
+		}
 	    }
 	    return(true);
 	}

@@ -700,6 +700,14 @@ public class OptWnd extends Window {
 		    a = val;
 		}
 	    }, c.copy()).sz.y + spacer;
+	    c.y += gameplay.add(new CheckBox("Equip items on right click") {
+		{a = global.get(AUTOEQUIP, Boolean.class);}
+
+		public void set(boolean val) {
+		    global.set(AUTOEQUIP, val);
+		    a = val;
+		}
+	    }, c.copy()).sz.y + spacer;
 	    c.y += gameplay.add(new CheckBox("Show F Key Belt") {
 		{a = global.get(SHOWFKBELT, Boolean.class);}
 
@@ -754,6 +762,14 @@ public class OptWnd extends Window {
 
 		public void set(boolean val) {
 		    global.set(ALWAYSLONGTIP, val);
+		    a = val;
+		}
+	    }, c.copy()).sz.y + spacer;
+	    c.y += gameplay.add(new CheckBox("Show FPS") {
+		{a = global.get(SHOWFPS, Boolean.class);}
+
+		public void set(boolean val) {
+		    global.set(SHOWFPS, val);
 		    a = val;
 		}
 	    }, c.copy()).sz.y + spacer;

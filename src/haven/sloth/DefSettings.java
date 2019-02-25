@@ -4,6 +4,7 @@ import com.google.common.flogger.FluentLogger;
 import haven.sloth.gob.*;
 import haven.sloth.gui.BeltWnd;
 import haven.sloth.io.HighlightData;
+import haven.sloth.io.ItemData;
 import haven.sloth.io.Storage;
 
 import java.awt.*;
@@ -102,11 +103,13 @@ public class DefSettings {
     	SHOWQUALITY = "gameplay.show-item-quality",             //[Bool] Toggle item quality
     	SHOWWEAR = "gameplay.show-item-wear",			//[Bool] Toggle item wear bar
     	SHOWCMETER = "gameplay.show-content-meter",		//[Bool] Toggle item content bar
+    	AUTOEQUIP = "gameplay.item-equip-on-right-click",	//[Bool] Toggle equiping items on right click if possible
     	SHOWPCLAIM = "gameplay.show-pclaim",			//[Bool] Toggle pclaims
     	SHOWVCLAIM = "gameplay.show-vclaim",			//[Bool] Toggle vclaims
     	SHOWKCLAIM = "gameplay.show-kclaim",			//[Bool] Toggle kingdom claims
     	BADKIN = "gameplay.bad-kin-color",			//[Int] Bad kin color, default: 2 (red)
     	ALWAYSLONGTIP = "gameplay.always-show-longtip",		//[Bool] Toggle only longtips on item tooltips
+    	SHOWFPS = "gameplay.show-fps",				//[Bool] Toggle FPS counter
 
     	SHOWFKBELT = "belt.fk.show",				//[Bool] Toggle F key belt
     	FKBELTPAGE = "belt.fk.page",				//[Int] Page F key belt is on
@@ -215,11 +218,13 @@ public class DefSettings {
 	global.ensure(SHOWQUALITY, true);
 	global.ensure(SHOWWEAR, true);
 	global.ensure(SHOWCMETER, true);
+	global.ensure(AUTOEQUIP, true);
 	global.ensure(SHOWPCLAIM, false);
 	global.ensure(SHOWVCLAIM, false);
 	global.ensure(SHOWKCLAIM, false);
 	global.ensure(BADKIN, 2);
 	global.ensure(ALWAYSLONGTIP, true);
+	global.ensure(SHOWFPS, true);
 	//Belts
 	global.ensure(SHOWFKBELT, false);
 	global.ensure(FKBELTPAGE, 0);
@@ -281,6 +286,7 @@ public class DefSettings {
 	    Deleted.init();
 	    Hidden.init();
 	    HighlightData.init();
+	    ItemData.init(optint.get());
 	    //Internal lookups are no longer needed
 	    optint.get().close();
 	} else {

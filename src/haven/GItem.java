@@ -184,6 +184,28 @@ public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owne
 	}
     }
 
+    public <T> Optional<T> getinfo(Class<T> type, List<ItemInfo> infolst) {
+	try {
+	    for (final ItemInfo info : infolst) {
+		if (type.isInstance(info)) {
+		    return Optional.of(type.cast(info));
+		}
+	    }
+	    return Optional.empty();
+	} catch (Exception e) {
+	    return Optional.empty();
+	}
+    }
+
+    public Optional<String> name() {
+        final ItemInfo.Name name = getinfo(ItemInfo.Name.class).orElse(null);
+        if(name != null) {
+            return Optional.of(name.str.text);
+	} else {
+            return Optional.empty();
+	}
+    }
+
     public Resource resource() {
 	return(res.get());
     }

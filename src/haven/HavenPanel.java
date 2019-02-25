@@ -316,6 +316,11 @@ public class HavenPanel extends GLCanvas implements Runnable, Console.Directory 
 	    if(Resource.remote().qdepth() > 0)
 		FastText.aprintf(g, new Coord(10, y -= 15), 0, 1, "RQ depth: %d (%d)", Resource.remote().qdepth(), Resource.remote().numloaded());
 	}
+
+	if(DefSettings.global.get(DefSettings.SHOWFPS, Boolean.class)) {
+	    FastText.aprintf(g, new Coord(w, 0), 1, 0, "FPS: %d (%d%%, %d%% idle)", fps, (int)(uidle * 100.0), (int)(ridle * 100.0));
+	}
+
 	Object tooltip;
         try {
 	    synchronized(ui) {

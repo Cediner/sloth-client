@@ -2,7 +2,6 @@ TODO
     - Search all open inventories based off name, isFood, isEquipment, etc, etc
     - Lock placing object (Ape)
     - Movable Fightsess (split into two parts maybe?)
-    - water meter
     - Fightsess move icons clickable
     - Grid View + tooltips = non-bold lines. Something from tooltips must be causing an extra GL command to fuck over lines
     - Infinite zoom out on Overview map

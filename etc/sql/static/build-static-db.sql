@@ -276,7 +276,7 @@ INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/terobjs/woodcrash', (SE
 INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/terobjs/woodcrash2', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
 INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/terobjs/woodspin', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
 INSERT OR IGNORE INTO object (name, type_id) VALUES('custom/sfx/howl', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
-INSERT OR IGNORE INTO object (name, type_id) VALUES('custom/csfx/timer', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('custom/sfx/timer', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
 
 CREATE TABLE IF NOT EXISTS growth (
     object_id   INTEGER,    -- Objects that can grow and have stages
@@ -368,7 +368,7 @@ INSERT OR IGNORE INTO move SELECT object_id FROM object WHERE type_id = (SELECT 
 CREATE TABLE IF NOT EXISTS item_type (
     item_type_id     INTEGER,    -- Alias for ROWID
     name_key         TEXT,       -- All Caps name of this type
-    CONSTRAINT item_type_pk_type_id PRIMARY KEY (type_id),
+    CONSTRAINT item_type_pk_item_type_id PRIMARY KEY (item_type_id),
     CONSTRAINT item_type_un_name_key UNIQUE (name_key)
 );
 
@@ -376,8 +376,8 @@ CREATE TABLE IF NOT EXISTS item (
     item_id      INTEGER,   --Alias for RowID
     item_type_id INTEGER,   --Item type
     name_key     TEXT,      --Item 'Name' ItemInfo, all uppercase
-    CONSTRAINT item_pk_item_id PRIMARY KEY (item_id)
-    CONSTRAINT item_un_name UNIQUE (name)
+    CONSTRAINT item_pk_item_id PRIMARY KEY (item_id),
+    CONSTRAINT item_un_name UNIQUE (name_key)
 );
 
 -- Items that allow liquids/seeds, etc
@@ -389,13 +389,19 @@ CREATE TABLE IF NOT EXISTS item_contents (
     CONSTRAINT item_contents_pk_item_id PRIMARY KEY (item_id)
 );
 
-INSERT OR IGNORE INTO item_type (name_key) VALUES ("EQUIPMENT")
+CREATE TABLE IF NOT EXISTS item_equipable (
+    item_id INTEGER, -- Alias for ROWID
+    CONSTRAINT item_equipable_pk_item_id PRIMARY KEY (item_id)
+);
+
+INSERT OR IGNORE INTO item_type (name_key) VALUES ("EQUIPMENT");
 INSERT OR IGNORE INTO item_type (name_key) VALUES ("CONTAINER");
 INSERT OR IGNORE INTO item_type (name_key) VALUES ("ARMOR");
 INSERT OR IGNORE INTO item_type (name_key) VALUES ("WEAPON");
 INSERT OR IGNORE INTO item_type (name_key) VALUES ("EQUIPMENT"); --Misc Equipment, gilding items, just for show, etc
 INSERT OR IGNORE INTO item_type (name_key) VALUES ("TOOL");
 INSERT OR IGNORE INTO item_type (name_key) VALUES ("ARROW");
+INSERT OR IGNORE INTO item_type (name_key) VALUES ("FISHING");
 
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'CONTAINER'), 'WATERSKIN');
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'CONTAINER'), 'WATERFLASK');
@@ -451,7 +457,7 @@ INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "BROWN PAPER BAG");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "BULL PIPE");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "BUNNY SLIPPERS");
-INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "BUSHCRAFT FISHINGPOLE");
+INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'FISHING'), "BUSHCRAFT FISHINGPOLE");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'WEAPON'), "BUTCHER'S CLEAVER");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "CAMPAIGN CAP");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "CANDLE CROWN");
@@ -483,7 +489,7 @@ INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "CYLINDER HAT");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "DEV CAPE");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "DEVIL'S DIADEM");
-INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "DOWSING ROD");
+INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'TOOL'), "DOWSING ROD");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'ARMOR'), "DRAGON HELM");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "DRUID'S CLOAK");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'ARMOR'), "DRUID'S HELM");
@@ -613,7 +619,7 @@ INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "POINTED CAP");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "POOR MAN'S BELT");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "POOR MAN'S GLOVES");
-INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "PRIMITIVE CASTING-ROD");
+INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'FISHING'), "PRIMITIVE CASTING-ROD");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "PRINCESS' CONE");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "PROPELLER CAP");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "PROTEST SIGN");
@@ -717,3 +723,5 @@ INSERT OR IGNORE INTO item_contents VALUES ((SELECT item_id FROM item WHERE name
 INSERT OR IGNORE INTO item_contents VALUES ((SELECT item_id FROM item WHERE name_key = 'WATERFLASK'), 2.0, 0.0, 0.0);
 INSERT OR IGNORE INTO item_contents VALUES ((SELECT item_id FROM item WHERE name_key = 'BIRCHBARK KUKSA'), 0.4, 0.0, 0.0);
 INSERT OR IGNORE INTO item_contents VALUES ((SELECT item_id FROM item WHERE name_key = 'BUCKET'), 10.0, 10.0, 1000.0);
+
+INSERT OR IGNORE INTO item_equipable SELECT item_id FROM item WHERE item_type_id in (SELECT item_type_id FROM item_type WHERE name_key in ('EQUIPMENT', 'TOOL', 'ARMOR', 'WEAPON'));
