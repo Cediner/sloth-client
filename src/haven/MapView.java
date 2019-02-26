@@ -68,6 +68,12 @@ public class MapView extends PView implements DTarget, Console.Directory {
     //Tooltip info
     private String lasttt = "";
     private Object tt;
+    //Queued movement
+    private Coord2d movingto;
+    private Coord2d lastrc;
+    private double mspeed;
+    private long lastMove = System.currentTimeMillis();
+    private Queue<Coord2d> movequeue = new ArrayDeque<>();
 
     public interface Delayed {
 	public void run(GOut g);
@@ -1412,6 +1418,53 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    }
 	}
     }
+
+    /**
+     * 1) If you made it to your destination within a reasonable limit
+     * a) Exactly on target destination
+     * b) Not moving anymore and within 5 units of it
+     * c) Predictive model said it was okay
+     */
+    private boolean triggermove(final double dt) {
+        System.out.printf("Queue: %s\n", movequeue);
+        final Gob pl = ui.sess.glob.oc.getgob(plgob);
+        if(pl != null) {
+            if(movingto != null && pl.getattr(Moving.class) != null) {
+                final Coord2d plc = new Coord2d(pl.getc());
+                if(lastrc != null) {
+		    mspeed = plc.dist(lastrc) / dt;
+		} else {
+                    mspeed = 0;
+		}
+                final double left = plc.dist(movingto) / mspeed;
+                //Only predictive models can trigger here
+		lastrc = plc;
+		return false;
+	    } else if(movingto == null || movingto.dist(pl.rc) <= 5) {
+                return true;
+	    } else {
+                //Way off target and not moving, cancel
+		clearmovequeue();
+		return false;
+	    }
+	} else {
+            return false;
+	}
+    }
+
+    private void clearmovequeue() {
+        movequeue.clear();
+        movingto = null;
+    }
+
+    public void queuemove(final Coord2d c) {
+        movequeue.add(c);
+    }
+
+    public void moveto(final Coord2d c) {
+        clearmovequeue();
+	wdgmsg("click", new Coord(1,1), c.floor(posres), 1, 0);
+    }
     
     public void tick(double dt) {
 	camload = null;
@@ -1427,6 +1480,11 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	}
 	if(placing != null)
 	    placing.ctick((int)(dt * 1000));
+	if(movequeue.size() > 0 && (System.currentTimeMillis() - lastMove > 500) && triggermove(dt)) {
+	    movingto = movequeue.poll();
+	    wdgmsg("click", new Coord(1,1), movingto.floor(posres), 1, 0);
+	    lastMove = System.currentTimeMillis();
+	}
     }
     
     public void resize(Coord sz) {
@@ -1808,8 +1866,14 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    } else {
 		final Object[] gobargs = gobclickargs(inf);
 		Object[] args = {pc, mc.floor(posres), clickb, ui.modflags()};
-		args = Utils.extend(args, gobargs);
-		wdgmsg("click", args);
+		if(clickb == 1 && ui.modshift) {
+		    //Queued movement
+		    movequeue.add(mc);
+		} else {
+		    clearmovequeue();
+		    args = Utils.extend(args, gobargs);
+		    wdgmsg("click", args);
+		}
 	    }
 	}
     }

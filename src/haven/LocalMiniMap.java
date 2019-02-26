@@ -426,8 +426,12 @@ public class LocalMiniMap extends Widget {
 	if (cc == null)
 	    return (false);
 	Gob gob = findicongob(c);
-	if (gob == null && ui.modflags() == 0) { //click tile
-	    mv.wdgmsg("click", rootpos().add(c), c2p(c.add(offset)).floor(posres), button, ui.modflags());
+	if (gob == null && (ui.modflags() == 0 || ui.modshift)) { //click tile
+	    if(ui.modshift) {
+	        mv.queuemove(c2p(c.add(offset)));
+	    } else {
+		mv.moveto(c2p(c.add(offset)));
+	    }
 	    return true;
 	} else if(gob != null) { //click gob
 	    mv.wdgmsg("click", rootpos().add(c), c2p(c.add(offset)).floor(posres), button, ui.modflags(), 0, (int) gob.id, gob.rc.floor(posres), 0, -1);

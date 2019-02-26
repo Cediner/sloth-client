@@ -368,7 +368,11 @@ public class MapFileWidget extends Widget {
 		    final Coord2d offset = new Coord2d(pl.tc.sub(tc));
 		    //Translate this to real map units and add to current map position
 		    final Coord2d mc = plc.sub(offset.mul(MCache.tilesz));
-		    ui.gui.map.wdgmsg("click", rootpos().add(c), mc.floor(posres), button, 0);
+		    if(ui.modshift) {
+		        ui.gui.map.queuemove(mc);
+		    } else {
+		        ui.gui.map.moveto(mc);
+		    }
 		}
 	    }
 	}
