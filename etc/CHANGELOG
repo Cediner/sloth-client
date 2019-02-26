@@ -1,6 +1,7 @@
 2/26/19
     - Fixed the bug with not being able to use hotkeys while in combat
     - Rearranged Options window
+    - Can now ctrl + click on Loftar's map to move to that rough location.
 
 2/25/19
     - Added more crops that weren't displaying their crop stages

@@ -2,7 +2,6 @@ TODO
     - Always on fight deck hotbar
     - Alt + Right click map tile -> "Mark for party", Same idea as Gob but for a specific map tile
         - Will need to be sent { GridID, OffsetInGrid } since GC are not the same for everyone?
-    - Clicking on Loftar map -> moving to that location
     - Right click Loftar map -> make Pointer of the location you want to go to
         - Both of these can be done only on the same map you're gob is on.  Find offset between location and plgob on
           the Loftar map. Compare real rc -> loftar rc and tranform offset to real rc

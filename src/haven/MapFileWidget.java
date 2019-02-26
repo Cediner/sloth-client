@@ -34,6 +34,7 @@ import haven.MapFile.Marker;
 import haven.MapFile.PMarker;
 import haven.MapFile.SMarker;
 import static haven.MCache.cmaps;
+import static haven.OCache.posres;
 
 public class MapFileWidget extends Widget {
     public final MapFile file;
@@ -362,12 +363,12 @@ public class MapFileWidget extends Widget {
 		final Location pl = resolve(new MapLocator(ui.gui.map));
 		if(curloc != null && curloc.seg == pl.seg) {
 		    final Coord2d plc = new Coord2d(ui.sess.glob.oc.getgob(ui.gui.map.plgob).getc());
-		    final Coord2d translate = plc.div(new Coord2d(pl.tc));
 		    //Offset in terms of loftar map coordinates
+		    //XXX: Previous worlds had randomized north/south/east/west directions, still the case? Assuming not for now.
 		    final Coord2d offset = new Coord2d(pl.tc.sub(tc));
 		    //Translate this to real map units and add to current map position
-		    final Coord2d mc = tc.mul(translate);
-		    System.out.printf("%s vs %s\n", tc.mul(translate), plc.add(offset.mul(translate)));
+		    final Coord2d mc = plc.sub(offset.mul(MCache.tilesz));
+		    ui.gui.map.wdgmsg("click", rootpos().add(c), mc.floor(posres), button, 0);
 		}
 	    }
 	}
