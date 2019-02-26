@@ -80,7 +80,7 @@ public class AnimSprite extends Sprite {
     public boolean tick(int idt) {
 	boolean ret = false;
 	float dt = idt / 1000.0f;
-	if(DefSettings.global.get(DefSettings.ANIMATIONS, Boolean.class)) {
+	if(DefSettings.ANIMATIONS.get()) {
 	    for (MeshAnim.Anim anim : anims)
 		ret = ret | anim.tick(dt);
 	}
@@ -88,6 +88,6 @@ public class AnimSprite extends Sprite {
     }
 
     public Object staticp() {
-	return((!DefSettings.global.get(DefSettings.ANIMATIONS, Boolean.class) || anims.length == 0)?CONSTANS:null);
+	return((!DefSettings.ANIMATIONS.get() || anims.length == 0)?CONSTANS:null);
     }
 }

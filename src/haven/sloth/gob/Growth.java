@@ -2,6 +2,7 @@ package haven.sloth.gob;
 
 import haven.*;
 import haven.sloth.DefSettings;
+import haven.sloth.gfx.TextMap;
 import haven.sloth.io.Storage;
 
 import java.awt.*;
@@ -13,8 +14,9 @@ import java.util.Map;
  * Gob Attribute for showing crop stage number if possible
  */
 public class Growth extends GAttrib implements Rendered {
-    private static Map<String, Integer> growth = new HashMap<>();
     private static final Color stagecolor = new Color(235, 235, 235);
+    public static TextMap text = new TextMap("growth", Text.std, stagecolor, Color.BLACK, "0123456789");
+    private static Map<String, Integer> growth = new HashMap<>();
 
     public static void init(final Storage internal) {
         internal.ensure(sql -> {
@@ -34,55 +36,35 @@ public class Growth extends GAttrib implements Rendered {
     }
 
 
-    public Tex tex = null;
-    public PView.Draw2D fx = null;
-    private int cstage = -1;
+    private final PView.Draw2D fx;
+    private int stage = -1;
 
     public Growth(Gob g) {
 	super(g);
-    }
-
-    public void setup(RenderList rl) {
-        if(fx != null && DefSettings.global.get(DefSettings.SHOWCROPSTAGE, Boolean.class)) {
-	    rl.add(fx, null);
-	}
-    }
-
-    private void setstagenum(final int num) {
-	tex = Text.renderstroked(Integer.toString(num),
-		stagecolor,
-		Color.BLACK,
-		Gob.gobhpf).tex();
 	fx = new PView.Draw2D() {
 	    public void draw2d(GOut g) {
 		if(gob.sc != null) {
-		    g.image(tex, gob.sc);
+		    text.prints(g, gob.sc, Integer.toString(stage));
 		}
 	    }
 	};
     }
 
-    public void tick() {
-	final ResDrawable rd = gob.getattr(ResDrawable.class);
-	if(rd != null) {
-	    final int stage = rd.sdtnum();
-	    if(cstage != stage && stage > 0 && stage != 268431360) {
-		cstage = stage;
-		setstagenum(cstage);
-	    }
+    public void setup(RenderList rl) {
+        if(stage >= 0 && stage != 268431360 && DefSettings.SHOWCROPSTAGE.get()) {
+	    rl.add(fx, null);
 	}
     }
 
-    public void dispose() {
-	if(tex != null)
-	    tex.dispose();
+    public void tick() {
+	final ResDrawable rd = gob.getattr(ResDrawable.class);
+	if(rd != null) {
+	    stage = rd.sdtnum();
+	}
     }
 
     //These can't be static since sc needs to update...
     public Object staticp() {
-	if(DefSettings.global.get(DefSettings.SHOWCROPSTAGE, Boolean.class) && gob.sdt() != 268431360)
-	    return null;
-	else
-	    return super.staticp();
+	return new Gob.Static();
     }
 }

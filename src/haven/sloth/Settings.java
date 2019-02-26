@@ -196,6 +196,13 @@ public class Settings {
     }
 
     /**
+     * Fetches a value from our settings, if it exists. Return null if not.
+     */
+    public Object get(final String key) {
+        return settings.getOrDefault(key, null);
+    }
+
+    /**
      * Sets a setting to the specified value
      */
     public Settings set(final String key, final Object val) {

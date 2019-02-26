@@ -70,6 +70,9 @@ public class Session implements Resource.Resolver {
     public final Glob glob;
     public byte[] sesskey;
 
+    //Monitoring
+    long sent = 0, recv = 0;
+
     @SuppressWarnings("serial")
     public static class MessageException extends RuntimeException {
 	public Message msg;
@@ -370,6 +373,7 @@ public class Session implements Resource.Resolver {
 		    if(!p.getSocketAddress().equals(server))
 			continue;
 		    PMessage msg = new PMessage(p.getData()[0], p.getData(), 1, p.getLength() - 1);
+		    recv += p.getLength();
 		    if(msg.type == MSG_SESS) {
 			if(state == "conn") {
 			    int error = msg.uint8();
@@ -658,6 +662,7 @@ public class Session implements Resource.Resolver {
     public void sendmsg(byte[] msg) {
 	try {
 	    sk.send(new DatagramPacket(msg, msg.length, server));
+	    sent += msg.length;
 	} catch(IOException e) {
 	}
     }

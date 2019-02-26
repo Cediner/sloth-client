@@ -1,11 +1,9 @@
 package haven.sloth.gob;
 
-import com.google.common.flogger.FluentLogger;
 import haven.*;
 import haven.sloth.gfx.GobPathSprite;
 import haven.sloth.io.Storage;
 
-import java.awt.*;
 import java.sql.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -21,9 +19,9 @@ public class Movable extends GAttrib implements Rendered {
     private static Set<String> movable = new HashSet<>();
     static {
 	//Setup our colors
-	vehiclepathcol = new haven.States.ColState(global.get(VEHPATHCOL, Color.class));
-	unknowngobcol = new haven.States.ColState(global.get(GOBPATHCOL, Color.class));
-	animalpathcol = new haven.States.ColState(global.get(ANIMALPATHCOL, Color.class)); //Animals
+	vehiclepathcol = new haven.States.ColState(VEHPATHCOL.get());
+	unknowngobcol = new haven.States.ColState(GOBPATHCOL.get());
+	animalpathcol = new haven.States.ColState(ANIMALPATHCOL.get()); //Animals
 	buddycol = new States.ColState[BuddyWnd.gc.length]; //Humans
 	IntStream.range(0, buddycol.length).forEach((i) -> buddycol[i] = new States.ColState(BuddyWnd.gc[i]));
     }
@@ -54,16 +52,16 @@ public class Movable extends GAttrib implements Rendered {
 
     public void setup(RenderList rl) {
         if(pathol != null) {
-	    if (((gob.type == Type.HUMAN || gob.type == Type.VEHICLE) && global.get(SHOWGOBPATH, Boolean.class)) ||
-		    (gob.type == Type.ANIMAL && global.get(SHOWANIMALPATH, Boolean.class))) {
+	    if (((gob.type == Type.HUMAN || gob.type == Type.VEHICLE) && SHOWGOBPATH.get()) ||
+		    (gob.type == Type.ANIMAL && SHOWANIMALPATH.get())) {
 		rl.add(pathol, null);
 	    }
 	}
     }
 
     public void tick() {
-	if (((gob.type == Type.HUMAN || gob.type == Type.VEHICLE) && global.get(SHOWGOBPATH, Boolean.class)) ||
-		(gob.type == Type.ANIMAL && global.get(SHOWANIMALPATH, Boolean.class))) {
+	if (((gob.type == Type.HUMAN || gob.type == Type.VEHICLE) && SHOWGOBPATH.get()) ||
+		(gob.type == Type.ANIMAL && SHOWANIMALPATH.get())) {
 	    Moving mv = gob.getattr(Moving.class);
 	    if (mv != null) {
 		try {

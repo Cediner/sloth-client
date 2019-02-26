@@ -437,7 +437,7 @@ public class RenderList {
 	    else
 		throw(l);
 	} catch (Defer.NotDoneException e) {
-	    if(DefSettings.global.get(DefSettings.SKIPLOADING, Boolean.class)) {
+	    if(DefSettings.SKIPLOADING.get()) {
 	        return;
 	    } else {
 	        throw(e);

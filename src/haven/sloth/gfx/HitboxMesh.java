@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 //TODO:: The four corners should match the heightmap
 public class HitboxMesh extends FastMesh {
-    private static States.ColState hiddencolor = new States.ColState(DefSettings.global.get(DefSettings.HIDDENCOLOR, Color.class));
+    private static States.ColState hiddencolor = new States.ColState(DefSettings.HIDDENCOLOR.get());
     //Lots of hidden sprites will be identical, rather than each gob have there own we'll share
     //sprites that have the same sizes
     private static ConcurrentHashMap<String, HitboxMesh> hbs = new ConcurrentHashMap<>();

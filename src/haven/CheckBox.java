@@ -27,16 +27,18 @@
 package haven;
 
 import haven.sloth.Theme;
+import haven.sloth.gfx.TextureAtlas;
 
 import java.util.function.Consumer;
 
 public class CheckBox extends Widget {
+    //These are quite only for precautions about res classes
     public static final Tex lbox = Theme.tex("chkbox/large", 0),
 	    lmark = Theme.tex("chkbox/large", 1);
     public static final Tex sbox = Theme.tex("chkbox/small", 0),
 	    smark = Theme.tex("chkbox/small", 1);
-    public final Tex box, mark;
-    public final Coord loff;
+
+    private final String type;
     public boolean a = false;
     private Consumer<Boolean> onChange;
     Text lbl;
@@ -53,13 +55,12 @@ public class CheckBox extends Widget {
     public CheckBox(String lbl, boolean lg, final Consumer<Boolean> onChange) {
 	this.lbl = Text.std.render(lbl, java.awt.Color.WHITE);
 	if(lg) {
-	    box = lbox; mark = lmark;
-	    loff = new Coord(0, -3);
+	    type = "chkbox/large";
 	} else {
-	    box = sbox; mark = smark;
-	    loff = new Coord(5, 0);
+	    type = "chkbox/small";
 	}
-	sz = new Coord(box.sz().x + 5 + this.lbl.sz().x, Math.max(box.sz().y, this.lbl.sz().y));
+	final Coord boxsz = Theme.timg(type, 0).sz;
+	sz = new Coord(boxsz.x + 5 + this.lbl.sz().x, Math.max(boxsz.y, this.lbl.sz().y));
 	this.onChange = onChange;
     }
 
@@ -69,6 +70,11 @@ public class CheckBox extends Widget {
 
     public CheckBox(String lbl) {
 	this(lbl, false, null);
+    }
+
+    public CheckBox(final String lbl, final Consumer<Boolean> onChange, final boolean val) {
+        this(lbl, false, onChange);
+        this.a = val;
     }
 
     public boolean mousedown(Coord c, int button) {
@@ -84,10 +90,11 @@ public class CheckBox extends Widget {
     }
 
     public void draw(GOut g) {
-	g.image(lbl.tex(), loff.add(box.sz().x, box.sz().y - lbl.sz().y));
-	g.image(box, Coord.z);
-	if(a)
-	    g.image(mark, Coord.z);
+	final int id = a ? 1 : 0;
+	final TextureAtlas.Img chk = Theme.timg(type, id);
+	g.image(chk, new Coord(0, sz.y / 2 - chk.sz.y / 2));
+	//Draw label
+	g.image(lbl.tex(), new Coord(chk.sz.x + 5, sz.y /2 - lbl.sz().y / 2 ));
 	super.draw(g);
     }
 

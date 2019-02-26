@@ -26,41 +26,29 @@
 
 package haven;
 
+import haven.sloth.gfx.TextMap;
+
+import java.awt.*;
+
 public class FastText {
     public static final Text.Foundry fnd = new Text.Foundry(Text.sans, 10);
-    private static final Tex[] ct = new Tex[225];
-    
-    private FastText() {}
-    
-    public static Tex ch(char c) {
-	int i;
-	if((c < 32) || (c >= 256))
-	    i = 0;
-	else
-	    i = c - 31;
-	if(ct[i] == null)
-	    ct[i] = fnd.render(Character.toString(c)).tex();
-	return(ct[i]);
+    private static final TextMap textmap;
+    static {
+        final StringBuilder str = new StringBuilder();
+        for(int chr = 0; chr <= 256; chr++) {
+            str.append((char)chr);
+	}
+	textmap = new TextMap("FastText", fnd, Color.WHITE, Color.BLACK, str.toString());
     }
+
+    public static Coord size(String text) { return textmap.size(text); }
     
     public static int textw(String text) {
-	int r = 0;
-	for(int i = 0; i < text.length(); i++)
-	    r += ch(text.charAt(i)).sz().x;
-	return(r);
+        return textmap.size(text).x;
     }
     
     public static void aprint(GOut g, Coord c, double ax, double ay, String text) {
-	Coord lc = new Coord(c);
-	if(ax > 0)
-	    lc.x -= textw(text) * ax;
-	if(ay > 0)
-	    lc.y -= fnd.height() * ay;
-	for(int i = 0; i < text.length(); i++) {
-	    Tex ch = ch(text.charAt(i));
-	    g.image(ch, lc);
-	    lc.x += ch.sz().x;
-	}
+	textmap.aprint(g, c, ax, ay, text);
     }
     
     public static void print(GOut g, Coord c, String text) {
@@ -73,5 +61,21 @@ public class FastText {
     
     public static void printf(GOut g, Coord c, String fmt, Object... args) {
 	print(g, c, String.format(fmt, args));
+    }
+
+    public static void aprints(GOut g, Coord c, double ax, double ay, String text) {
+	textmap.aprints(g, c, ax, ay, text);
+    }
+
+    public static void prints(GOut g, Coord c, String text) {
+	aprints(g, c, 0.0, 0.0, text);
+    }
+
+    public static void aprintsf(GOut g, Coord c, double ax, double ay, String fmt, Object... args) {
+	aprints(g, c, ax, ay, String.format(fmt, args));
+    }
+
+    public static void printsf(GOut g, Coord c, String fmt, Object... args) {
+	prints(g, c, String.format(fmt, args));
     }
 }

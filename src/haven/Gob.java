@@ -186,7 +186,7 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 	public void tick() {
 	    try {
 		Coord3f c = getc();
-		if(DefSettings.global.get(DefSettings.FLATWORLD, Boolean.class))
+		if(DefSettings.FLATWORLD.get())
 		    c.z = 0;
 		c.y = -c.y;
 		if((this.c == null) || !c.equals(this.c))
@@ -646,7 +646,7 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 	    GobHealth hlt = getattr(GobHealth.class);
 	    if (hlt != null) {
 		rl.prepc(hlt.getfx());
-		if (DefSettings.global.get(DefSettings.SHOWGOBHP, Boolean.class)) {
+		if (DefSettings.SHOWGOBHP.get()) {
 		    rl.add(hlt.hpfx, null);
 		}
 	    }
@@ -670,12 +670,12 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 	    if (ki != null)
 		rl.add(ki.fx, null);
 
-	    if(DefSettings.global.get(DefSettings.SHOWHITBOX, Boolean.class) && hitbox != null) {
+	    if(DefSettings.SHOWHITBOX.get() && hitbox != null) {
 	        rl.add(hitbox, null);
 	    }
 	} else {
 	    //hidden gob, only show its square if allowed
-	    if(DefSettings.global.get(DefSettings.SHOWHIDDEN, Boolean.class)) {
+	    if(DefSettings.SHOWHIDDEN.get()) {
 	        hid.setup(rl);
 	    }
 	}

@@ -242,6 +242,7 @@ public class BeltWnd extends MovableWidget {
     private final BeltData data;
 
 
+    //TODO: belts should be IndirSettings
     private BeltWnd(final String name, final BeltData data) {
         super(name);
         this.name = name;

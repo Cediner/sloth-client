@@ -38,6 +38,12 @@ INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/terobjs/plants/yellowon
 INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/terobjs/plants/pumpkin', (SELECT type_id FROM type WHERE name_key = 'PLANT'));
 INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/terobjs/plants/pepper', (SELECT type_id FROM type WHERE name_key = 'PLANT'));
 INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/terobjs/plants/wine', (SELECT type_id FROM type WHERE name_key = 'PLANT'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/terobjs/plants/redonion', (SELECT type_id FROM type WHERE name_key = 'PLANT'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/terobjs/plants/turnip', (SELECT type_id FROM type WHERE name_key = 'PLANT'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/terobjs/plants/cucumber', (SELECT type_id FROM type WHERE name_key = 'PLANT'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/terobjs/plants/millet', (SELECT type_id FROM type WHERE name_key = 'PLANT'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/terobjs/plants/leek', (SELECT type_id FROM type WHERE name_key = 'PLANT'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/terobjs/plants/lettuce', (SELECT type_id FROM type WHERE name_key = 'PLANT'));
 -- misc stuff
 INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/terobjs/trough', (SELECT type_id FROM type WHERE name_key = 'FARMING'));
 INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/terobjs/beehive', (SELECT type_id FROM type WHERE name_key = 'FARMING'));
@@ -298,6 +304,12 @@ INSERT OR IGNORE INTO growth VALUES ((SELECT object_id FROM object WHERE name = 
 INSERT OR IGNORE INTO growth VALUES ((SELECT object_id FROM object WHERE name = 'gfx/terobjs/plants/pumpkin')       , 4);
 INSERT OR IGNORE INTO growth VALUES ((SELECT object_id FROM object WHERE name = 'gfx/terobjs/plants/pepper')        , 6);
 INSERT OR IGNORE INTO growth VALUES ((SELECT object_id FROM object WHERE name = 'gfx/terobjs/plants/wine')          , 6);
+INSERT OR IGNORE INTO growth VALUES ((SELECT object_id FROM object WHERE name = 'gfx/terobjs/plants/redonion')      , 3);
+INSERT OR IGNORE INTO growth VALUES ((SELECT object_id FROM object WHERE name = 'gfx/terobjs/plants/turnip')        , 3);
+INSERT OR IGNORE INTO growth VALUES ((SELECT object_id FROM object WHERE name = 'gfx/terobjs/plants/cucumber')      , 4);
+INSERT OR IGNORE INTO growth VALUES ((SELECT object_id FROM object WHERE name = 'gfx/terobjs/plants/leek')          , 4);
+INSERT OR IGNORE INTO growth VALUES ((SELECT object_id FROM object WHERE name = 'gfx/terobjs/plants/lettuce')       , 4);
+INSERT OR IGNORE INTO growth VALUES ((SELECT object_id FROM object WHERE name = 'gfx/terobjs/plants/millet')        , 3);
 
 CREATE TABLE IF NOT EXISTS dangerous (
     object_id   INTEGER,    -- Objects that are dangerous to the player

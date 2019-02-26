@@ -53,7 +53,7 @@ public class Scrollbar extends Widget {
     
     public void draw(GOut g) {
 	if(vis()) {
-	    g.chcolor(DefSettings.global.get(String.format(DefSettings.SLIDERCOLFMT, DefSettings.global.get(DefSettings.HUDTHEME, String.class)), Color.class));
+	    g.chcolor(DefSettings.SLIDERCOL.get());
 	    //x offset incase sflarp.sz.x > schain.sz.x
 	    int cx = (sflarp.sz().x / 2) - (schaint.sz().x / 2);
 	    //Top

@@ -230,7 +230,7 @@ public class FlowerMenu extends Widget {
     public boolean mousedown(Coord c, int button) {
 	if(!anims.isEmpty())
 	    return(true);
-	if(DefSettings.global.get(DefSettings.BUGGEDMENU, Boolean.class))
+	if(DefSettings.BUGGEDMENU.get())
 	    return super.mousedown(c, button);
 	if(!super.mousedown(c, button))
 	    choose(null);
@@ -255,7 +255,7 @@ public class FlowerMenu extends Widget {
     public void binded() {
 	int jack = ui.modflags();
 
-	if(DefSettings.global.get(DefSettings.QUICKMENU, Boolean.class) && jack < opts.length && opts.length <= 2) {
+	if(DefSettings.QUICKMENU.get() && jack < opts.length && opts.length <= 2) {
 	    if(opts[0].name.equals("Empty")){
 		if(opts.length == 1) return; //don't jackui a single empty
 		//switch options for containers
@@ -263,7 +263,7 @@ public class FlowerMenu extends Widget {
 	    }
 	    wdgmsg("cl",jack,0);
 	    hide();
-	} else if(DefSettings.global.get(DefSettings.QUICKMENU, Boolean.class) && jack < opts.length && opts[1].name.equals("Sip")) {
+	} else if(DefSettings.QUICKMENU.get() && jack < opts.length && opts[1].name.equals("Sip")) {
 	    wdgmsg("cl", jack, 0);
 	    hide();
 	}

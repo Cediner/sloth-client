@@ -26,6 +26,8 @@
 
 package haven;
 
+import haven.sloth.Theme;
+
 import java.util.*;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -627,7 +629,7 @@ public class FightWnd extends Widget {
 		g.aimage(saves[n].tex(), new Coord(20, itemh / 2), 0.0, 0.5);
 	    }
 	    if(n == usesave)
-		g.aimage(CheckBox.smark, new Coord(itemh / 2, itemh / 2), 0.5, 0.5);
+		g.aimage(Theme.timg("chkbox/small", 1), new Coord(itemh / 2, itemh / 2), 0.5, 0.5);
 	}
 
 	private Coord lc = null;

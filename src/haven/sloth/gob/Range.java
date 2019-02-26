@@ -47,8 +47,8 @@ public class Range extends GAttrib implements Rendered {
     }
 
     public void setup(RenderList rl) {
-        if((gob.type == Type.ANIMAL && global.get(SHOWANIMALRADIUS, Boolean.class) && !gob.isDead()) ||
-		(gob.type == Type.FARMING && global.get(SHOWFARMRADIUS, Boolean.class))) {
+        if((gob.type == Type.ANIMAL && SHOWANIMALRADIUS.get() && !gob.isDead()) ||
+		(gob.type == Type.FARMING && SHOWFARMRADIUS.get())) {
 	    rl.add(bp, null);
 	}
     }

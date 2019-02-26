@@ -1,3 +1,10 @@
+2/26/19
+    - Fixed the bug with not being able to use hotkeys while in combat
+    - Rearranged Options window
+
+2/25/19
+    - Added more crops that weren't displaying their crop stages
+
 2/24/19
     - Unless you're switching between moves rapidly the client will only send up to 10 moves per second roughly
     - Random keys that are not caught by the client and sent to the server are also delayed if it's the same key, like above
@@ -10,6 +17,8 @@
     - FPS will now display in top right, can be turned off in Gameplay settings
     - You can now lock placing objects again with ctrl + right click. This also means for things like stockpile items
       you can lock one as a stockpile and carry another one as an item and lock both on your mouse to move around.
+    - Show FPS will also now show how much data was sent and received in the last second under it.
+        - You should rarely see it say "R: 0" for long periods of time (ie: over 5-10 seconds).
 
 2/22/19
     - Added in Dark mode for a different kind of experience, will expand on this further later on

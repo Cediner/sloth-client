@@ -44,106 +44,97 @@ public class DefSettings {
     public static final Settings session = new Settings("");
 
     //Sections & settings for each one, for 'global'
-    public static final String
-	//GLSettings
-	PFLIGHTING = "graphics.lighting-per-fragment", 		//[Bool] Use per-fragment lighting
-	CELSHADING = "graphics.lighting-cel-shading",		//[Bool] Use cel-shading shader
-	SHADOWS = "graphics.shadows-show",			//[Bool] Display shadows
-	WATERSURFACE = "graphics.water-surface-show",		//[Bool] Render water surfaces
-	ANTIALIASING = "graphics.msaa-use",			//[Bool] Use Antialiasing
-    	MESHMODE = "graphics.meshmode",				//[String] Mesh mode : { VAO, DLIST, MEM }
-    	INSTANCING = "graphics.instancing-use",			//[Bool] Use instancing or not
-    	OUTLINES = "graphics.outlines-use",			//[Bool] Toggle outlines
-        ANISOLEVEL = "graphics.anisotropic-level",		//[Int] Anisotropic level [0-GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT]
-    	ALPHACOV = "graphics.alpha-coverage",                   //[Bool] Toggle alpha coverage for multisampling
-	//Custom stuff
-	SKIPLOADING = "graphics.skip-loading",			//[Bool] Skip loading screens
-	SHOWFLAVOBJS = "graphics.flav-objs-show",	  	//[Bool] Don't show flav objs
-	SYMMETRICOUTLINES = "graphics.outlines-symmetric",   	//[Bool] Make outlines symmetric (bolder)
-	SHADOWSQUALITY = "graphics.shadows-quality",		//[Int ] Shadow quality level [0-7], 4 is default
-	SHADOWSIZE = "graphics.shadows-size",			//[Int ] Shadow size, 750 is default
-	MSAALEVEL = "graphics.msaa-level",			//[Int ] MSAA level [1-8]
-	WIREFRAMEMODE = "graphics.wireframe-mode",		//[Int ] Display everything as wireframe
-	WEATHER = "graphics.weather-show",			//[Bool] Show weather or not
-	ANIMATIONS = "graphics.animations-show",		//[Bool] Turn animations orr or on
-	SHOWMAP = "graphics.map-show",				//[Bool] Toggle mapgrid on/off
-	SHOWGOBS = "graphics.gobs-show",			//[Bool] Toggle gobs on/off
-	NIGHTVISION = "graphics.nightvision",			//[Bool] Toggle nightvision
-    	FLATWORLD = "graphics.flatworld",			//[Bool] Toggle flatworld (haven)
-    	SHOWTRANTILES = "graphics.show-transition-tiles",	//[Bool] Toggle transition tiles
-    	TREESCALE = "graphics.tree-scale",			//[Int ] Tree scaling value [1-16], 1 is default
-    	COLORFULDUST = "graphics.colorful-cave-dust",		//[Bool] Toggle colorful cave dust
-    	MOREFLAVOBJS = "graphics.more-flavor-objs",		//[Bool] Toggle more flavor objects
-    	SHOWSKYBOX = "graphics.show-skybox",			//[Bool] Toggle skybox
-    	SKYBOXRANGE = "graphics.skybox-range",			//[Int ] Skybox range, default -> 1500?
-    	KEEPGRIDS = "graphics.dont-delete-grids",		//[Bool] Don't delete map grids
-    	DRAWGRIDRADIUS = "graphics.map-grid-draw-radius",	//[Int ] Map grid draw radius, default -> 2
-    	NVAMBIENTCOL = "graphics.nightvision-ambient",		//[RBGA] Nightvision ambient color
-    	NVDIFFUSECOL = "graphics.diffuse-color",		//[RGBA] Nightvision diffuse color
-    	NVSPECCOC = "graphics.specular-color",			//[RGBA] Nightvision specular color
-    	DARKMODE = "graphics.dark-mode",			//[Bool] Toggle dark mode, overrides Nightvision
+    //Custom stuff
+    public static final IndirSetting<Boolean> SKIPLOADING =  new IndirSetting<>(global, "graphics.skip-loading");             //[Bool] Skip loading screens
+    public static final IndirSetting<Boolean> SHOWFLAVOBJS =  new IndirSetting<>(global, "graphics.flav-objs-show");          //[Bool] Don't show flav objs
+    public static final IndirSetting<Boolean> SYMMETRICOUTLINES =  new IndirSetting<>(global, "graphics.outlines-symmetric"); //[Bool] Make outlines symmetric (bolder)
+    public static final IndirSetting<Integer> SHADOWSQUALITY =  new IndirSetting<>(global, "graphics.shadows-quality");       //[Int ] Shadow quality level [0-7], 4 is default
+    public static final IndirSetting<Integer> SHADOWSIZE =  new IndirSetting<>(global, "graphics.shadows-size");              //[Int ] Shadow size, 750 is default
+    public static final IndirSetting<Integer> MSAALEVEL =  new IndirSetting<>(global, "graphics.msaa-level");                 //[Int ] MSAA level [1-8]
+    public static final IndirSetting<Boolean> WIREFRAMEMODE =  new IndirSetting<>(global, "graphics.wireframe-mode");         //[Bool] Display everything as wireframe
+    public static final IndirSetting<Boolean> WEATHER =  new IndirSetting<>(global, "graphics.weather-show");                 //[Bool] Show weather or not
+    public static final IndirSetting<Boolean> ANIMATIONS =  new IndirSetting<>(global, "graphics.animations-show");           //[Bool] Turn animations orr or on
+    public static final IndirSetting<Boolean> SHOWMAP =  new IndirSetting<>(global, "graphics.map-show");                     //[Bool] Toggle mapgrid on/off
+    public static final IndirSetting<Boolean> SHOWGOBS =  new IndirSetting<>(global, "graphics.gobs-show");                   //[Bool] Toggle gobs on/off
+    public static final IndirSetting<Boolean> NIGHTVISION =  new IndirSetting<>(global, "graphics.nightvision");              //[Bool] Toggle nightvision
+    public static final IndirSetting<Boolean> FLATWORLD =  new IndirSetting<>(global, "graphics.flatworld");                  //[Bool] Toggle flatworld (haven)
+    public static final IndirSetting<Boolean> SHOWTRANTILES =  new IndirSetting<>(global, "graphics.show-transition-tiles");  //[Bool] Toggle transition tiles
+    public static final IndirSetting<Boolean> COLORFULDUST =  new IndirSetting<>(global, "graphics.colorful-cave-dust");      //[Bool] Toggle colorful cave dust
+    public static final IndirSetting<Integer> DRAWGRIDRADIUS =  new IndirSetting<>(global, "graphics.map-grid-draw-radius");  //[Int ] Map grid draw radius, default -> 2
+    public static final IndirSetting<Color> NVAMBIENTCOL =  new IndirSetting<>(global, "graphics.nightvision-ambient");       //[RBGA] Nightvision ambient color
+    public static final IndirSetting<Color> NVDIFFUSECOL =  new IndirSetting<>(global, "graphics.diffuse-color");             //[RGBA] Nightvision diffuse color
+    public static final IndirSetting<Color> NVSPECCOC =  new IndirSetting<>(global, "graphics.specular-color");               //[RGBA] Nightvision specular color
+    public static final IndirSetting<Boolean> DARKMODE =  new IndirSetting<>(global, "graphics.dark-mode");                   //[Bool] Toggle dark mode, overrides Nightvision
+    public static final IndirSetting<Boolean> QUICKMENU =  new IndirSetting<>(global, "gameplay.quick-flowermenu");           //[Bool] Toggle quick flowermenu
+    public static final IndirSetting<Boolean> BUGGEDMENU =  new IndirSetting<>(global, "gameplay.bugged-flowermenu");         //[Bool] Whether not flowermenu should close on clicks outside of it
+    public static final IndirSetting<Boolean> SIMPLECROPS =  new IndirSetting<>(global, "gameplay.simple-crops");             //[Bool] Toggle simple crop meshes
+    public static final IndirSetting<Boolean> SHOWCROPSTAGE =  new IndirSetting<>(global, "gameplay.show-crop-stage");        //[Bool] Toggle crop stages off/on
+    public static final IndirSetting<Boolean> SHOWGOBHP =  new IndirSetting<>(global, "gameplay.show-gob-hp");                //[Bool] Toggle gob hp visibility
+    public static final IndirSetting<Boolean> SHOWGOBPATH =  new IndirSetting<>(global, "gameplay.show-gob-path");            //[Bool] Toggle gob path rendering
+    public static final IndirSetting<Color> GOBPATHCOL =  new IndirSetting<>(global, "gameplay.gob-path-color");              //[RGBA] Path color for gobs, only for unknown gobs
+    public static final IndirSetting<Color> VEHPATHCOL =  new IndirSetting<>(global, "gameplay.vehicle-path-color");          //[RGBA] Path color for vehicle
+    public static final IndirSetting<Boolean> SHOWANIMALPATH =  new IndirSetting<>(global, "gameplay.show-animal-path");      //[Bool] Toggle animal path rendering
+    public static final IndirSetting<Color> ANIMALPATHCOL =  new IndirSetting<>(global, "gameplay.animal-path-color");        //[RBGA] Path color for animals
+    public static final IndirSetting<Boolean> SHOWANIMALRADIUS =  new IndirSetting<>(global, "gameplay.show-animal-radius");  //[Bool] Toggle radius on dangerous animals
+    public static final IndirSetting<Boolean> SHOWFARMRADIUS =  new IndirSetting<>(global, "gameplay.show-farming-radius");   //[Bool] Toggle radius on farming equipment (beehive/trough)
+    public static final IndirSetting<Boolean> SHOWHITBOX =  new IndirSetting<>(global, "gameplay.show-hitbox");               //[Bool] Toggle hitbox squares
+    public static final IndirSetting<Boolean> SHOWHIDDEN =  new IndirSetting<>(global, "gameplay.show-hidden");               //[Bool] Toggle hidden squares
+    public static final IndirSetting<Color> HIDDENCOLOR =  new IndirSetting<>(global, "gameplay.hidden-color");               //[RGBA] Color of hidden squares
+    public static final IndirSetting<Boolean> SHOWQUALITY =  new IndirSetting<>(global, "gameplay.show-item-quality");        //[Bool] Toggle item quality
+    public static final IndirSetting<Boolean> SHOWWEAR =  new IndirSetting<>(global, "gameplay.show-item-wear");              //[Bool] Toggle item wear bar
+    public static final IndirSetting<Boolean> SHOWCMETER =  new IndirSetting<>(global, "gameplay.show-content-meter");        //[Bool] Toggle item content bar
+    public static final IndirSetting<Boolean> AUTOEQUIP =  new IndirSetting<>(global, "gameplay.item-equip-on-right-click");  //[Bool] Toggle equiping items on right click if possible
+    public static final IndirSetting<Boolean> SHOWPCLAIM =  new IndirSetting<>(global, "gameplay.show-pclaim");               //[Bool] Toggle pclaims
+    public static final IndirSetting<Boolean> SHOWVCLAIM =  new IndirSetting<>(global, "gameplay.show-vclaim");               //[Bool] Toggle vclaims
+    public static final IndirSetting<Boolean> SHOWKCLAIM =  new IndirSetting<>(global, "gameplay.show-kclaim");               //[Bool] Toggle kingdom claims
+    public static final IndirSetting<Integer> BADKIN =  new IndirSetting<>(global, "gameplay.bad-kin-color");                 //[Int] Bad kin color, default: 2 (red)
+    public static final IndirSetting<Boolean> ALWAYSLONGTIP =  new IndirSetting<>(global, "gameplay.always-show-longtip");    //[Bool] Toggle only longtips on item tooltips
+    public static final IndirSetting<Boolean> SHOWFPS =  new IndirSetting<>(global, "gameplay.show-fps");                     //[Bool] Toggle FPS counter
+    public static final IndirSetting<Boolean> SHOWFKBELT =  new IndirSetting<>(global, "belt.fk.show");                       //[Bool] Toggle F key belt
+    public static final IndirSetting<Integer> FKBELTPAGE =  new IndirSetting<>(global, "belt.fk.page");                       //[Int] Page F key belt is on
+    public static final IndirSetting<String> FKBELTSTYLE =  new IndirSetting<>(global, "belt.fk.style");                      //[String] F key belt style
+    public static final IndirSetting<Boolean> SHOWNPBELT =  new IndirSetting<>(global, "belt.np.show");                       //[Bool] Toggle NumPad belt
+    public static final IndirSetting<Integer> NPBELTPAGE =  new IndirSetting<>(global, "belt.np.page");                       //[Int] Page F key belt is on
+    public static final IndirSetting<String> NPBELTSTYLE =  new IndirSetting<>(global, "belt.np.style");                      //[String] F key belt style
+    public static final IndirSetting<Boolean> SHOWNBELT =  new IndirSetting<>(global, "belt.n.show");                         //[Bool] Toggle Number belt
+    public static final IndirSetting<Integer> NBELTPAGE =  new IndirSetting<>(global, "belt.n.page");                         //[Int] Page F key belt is on
+    public static final IndirSetting<String> NBELTSTYLE =  new IndirSetting<>(global, "belt.n.style");                        //[String] F key belt style
+    public static final IndirSetting<Boolean> MMSHOWGRID =  new IndirSetting<>(global, "minimap.show-grid");                  //[Bool] Toggle minimap grid
+    public static final IndirSetting<Boolean> MMSHOWVIEW =  new IndirSetting<>(global, "minimap.show-view");                  //[Bool] Toggle minimap view box
+    public static final IndirSetting<String> CAMERA =  new IndirSetting<>(global, "camera.camera-type");                      //[String] Camera type, default: Ortho
+    public static final IndirSetting<Boolean> FREECAMREXAXIS =  new IndirSetting<>(global, "camera.free.reverse-x-axis");     //[Bool] Reverse free cam x axis on drag or not
+    public static final IndirSetting<Boolean> FREECAMREYAXIS =  new IndirSetting<>(global, "camera.free.reverse-y-axis");     //[Bool] Reverse free cam y axis on drag or not
+    public static final IndirSetting<Boolean> FREECAMLOCKELAV =  new IndirSetting<>(global, "camera.free.lock-elevation");    //[Bool] Lock freecam elevation angle
+    public static final IndirSetting<Integer> TIMERVOLUME =  new IndirSetting<>(global, "audio.timer-volume");                //[Int] Timer volume
+    public static final IndirSetting<Boolean> NOGOBAUDIO = new IndirSetting<>(global, "audio.no-gob-audio");                  //[Bool] Toggles Gob audio
 
-    	QUICKMENU = "gameplay.quick-flowermenu", 		//[Bool] Toggle quick flowermenu
-    	BUGGEDMENU = "gameplay.bugged-flowermenu",		//[Bool] Whether not flowermenu should close on clicks outside of it
-    	SIMPLECROPS = "gameplay.simple-crops",			//[Bool] Toggle simple crop meshes
-    	SHOWCROPSTAGE = "gameplay.show-crop-stage",		//[Bool] Toggle crop stages off/on
-    	AUTOHEARTH = "gameplay.autohearth",			//[Bool] Toggle auto hearth on players
-    	SMARTAIM = "gameplay.smartaim",				//[Bool] Toggle smart aim for archery
-    	SHOWGOBHP = "gameplay.show-gob-hp",			//[Bool] Toggle gob hp visibility
-    	SHOWGOBPATH = "gameplay.show-gob-path",			//[Bool] Toggle gob path rendering
-    	GOBPATHCOL = "gameplay.gob-path-color",			//[RGBA] Path color for gobs, only for unknown gobs
-    	VEHPATHCOL = "gameplay.vehicle-path-color",		//[RGBA] Path color for vehicle
-    	SHOWANIMALPATH = "gameplay.show-animal-path",		//[Bool] Toggle animal path rendering
-    	ANIMALPATHCOL = "gameplay.animal-path-color",		//[RBGA] Path color for animals
-    	SHOWANIMALRADIUS = "gameplay.show-animal-radius",	//[Bool] Toggle radius on dangerous animals
-    	SHOWFARMRADIUS = "gameplay.show-farming-radius",	//[Bool] Toggle radius on farming equipment (beehive/trough)
-    	SHOWHITBOX = "gameplay.show-hitbox",			//[Bool] Toggle hitbox squares
-    	SHOWHIDDEN = "gameplay.show-hidden",			//[Bool] Toggle hidden squares
-    	HIDDENCOLOR = "gameplay.hidden-color",			//[RGBA] Color of hidden squares
-    	SHOWQUALITY = "gameplay.show-item-quality",             //[Bool] Toggle item quality
-    	SHOWWEAR = "gameplay.show-item-wear",			//[Bool] Toggle item wear bar
-    	SHOWCMETER = "gameplay.show-content-meter",		//[Bool] Toggle item content bar
-    	AUTOEQUIP = "gameplay.item-equip-on-right-click",	//[Bool] Toggle equiping items on right click if possible
-    	SHOWPCLAIM = "gameplay.show-pclaim",			//[Bool] Toggle pclaims
-    	SHOWVCLAIM = "gameplay.show-vclaim",			//[Bool] Toggle vclaims
-    	SHOWKCLAIM = "gameplay.show-kclaim",			//[Bool] Toggle kingdom claims
-    	BADKIN = "gameplay.bad-kin-color",			//[Int] Bad kin color, default: 2 (red)
-    	ALWAYSLONGTIP = "gameplay.always-show-longtip",		//[Bool] Toggle only longtips on item tooltips
-    	SHOWFPS = "gameplay.show-fps",				//[Bool] Toggle FPS counter
+    //Themes
+    public static final IndirSetting<String[]> THEMES = new IndirSetting<>(session, "theme.themes");
+    public static final IndirSetting<String> HUDTHEME =  new IndirSetting<>(global, "theme.hud");                             //[String] Hud theme to use, default: sloth
+    public static final IndirSetting<Color> WNDCOL = new IndirSetting<>(global, new IndirSetting.IndirFormatKey("theme.%s.wnd.color", HUDTHEME));
+    public static final IndirSetting<Color> BTNCOL = new IndirSetting<>(global, new IndirSetting.IndirFormatKey("theme.%s.button.color", HUDTHEME));
+    public static final IndirSetting<Color> TXBCOL = new IndirSetting<>(global, new IndirSetting.IndirFormatKey("theme.%s.textbox.color", HUDTHEME));
+    public static final IndirSetting<Color> SLIDERCOL = new IndirSetting<>(global, new IndirSetting.IndirFormatKey("theme.%s.slider.color", HUDTHEME));
+    private static final String
+	    WNDCOLFMT = "theme.%s.wnd.color",
+	    BTNCOLFMT = "theme.%s.button.color",
+	    TXBCOLFMT = "theme.%s.textbox.color",
+	    SLIDERCOLFMT = "theme.%s.slider.color";
 
-    	SHOWFKBELT = "belt.fk.show",				//[Bool] Toggle F key belt
-    	FKBELTPAGE = "belt.fk.page",				//[Int] Page F key belt is on
-    	FKBELTSTYLE = "belt.fk.style",				//[String] F key belt style
-    	SHOWNPBELT = "belt.np.show",	 			//[Bool] Toggle NumPad belt
-	NPBELTPAGE = "belt.np.page",				//[Int] Page F key belt is on
-	NPBELTSTYLE = "belt.np.style",				//[String] F key belt style
-    	SHOWNBELT = "belt.n.show",				//[Bool] Toggle Number belt
-	NBELTPAGE = "belt.n.page",				//[Int] Page F key belt is on
-	NBELTSTYLE = "belt.n.style",				//[String] F key belt style
+    //Unused
+    public static final IndirSetting<Integer> TREESCALE =  new IndirSetting<>(global, "graphics.tree-scale");                 //[Int ] Tree scaling value [1-16], 1 is default
+    public static final IndirSetting<Boolean> MOREFLAVOBJS =  new IndirSetting<>(global, "graphics.more-flavor-objs");        //[Bool] Toggle more flavor objects
+    public static final IndirSetting<Boolean> SHOWSKYBOX =  new IndirSetting<>(global, "graphics.show-skybox");               //[Bool] Toggle skybox
+    public static final IndirSetting<Integer> SKYBOXRANGE =  new IndirSetting<>(global, "graphics.skybox-range");             //[Int ] Skybox range, default -> 1500?
+    public static final IndirSetting<Boolean> KEEPGRIDS =  new IndirSetting<>(global, "graphics.dont-delete-grids");          //[Bool] Don't delete map grids
+    public static final IndirSetting<Boolean> AUTOHEARTH =  new IndirSetting<>(global, "gameplay.autohearth");                //[Bool] Toggle auto hearth on players
+    public static final IndirSetting<Boolean> SMARTAIM =  new IndirSetting<>(global, "gameplay.smartaim");                    //[Bool] Toggle smart aim for archery
+    public static final IndirSetting<String> MENUTHEME =  new IndirSetting<>(global, "theme.menu");                           //[String] Menu theme to use, default: default
 
-    	MMSHOWGRID = "minimap.show-grid",			//[Bool] Toggle minimap grid
-    	MMSHOWVIEW = "minimap.show-view",			//[Bool] Toggle minimap view box
 
-    	CAMERA = "camera.camera-type",				//[String] Camera type, default: Ortho
-    	FREECAMREXAXIS = "camera.free.reverse-x-axis",		//[Bool] Reverse free cam x axis on drag or not
-    	FREECAMREYAXIS = "camera.free.reverse-y-axis",		//[Bool] Reverse free cam y axis on drag or not
-    	FREECAMLOCKELAV = "camera.free.lock-elevation",		//[Bool] Lock freecam elevation angle
-
-    	HUDTHEME = "theme.hud",					//[String] Hud theme to use, default: sloth
-    	MENUTHEME = "theme.menu",				//[String] Menu theme to use, default: default
-    	THEMES = "theme.themes",				//[String[]] Session only
-    	//Not listed: theme.<theme-name>.wnd.color		//[RGBA] Window overlay color, default: White (no change)
-    	WNDCOLFMT = "theme.%s.wnd.color",
-	BTNCOLFMT = "theme.%s.button.color",
-	TXBCOLFMT = "theme.%s.textbox.color",
-	SLIDERCOLFMT = "theme.%s.slider.color",
-
-    	TIMERVOLUME = "audio.timer-volume",			//[Int] Timer volume
-    	NOGOBAUDIO = "audio.no-gob-audio"; 			//[Bool] Toggles Gob audio
-
-    public static final String
-    	PAUSED = "session.paused",
-    	SHOWGRID = "session.show-grid";
+    //Session based
+    public static final IndirSetting<Boolean> PAUSED = new IndirSetting<>(session, "session.paused");
+    public static final IndirSetting<Boolean> SHOWGRID = new IndirSetting<>(session, "session.show-grid");
 
     /**
      * Checks out settings nad saves them if they are dirty
@@ -158,94 +149,83 @@ public class DefSettings {
      */
     public static void init() {
         global.load();
-        //GLSettings
-	global.ensure(PFLIGHTING, true);
-	global.ensure(CELSHADING, false);
-	global.ensure(SHADOWS, true);
-	global.ensure(WATERSURFACE, true);
-	global.ensure(ANTIALIASING, false);
-	global.ensure(ALPHACOV, false);
-	global.ensure(MESHMODE, "VAO");
-	global.ensure(INSTANCING, true);
-	global.ensure(OUTLINES, true);
-	global.ensure(ANISOLEVEL, 0);
 	//Custom Graphics
-	global.ensure(SKIPLOADING,true);
-	global.ensure(SHOWFLAVOBJS,false);
-	global.ensure(SKIPLOADING, true);
-	global.ensure(SHOWFLAVOBJS, true);
-	global.ensure(SYMMETRICOUTLINES, false);
-	global.ensure(SHADOWSQUALITY, 4);
-	global.ensure(SHADOWSIZE, 750);
-	global.ensure(MSAALEVEL, 4);
-	global.ensure(WIREFRAMEMODE, false);
-	global.ensure(WEATHER, true);
-	global.ensure(ANIMATIONS, true);
-	global.ensure(SHOWMAP, true);
-	global.ensure(SHOWGOBS, true);
-	global.ensure(NIGHTVISION, false);
-	global.ensure(NVAMBIENTCOL, Color.WHITE);
-	global.ensure(NVDIFFUSECOL, Color.WHITE);
-	global.ensure(NVSPECCOC, Color.WHITE);
-	global.ensure(FLATWORLD, false);
-	global.ensure(SHOWTRANTILES, true);
-	global.ensure(TREESCALE, 1);
-	global.ensure(COLORFULDUST, true);
-	global.ensure(MOREFLAVOBJS, false);
-	global.ensure(SHOWSKYBOX, false);
-	global.ensure(SKYBOXRANGE, 15000);
-	global.ensure(KEEPGRIDS, false);
-	global.ensure(DRAWGRIDRADIUS, 2);
-	global.ensure(DARKMODE, false);
+	SKIPLOADING.ensure(true);
+	SHOWFLAVOBJS.ensure(false);
+	SKIPLOADING.ensure(true);
+	SHOWFLAVOBJS.ensure(true);
+	SYMMETRICOUTLINES.ensure(false);
+	SHADOWSQUALITY.ensure(4);
+	SHADOWSIZE.ensure(750);
+	MSAALEVEL.ensure(4);
+	WIREFRAMEMODE.ensure(false);
+	WEATHER.ensure(true);
+	ANIMATIONS.ensure(true);
+	SHOWMAP.ensure(true);
+	SHOWGOBS.ensure(true);
+	NIGHTVISION.ensure(false);
+	NVAMBIENTCOL.ensure(Color.WHITE);
+	NVDIFFUSECOL.ensure(Color.WHITE);
+	NVSPECCOC.ensure(Color.WHITE);
+	FLATWORLD.ensure(false);
+	SHOWTRANTILES.ensure(true);
+	TREESCALE.ensure(1);
+	COLORFULDUST.ensure(true);
+	MOREFLAVOBJS.ensure(false);
+	SHOWSKYBOX.ensure(false);
+	SKYBOXRANGE.ensure(15000);
+	KEEPGRIDS.ensure(false);
+	DRAWGRIDRADIUS.ensure(2);
+	DARKMODE.ensure(false);
 	//Gameplay
-	global.ensure(QUICKMENU, false);
-	global.ensure(BUGGEDMENU, false);
-	global.ensure(SIMPLECROPS, false);
-	global.ensure(SHOWCROPSTAGE, false);
-	global.ensure(AUTOHEARTH, false);
-	global.ensure(SMARTAIM, false);
-	global.ensure(SHOWGOBHP, false);
-	global.ensure(SHOWGOBPATH, false);
-	global.ensure(GOBPATHCOL, new Color(255, 0, 0, 168));
-	global.ensure(VEHPATHCOL, new Color(111, 255, 138, 168));
-	global.ensure(SHOWANIMALPATH, false);
-	global.ensure(ANIMALPATHCOL, new Color(144,255,171,146));
-	global.ensure(SHOWANIMALRADIUS, false);
-	global.ensure(SHOWFARMRADIUS, false);
-	global.ensure(SHOWHITBOX, false);
-	global.ensure(SHOWHIDDEN, true);
-	global.ensure(HIDDENCOLOR, Color.RED);
-	global.ensure(SHOWQUALITY, true);
-	global.ensure(SHOWWEAR, true);
-	global.ensure(SHOWCMETER, true);
-	global.ensure(AUTOEQUIP, true);
-	global.ensure(SHOWPCLAIM, false);
-	global.ensure(SHOWVCLAIM, false);
-	global.ensure(SHOWKCLAIM, false);
-	global.ensure(BADKIN, 2);
-	global.ensure(ALWAYSLONGTIP, true);
-	global.ensure(SHOWFPS, true);
+	QUICKMENU.ensure(false);
+	BUGGEDMENU.ensure(false);
+	SIMPLECROPS.ensure(false);
+	SHOWCROPSTAGE.ensure(false);
+	AUTOHEARTH.ensure(false);
+	SMARTAIM.ensure(false);
+	SHOWGOBHP.ensure(false);
+	SHOWGOBPATH.ensure(false);
+	GOBPATHCOL.ensure(new Color(255,0,0,168));
+	VEHPATHCOL.ensure(new Color(111,255,138,168));
+	SHOWANIMALPATH.ensure(false);
+	ANIMALPATHCOL.ensure(new Color(144,255,171,146));
+	SHOWANIMALRADIUS.ensure(false);
+	SHOWFARMRADIUS.ensure(false);
+	SHOWHITBOX.ensure(false);
+	SHOWHIDDEN.ensure(true);
+	HIDDENCOLOR.ensure(Color.RED);
+	SHOWQUALITY.ensure(true);
+	SHOWWEAR.ensure(true);
+	SHOWCMETER.ensure(true);
+	AUTOEQUIP.ensure(true);
+	SHOWPCLAIM.ensure(false);
+	SHOWVCLAIM.ensure(false);
+	SHOWKCLAIM.ensure(false);
+	BADKIN.ensure(2);
+	ALWAYSLONGTIP.ensure(true);
+	SHOWFPS.ensure(true);
 	//Belts
-	global.ensure(SHOWFKBELT, false);
-	global.ensure(FKBELTPAGE, 0);
-	global.ensure(FKBELTSTYLE, BeltWnd.Style.HORIZONTAL.toString());
-	global.ensure(SHOWNPBELT, false);
-	global.ensure(NPBELTPAGE, 0);
-	global.ensure(NPBELTSTYLE, BeltWnd.Style.HORIZONTAL.toString());
-	global.ensure(SHOWNBELT, true);
-	global.ensure(NBELTPAGE, 0);
-	global.ensure(NBELTSTYLE, BeltWnd.Style.HORIZONTAL.toString());
+	SHOWFKBELT.ensure(false);
+	FKBELTPAGE.ensure(0);
+	FKBELTSTYLE.ensure(BeltWnd.Style.HORIZONTAL.toString());
+	SHOWNPBELT.ensure(false);
+	NPBELTPAGE.ensure(0);
+	NPBELTSTYLE.ensure(BeltWnd.Style.HORIZONTAL.toString());
+	SHOWNBELT.ensure(true);
+	NBELTPAGE.ensure(0);
+	NBELTSTYLE.ensure(BeltWnd.Style.HORIZONTAL.toString());
 	//Minimap
-	global.ensure(MMSHOWGRID, false);
-	global.ensure(MMSHOWVIEW, false);
+	MMSHOWGRID.ensure(false);
+	MMSHOWVIEW.ensure(false);
 	//Cameras
-	global.ensure(CAMERA, "sortho");
-	global.ensure(FREECAMREXAXIS, false);
-	global.ensure(FREECAMREYAXIS, false);
-	global.ensure(FREECAMLOCKELAV, false);
+	CAMERA.ensure("sortho");
+	FREECAMREXAXIS.ensure(false);
+	FREECAMREYAXIS.ensure(false);
+	FREECAMLOCKELAV.ensure(false);
 	//Figure out our themes
-	global.ensure(HUDTHEME, "sloth");
-	global.ensure(MENUTHEME, "default");
+	HUDTHEME.ensure("sloth");
+	MENUTHEME.ensure("default");
 	{
 	    final Color slothc = new Color(85, 144, 87, 228);
 	    global.ensure(String.format(WNDCOLFMT, "sloth"), slothc);
@@ -265,16 +245,16 @@ public class DefSettings {
 		}
 	    }
 	    //For options window
-	    session.set(THEMES, huds.toArray(new String[0]));
+	    THEMES.set(huds.toArray(new String[0]));
 	}
 
 	//Audio
-	global.ensure(TIMERVOLUME, 1000);
-	global.ensure(NOGOBAUDIO, false);
+	TIMERVOLUME.ensure(1000);
+	NOGOBAUDIO.ensure(false);
 
 	//Session based globals
-	session.ensure(PAUSED, false);
-	session.ensure(SHOWGRID, false);
+	PAUSED.ensure(false);
+	SHOWGRID.ensure(false);
 
 	//Piggy backing off this to init some other important settings
 	final Optional<Storage> optint = Storage.create("jdbc:sqlite:data/static.sqlite");
@@ -299,33 +279,22 @@ public class DefSettings {
      * Users may want to reset all graphics related settings for reasons...
      */
     public static void resetgraphics() {
-        //GLSettings
-	global.set(PFLIGHTING, true);
-	global.set(CELSHADING, false);
-	global.set(SHADOWS, true);
-	global.set(WATERSURFACE, true);
-	global.set(ANTIALIASING, false);
-	global.set(ALPHACOV, false);
-	global.set(MESHMODE, "VAO");
-	global.set(INSTANCING, true);
-	global.set(OUTLINES, true);
-	global.set(ANISOLEVEL, 0);
 	//Custom Graphics
-	global.set(SKIPLOADING,true);
-	global.set(SHOWFLAVOBJS,false);
-	global.set(SKIPLOADING, true);
-	global.set(SHOWFLAVOBJS, true);
-	global.set(SYMMETRICOUTLINES, false);
-	global.set(SHADOWSQUALITY, 4);
-	global.set(SHADOWSIZE, 750);
-	global.set(MSAALEVEL, 4);
-	global.set(WIREFRAMEMODE, false);
-	global.set(WEATHER, true);
-	global.set(ANIMATIONS, true);
-	global.set(SHOWMAP, true);
-	global.set(SHOWGOBS, true);
-	global.set(NIGHTVISION, false);
-	global.set(FLATWORLD, false);
-	global.set(SHOWTRANTILES, true);
+	SKIPLOADING.set(true);
+	SHOWFLAVOBJS.set(false);
+	SKIPLOADING.set(true);
+	SHOWFLAVOBJS.set(true);
+	SYMMETRICOUTLINES.set(false);
+	SHADOWSQUALITY.set(4);
+	SHADOWSIZE.set(750);
+	MSAALEVEL.set(4);
+	WIREFRAMEMODE.set(false);
+	WEATHER.set(true);
+	ANIMATIONS.set(true);
+	SHOWMAP.set(true);
+	SHOWGOBS.set(true);
+	NIGHTVISION.set(false);
+	FLATWORLD.set(false);
+	SHOWTRANTILES.set(true);
     }
 }

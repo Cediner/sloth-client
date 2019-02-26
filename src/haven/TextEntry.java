@@ -156,7 +156,7 @@ public class TextEntry extends SIWidget {
     }
 
     public void draw(GOut g) {
-	g.chcolor(DefSettings.global.get(String.format(DefSettings.TXBCOLFMT, DefSettings.global.get(DefSettings.HUDTHEME, String.class)), Color.class));
+	g.chcolor(DefSettings.TXBCOL.get());
 	super.draw(g);
 	g.chcolor();
 	if(hasfocus) {

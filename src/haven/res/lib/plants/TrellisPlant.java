@@ -42,7 +42,7 @@ public class TrellisPlant implements Factory {
 	    throw new ResourceException("No variants for grow stage " + stg, res);
 	} else {
 	    CSprite cs = new CSprite(owner, res);
-	    if (DefSettings.global.get(DefSettings.SIMPLECROPS, Boolean.class)) {
+	    if (DefSettings.SIMPLECROPS.get()) {
 		MeshRes mesh = (MeshRes)meshes.get(0);
 		cs.addpart(0, 0, mesh.mat.get(), mesh.m);
 	    } else {

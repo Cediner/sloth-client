@@ -189,7 +189,7 @@ public class Window extends MovableWidget implements DTarget {
     }
 
     protected void drawframe(GOut g) {
-	g.chcolor(DefSettings.global.get(String.format(DefSettings.WNDCOLFMT, DefSettings.global.get(DefSettings.HUDTHEME, String.class)), Color.class));
+	g.chcolor(DefSettings.WNDCOL.get());
         //corners
         g.image(cl, Coord.z);
         g.image(bl, new Coord(0, sz.y-bl.sz().y));

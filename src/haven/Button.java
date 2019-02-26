@@ -138,7 +138,7 @@ public class Button extends SIWidget {
 
     @Override
     public void draw(GOut g) {
-	g.chcolor(DefSettings.global.get(String.format(DefSettings.BTNCOLFMT, DefSettings.global.get(DefSettings.HUDTHEME, String.class)), Color.class));
+	g.chcolor(DefSettings.BTNCOL.get());
 	super.draw(g);
 	g.chcolor();
     }

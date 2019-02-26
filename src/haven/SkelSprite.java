@@ -186,7 +186,7 @@ public class SkelSprite extends Sprite implements Gob.Overlay.CUpd, Skeleton.Has
     
     public boolean tick(int idt) {
 	float dt = idt / 1000.0f;
-	if(DefSettings.global.get(DefSettings.ANIMATIONS, Boolean.class)) {
+	if(DefSettings.ANIMATIONS.get()) {
 	    if(!stat || (ipold > 0)) {
 		boolean done = true;
 		for(PoseMod m : mods) {
@@ -210,7 +210,7 @@ public class SkelSprite extends Sprite implements Gob.Overlay.CUpd, Skeleton.Has
     }
 
     public Object staticp() {
-	if (DefSettings.global.get(DefSettings.ANIMATIONS, Boolean.class)) {
+	if (DefSettings.ANIMATIONS.get()) {
 	    if (!stat || (manims.length > 0) || (ipold > 0)) {
 		return (null);
 	    } else {

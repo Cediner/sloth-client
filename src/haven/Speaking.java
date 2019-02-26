@@ -37,7 +37,7 @@ public class Speaking extends GAttrib {
 	
     public Speaking(Gob gob, float zo, String text) {
 	super(gob);
-	if(sb == null)
+	if(sb == null) //TODO: This should be part of hud themes.
 	    sb = new IBox("gfx/hud/emote", "tl", "tr", "bl", "br", "el", "er", "et", "eb");
 	svans = Resource.loadtex("gfx/hud/emote/svans");
 	this.zo = zo;

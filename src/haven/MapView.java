@@ -28,8 +28,7 @@ package haven;
 
 import static haven.MCache.tilesz;
 import static haven.OCache.posres;
-import static haven.sloth.DefSettings.DRAWGRIDRADIUS;
-import static haven.sloth.DefSettings.SKIPLOADING;
+import static haven.sloth.DefSettings.*;
 
 import com.google.common.flogger.FluentLogger;
 import haven.GLProgram.VarID;
@@ -52,10 +51,10 @@ public class MapView extends PView implements DTarget, Console.Directory {
     public long plgob = -1;
     public Coord2d cc;
     private final Glob glob;
-    public int view = DefSettings.global.get(DRAWGRIDRADIUS, Integer.class);
-    private Collection<Delayed> delayed = new LinkedList<Delayed>();
-    private Collection<Delayed> delayed2 = new LinkedList<Delayed>();
-    private Collection<Rendered> extradraw = new LinkedList<Rendered>();
+    public int view = DRAWGRIDRADIUS.get();
+    private Collection<Delayed> delayed = new LinkedList<>();
+    private Collection<Delayed> delayed2 = new LinkedList<>();
+    private Collection<Rendered> extradraw = new LinkedList<>();
     public Camera camera = restorecam();
     private Plob placing = null;
     private int[] visol = new int[32];
@@ -64,7 +63,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
     private Coord3f camoff = new Coord3f(Coord3f.o);
     public double shake = 0.0;
     public static int plobgran = 8;
-    private static final Map<String, Class<? extends Camera>> camtypes = new HashMap<String, Class<? extends Camera>>();
+    private static final Map<String, Class<? extends Camera>> camtypes = new HashMap<>();
     public CPUProfile setupprof = new CPUProfile(300);
     //Tooltip info
     private String lasttt = "";
@@ -230,7 +229,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 
 	public void tick(double dt) {
 	    Coord3f cc = getcc();
-	    if(DefSettings.global.get(DefSettings.FLATWORLD, Boolean.class))
+	    if(FLATWORLD.get())
 	        cc.z = 0;
 	    cc.y = -cc.y;
 	    view.update(PointedCam.compute(cc.add(camoff).add(0.0f, 0.0f, 15f), dist, elev, angl));
@@ -250,11 +249,11 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	public void drag(Coord c) {
 	    if (c == null || dragorig == null)
 		return;
-	    if (DefSettings.global.get(DefSettings.FREECAMREXAXIS, Boolean.class))
+	    if (FREECAMREXAXIS.get())
 		c = new Coord(c.x + (dragorig.x - c.x) * 2, c.y);
-	    if (DefSettings.global.get(DefSettings.FREECAMREYAXIS, Boolean.class))
+	    if (FREECAMREYAXIS.get())
 		c = new Coord(c.x, c.y + (dragorig.y - c.y) * 2);
-	    if(ui.modshift || !DefSettings.global.get(DefSettings.FREECAMLOCKELAV, Boolean.class)) {
+	    if(ui.modshift || !FREECAMLOCKELAV.get()) {
 		elev = elevorig - ((float) (c.y - dragorig.y) / 100.0f);
 		if (elev < 0.0f) elev = 0.0f;
 		if (elev > (Math.PI / 2.0)) elev = (float) Math.PI / 2.0f;
@@ -291,7 +290,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 
 	public void tick2(double dt) {
 	    Coord3f cc = getcc();
-	    if(DefSettings.global.get(DefSettings.FLATWORLD, Boolean.class))
+	    if(FLATWORLD.get())
 	        cc.z = 0;
 	    cc.y = -cc.y;
 	    this.cc = cc;
@@ -361,7 +360,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 
 	public void tick2(double dt) {
 	    Coord3f mc = getcc();
-	    if(DefSettings.global.get(DefSettings.FLATWORLD, Boolean.class))
+	    if(FLATWORLD.get())
 		mc.z = 0;
 	    mc.y = -mc.y;
 	    if((cc == null) || (Math.hypot(mc.x - cc.x, mc.y - cc.y) > 250))
@@ -454,13 +453,13 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	this.gobs = new Gobs();
 	setcanfocus(true);
 
-	if(DefSettings.global.get(DefSettings.SHOWPCLAIM, Boolean.class)) {
+	if(SHOWPCLAIM.get()) {
 	    enol(0, 1);
 	}
-	if(DefSettings.global.get(DefSettings.SHOWVCLAIM, Boolean.class)) {
+	if(SHOWVCLAIM.get()) {
 	    enol(2, 3);
 	}
-	if(DefSettings.global.get(DefSettings.SHOWKCLAIM, Boolean.class)) {
+	if(SHOWKCLAIM.get()) {
 	    enol(4, 5);
 	}
     }
@@ -523,7 +522,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    public boolean setup(RenderList rl) {
 		Coord cc = MapView.this.cc.floor(tilesz).div(MCache.cutsz);
 		Coord o = new Coord();
-		if(DefSettings.global.get(DefSettings.SKIPLOADING, Boolean.class)) {
+		if(SKIPLOADING.get()) {
 		    for (o.y = -view; o.y <= view; o.y++) {
 			for (o.x = -view; o.x <= view; o.x++) {
 			    Coord2d pc = cc.add(o).mul(MCache.cutsz).mul(tilesz);
@@ -547,7 +546,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 		    }
 		}
 		if(!(rl.state().get(PView.ctx) instanceof ClickContext)
-			&& DefSettings.global.get(DefSettings.SHOWFLAVOBJS, Boolean.class)) {
+			&& SHOWFLAVOBJS.get()) {
 		    rl.add(flavobjs, null);
 		}
 		return(false);
@@ -866,9 +865,9 @@ public class MapView extends PView implements DTarget, Console.Directory {
     private void updsmap(RenderList rl, DirLight light) {
 	if(rl.cfg.pref.lshadow.val) {
 	    if(smap == null) {
-	        final int texs = shadowmap[DefSettings.global.get(DefSettings.SHADOWSQUALITY, Integer.class)];
+	        final int texs = shadowmap[SHADOWSQUALITY.get()];
 		smap = new ShadowMap(new Coord(texs, texs),
-			DefSettings.global.get(DefSettings.SHADOWSIZE, Integer.class),
+			SHADOWSIZE.get(),
 			5000, 1);
 	    }
 	    smap.light = light;
@@ -903,7 +902,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
     }
 
     public DirLight amb = null;
-    public Outlines outlines = new Outlines(DefSettings.global.get(DefSettings.SYMMETRICOUTLINES, Boolean.class));
+    public Outlines outlines = new Outlines(SYMMETRICOUTLINES.get());
     public void setup(RenderList rl) {
 	CPUProfile.Frame curf = null;
 	if(Config.profile)
@@ -913,11 +912,11 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    this.cc = new Coord2d(pl.getc());
 	synchronized(glob) {
 	    if(glob.lightamb != null) {
-	        final boolean darkmode = DefSettings.global.get(DefSettings.DARKMODE, Boolean.class);
-	        final boolean nightvision = DefSettings.global.get(DefSettings.NIGHTVISION, Boolean.class);
-		final Color lamb = darkmode ? Color.BLACK : nightvision ? DefSettings.global.get(DefSettings.NVAMBIENTCOL, Color.class) : glob.lightamb;
-		final Color ldif = darkmode ? Color.BLACK : nightvision ? DefSettings.global.get(DefSettings.NVDIFFUSECOL, Color.class) : glob.lightdif;
-		final Color lspc = darkmode ? Color.BLACK : nightvision ? DefSettings.global.get(DefSettings.NVSPECCOC, Color.class) : glob.lightspc;
+	        final boolean darkmode = DARKMODE.get();
+	        final boolean nightvision = NIGHTVISION.get();
+		final Color lamb = darkmode ? Color.BLACK : nightvision ? NVAMBIENTCOL.get() : glob.lightamb;
+		final Color ldif = darkmode ? Color.BLACK : nightvision ? NVDIFFUSECOL.get() : glob.lightdif;
+		final Color lspc = darkmode ? Color.BLACK : nightvision ? NVSPECCOC.get() : glob.lightspc;
 
 		DirLight light = new DirLight(lamb, ldif, lspc,
 			Coord3f.o.sadd((float)glob.lightelev, (float)glob.lightang, 1f));
@@ -930,7 +929,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    }
 	    if(curf != null)
 		curf.tick("light");
-	    if(DefSettings.global.get(DefSettings.WEATHER, Boolean.class)) {
+	    if(WEATHER.get()) {
 	        try {
 		    for (Glob.Weather w : glob.weather)
 			w.gsetup(rl);
@@ -939,7 +938,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 			    rl.add((Rendered) w, null);
 		    }
 		} catch (Exception e) {
-	            if(!DefSettings.global.get(SKIPLOADING, Boolean.class)) {
+	            if(!SKIPLOADING.get()) {
 	                throw e;
 		    } //otherwise ignore
 		}
@@ -949,16 +948,16 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	}
 	if(rl.cfg.pref.fsaa.val) {
 	    FBConfig cfg = ((PView.ConfContext)rl.state().get(PView.ctx)).cfg;
-	    cfg.ms = DefSettings.global.get(DefSettings.MSAALEVEL, Integer.class);
+	    cfg.ms = DefSettings.MSAALEVEL.get();
 	}
 	if(rl.cfg.pref.outline.val)
 	    rl.add(outlines, null);
 	if(curf != null)
 	    curf.tick("outlines");
-	if(DefSettings.global.get(DefSettings.SHOWMAP, Boolean.class)) {
+	if(SHOWMAP.get()) {
 	    rl.add(map, null);
 	}
-	if(DefSettings.session.get(DefSettings.SHOWGRID, Boolean.class)) {
+	if(SHOWGRID.get()) {
 	    rl.add(grid, null);
 	}
 	if(curf != null)
@@ -966,7 +965,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	rl.add(mapol, null);
 	if(curf != null)
 	    curf.tick("mapol");
-	if(DefSettings.global.get(DefSettings.SHOWGOBS, Boolean.class)) {
+	if(SHOWGOBS.get()) {
 	    rl.add(gobs, null);
 	}
 	if(curf != null)
@@ -1399,7 +1398,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    String text = e.getMessage();
 	    if(text == null)
 		text = "Loading...";
-	    if(!DefSettings.global.get(DefSettings.SKIPLOADING, Boolean.class)) {
+	    if(!SKIPLOADING.get()) {
 		g.chcolor(Color.BLACK);
 		g.frect(Coord.z, sz);
 	    } else {
@@ -2146,7 +2145,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
     }
 
     private Camera restorecam() {
-	Class<? extends Camera> ct = camtypes.get(DefSettings.global.get(DefSettings.CAMERA, String.class));
+	Class<? extends Camera> ct = camtypes.get(CAMERA.get());
 	if(ct != null) {
 	    return makecam(ct);
 	} else {
@@ -2154,23 +2153,8 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	}
     }
 
-    private Map<String, Console.Command> cmdmap = new TreeMap<String, Console.Command>();
+    private Map<String, Console.Command> cmdmap = new TreeMap<>();
     {
-	cmdmap.put("cam", new Console.Command() {
-		public void run(Console cons, String[] args) throws Exception {
-		    if(args.length >= 2) {
-			Class<? extends Camera> ct = camtypes.get(args[1]);
-			String[] cargs = Utils.splice(args, 2);
-			if(ct != null) {
-				camera = makecam(ct, cargs);
-				Utils.setpref("defcam", args[1]);
-				Utils.setprefb("camargs", Utils.serialize(cargs));
-			} else {
-			    throw(new Exception("no such camera: " + args[1]));
-			}
-		    }
-		}
-	    });
 	Console.setscmd("placegrid", new Console.Command() {
 		public void run(Console cons, String[] args) {
 		    if((plobgran = Integer.parseInt(args[1])) < 0)

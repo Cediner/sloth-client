@@ -42,6 +42,9 @@ public class HavenPanel extends GLCanvas implements Runnable, Console.Directory 
     int w, h;
     public boolean bgmode = false;
     long fd = 10, bgfd = 200, fps = 0;
+    long last_sess_upd = System.currentTimeMillis();
+    long ssent = 0, srecv = 0;
+    long sent = 0, recv = 0;
     double uidle = 0.0, ridle = 0.0;
     Queue<InputEvent> events = new LinkedList<InputEvent>();
     private String cursmode = "tex";
@@ -317,8 +320,20 @@ public class HavenPanel extends GLCanvas implements Runnable, Console.Directory 
 		FastText.aprintf(g, new Coord(10, y -= 15), 0, 1, "RQ depth: %d (%d)", Resource.remote().qdepth(), Resource.remote().numloaded());
 	}
 
-	if(DefSettings.global.get(DefSettings.SHOWFPS, Boolean.class)) {
-	    FastText.aprintf(g, new Coord(w, 0), 1, 0, "FPS: %d (%d%%, %d%% idle)", fps, (int)(uidle * 100.0), (int)(ridle * 100.0));
+	//Update session stats
+	if(ui.sess != null) {
+	    if ((System.currentTimeMillis() - last_sess_upd) >= 1000) {
+		sent = ui.sess.sent - ssent;
+		recv = ui.sess.recv - srecv;
+		ssent = ui.sess.sent;
+		srecv = ui.sess.recv;
+		last_sess_upd = System.currentTimeMillis();
+	    }
+
+	    if (DefSettings.SHOWFPS.get()) {
+		FastText.aprintf(g, new Coord(w, 0), 1, 0, "FPS: %d (%d%%, %d%% idle)", fps, (int) (uidle * 100.0), (int) (ridle * 100.0));
+		FastText.aprintf(g, new Coord(w, 15), 1, 0, "S: %d | R: %d", sent, recv);
+	    }
 	}
 
 	Object tooltip;
@@ -529,7 +544,7 @@ public class HavenPanel extends GLCanvas implements Runnable, Console.Directory 
 		long frames[] = new long[128];
 		int framep = 0, waited[] = new int[128];
 		while(true) {
-		    if(!DefSettings.session.get(DefSettings.PAUSED, Boolean.class)) {
+		    if(!DefSettings.PAUSED.get()) {
 			int fwaited = 0;
 			Debug.cycle();
 			UI ui = this.ui;

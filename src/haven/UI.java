@@ -26,12 +26,15 @@
 
 package haven;
 
+import com.google.common.flogger.FluentLogger;
+
 import java.util.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.InputEvent;
 
 public class UI {
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     public static int MOD_SHIFT = 1, MOD_CTRL = 2, MOD_META = 4, MOD_SUPER = 8;
     public RootWidget root;
     public GameUI gui; 
@@ -162,6 +165,7 @@ public class UI {
 	    }
 	    bind(wdg, id);
 	}
+	logger.atFine().log("New Widget [id %s] [parent %d] [type %s] [args %s]", id, parent, type, Arrays.toString(cargs));
     }
 
     public void addwidget(int id, int parent, Object[] pargs) {
@@ -174,6 +178,7 @@ public class UI {
 		throw(new UIException("Null parent widget " + parent + " for " + id, null, pargs));
 	    pwdg.addchild(wdg, pargs);
 	}
+	logger.atFine().log("Add Widget [id %s] to [parent %d] [args %s]", id, parent, Arrays.toString(pargs));
     }
 
     public abstract class Grab {
@@ -232,6 +237,7 @@ public class UI {
     }
     
     public void destroy(int id) {
+        logger.atFine().log("Destroy Widget [id %s]", id);
 	synchronized(this) {
 	    if(widgets.containsKey(id)) {
 		Widget wdg = widgets.get(id);

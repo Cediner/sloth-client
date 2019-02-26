@@ -345,10 +345,11 @@ public class Fightsess extends Widget {
 	    if((n >= 0) && ((ev.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) != 0))
 		n += 5;
 	    int fn = n;
-	    if ((n >= 0) && (n < actions.length) && (last_button != fn || (System.currentTimeMillis() - last_sent) >= 100)) {
-		wdgmsg("use", fn, 1, ui.modflags());
-		last_button = fn;
-		last_sent = System.currentTimeMillis();
+	    if ((n >= 0) && (n < actions.length)) {
+	        if((last_button != fn || (System.currentTimeMillis() - last_sent) >= 100)) {
+		    wdgmsg("use", fn, 1, ui.modflags());
+		    last_button = fn;
+		    last_sent = System.currentTimeMillis();
 		/*MapView map = getparent(GameUI.class).map;
 		Coord mvc = map.rootxlate(ui.mc);
 		if(mvc.isect(Coord.z, map.sz)) {
@@ -363,8 +364,10 @@ public class Fightsess extends Widget {
 			    }
 			});
 		}*/
+		}
+	        //only true if you press one of the actions.length buttons and not all...
+		return (true);
 	    }
-	    return (true);
 	}
 	return(super.globtype(key, ev));
     }

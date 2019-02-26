@@ -28,12 +28,12 @@ package haven;
 
 import java.awt.Color;
 import haven.glsl.*;
+import haven.sloth.DefSettings;
+
 import static haven.glsl.Cons.*;
 import static haven.glsl.Type.*;
 
 public class Outlines implements Rendered {
-    public boolean symmetric;
-
     public void draw(GOut g) {}
 
     private final static Uniform snrm = new Uniform(SAMPLER2D);
@@ -129,7 +129,6 @@ public class Outlines implements Rendered {
     }
 
     public Outlines(final boolean symmetric) {
-	this.symmetric = symmetric;
     }
 
     public boolean setup(RenderList rl) {
@@ -139,7 +138,7 @@ public class Outlines implements Rendered {
 	ctx.cfg.tdepth = true;
 	ctx.cfg.add(nrm);
 	rl.prepc(Rendered.postfx);
-	rl.add(new Rendered.ScreenQuad(), new States.AdHoc(shaders[(symmetric?2:0) | (ms?1:0)]) {
+	rl.add(new Rendered.ScreenQuad(), new States.AdHoc(shaders[(DefSettings.SYMMETRICOUTLINES.get()?2:0) | (ms?1:0)]) {
 		private TexUnit tnrm;
 		private TexUnit tdep;
 

@@ -29,6 +29,8 @@ package haven;
 import java.awt.Color;
 import java.awt.image.*;
 import com.jogamp.opengl.*;
+import haven.sloth.gfx.TextureAtlas;
+
 import java.nio.*;
 
 public class GOut {
@@ -178,6 +180,87 @@ public class GOut {
 
     public void image(Indir<Tex> tex, Coord c) {
 	image(tex.get(), c);
+    }
+
+    /**
+     * Just for Texture Atlas
+     */
+    private void render(Tex t, Coord ul, Coord br, Coord3f tul, Coord3f tbr)  {
+	st.prep(t.draw());
+	apply();
+
+
+	gl.glBegin(GL2.GL_QUADS);
+
+	gl.glTexCoord2f(tul.x, tul.y); gl.glVertex3i(ul.x, ul.y, 0);
+	gl.glTexCoord2f(tbr.x, tul.y); gl.glVertex3i(br.x, ul.y, 0);
+	gl.glTexCoord2f(tbr.x, tbr.y); gl.glVertex3i(br.x, br.y, 0);
+	gl.glTexCoord2f(tul.x, tbr.y); gl.glVertex3i(ul.x, br.y, 0);
+
+	gl.glEnd();
+	checkerr(gl);
+    }
+
+    /**
+     * Just for Texture Atlas
+     */
+    private void crender(TextureAtlas.Img tex, Coord c, Coord sz, Coord ul, Coord br) {
+	final Tex texture = tex.tex();
+	if(sz.x == 0 || sz.y == 0)
+	    return;
+
+	if((c.x >= br.x) || (c.y >= br.y) ||
+		(c.x + sz.x <= ul.x) || (c.y + sz.y <= ul.y))
+	    return;
+
+	Coord
+		vul = new Coord(c),		//Upper Left of draw coord
+		vbr = new Coord(c.add(sz));	//Bottom right of draw coord
+	Coord3f
+		tul = new Coord3f(tex.tul),	//Upper Left coord within the texture
+		tbr = new Coord3f(tex.tbr),	//Bottom right coord within the texture
+		tfsz = tbr.sub(tul);		//The size of this unit within the texture
+
+
+	if(c.x < ul.x) {
+	    vul.x = ul.x;
+	    tul.x = tex.tul.x + (tfsz.x * ((vul.x-c.x)/(float)sz.x));
+	}
+	if(c.y < ul.y) {
+	    vul.y = ul.y;
+	    tul.y = tex.tul.y + (tfsz.y * ((vul.y-c.y)/(float)sz.y));
+	}
+	if(c.x + sz.x > br.x) {
+	    vbr.x = br.x;
+	    tbr.x = tex.tul.x + (tfsz.x * ((vbr.x-c.x)/(float)sz.x));
+	}
+	if(c.y + sz.y > br.y) {
+	    vbr.y = br.y;
+	    tbr.y = tex.tul.y + (tfsz.y * ((vbr.y-c.y)/(float)sz.y));
+	}
+
+
+	render(texture, vul, vbr, tul, tbr);
+    }
+
+    public void image(TextureAtlas.Img tex, Coord c, Coord sz) {
+        if(tex != null) {
+            st.set(cur2d);
+	    crender(tex, c.add(tx), sz, ul, ul.add(this.sz));
+            checkerr();
+	}
+    }
+
+    public void image(TextureAtlas.Img tex, Coord c) {
+        image(tex, c, tex.sz);
+    }
+
+    public void image(TextureAtlas.Img tex) {
+        image(tex, Coord.z, tex.sz);
+    }
+
+    public void aimage(TextureAtlas.Img tex, Coord c, double ax, double ay) {
+	image(tex, c.add((int)((double)tex.sz.x * -ax), (int)((double)tex.sz.y * -ay)));
     }
 
     public void aimage(Tex tex, Coord c, double ax, double ay) {

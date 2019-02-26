@@ -60,11 +60,9 @@ public class RootWidget extends ConsoleHost {
 		    add(new Profwnd(ggprof, "GPU profile"), new Coord(800, 100));
 		}
 	    } else if(key == 'g') {
-		DefSettings.session.set(DefSettings.SHOWGRID,
-			!DefSettings.session.get(DefSettings.SHOWGRID, Boolean.class));
+	        DefSettings.SHOWGRID.set(!DefSettings.SHOWGRID.get());
 	    } else if(key == 'p') {
-		DefSettings.session.set(DefSettings.PAUSED,
-			!DefSettings.session.get(DefSettings.PAUSED, Boolean.class));
+	        DefSettings.PAUSED.set(!DefSettings.PAUSED.get());
 	    } else if(key == ':') {
 		entercmd();
 	    } else if(key != 0 && (last_gk != key || (System.currentTimeMillis() - last_gk_time) >= 500)) {

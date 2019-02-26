@@ -64,7 +64,7 @@ public class GobHealth extends GAttrib {
     }
 
     public Object staticp() {
-        if(!DefSettings.global.get(DefSettings.SHOWGOBHP, Boolean.class) && hp < 4)
+        if(!DefSettings.SHOWGOBHP.get() && hp < 4)
 	    return super.staticp();
         else
             return null;

@@ -69,7 +69,7 @@ public class Cavein extends haven.Sprite implements haven.Gob.Overlay.CDel {
 	paramMessage.uint8(); //Ignore server "life"
 	life = 60*30; //dust lasts 30 minutes
 
-	if(global.get(COLORFULDUST, Boolean.class)) {
+	if(COLORFULDUST.get()) {
 	    Random rnd = new Random();
 	    mat = new haven.Material.Colors(new Color(rnd.nextInt(256),rnd.nextInt(256),rnd.nextInt(256)),
 		    new Color(rnd.nextInt(256),rnd.nextInt(256),rnd.nextInt(256)),

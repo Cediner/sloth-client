@@ -15,28 +15,28 @@ public class MinimapWnd extends ResizableWnd {
 
         final IButton claim = add(new IButton("custom/mm/hud/claim", "Show Personal Claims", () ->{
 	    if((ui.gui.map != null) && !ui.gui.map.visol(0)) {
-		DefSettings.global.set(DefSettings.SHOWPCLAIM, true);
+		DefSettings.SHOWPCLAIM.set(true);
 		ui.gui.map.enol(0, 1);
 	    } else {
-		DefSettings.global.set(DefSettings.SHOWPCLAIM, false);
+		DefSettings.SHOWPCLAIM.set(false);
 		ui.gui.map.disol(0, 1);
 	    }
 	}), new Coord(0, 0));
 	final IButton vclaim = add(new IButton("custom/mm/hud/vclaim", "Show Village Claims", () ->{
 	    if((ui.gui.map != null) && !ui.gui.map.visol(2)) {
-		DefSettings.global.set(DefSettings.SHOWVCLAIM, true);
+		DefSettings.SHOWVCLAIM.set(true);
 		ui.gui.map.enol(2, 3);
 	    } else {
-		DefSettings.global.set(DefSettings.SHOWVCLAIM, false);
+		DefSettings.SHOWVCLAIM.set(false);
 		ui.gui.map.disol(2, 3);
 	    }
 	}), claim.c.add(claim.sz.x + spacer, 0));
 	final IButton rlm = add(new IButton("custom/mm/hud/realm", "Show Kingdom Claims", () ->{
 	    if((ui.gui.map != null) && !ui.gui.map.visol(4)) {
 		ui.gui.map.enol(4, 5);
-		DefSettings.global.set(DefSettings.SHOWKCLAIM, true);
+		DefSettings.SHOWKCLAIM.set(true);
 	    } else {
-		DefSettings.global.set(DefSettings.SHOWKCLAIM, false);
+		DefSettings.SHOWKCLAIM.set(false);
 		ui.gui.map.disol(4, 5);
 	    }
 	}), vclaim.c.add(vclaim.sz.x + spacer, 0));

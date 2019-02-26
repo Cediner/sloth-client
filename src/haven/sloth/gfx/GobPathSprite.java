@@ -41,7 +41,7 @@ public class GobPathSprite extends Sprite {
 	//This sprite is essentially drawn on the default plane and rotated/transformed with the gob
 	//Therefore, y is a1lways 1f defining the width of our top face, delta defines the width of the side faces
 	final float y = 1f;
-	final float z = !DefSettings.global.get(DefSettings.FLATWORLD, Boolean.class) ? endz + h: 0;
+	final float z = !DefSettings.FLATWORLD.get() ? endz + h: 0;
 	final float dh = h - delta, dz = z - delta;
 
 	pa.put(0).put(0).put(h);	na.put(0).put(0).put(0f);

@@ -126,7 +126,7 @@ public class WItem extends Widget implements DTarget {
 		shorttip = longtip = null;
 		ttinfo = info;
 	    }
-	    if(now - hoverstart < 1.0 && !DefSettings.global.get(DefSettings.ALWAYSLONGTIP, Boolean.class)) {
+	    if(now - hoverstart < 1.0 && !DefSettings.ALWAYSLONGTIP.get()) {
 		if(shorttip == null)
 		    shorttip = new ShortTip(info);
 		return(shorttip);
@@ -222,7 +222,7 @@ public class WItem extends Widget implements DTarget {
 		FastText.printf(g, c, "%s%%", (int)(meter*100));
 	    }
 
-	    if(item.quality > 0 && DefSettings.global.get(DefSettings.SHOWQUALITY, Boolean.class)) {
+	    if(item.quality > 0 && DefSettings.SHOWQUALITY.get()) {
 		final Coord tsz = item.q_tex.sz();
 		final Coord c = new Coord(sz.x - tsz.x, 0);
 		g.chcolor(new Color(128, 128, 128, 128));
@@ -231,7 +231,7 @@ public class WItem extends Widget implements DTarget {
 	        g.image(item.q_tex, c);
 	    }
 
-	    if(DefSettings.global.get(DefSettings.SHOWWEAR, Boolean.class)) {
+	    if(DefSettings.SHOWWEAR.get()) {
 	        item.getinfo(Wear.class).ifPresent(wear -> {
 		    double p = 1 - wear.percent();
 		    int h = (int) (p * (double) sz.y);
@@ -241,7 +241,7 @@ public class WItem extends Widget implements DTarget {
 		});
 	    }
 
-	    if(DefSettings.global.get(DefSettings.SHOWCMETER, Boolean.class)) {
+	    if(DefSettings.SHOWCMETER.get()) {
 		item.getinfo(ItemInfo.Contents.class).ifPresent(cont ->
 		    item.getinfo(ItemInfo.Name.Name.class, cont.sub).ifPresent(contname ->
 			item.name().ifPresent(name -> {
@@ -293,8 +293,7 @@ public class WItem extends Widget implements DTarget {
 	    } else {
 	        final Optional<String> name = item.name();
 	        if(name.isPresent()) {
-		    if (ui.modmeta && DefSettings.global.get(DefSettings.AUTOEQUIP, Boolean.class) &&
-			    ItemData.isEquipable(name.get())) {
+		    if (ui.modmeta && DefSettings.AUTOEQUIP.get() && ItemData.isEquipable(name.get())) {
 		        if(!(parent instanceof Equipory)) {
 			    item.wdgmsg("take", c);
 			    ui.gui.equ.wdgmsg("drop", -1);

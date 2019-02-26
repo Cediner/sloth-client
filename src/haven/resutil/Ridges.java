@@ -189,7 +189,7 @@ public class Ridges extends MapMesh.Hooks {
 	    Coord gc = tc.add(m.ul);
 	    int z1 = m.map.getz(gc.add(tccs[e])), z2 = m.map.getz(gc.add(tccs[(e + 1) % 4]));
 	    lo = Math.min(z1, z2); hi = Math.max(z1, z2);
-	    if(DefSettings.global.get(DefSettings.FLATWORLD, Boolean.class)) {
+	    if(DefSettings.FLATWORLD.get()) {
 	        lo = 0;
 	        hi = 15;
 	    }
@@ -471,7 +471,7 @@ public class Ridges extends MapMesh.Hooks {
 
     private Vertex[] colzmatch(Coord3f[] cl, float lo, float hi) {
 	int i, l, h;
-	if(DefSettings.global.get(DefSettings.FLATWORLD, Boolean.class)) {
+	if(DefSettings.FLATWORLD.get()) {
 	    lo = 0;
 	    hi = 15;
 	}
