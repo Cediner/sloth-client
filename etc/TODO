@@ -1,6 +1,5 @@
 TODO
     - Always on fight deck hotbar
-    - Options grouping to make it more readable...
     - Alt + Right click map tile -> "Mark for party", Same idea as Gob but for a specific map tile
         - Will need to be sent { GridID, OffsetInGrid } since GC are not the same for everyone?
     - Clicking on Loftar map -> moving to that location

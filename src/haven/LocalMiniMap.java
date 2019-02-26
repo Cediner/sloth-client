@@ -76,8 +76,8 @@ public class LocalMiniMap extends Widget {
     private UI.Grab dm = null;
     private Coord doff;
     //Some extras
-    private boolean showGrid = DefSettings.global.get(DefSettings.MMSHOWGRID, Boolean.class);
-    private boolean showView = DefSettings.global.get(DefSettings.MMSHOWVIEW, Boolean.class);
+    private boolean showGrid = DefSettings.MMSHOWGRID.get();
+    private boolean showView = DefSettings.MMSHOWVIEW.get();
 
     //Session data, folder name, coord that is our center
     private String session = null;
@@ -414,12 +414,12 @@ public class LocalMiniMap extends Widget {
 
     public void toggleGrid() {
         showGrid = !showGrid;
-        DefSettings.global.set(DefSettings.MMSHOWGRID, showGrid);
+	DefSettings.MMSHOWGRID.set(showGrid);
     }
 
     public void toggleView() {
         showView = !showView;
-	DefSettings.global.set(DefSettings.MMSHOWVIEW, showView);
+        DefSettings.MMSHOWVIEW.set(showView);
     }
 
     public boolean mousedown(Coord c, int button) {

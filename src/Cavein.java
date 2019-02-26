@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Random;
 
 import static haven.sloth.DefSettings.COLORFULDUST;
-import static haven.sloth.DefSettings.global;
 
 public class Cavein extends haven.Sprite implements haven.Gob.Overlay.CDel {
     public class Boll {

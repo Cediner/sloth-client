@@ -357,8 +357,21 @@ public class MapFileWidget extends Widget {
 		return(true);
 	    if(clickloc(new Location(curloc.seg, tc), button))
 		return(true);
+	    if(button == 1 && ui.modctrl) {
+		//Only works if we're on the same map segment as our player
+		final Location pl = resolve(new MapLocator(ui.gui.map));
+		if(curloc != null && curloc.seg == pl.seg) {
+		    final Coord2d plc = new Coord2d(ui.sess.glob.oc.getgob(ui.gui.map.plgob).getc());
+		    final Coord2d translate = plc.div(new Coord2d(pl.tc));
+		    //Offset in terms of loftar map coordinates
+		    final Coord2d offset = new Coord2d(pl.tc.sub(tc));
+		    //Translate this to real map units and add to current map position
+		    final Coord2d mc = tc.mul(translate);
+		    System.out.printf("%s vs %s\n", tc.mul(translate), plc.add(offset.mul(translate)));
+		}
+	    }
 	}
-	if(button == 1) {
+	if(button == 1 && ui.modflags() == 0) {
 	    Location loc = curloc;
 	    if((drag == null) && (loc != null)) {
 		drag = ui.grabmouse(this);

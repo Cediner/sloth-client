@@ -112,7 +112,7 @@ public class Material extends GLState {
 
 	public void apply(GOut g) {
 	    BGL gl = g.gl;
-	    if(!DefSettings.global.get(DefSettings.DARKMODE, Boolean.class)) {
+	    if(!DefSettings.DARKMODE.get()) {
 		gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_AMBIENT, amb, 0);
 		gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_DIFFUSE, dif, 0);
 		gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_SPECULAR, spc, 0);
@@ -123,7 +123,7 @@ public class Material extends GLState {
 
 	public void unapply(GOut g) {
 	    BGL gl = g.gl;
-	    if(!DefSettings.global.get(DefSettings.DARKMODE, Boolean.class)) {
+	    if(!DefSettings.DARKMODE.get()) {
 		gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_AMBIENT, defamb, 0);
 		gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_DIFFUSE, defdif, 0);
 		gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_SPECULAR, defspc, 0);

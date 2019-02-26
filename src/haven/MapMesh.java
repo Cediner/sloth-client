@@ -120,7 +120,7 @@ public class MapMesh implements Rendered, Disposable {
 	    float z;
 	    for(int y = vs.ul.y; y < vs.br.y; y++) {
 		for(int x = vs.ul.x; x < vs.br.x; x++) {
-		    z = !DefSettings.global.get(DefSettings.FLATWORLD, Boolean.class) ? map.getz(ul.add(x, y)) : 0;
+		    z = !DefSettings.FLATWORLD.get() ? map.getz(ul.add(x, y)) : 0;
 		    surf[vs.o(x, y)] = new Vertex(x * (float)tilesz.x, y * -(float)tilesz.y, z);
 		}
 	    }
@@ -211,7 +211,7 @@ public class MapMesh implements Rendered, Disposable {
     }
 	
     private static void dotrans(MapMesh m, Random rnd, Coord lc, Coord gc) {
-        if(DefSettings.global.get(DefSettings.SHOWTRANTILES, Boolean.class)) {
+        if(DefSettings.SHOWTRANTILES.get()) {
 	    Tiler ground = m.map.tiler(m.map.gettile(gc));
 	    int tr[][] = new int[3][3];
 	    int max = -1;
