@@ -374,8 +374,8 @@ public class MapFileWidget extends Widget {
 		        ui.gui.map.moveto(mc);
 		    }
 		}
+		return true;
 	    }
-	    return true;
 	}
 	if(button == 1 && ui.modflags() == 0) {
 	    Location loc = curloc;
