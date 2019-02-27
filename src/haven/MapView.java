@@ -1426,7 +1426,6 @@ public class MapView extends PView implements DTarget, Console.Directory {
      * c) Predictive model said it was okay
      */
     private boolean triggermove(final double dt) {
-        System.out.printf("Queue: %s\n", movequeue);
         final Gob pl = ui.sess.glob.oc.getgob(plgob);
         if(pl != null) {
             if(movingto != null && pl.getattr(Moving.class) != null) {
@@ -1439,7 +1438,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
                 final double left = plc.dist(movingto) / mspeed;
                 //Only predictive models can trigger here
 		lastrc = plc;
-		return false;
+		return movingto.dist(pl.rc) <= 5 || left == 0;
 	    } else if(movingto == null || movingto.dist(pl.rc) <= 5) {
                 return true;
 	    } else {
@@ -1455,6 +1454,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
     private void clearmovequeue() {
         movequeue.clear();
         movingto = null;
+        ui.gui.pointer.update(null);
     }
 
     public void queuemove(final Coord2d c) {
@@ -1464,6 +1464,11 @@ public class MapView extends PView implements DTarget, Console.Directory {
     public void moveto(final Coord2d c) {
         clearmovequeue();
 	wdgmsg("click", new Coord(1,1), c.floor(posres), 1, 0);
+    }
+
+    public Coord2d movingto() { return movingto; }
+    public List<Coord2d> movequeue() {
+        return new ArrayList<>(movequeue);
     }
     
     public void tick(double dt) {
@@ -1480,9 +1485,10 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	}
 	if(placing != null)
 	    placing.ctick((int)(dt * 1000));
-	if(movequeue.size() > 0 && (System.currentTimeMillis() - lastMove > 500) && triggermove(dt)) {
+	if (movequeue.size() > 0 && (System.currentTimeMillis() - lastMove > 500) && triggermove(dt)) {
 	    movingto = movequeue.poll();
-	    wdgmsg("click", new Coord(1,1), movingto.floor(posres), 1, 0);
+	    ui.gui.pointer.update(movingto);
+	    wdgmsg("click", new Coord(1, 1), movingto.floor(posres), 1, 0);
 	    lastMove = System.currentTimeMillis();
 	}
     }
@@ -1866,12 +1872,13 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    } else {
 		final Object[] gobargs = gobclickargs(inf);
 		Object[] args = {pc, mc.floor(posres), clickb, ui.modflags()};
-		if(clickb == 1 && ui.modshift) {
+		if(clickb == 1 && ui.modmeta) {
 		    //Queued movement
 		    movequeue.add(mc);
 		} else {
-		    clearmovequeue();
 		    args = Utils.extend(args, gobargs);
+		    if(clickb == 1 || gobargs.length > 0)
+		        clearmovequeue();
 		    wdgmsg("click", args);
 		}
 	    }

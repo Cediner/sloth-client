@@ -71,8 +71,9 @@ public class DefSettings {
     public static final IndirSetting<Boolean> SHOWCROPSTAGE =  new IndirSetting<>(global, "gameplay.show-crop-stage");        //[Bool] Toggle crop stages off/on
     public static final IndirSetting<Boolean> SHOWGOBHP =  new IndirSetting<>(global, "gameplay.show-gob-hp");                //[Bool] Toggle gob hp visibility
     public static final IndirSetting<Boolean> SHOWGOBPATH =  new IndirSetting<>(global, "gameplay.show-gob-path");            //[Bool] Toggle gob path rendering
-    public static final IndirSetting<Color> GOBPATHCOL =  new IndirSetting<>(global, "gameplay.gob-path-color");              //[RGBA] Path color for gobs, only for unknown gobs
-    public static final IndirSetting<Color> VEHPATHCOL =  new IndirSetting<>(global, "gameplay.vehicle-path-color");          //[RGBA] Path color for vehicle
+    public static final IndirSetting<Color> GOBPATHCOL = new IndirSetting<>(global, "gameplay.gob-path-color");               //[RGBA] Path color for gobs, only for unknown gobs
+    public static final IndirSetting<Color> VEHPATHCOL = new IndirSetting<>(global, "gameplay.vehicle-path-color");           //[RGBA] Path color for vehicle                //[Bool] Toggles Gob audio
+    public static final IndirSetting<Color> MMPATHCOL = new IndirSetting<>(global, "gameplay.minimap.path-col");              //[RGBA] Path color for minimap
     public static final IndirSetting<Boolean> SHOWANIMALPATH =  new IndirSetting<>(global, "gameplay.show-animal-path");      //[Bool] Toggle animal path rendering
     public static final IndirSetting<Color> ANIMALPATHCOL =  new IndirSetting<>(global, "gameplay.animal-path-color");        //[RBGA] Path color for animals
     public static final IndirSetting<Boolean> SHOWANIMALRADIUS =  new IndirSetting<>(global, "gameplay.show-animal-radius");  //[Bool] Toggle radius on dangerous animals
@@ -106,7 +107,7 @@ public class DefSettings {
     public static final IndirSetting<Boolean> FREECAMREYAXIS =  new IndirSetting<>(global, "camera.free.reverse-y-axis");     //[Bool] Reverse free cam y axis on drag or not
     public static final IndirSetting<Boolean> FREECAMLOCKELAV =  new IndirSetting<>(global, "camera.free.lock-elevation");    //[Bool] Lock freecam elevation angle
     public static final IndirSetting<Integer> TIMERVOLUME =  new IndirSetting<>(global, "audio.timer-volume");                //[Int] Timer volume
-    public static final IndirSetting<Boolean> NOGOBAUDIO = new IndirSetting<>(global, "audio.no-gob-audio");                  //[Bool] Toggles Gob audio
+    public static final IndirSetting<Boolean> NOGOBAUDIO = new IndirSetting<>(global, "audio.no-gob-audio");
 
     //Themes
     public static final IndirSetting<String[]> THEMES = new IndirSetting<>(session, "theme.themes");
@@ -188,6 +189,7 @@ public class DefSettings {
 	SHOWGOBPATH.ensure(false);
 	GOBPATHCOL.ensure(new Color(255,0,0,168));
 	VEHPATHCOL.ensure(new Color(111,255,138,168));
+	MMPATHCOL.ensure(Color.magenta);
 	SHOWANIMALPATH.ensure(false);
 	ANIMALPATHCOL.ensure(new Color(144,255,171,146));
 	SHOWANIMALRADIUS.ensure(false);

@@ -1,3 +1,8 @@
+2/27/19
+    - You can now alt + click on Loftar's map to queue a move through it. Loftar's map will show the lines of
+    the path on it to. You can recolor these lines under Gameplay Settings -> Gob
+    - The current waypoint is also marked with a pointer. You can mouse over to see the distance from it.
+
 2/26/19
     - Fixed the bug with not being able to use hotkeys while in combat
     - Rearranged Options window

@@ -27,6 +27,7 @@
 package haven;
 
 import haven.sloth.Theme;
+import haven.sloth.gfx.MapPointer;
 import haven.sloth.gui.*;
 import haven.sloth.gui.Timer.TimersWnd;
 import haven.sloth.io.BeltData;
@@ -80,6 +81,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public Bufflist buffs; //Buff Widget
     private ActWnd paginasearch;
     private TimersWnd timers;
+    public MapPointer pointer;
     
     @RName("gameui")
     public static class $_ implements Factory {
@@ -146,6 +148,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     	timers.hide();
     	highlighted = add(new HighlightManager());
     	highlighted.hide();
+    	pointer = add(new MapPointer());
     }
     
     public class Hidepanel extends Widget {

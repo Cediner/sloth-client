@@ -35,6 +35,7 @@ import haven.MapFile.PMarker;
 import haven.MapFile.SMarker;
 import haven.MapFileWidget.*;
 import haven.BuddyWnd.GroupSelector;
+import haven.sloth.DefSettings;
 
 import static haven.LocalMiniMap.party;
 import static haven.LocalMiniMap.plx;
@@ -174,7 +175,36 @@ public class MapWnd extends Window {
 			}
 		    }
 		}
-	    } catch(Loading l) {}
+	    } catch(Loading l) {
+	        //Fail silently
+	    }
+	}
+
+
+	/**
+	 * Ideally this will be a line -> X -> line -> X
+	 * Where X is some icon for destinations
+	 * Start at map.moveto
+	 * Then follow map.movequeue
+	 * XXX: does it need an icon?
+	 */
+	private void drawmovement(GOut g, final Location ploc) {
+	    final Coord pc = new Coord2d(mv.getcc()).floor(tilesz);
+	    final Coord2d movingto = mv.movingto();
+	    final List<Coord2d> queue = mv.movequeue();
+	    if (movingto != null) {
+		//Make the line first
+		g.chcolor(DefSettings.MMPATHCOL.get());
+		g.dottedline(xlate(ploc), xlate(new Location(ploc.seg, ploc.tc.add(movingto.floor(tilesz).sub(pc)))), 2);
+		if (queue.size() > 0) {
+		    g.dottedline(xlate(new Location(ploc.seg, ploc.tc.add(movingto.floor(tilesz).sub(pc)))),
+			    xlate(new Location(ploc.seg, ploc.tc.add(queue.get(0).floor(tilesz).sub(pc)))), 2);
+		    for (int i = 1; i < queue.size(); ++i) {
+			g.dottedline(xlate(new Location(ploc.seg, ploc.tc.add(queue.get(i - 1).floor(tilesz).sub(pc)))),
+				xlate(new Location(ploc.seg, ploc.tc.add(queue.get(i).floor(tilesz).sub(pc)))), 2);
+		    }
+		}
+	    }
 	}
 
 	public void draw(GOut g) {
@@ -193,6 +223,8 @@ public class MapWnd extends Window {
 		    g.chcolor();
 		    //Draw gob icons
 		    drawicons(g, loc);
+		    //Draw Movement queue if any exit
+		    drawmovement(g.reclip(view.c, view.sz), loc);
 		}
 	    } catch(Loading l) {
 	    }

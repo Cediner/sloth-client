@@ -1,15 +1,15 @@
 TODO
+    - Need to polish queued movement. Some things cancel it that shouldn't..
     - Always on fight deck hotbar
     - Alt + Right click map tile -> "Mark for party", Same idea as Gob but for a specific map tile
         - Will need to be sent { GridID, OffsetInGrid } since GC are not the same for everyone?
-    - Right click Loftar map -> make Pointer of the location you want to go to
-        - Both of these can be done only on the same map you're gob is on.  Find offset between location and plgob on
-          the Loftar map. Compare real rc -> loftar rc and tranform offset to real rc
     - Fix up Water tiles. The skybox under them is ugly and doesn't fit with the rest of the game.
         - The top transparent layer has weird oddities with it
         - Realistically the water color itself should be at the level where the transparent part is rather than lowered
         - The water surface floor can be at the correct depth
         - Also it ignores global lighting and is always lit
+    - Ability to draw on Loftar's map ?
+        - Share with party for planning, attacks, etc
     - Search all open inventories based off name, isFood, isEquipment, etc, etc
     - Movable Fightsess (split into two parts maybe?)
     - Fightsess move icons clickable

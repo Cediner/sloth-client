@@ -334,6 +334,7 @@ public class OptWnd extends Window {
 		    }
 		}));
 	        gobs.add(new IndirCheckBox("Show Gob Paths", SHOWGOBPATH));
+		gobs.add(ColorPreWithLabel("Minimap path color: ", MMPATHCOL));
 	        gobs.add(ColorPreWithLabel("Unknown gob path color: ", GOBPATHCOL));
 	        gobs.add(ColorPreWithLabel("Vehicle path color: ", VEHPATHCOL));
 	        gobs.add(new Label("Bad Kin Group:"));

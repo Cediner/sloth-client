@@ -383,14 +383,14 @@ public class LocalMiniMap extends Widget {
 	    for(int y = ulg.y+1; (y * MCache.cmaps.y) - tc.y + (hsz.y / 2) < hsz.y; y++) {
 		c1.y = (y * MCache.cmaps.y) - tc.y + (hsz.y / 2);
 		c2.y = c1.y;
-		g.line(c1, c2, 1);
+		g.dottedline(c1, c2, 1);
 	    }
 	    c1 = new Coord();
 	    c2 = new Coord(0,hsz.y);
 	    for(int x = ulg.x+1; (x * MCache.cmaps.x) - tc.x + (hsz.x / 2) < hsz.x; x++) {
 		c1.x = (x * MCache.cmaps.x) - tc.x + (hsz.x / 2);
 		c2.x = c1.x;
-		g.line(c1, c2, 1);
+		g.dottedline(c1, c2, 1);
 	    }
 	    g.chcolor();
 	}

@@ -32,6 +32,7 @@ import com.jogamp.opengl.*;
 import haven.sloth.gfx.TextureAtlas;
 
 import java.nio.*;
+import java.util.Optional;
 
 public class GOut {
     public final BGL gl;
@@ -346,8 +347,8 @@ public class GOut {
     public void state2d() {
 	st.set(cur2d);
     }
-    
-    public void line(Coord c1, Coord c2, double w) {
+
+    public void _line(Coord c1, Coord c2, double w) {
 	st.set(cur2d);
 	apply();
 	gl.glLineWidth((float)w);
@@ -356,6 +357,177 @@ public class GOut {
 	vertex(c2);
 	gl.glEnd();
 	checkerr();
+
+    }
+
+    //TODO: There is bound to be easier methods to do this to get 2 points to fit within the bounding box..
+    public void line(Coord c1, Coord c2, double w) {
+        boolean c1in = c1.isect(Coord.z, sz);
+	boolean c2in = c2.isect(Coord.z, sz);
+        //Don't render something completely outside of our frame
+        if(c1in || c2in) {
+            if(c1in && c2in) {
+		//Simple, all insides
+		_line(c1, c2, w);
+	    } else {
+                //One of the coordinates is now inside
+		final Coord inside = c1in ? c1 : c2;
+		final Coord outside = c1in ? c2 : c1;
+
+		inside.hlsect(outside, 0).ifPresent(point -> {
+		    if(point.isect(Coord.z, sz.add(1,1)) && point.between(inside, outside)) {
+		        _line(inside, point, w);
+		    }
+		});
+
+		inside.hlsect(outside, sz.y).ifPresent(point -> {
+		    if(point.isect(Coord.z, sz.add(1,1)) && point.between(inside, outside)) {
+			_line(inside, point, w);
+		    }
+		});
+
+		inside.vlsect(outside, 0).ifPresent(point -> {
+		    if(point.isect(Coord.z, sz.add(1,1)) && point.between(inside, outside)) {
+			_line(inside, point, w);
+		    }
+		});
+
+		inside.vlsect(outside, sz.x).ifPresent(point -> {
+		    if(point.isect(Coord.z, sz.add(1,1)) && point.between(inside, outside)) {
+			_line(inside, point, w);
+		    }
+		});
+	    }
+	} else {
+            //Both are outside, but they could cross through still..
+	    //If c1.x == c2.x -> Vertical line, could intersect top and bottom faces; easy case
+	    //If c1.y == c2.y -> Horizontal line, could intersect left and right faces; easy case
+	    //else could be: {left,top}, {top,right}, {right,bottom}, {bottom,left}, {left, right}, {top, bottom}; annoying cases
+	    if(c1.x == c2.x) {
+	        if(c1.x >= 0 && c1.x <= sz.x) {
+	            _line(new Coord(c1.x, 0), new Coord(c1.x, sz.y), w);
+		}
+	        //Not within, don't draw anything
+	    } else if(c1.y == c2.y) {
+	        if(c1.y >= 0 && c1.y <= sz.y) {
+		    _line(new Coord(0, c1.y), new Coord(sz.x, c1.y), w);
+		}
+		//Not within, don't draw anything
+	    } else {
+	        //Need to find 2 points because the original 2 are both outside it....
+		//Could be anything, just brute force it.
+		Optional<Coord> e1, e2;
+		//top-bottom
+		e1 = c1.hlsect(c2, 0);
+		if(e1.isPresent() && e1.get().between(c1, c2) && e1.get().isect(Coord.z, sz)) {
+		    e2 = c1.hlsect(c2, sz.y);
+		    if(e2.isPresent() && e2.get().between(c1, c2) && e2.get().isect(Coord.z, sz)) {
+			_line(e1.get(), e2.get(), w);
+		    }
+		}
+		//left-right
+		e1 = c1.vlsect(c2, 0);
+		if(e1.isPresent() && e1.get().between(c1, c2) && e1.get().isect(Coord.z, sz)) {
+		    e2 = c1.vlsect(c2, sz.x);
+		    if(e2.isPresent() && e2.get().between(c1, c2) && e2.get().isect(Coord.z, sz)) {
+			_line(e1.get(), e2.get(), w);
+		    }
+		}
+		//top-right
+		e1 = c1.hlsect(c2, 0);
+		if(e1.isPresent() && e1.get().between(c1, c2) && e1.get().isect(Coord.z, sz)) {
+		    e2 = c1.vlsect(c2, sz.x);
+		    if(e2.isPresent() && e2.get().between(c1, c2) && e2.get().isect(Coord.z, sz)) {
+			_line(e1.get(), e2.get(), w);
+		    }
+		}
+		//top-left
+		e1 = c1.hlsect(c2, 0);
+		if(e1.isPresent() && e1.get().between(c1, c2) && e1.get().isect(Coord.z, sz)) {
+		    e2 = c1.vlsect(c2, 0);
+		    if(e2.isPresent() && e2.get().between(c1, c2) && e2.get().isect(Coord.z, sz)) {
+			_line(e1.get(), e2.get(), w);
+		    }
+		}
+		//bottom-left
+		e1 = c1.hlsect(c2, sz.y);
+		if(e1.isPresent() && e1.get().between(c1, c2) && e1.get().isect(Coord.z, sz)) {
+		    e2 = c1.vlsect(c2, 0);
+		    if(e2.isPresent() && e2.get().between(c1, c2) && e2.get().isect(Coord.z, sz)) {
+			_line(e1.get(), e2.get(), w);
+		    }
+		}
+		//bottom-right
+		e1 = c1.hlsect(c2, sz.y);
+		if(e1.isPresent() && e1.get().between(c1, c2) && e1.get().isect(Coord.z, sz)) {
+		    e2 = c1.vlsect(c2, sz.x);
+		    if (e2.isPresent() && e2.get().between(c1, c2) && e2.get().isect(Coord.z, sz)) {
+			_line(e1.get(), e2.get(), w);
+		    }
+		}
+	    }
+	}
+    }
+
+    //Alternative to line, uses GL_POINTS, surprisingly better than lines tbh
+    public void dottedline(Coord c1, Coord c2, float w) {
+        final float m = (float)(c2.y - c1.y) / (c2.x - c1.x);
+        if(Float.isFinite(m) && m != 0) {
+	    final float b = c2.y - m * c2.x;
+	    float x = Math.max(c1.x < c2.x ? c1.x : c2.x, 0);
+	    float y;
+	    float end = Math.min(c1.x < c2.x ? c2.x : c1.x, sz.x);
+	    float step = Math.min((end-x)/0.15f >= 20 ? 0.15f : (end-x)/20f, 0.01f);
+
+	    st.set(cur2d);
+	    apply();
+	    gl.glPointSize(w);
+	    gl.glBegin(GL.GL_POINTS);
+	    for (; x <= end; x += step) {
+		y = m * x + b;
+		if (y >= 0 && y <= sz.y) {
+		    vertex(x, y);
+		}
+	    }
+	    gl.glEnd();
+	    checkerr();
+	} else if(m == 0) {
+            //Vertical
+	    if(c1.y >= 0 && c1.y <= sz.y) {
+		float x = Math.min(c1.x, c2.x);
+		if (x < sz.x) {
+		    float mx = Math.min(Math.max(c1.x, c2.x), sz.x);
+
+		    st.set(cur2d);
+		    apply();
+		    gl.glPointSize(w);
+		    gl.glBegin(GL.GL_POINTS);
+		    for (; x <= mx; x += 0.25) {
+			vertex(x, c1.y);
+		    }
+		    gl.glEnd();
+		    checkerr();
+		}
+	    }
+	} else {
+            //Horizontal
+	    if(c1.x >= 0 && c1.x <= sz.x) {
+		float y = Math.min(c1.y, c2.y);
+		if (y < sz.x) {
+		    float my = Math.min(Math.max(c1.y, c2.y), sz.y);
+
+		    st.set(cur2d);
+		    apply();
+		    gl.glPointSize(w);
+		    gl.glBegin(GL.GL_POINTS);
+		    for (; y <= my; y += 0.25) {
+			vertex(c1.x, y);
+		    }
+		    gl.glEnd();
+		    checkerr();
+		}
+	    }
+	}
     }
     
     public void text(String text, Coord c) {

@@ -358,7 +358,7 @@ public class MapFileWidget extends Widget {
 		return(true);
 	    if(clickloc(new Location(curloc.seg, tc), button))
 		return(true);
-	    if(button == 1 && ui.modctrl) {
+	    if(button == 1 && (ui.modctrl || ui.modmeta)) {
 		//Only works if we're on the same map segment as our player
 		final Location pl = resolve(new MapLocator(ui.gui.map));
 		if(curloc != null && curloc.seg == pl.seg) {
@@ -368,13 +368,14 @@ public class MapFileWidget extends Widget {
 		    final Coord2d offset = new Coord2d(pl.tc.sub(tc));
 		    //Translate this to real map units and add to current map position
 		    final Coord2d mc = plc.sub(offset.mul(MCache.tilesz));
-		    if(ui.modshift) {
+		    if(ui.modmeta) {
 		        ui.gui.map.queuemove(mc);
 		    } else {
 		        ui.gui.map.moveto(mc);
 		    }
 		}
 	    }
+	    return true;
 	}
 	if(button == 1 && ui.modflags() == 0) {
 	    Location loc = curloc;
