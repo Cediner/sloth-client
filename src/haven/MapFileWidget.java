@@ -27,6 +27,8 @@
 package haven;
 
 import java.util.*;
+
+import com.google.common.flogger.FluentLogger;
 import haven.MapFile.Segment;
 import haven.MapFile.DataGrid;
 import haven.MapFile.GridInfo;
@@ -37,6 +39,8 @@ import static haven.MCache.cmaps;
 import static haven.OCache.posres;
 
 public class MapFileWidget extends Widget {
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
+
     public final MapFile file;
     public Location curloc;
     private Locator setloc;
@@ -360,19 +364,23 @@ public class MapFileWidget extends Widget {
 		return(true);
 	    if(button == 1 && (ui.modctrl || ui.modmeta)) {
 		//Only works if we're on the same map segment as our player
-		final Location pl = resolve(new MapLocator(ui.gui.map));
-		if(curloc != null && curloc.seg == pl.seg) {
-		    final Coord2d plc = new Coord2d(ui.sess.glob.oc.getgob(ui.gui.map.plgob).getc());
-		    //Offset in terms of loftar map coordinates
-		    //XXX: Previous worlds had randomized north/south/east/west directions, still the case? Assuming not for now.
-		    final Coord2d offset = new Coord2d(pl.tc.sub(tc));
-		    //Translate this to real map units and add to current map position
-		    final Coord2d mc = plc.sub(offset.mul(MCache.tilesz));
-		    if(ui.modmeta) {
-		        ui.gui.map.queuemove(mc);
-		    } else {
-		        ui.gui.map.moveto(mc);
+		try {
+		    final Location pl = resolve(new MapLocator(ui.gui.map));
+		    if (curloc != null && curloc.seg == pl.seg) {
+			final Coord2d plc = new Coord2d(ui.sess.glob.oc.getgob(ui.gui.map.plgob).getc());
+			//Offset in terms of loftar map coordinates
+			//XXX: Previous worlds had randomized north/south/east/west directions, still the case? Assuming not for now.
+			final Coord2d offset = new Coord2d(pl.tc.sub(tc));
+			//Translate this to real map units and add to current map position
+			final Coord2d mc = plc.sub(offset.mul(MCache.tilesz));
+			if (ui.modmeta) {
+			    ui.gui.map.queuemove(mc);
+			} else {
+			    ui.gui.map.moveto(mc);
+			}
 		    }
+		} catch (Exception e) {
+		    logger.atSevere().withCause(e).log("Failed to resolve player location");
 		}
 		return true;
 	    }
