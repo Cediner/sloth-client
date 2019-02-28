@@ -191,17 +191,18 @@ public class MapWnd extends Window {
 	private void drawmovement(GOut g, final Location ploc) {
 	    final Coord pc = new Coord2d(mv.getcc()).floor(tilesz);
 	    final Coord2d movingto = mv.movingto();
-	    final List<Coord2d> queue = mv.movequeue();
+	    final Iterator<Coord2d> queue = mv.movequeue();
+	    Coord last;
 	    if (movingto != null) {
 		//Make the line first
 		g.chcolor(DefSettings.MMPATHCOL.get());
-		g.dottedline(xlate(ploc), xlate(new Location(ploc.seg, ploc.tc.add(movingto.floor(tilesz).sub(pc)))), 2);
-		if (queue.size() > 0) {
-		    g.dottedline(xlate(new Location(ploc.seg, ploc.tc.add(movingto.floor(tilesz).sub(pc)))),
-			    xlate(new Location(ploc.seg, ploc.tc.add(queue.get(0).floor(tilesz).sub(pc)))), 2);
-		    for (int i = 1; i < queue.size(); ++i) {
-			g.dottedline(xlate(new Location(ploc.seg, ploc.tc.add(queue.get(i - 1).floor(tilesz).sub(pc)))),
-				xlate(new Location(ploc.seg, ploc.tc.add(queue.get(i).floor(tilesz).sub(pc)))), 2);
+		last = xlate(new Location(ploc.seg, ploc.tc.add(movingto.floor(tilesz).sub(pc))));
+		g.dottedline(xlate(ploc), last, 2);
+		if (queue.hasNext()) {
+		    while(queue.hasNext()) {
+			final Coord next = xlate(new Location(ploc.seg, ploc.tc.add(queue.next().floor(tilesz).sub(pc))));
+			g.dottedline(last, next, 2);
+			last = next;
 		    }
 		}
 	    }

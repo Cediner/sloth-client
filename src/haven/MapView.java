@@ -1467,8 +1467,8 @@ public class MapView extends PView implements DTarget, Console.Directory {
     }
 
     public Coord2d movingto() { return movingto; }
-    public List<Coord2d> movequeue() {
-        return new ArrayList<>(movequeue);
+    public Iterator<Coord2d> movequeue() {
+        return movequeue.iterator();
     }
     
     public void tick(double dt) {
