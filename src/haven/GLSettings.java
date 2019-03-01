@@ -149,8 +149,9 @@ public class GLSettings implements java.io.Serializable {
 	public final String nm;
 	public T val;
 
-	private Setting(String nm) {
+	private Setting(String nm, T def) {
 	    this.nm = nm.intern();
+	    this.val = def;
 	    settings.add(this);
 	}
 
@@ -163,7 +164,7 @@ public class GLSettings implements java.io.Serializable {
     }
 
     public abstract class BoolSetting extends Setting<Boolean> {
-	private BoolSetting(String nm) {super(nm);}
+	private BoolSetting(String nm, Boolean def) {super(nm, def);}
 
 	public void set(String val) {
 	    boolean bval;
@@ -179,9 +180,10 @@ public class GLSettings implements java.io.Serializable {
     public abstract class EnumSetting<E extends Enum<E>> extends Setting<E> {
 	private final Class<E> real;
 
-	private EnumSetting(String nm, Class<E> real) {
-	    super(nm);
+	private EnumSetting(String nm, String def, Class<E> real) {
+	    super(nm, null);
 	    this.real = real;
+	    set(def);
 	}
 
 	public void set(String val) {
@@ -201,7 +203,7 @@ public class GLSettings implements java.io.Serializable {
     }
 
     public abstract class FloatSetting extends Setting<Float> {
-	private FloatSetting(String nm) {super(nm);}
+	private FloatSetting(String nm, Float def) {super(nm, def);}
 
 	public void set(String val) {
 	    float fval;
@@ -221,28 +223,25 @@ public class GLSettings implements java.io.Serializable {
 	MEM, DLIST, VAO
     }
 
-    public final EnumSetting<MeshMode> meshmode = new EnumSetting<MeshMode>("meshmode", MeshMode.class) {
+    public final EnumSetting<MeshMode> meshmode = new EnumSetting<MeshMode>("meshmode", MESHMODE.get(), MeshMode.class) {
 	public void validate(MeshMode mode) {
-	    if(mode == MeshMode.VAO && !cfg.haveVAO()) {
-		throw(new SettingException("VAOs are not supported."));
-	    }
 	}
     };
 
-    public final BoolSetting instancing = new BoolSetting("instance") {
+    public final BoolSetting instancing = new BoolSetting("instance", INSTANCING.get()) {
 	    public void validate(Boolean val) {
 		if(val && !(cfg.haveInstancing()))
 		    throw(new SettingException("Video card does not support instancing."));
 	    }
 	};
 
-    public final BoolSetting fsaa = new BoolSetting("fsaa") {
+    public final BoolSetting fsaa = new BoolSetting("fsaa", ANTIALIASING.get()) {
 	    public void validate(Boolean val) {
 		if(val && !cfg.havefsaa())
 		    throw(new SettingException("FSAA is not supported."));
 	    }
 	};
-    public final BoolSetting alphacov = new BoolSetting("alphacov") {
+    public final BoolSetting alphacov = new BoolSetting("alphacov", ALPHACOV.get()) {
 	    public void validate(Boolean val) {
 		if(val) {
 		    if(!fsaa.val) throw(new SettingException("Alpha-to-coverage must be used with multisampling."));
@@ -250,11 +249,11 @@ public class GLSettings implements java.io.Serializable {
 	    }
 	};
 
-    public final BoolSetting flight = new BoolSetting("flight") {
+    public final BoolSetting flight = new BoolSetting("flight", PFLIGHTING.get()) {
 	    public void validate(Boolean val) {}
 	};
 
-    public final BoolSetting cel = new BoolSetting("cel") {
+    public final BoolSetting cel = new BoolSetting("cel", CELSHADING.get()) {
 	    public void validate(Boolean val) {
 		if(val) {
 		    if(!flight.val) throw(new SettingException("Cel-shading requires per-fragment lighting."));
@@ -262,7 +261,7 @@ public class GLSettings implements java.io.Serializable {
 	    }
 	};
 
-    public final BoolSetting lshadow = new BoolSetting("sdw") {
+    public final BoolSetting lshadow = new BoolSetting("sdw", SHADOWS.get()) {
 	    public void validate(Boolean val) {
 		if(val) {
 		    if(!flight.val) throw(new SettingException("Shadowed lighting requires per-fragment lighting."));
@@ -270,7 +269,7 @@ public class GLSettings implements java.io.Serializable {
 		}
 	    }
 	};
-    public final BoolSetting outline = new BoolSetting("outl") {
+    public final BoolSetting outline = new BoolSetting("outl", OUTLINES.get()) {
 	    public void validate(Boolean val) {
 		if(val) {
 		    if(!cfg.havefbo()) throw(new SettingException("Outline rendering requires a video card supporting framebuffers."));
@@ -278,11 +277,11 @@ public class GLSettings implements java.io.Serializable {
 	    }
 	};
 
-    public final BoolSetting wsurf = new BoolSetting("wsurf") {
+    public final BoolSetting wsurf = new BoolSetting("wsurf", WATERSURFACE.get()) {
 	    public void validate(Boolean val) {}
 	};
 
-    public final FloatSetting anisotex = new FloatSetting("aniso") {
+    public final FloatSetting anisotex = new FloatSetting("aniso", ANISOLEVEL.get() / 2.0f) {
 	    public float min() {return(0);}
 	    public float max() {return(cfg.anisotropy);}
 	    public void validate(Float val) {

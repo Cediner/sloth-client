@@ -77,7 +77,6 @@ public class IndirSetting<T> {
     }
 
     public void ensure(T val) {
-	if(verification == null || verification.apply(val))
-	    settings.ensure(key.key(), val);
+	settings.ensure(key.key(), val);
     }
 }
