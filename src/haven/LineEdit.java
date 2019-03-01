@@ -26,11 +26,14 @@
 
 package haven;
 
+import com.google.common.flogger.FluentLogger;
+
 import java.util.*;
 import java.awt.event.*;
 import java.awt.datatransfer.*;
 
 public class LineEdit {
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     public String line = "";
     public int point = 0;
     private static Text tcache = null;
@@ -83,8 +86,13 @@ public class LineEdit {
 		int b = wordend(point);
 		line = line.substring(0, point) + line.substring(b);
 	    } else if((c >= 32) && (mod == 0)) {
-		line = line.substring(0, point) + c + line.substring(point);
-		point++;
+	        if(point < line.length()+1) {
+		    line = line.substring(0, point) + c + line.substring(point);
+		    point++;
+		} else {
+	            logger.atSevere().log("Strange lineedit bug [line %s] [line.length %d] [point %d] [c %s]",
+			    line, line.length(), point, c);
+		}
 	    } else if((code == KeyEvent.VK_LEFT) && (mod == 0)) {
 		if(point > 0)
 		    point--;
