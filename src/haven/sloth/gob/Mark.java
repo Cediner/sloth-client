@@ -9,7 +9,7 @@ public class Mark extends SkelSprite implements Gob.Overlay.SetupMod {
     public static final String CHAT_FMT = "$Mark{%d,%d}";
     public static final String CHAT_TILE_FMT = "$MarkTile{%d,%d,%d}";
     public static final Pattern CHAT_FMT_PAT = Pattern.compile("\\$Mark\\{([0-9]+),([0-9]+)}");
-    public static final Pattern CHAT_TILE_FMT_PAT = Pattern.compile("\\$MarkTile\\{([0-9]+),([0-9]+),([0-9]+)}");
+    public static final Pattern CHAT_TILE_FMT_PAT = Pattern.compile("\\$MarkTile\\{(-?[0-9]+),([0-9]+),([0-9]+)}");
     private static final Resource tgtfx = Resource.local().loadwait("custom/fx/partytgt");
     public static final int id = -24441;
     private float[] emi = {1.0f, 0.0f, 1.0f, 0.0f};
