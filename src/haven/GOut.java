@@ -477,7 +477,8 @@ public class GOut {
 	    float x = Math.max(c1.x < c2.x ? c1.x : c2.x, 0);
 	    float y;
 	    float end = Math.min(c1.x < c2.x ? c2.x : c1.x, sz.x);
-	    float step = Math.min((end-x)/0.15f >= 20 ? 0.15f : (end-x)/20f, 0.01f);
+	    float step = Math.min(1f, (end-x)/Math.abs((m*x+b) - (m*end+b)));
+	    //float step = Math.max((end-x)/1f >= 20 ? 1f : (end-x)/Math.abs((m*x+b) - (m*end+b)), 0.01f);
 
 	    st.set(cur2d);
 	    apply();
@@ -492,9 +493,9 @@ public class GOut {
 	    gl.glEnd();
 	    checkerr();
 	} else if(m == 0) {
-            //Vertical
+            //Horizontal
 	    if(c1.y >= 0 && c1.y <= sz.y) {
-		float x = Math.min(c1.x, c2.x);
+		float x = Math.max(Math.min(c1.x, c2.x), 0);
 		if (x < sz.x) {
 		    float mx = Math.min(Math.max(c1.x, c2.x), sz.x);
 
@@ -510,9 +511,9 @@ public class GOut {
 		}
 	    }
 	} else {
-            //Horizontal
+            //Vertical
 	    if(c1.x >= 0 && c1.x <= sz.x) {
-		float y = Math.min(c1.y, c2.y);
+		float y = Math.max(Math.min(c1.y, c2.y), 0);
 		if (y < sz.x) {
 		    float my = Math.min(Math.max(c1.y, c2.y), sz.y);
 
