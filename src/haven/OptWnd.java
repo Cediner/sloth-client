@@ -348,8 +348,8 @@ public class OptWnd extends Window {
 		animals.pack();
 	    }
 	    { //misc
-	        misc.add(new IndirCheckBox("Show Hitbox", SHOWHITBOX));
-	        misc.add(new IndirCheckBox("Show Hidden", SHOWHIDDEN));
+	        misc.add(new IndirCheckBox("Show Hitbox", SHOWHITBOX, val -> ui.sess.glob.oc.changeAllGobs()));
+	        misc.add(new IndirCheckBox("Show Hidden", SHOWHIDDEN, val -> ui.sess.glob.oc.changeHiddenGobs()));
 		misc.add(ColorPreWithLabel("Hidden color: ", HIDDENCOLOR));
 	        misc.add(new IndirCheckBox("Colorful Cavedust", COLORFULDUST));
 	        misc.add(new IndirCheckBox("Show FPS", SHOWFPS));
