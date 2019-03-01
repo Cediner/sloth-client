@@ -289,6 +289,12 @@ public class OCache implements Iterable<Gob> {
 	    }
 	}
     }
+
+    public class ModdedGob extends Virtual {
+        public ModdedGob(Coord2d c, double a) {
+            super(c, a);
+	}
+    }
     
     private Indir<Resource> getres(int id) {
 	return(glob.sess.getres(id));

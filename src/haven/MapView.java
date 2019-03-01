@@ -1839,7 +1839,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 
 	private void showSpecialMenu(final Coord2d mc) {
 	    final FlowerMenu modmenu = new FlowerMenu((selection) -> {
-	        if(selection >= 0 && selection <= 3) {
+	        if(selection >= 1 && selection <= 3) {
 		    final Gob g = ui.sess.glob.oc.getgob(next--, 0);
 		    ui.sess.glob.oc.move(g, mc, Math.toRadians(130));
 		    ui.sess.glob.oc.composite(g, Resource.remote().load("gfx/kritter/spermwhale/spermwhale"));
@@ -1850,14 +1850,33 @@ public class MapView extends PView implements DTarget, Console.Directory {
 		    ui.sess.glob.oc.cmpmod(g, mds);
 		    final List<ResData> pose = new ArrayList<>();
 		    switch (selection) {
-			case 0: pose.add(new ResData(Resource.remote().load("gfx/kritter/spermwhale/knock"), Message.nil)); break;
-			case 1: pose.add(new ResData(Resource.remote().load("gfx/kritter/spermwhale/waterdead"), Message.nil)); break;
-			case 2: pose.add(new ResData(Resource.remote().load("gfx/kritter/spermwhale/swimming"), Message.nil)); break;
-			case 3: pose.add(new ResData(Resource.remote().load("gfx/kritter/spermwhale/atk0"), Message.nil)); break;
+			case 1: pose.add(new ResData(Resource.remote().load("gfx/kritter/spermwhale/knock"), Message.nil)); break;
+			case 2: pose.add(new ResData(Resource.remote().load("gfx/kritter/spermwhale/waterdead"), Message.nil)); break;
+			case 3: pose.add(new ResData(Resource.remote().load("gfx/kritter/spermwhale/swimming"), Message.nil)); break;
 		    }
 		    ui.sess.glob.oc.cmppose(g, 11, pose, null, false, 0);
+		} else {
+		    switch (selection) {
+			case 0: { //Mark for party
+			    //Translate to Grid + Gird Offset
+			    final Coord tc = mc.floor(tilesz);
+			    final Gob g = ui.sess.glob.oc.new ModdedGob(mc, 0);
+			    g.addol(new Mark(20000));
+
+			    ui.sess.glob.map.getgridto(tc).ifPresent(grid -> {
+			        final Coord offset = tc.sub(grid.ul);
+				for (Widget wdg = ui.gui.chat.lchild; wdg != null; wdg = wdg.prev) {
+				    if (wdg instanceof ChatUI.PartyChat) {
+					final ChatUI.PartyChat chat = (ChatUI.PartyChat) wdg;
+					chat.send(String.format(Mark.CHAT_TILE_FMT, grid.id, offset.x, offset.y));
+				    }
+				}
+			    });
+			}
+			break;
+		    }
 		}
-	    }, "Add Whale (KO'd)", "Add Whale (Dead)", "Add Whale (Swimming)", "Add Whale (Attacking)");
+	    }, "Mark for party", "Add Whale (KO'd)", "Add Whale (Dead)", "Add Whale (Swimming)");
 	    ui.gui.add(modmenu, ui.mc);
 	}
 	

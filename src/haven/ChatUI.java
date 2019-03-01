@@ -42,6 +42,8 @@ import java.util.regex.*;
 import java.io.IOException;
 import java.awt.datatransfer.*;
 
+import static haven.MCache.tilesz;
+
 public class ChatUI extends Widget {
     public static final RichText.Foundry fnd = new RichText.Foundry(new ChatParser(TextAttribute.FONT, Text.dfont.deriveFont(10f), TextAttribute.FOREGROUND, Color.BLACK));
     public static final Text.Foundry qfnd = new Text.Foundry(Text.dfont, 12, new java.awt.Color(192, 255, 192));
@@ -784,6 +786,19 @@ public class ChatUI extends Widget {
 			    g.mark(life);
 			}
 			return;
+		    } else {
+		    	final Matcher tmatch = Mark.CHAT_TILE_FMT_PAT.matcher(line);
+		    	if(tmatch.find()) {
+			    final long gid = Long.parseLong(tmatch.group(1));
+			    final int offx = Integer.parseInt(tmatch.group(2));
+			    final int offy = Integer.parseInt(tmatch.group(3));
+			    ui.sess.glob.map.getgrido(gid).ifPresent(grid -> {
+			        final Coord2d mc = grid.ul.add(offx, offy).mul(tilesz);
+				final Gob g = ui.sess.glob.oc.new ModdedGob(mc, 0);
+				g.addol(new Mark(20000));
+			    });
+			    return;
+			}
 		    }
 		} catch (Exception e) {
 		    e.printStackTrace();

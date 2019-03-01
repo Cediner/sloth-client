@@ -469,6 +469,22 @@ public class MCache {
 	}
     }
 
+    public Optional<Grid> getgrido(final long id) {
+	synchronized(grids) {
+	    if ((cached == null) || cached.id != id) {
+		for (Grid g : grids.values()) {
+		    if (g.id == id) {
+			cached = g;
+			return Optional.of(g);
+		    }
+		}
+		return Optional.empty();
+	    } else {
+		return Optional.of(cached);
+	    }
+	}
+    }
+
     public Grid getgridt(Coord tc) {
 	return(getgrid(tc.div(cmaps)));
     }
