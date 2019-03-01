@@ -790,10 +790,10 @@ public class ChatUI extends Widget {
 		    	final Matcher tmatch = Mark.CHAT_TILE_FMT_PAT.matcher(line);
 		    	if(tmatch.find()) {
 			    final long gid = Long.parseLong(tmatch.group(1));
-			    final int offx = Integer.parseInt(tmatch.group(2));
-			    final int offy = Integer.parseInt(tmatch.group(3));
+			    final double offx = Double.parseDouble(tmatch.group(2));
+			    final double offy = Double.parseDouble(tmatch.group(3));
 			    ui.sess.glob.map.getgrido(gid).ifPresent(grid -> {
-			        final Coord2d mc = grid.ul.add(offx, offy).mul(tilesz);
+			        final Coord2d mc = new Coord2d(grid.ul).add(offx, offy).mul(tilesz);
 				final Gob g = ui.sess.glob.oc.new ModdedGob(mc, 0);
 				g.addol(new Mark(20000));
 			    });

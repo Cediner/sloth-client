@@ -1860,11 +1860,10 @@ public class MapView extends PView implements DTarget, Console.Directory {
 			case 0: { //Mark for party
 			    //Translate to Grid + Gird Offset
 			    final Coord tc = mc.floor(tilesz);
-			    final Gob g = ui.sess.glob.oc.new ModdedGob(mc, 0);
-			    g.addol(new Mark(20000));
+			    final Coord2d tcd = mc.div(tilesz);
 
 			    ui.sess.glob.map.getgridto(tc).ifPresent(grid -> {
-			        final Coord offset = tc.sub(grid.ul);
+			        final Coord2d offset = tcd.sub(new Coord2d(grid.ul));
 				for (Widget wdg = ui.gui.chat.lchild; wdg != null; wdg = wdg.prev) {
 				    if (wdg instanceof ChatUI.PartyChat) {
 					final ChatUI.PartyChat chat = (ChatUI.PartyChat) wdg;
