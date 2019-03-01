@@ -203,7 +203,9 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
     }
 
     public static class Static {}
+    public static final Static STATIC = new Static();
     public static class SemiStatic {}
+    public static final SemiStatic SEMISTATIC = new SemiStatic();
 
     public final Save save = new Save();
     public final GobLocation loc = new GobLocation();
@@ -687,37 +689,51 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
     private static final Object DYNAMIC = new Object();
     private Object seq = null;
     public Object staticp() {
-	if(seq == null) {
+	if (seq != null) {
+	    return ((seq == DYNAMIC) ? null : seq);
+	} else if (getattr(Hidden.class) == null) {
 	    int rs = 0;
-	    for(GAttrib attr : attr.values()) {
+	    for (GAttrib attr : attr.values()) {
 		Object as = attr.staticp();
-		if(as == Rendered.CONSTANS) {
-		} else if(as instanceof Static) {
-		} else if(as == SemiStatic.class) {
+		if (as == Rendered.CONSTANS) {
+		} else if (as instanceof Static) {
+		} else if (as == SemiStatic.class) {
 		    rs = Math.max(rs, 1);
 		} else {
 		    rs = 2;
 		    break;
 		}
 	    }
-	    for(Overlay ol : ols) {
+	    for (Overlay ol : ols) {
 		Object os = ol.staticp();
-		if(os == Rendered.CONSTANS) {
-		} else if(os instanceof Static) {
-		} else if(os == SemiStatic.class) {
+		if (os == Rendered.CONSTANS) {
+		} else if (os instanceof Static) {
+		} else if (os == SemiStatic.class) {
 		    rs = Math.max(rs, 1);
 		} else {
 		    rs = 2;
 		    break;
 		}
 	    }
-	    switch(rs) {
-	    case 0: seq = new Static(); break;
-	    case 1: seq = new SemiStatic(); break;
-	    default: seq = null; break;
+	    if(getattr(KinInfo.class) != null) {
+	        rs = 2; //I want to see the names above fires/players without it being screwed up
 	    }
+	    switch (rs) {
+		case 0:
+		    seq = new Static();
+		    break;
+		case 1:
+		    seq = new SemiStatic();
+		    break;
+		default:
+		    seq = null;
+		    break;
+	    }
+	    return ((seq == DYNAMIC) ? null : seq);
+	} else {
+	    //New hidden gob
+	    return seq = STATIC;
 	}
-	return((seq == DYNAMIC)?null:seq);
     }
 
     void changed() {

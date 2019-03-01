@@ -186,26 +186,24 @@ public class SkelSprite extends Sprite implements Gob.Overlay.CUpd, Skeleton.Has
     
     public boolean tick(int idt) {
 	float dt = idt / 1000.0f;
-	if(DefSettings.ANIMATIONS.get()) {
-	    if(!stat || (ipold > 0)) {
-		boolean done = true;
-		for(PoseMod m : mods) {
-		    m.tick(dt);
-		    done = done && m.done();
-		}
-		if(done)
-		    stat = true;
-		if(ipold > 0) {
-		    if((ipold -= (dt / ipollen)) < 0) {
-			ipold = 0;
-			oldpose = null;
-		    }
-		}
-		rebuild();
+	if(!stat || (ipold > 0)) {
+	    boolean done = true;
+	    for(PoseMod m : mods) {
+		m.tick(dt);
+		done = done && m.done();
 	    }
-	    for (MeshAnim.Anim anim : manims)
-		anim.tick(dt);
+	    if(done)
+		stat = true;
+	    if(ipold > 0) {
+		if((ipold -= (dt / ipollen)) < 0) {
+		    ipold = 0;
+		    oldpose = null;
+		}
+	    }
+	    rebuild();
 	}
+	for (MeshAnim.Anim anim : manims)
+	    anim.tick(dt);
 	return(false);
     }
 
@@ -217,7 +215,7 @@ public class SkelSprite extends Sprite implements Gob.Overlay.CUpd, Skeleton.Has
 		return (Gob.SemiStatic.class);
 	    }
 	} else {
-	    return CONSTANS;
+	    return Gob.STATIC;
 	}
     }
 

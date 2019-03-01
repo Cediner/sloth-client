@@ -32,6 +32,7 @@ import com.jogamp.opengl.*;
 public interface Rendered extends Drawn {
     public boolean setup(RenderList r);
 
+    //By default anything Rendered that doesn't redefine staticp is dynamic...
     public static final Object CONSTANS = new Object();
     public default Object staticp() {return(null);}
 

@@ -1,3 +1,15 @@
+2/28/19
+    - Shift+B to toggle hitboxes
+    - Fixed bug that made everything dynamic.
+    - Making a dynamic object hidden will now make it static like it should and increase performance!
+    - Updated text next to "Show Crop Stage" and "Show Gob HP" to remind you it'll be a performance hit. Objects that
+    need to show these end up having to be dynamic because of it. In large numbers you'll notice a difference.
+    - When you untoggle Stop Animations they will continue to tick in the background, just not update (unless you mouse
+    hover). While in this mode they will become static.
+        - Note: on hearthfires you may see the name float off because of this.
+    - Dead animals or composite gobs should no longer be dynamic when all their poses are done
+    - Show animations should almost affect everything now.
+
 2/27/19
     - You can now alt + click on Loftar's map to queue a move through it. Loftar's map will show the lines of
     the path on it to. You can recolor these lines under Gameplay Settings -> Gob

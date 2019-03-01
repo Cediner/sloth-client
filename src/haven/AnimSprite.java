@@ -30,6 +30,9 @@ import haven.sloth.DefSettings;
 
 import java.util.*;
 
+/**
+ * These are typically a set animation that eventually stops -> ie: gates
+ */
 public class AnimSprite extends Sprite {
     private Rendered[] parts;
     private MeshAnim.Anim[] anims;
@@ -79,15 +82,13 @@ public class AnimSprite extends Sprite {
 
     public boolean tick(int idt) {
 	boolean ret = false;
-	float dt = idt / 1000.0f;
-	if(DefSettings.ANIMATIONS.get()) {
-	    for (MeshAnim.Anim anim : anims)
-		ret = ret | anim.tick(dt);
-	}
+    	float dt = idt / 1000.0f;
+	for (MeshAnim.Anim anim : anims)
+	    ret = ret | anim.tick(dt);
 	return(ret);
     }
 
     public Object staticp() {
-	return((!DefSettings.ANIMATIONS.get() || anims.length == 0)?CONSTANS:null);
+	return((!DefSettings.ANIMATIONS.get() || anims.length == 0)?Gob.STATIC:null);
     }
 }

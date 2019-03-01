@@ -30,6 +30,12 @@ import haven.sloth.DefSettings;
 
 import java.awt.Color;
 
+import static haven.Gob.SEMISTATIC;
+
+/**
+ *
+ * TODO: Think of a way to represent the stage in 3D to avoid static/semistatic mess.
+ */
 public class GobHealth extends GAttrib {
     private static final Tex[] gobhp = new Tex[] {
 	    Text.renderstroked("25%", Color.WHITE, Color.BLACK, Gob.gobhpf).tex(),
@@ -64,9 +70,9 @@ public class GobHealth extends GAttrib {
     }
 
     public Object staticp() {
-        if(!DefSettings.SHOWGOBHP.get() && hp < 4)
+        if(!DefSettings.SHOWGOBHP.get() || hp >= 4)
 	    return super.staticp();
         else
-            return null;
+            return SEMISTATIC;
     }
 }

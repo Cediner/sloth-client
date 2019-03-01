@@ -649,8 +649,8 @@ public class MapView extends PView implements DTarget, Console.Directory {
     }
 
     public static class ChangeSet implements OCache.ChangeCallback {
-	public final Set<Gob> changed = new HashSet<Gob>();
-	public final Set<Gob> removed = new HashSet<Gob>();
+	public final Set<Gob> changed = new HashSet<>();
+	public final Set<Gob> removed = new HashSet<>();
 
 	public void changed(Gob ob) {
 	    changed.add(ob);
@@ -665,13 +665,13 @@ public class MapView extends PView implements DTarget, Console.Directory {
     private class Gobs implements Rendered {
 	final OCache oc = glob.oc;
 	final ChangeSet changed = new ChangeSet();
-	final Map<Gob, GobSet> parts = new HashMap<Gob, GobSet>();
+	final Map<Gob, GobSet> parts = new HashMap<>();
 	Integer ticks = 0;
 	{oc.callback(changed);}
 
 	class GobSet implements Rendered {
 	    private final String nm;
-	    final Collection<Gob> obs = new HashSet<Gob>();
+	    final Collection<Gob> obs = new HashSet<>();
 	    Object seq = this;
 
 	    GobSet(String nm) {
@@ -713,7 +713,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	}
 
 	class Transitory extends GobSet {
-	    final Map<Gob, Integer> age = new HashMap<Gob, Integer>();
+	    final Map<Gob, Integer> age = new HashMap<>();
 
 	    Transitory(String nm) {super(nm);}
 
@@ -735,7 +735,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 
 		void update() {
 		    if(++cycle >= 300) {
-			Collection<Gob> cache = new ArrayList<Gob>();
+			Collection<Gob> cache = new ArrayList<>();
 			for(Map.Entry<Gob, Integer> ob : age.entrySet()) {
 			    if(ticks - ob.getValue() > 450)
 				cache.add(ob.getKey());
@@ -751,8 +751,8 @@ public class MapView extends PView implements DTarget, Console.Directory {
 
 		void update() {
 		    if(++cycle >= 20) {
-			Collection<Gob> cache = new ArrayList<Gob>();
-			Collection<Gob> scache = new ArrayList<Gob>();
+			Collection<Gob> cache = new ArrayList<>();
+			Collection<Gob> scache = new ArrayList<>();
 			for(Map.Entry<Gob, Integer> ob : age.entrySet()) {
 			    if(ticks - ob.getValue() > 30) {
 				Gob gob = ob.getKey();
@@ -775,7 +775,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 
 		void update() {
 		    if(++cycle >= 5) {
-			Collection<Gob> cache = new ArrayList<Gob>();
+			Collection<Gob> cache = new ArrayList<>();
 			for(Gob ob : obs) {
 			    Object seq = ob.staticp();
 			    if((seq instanceof Gob.Static) || (seq instanceof Gob.SemiStatic))

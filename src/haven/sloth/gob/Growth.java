@@ -10,8 +10,14 @@ import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import static haven.Gob.SEMISTATIC;
+import static haven.Gob.STATIC;
+
 /**
  * Gob Attribute for showing crop stage number if possible
+ *
+ * TODO: Think of a way to represent the stage in 3D to avoid static/semistatic mess. When the Gob SDT changes then
+ *       we can trigger an update at that point while still being static
  */
 public class Growth extends GAttrib implements Rendered {
     private static final Color stagecolor = new Color(235, 235, 235);
@@ -63,8 +69,11 @@ public class Growth extends GAttrib implements Rendered {
 	}
     }
 
-    //These can't be static since sc needs to update...
+    //These can't be static since sc needs to update... RIP fps
     public Object staticp() {
-	return new Gob.Static();
+        if(!DefSettings.SHOWCROPSTAGE.get())
+            return STATIC;
+        else
+            return SEMISTATIC;
     }
 }

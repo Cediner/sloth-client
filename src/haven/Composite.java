@@ -68,7 +68,7 @@ public class Composite extends Drawable {
     }
 	
     private List<PoseMod> loadposes(Collection<ResData> rl, Skeleton skel, boolean old) {
-	List<PoseMod> mods = new ArrayList<PoseMod>(rl.size());
+	List<PoseMod> mods = new ArrayList<>(rl.size());
 	for(ResData dat : rl) {
 	    PoseMod mod = skel.mkposemod(gob, dat.res.get(), dat.sdt.clone());
 	    if(old)
@@ -79,7 +79,7 @@ public class Composite extends Drawable {
     }
 
     private List<PoseMod> loadposes(Collection<ResData> rl, Skeleton skel, WrapMode mode) {
-	List<PoseMod> mods = new ArrayList<PoseMod>(rl.size());
+	List<PoseMod> mods = new ArrayList<>(rl.size());
 	for(ResData dat : rl) {
 	    for(Skeleton.ResPose p : dat.res.get().layers(Skeleton.ResPose.class))
 		mods.add(p.forskel(gob, skel, (mode == null)?p.defmode:mode));
@@ -172,7 +172,11 @@ public class Composite extends Drawable {
 	nequ = equ;
     }
 
+
+    //TODO: Should inherit from `comp`, this composite could very well be static. Ex: dead animals
+    //      OCache already calls changed anytime it changes equ/poses.. so this should ONLY be dynamic
+    //      If one of the equ/poses are an animation and `Show Animations` is on
     public Object staticp() {
-	return(null);
+	return comp != null ? comp.staticp() : null;
     }
 }

@@ -153,7 +153,7 @@ public class OptWnd extends Window {
 		    }));
 		    view.add(new IndirCheckBox("Skip Loading", SKIPLOADING));
 		    view.add(new IndirCheckBox("Show Weather", WEATHER));
-		    view.add(new IndirCheckBox("Show Animations", ANIMATIONS));
+		    view.add(new IndirCheckBox("Show Animations", ANIMATIONS, val -> ui.sess.glob.oc.changeAllGobs()));
 		    view.add(new IndirCheckBox("Show Gobs", SHOWGOBS));
 		    view.add(new IndirCheckBox("Show Map", SHOWMAP));
 		    view.add(new IndirCheckBox("Show Transition Tiles", SHOWTRANTILES, val -> {
@@ -318,7 +318,7 @@ public class OptWnd extends Window {
 	    }
 	    { //crops
 	        crops.add(new IndirCheckBox("Simple Crops", SIMPLECROPS));
-	        crops.add(new IndirCheckBox("Show Crop Stage", SHOWCROPSTAGE, val -> {
+	        crops.add(new IndirCheckBox("Show Crop Stage (Performance hit)", SHOWCROPSTAGE, val -> {
 	            if(ui.sess != null) {
 	                ui.sess.glob.oc.changeCropGobs();
 		    }
@@ -328,7 +328,7 @@ public class OptWnd extends Window {
 		crops.pack();
 	    }
 	    { //gobs
-	        gobs.add(new IndirCheckBox("Show Gob HP", SHOWGOBHP, val -> {
+	        gobs.add(new IndirCheckBox("Show Gob HP (Performance hit)", SHOWGOBHP, val -> {
 		    if(ui.sess != null) {
 			ui.sess.glob.oc.changeHealthGobs();
 		    }
