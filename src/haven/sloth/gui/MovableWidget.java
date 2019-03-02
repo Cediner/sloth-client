@@ -17,21 +17,39 @@ import java.util.Map;
  */
 public abstract class MovableWidget extends Widget {
     public static final Map<String, Coord2d> knownPositions = new HashMap<>();
+    private static final Map<String, Boolean> knownLocks = new HashMap<>();
     static {
         //These settings are stored in dynamic.sqlite under `widget_position`
 	Storage.dynamic.ensure(sql -> {
 	    try(final Statement stmt = sql.createStatement()) {
-	        stmt.executeUpdate("CREATE TABLE IF NOT EXISTS widget_position ( name TEXT PRIMARY KEY, x REAL, y REAL )");
+	        stmt.executeUpdate("CREATE TABLE IF NOT EXISTS widget_position ( name TEXT PRIMARY KEY, x REAL, y REAL, locked BOOLEAN)");
+	        //For older client versions widget_position didn't have the `locked` column and it needs added in
+		try(final ResultSet res = stmt.executeQuery("PRAGMA table_info(widget_position)")) {
+		    boolean has3 = false;
+		    while(res.next()) {
+		        if(res.getInt(1) == 3) {
+		            has3 = true;
+		            break;
+			}
+		    }
+
+		    if(!has3) {
+		        //Older client, make the column
+			stmt.executeUpdate("ALTER TABLE widget_position ADD COLUMN locked BOOLEAN");
+		    }
+		}
 	    }
 	});
 	Storage.dynamic.ensure(sql -> {
 	    try(final Statement stmt = sql.createStatement()) {
-	        try(final ResultSet res = stmt.executeQuery("SELECT name, x, y FROM widget_position")) {
+	        try(final ResultSet res = stmt.executeQuery("SELECT name, x, y, locked FROM widget_position")) {
 	            while(res.next()) {
 	                final String name = res.getString(1);
 	                final double x = res.getDouble(2);
 	                final double y = res.getDouble(3);
+	                final boolean locked = res.getBoolean(4);
 	                knownPositions.put(name, new Coord2d(x, y));
+			knownLocks.put(name, locked);
 		    }
 		}
 	    }
@@ -42,7 +60,7 @@ public abstract class MovableWidget extends Widget {
     //Database key
     private final String key;
     //Whether we want to lock the current position or not
-    private boolean lock = false;
+    private boolean lock;
 
     private UI.Grab dm = null;
     private Coord doff;
@@ -67,7 +85,10 @@ public abstract class MovableWidget extends Widget {
         this.key = name;
     }
 
-    public void toggleLock() { lock = !lock; }
+    public void toggleLock() {
+        lock = !lock;
+        savePosition();
+    }
 
     public boolean locked() { return lock; }
 
@@ -82,10 +103,11 @@ public abstract class MovableWidget extends Widget {
             final Coord2d rel = relpos();
             knownPositions.put(key, rel);
             Storage.dynamic.write(sql -> {
-                final PreparedStatement stmt = Storage.dynamic.prepare("INSERT OR REPLACE INTO widget_position VALUES (?, ?, ?)");
+                final PreparedStatement stmt = Storage.dynamic.prepare("INSERT OR REPLACE INTO widget_position VALUES (?, ?, ?, ?)");
                 stmt.setString(1, key);
                 stmt.setDouble(2, rel.x);
                 stmt.setDouble(3, rel.y);
+                stmt.setBoolean(4, lock);
                 stmt.executeUpdate();
 	    });
 	}
@@ -94,6 +116,7 @@ public abstract class MovableWidget extends Widget {
     @Override
     protected void added() {
 	loadPosition();
+	lock = knownLocks.getOrDefault(key, false);
         super.added();
     }
 
