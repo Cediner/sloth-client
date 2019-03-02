@@ -26,6 +26,7 @@
 
 package haven;
 
+import java.awt.*;
 import java.util.*;
 
 import com.google.common.flogger.FluentLogger;
@@ -35,6 +36,8 @@ import haven.MapFile.GridInfo;
 import haven.MapFile.Marker;
 import haven.MapFile.PMarker;
 import haven.MapFile.SMarker;
+import haven.sloth.DefSettings;
+
 import static haven.MCache.cmaps;
 import static haven.OCache.posres;
 
@@ -274,7 +277,6 @@ public class MapFileWidget extends Widget {
 		file.lock.readLock().unlock();
 	    }
 	}
-	Coord zmaps = cmaps.mul(1 << dlvl);
 	for(Coord c : dgext) {
 	    Tex img;
 	    try {
@@ -287,6 +289,30 @@ public class MapFileWidget extends Widget {
 	    Coord ul = c.mul(cmaps).sub(loc.tc.div(1 << dlvl)).add(hsz);
 	    g.image(img, ul);
 	}
+
+
+	if(DefSettings.MMSHOWGRID.get()) {
+	    //Grid view is weird due to how zoommaps work, the only guarantee is that if we have one zoommap done
+	    //we know it's ul is on a grid edge. gc is the ul of SOME grid
+	    //Normal grids are 100x100 boxes, factor in zoomlevels and we're closer to
+	    // (100,100).div(1 << dlvl)
+	    final Coord sc = dgext.ul.mul(cmaps).sub(loc.tc.div(1 << dlvl)).add(hsz);
+	    final Coord step = cmaps.div(1 << dlvl);
+	    Coord tlc = new Coord(sc); //Top left grid that we can see within our window view
+	    while(tlc.y - step.y >= 0) tlc.y -= step.y;
+	    while(tlc.x - step.x >= 0) tlc.x -= step.x;
+	    g.chcolor(Color.RED);
+	    //Make horizontal lines
+	    for(int y = tlc.y; y < sz.y; y += step.y) {
+	        g.line(new Coord(0, y), new Coord(sz.x, y), 1);
+	    }
+	    //Make vertical lines
+	    for(int x = tlc.x; x < sz.x; x += step.x) {
+		g.line(new Coord(x, 0), new Coord(x, sz.y), 1);
+	    }
+	    g.chcolor();
+	}
+
 	if(!hmarkers) {
 	    if((markers == null) || (file.markerseq != markerseq))
 		remark(loc, dtext.margin(cmaps.mul(1 << dlvl)));
@@ -430,10 +456,9 @@ public class MapFileWidget extends Widget {
 
     public boolean mousewheel(Coord c, int amount) {
 	if(amount > 0) {
-	    //if(allowzoomout())
 	    final Coord zmaps = cmaps.mul(1 << Math.min(zoomlevel + 1, dlvl + 1));
 	    if(zmaps.x != 0 && zmaps.y != 0)
-		zoomlevel = Math.min(zoomlevel + 1, dlvl + 1);
+		zoomlevel = Math.min(Math.min(zoomlevel + 1, dlvl + 1), 5);
 	} else {
 	    zoomlevel = Math.max(zoomlevel - 1, 0);
 	}

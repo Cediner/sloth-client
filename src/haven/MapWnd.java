@@ -44,12 +44,14 @@ import static haven.MCache.cmaps;
 import static haven.OCache.posres;
 
 public class MapWnd extends Window {
+    private static final Tex viewbox = Resource.loadtex("custom/mm/hud/view", 3);
     public static final Resource markcurs = Resource.local().loadwait("gfx/hud/curs/flag");
     public final MapFileWidget view;
     public final MapView mv;
     public final MarkerList list;
     private final Locator player;
     private final Widget toolbar;
+    private final Widget markerwdg;
     private final Frame viewf, listf;
     private final Button pmbtn, smbtn;
     private TextEntry namesel;
@@ -88,20 +90,23 @@ public class MapWnd extends Window {
 		}
 	    }, Coord.z);
 	toolbar.pack();
-	listf = add(new Frame(new Coord(200, 200), false));
+	markerwdg = new Widget();
+	listf = markerwdg.add(new Frame(new Coord(200, 200), false));
 	list = listf.add(new MarkerList(listf.inner().x, 0));
-	pmbtn = add(new Button(95, "Placed", false) {
+	pmbtn = markerwdg.add(new Button(95, "Placed", false) {
 		public void click() {
 		    mflt = pmarkers;
 		    markerseq = -1;
 		}
 	    });
-	smbtn = add(new Button(95, "Natural", false) {
+	smbtn = markerwdg.add(new Button(95, "Natural", false) {
 		public void click() {
 		    mflt = smarkers;
 		    markerseq = -1;
 		}
 	    });
+	markerwdg.pack();
+	add(markerwdg);
 	resize(sz);
     }
 
@@ -254,6 +259,16 @@ public class MapWnd extends Window {
 	    }
 	}
 
+
+	/**
+	 * Draw players view distance around them
+	 */
+	private void drawview(GOut g, final Coord ploc) {
+	    if (DefSettings.MMSHOWVIEW.get()) {
+		g.image(viewbox, ploc.sub(viewbox.sz().div(2)));
+	    }
+	}
+
 	public void draw(GOut g) {
 	    g.chcolor(0, 0, 0, 128);
 	    g.frect(Coord.z, sz);
@@ -268,6 +283,8 @@ public class MapWnd extends Window {
 		    g.chcolor(255, 0, 0, 255);
 		    g.image(plx.layer(Resource.imgc), ploc.sub(plx.layer(Resource.negc).cc));
 		    g.chcolor();
+		    //Draw our view
+		    drawview(g, ploc);
 		    //Draw gob icons
 		    drawicons(g, loc);
 		    //Draw Movement queue if any exit
@@ -360,7 +377,7 @@ public class MapWnd extends Window {
 
 	    if(mark != null) {
 		if(namesel == null) {
-		    namesel = MapWnd.this.add(new TextEntry(200, "") {
+		    namesel = markerwdg.add(new TextEntry(200, "") {
 			    {dshow = true;}
 			    public void activate(String text) {
 				mark.nm = text;
@@ -375,7 +392,7 @@ public class MapWnd extends Window {
 		namesel.commit();
 		if(mark instanceof PMarker) {
 		    PMarker pm = (PMarker)mark;
-		    colsel = MapWnd.this.add(new GroupSelector(0) {
+		    colsel =markerwdg.add(new GroupSelector(0) {
 			    public void changed(int group) {
 				this.group = group;
 				pm.color = BuddyWnd.gc[group];
@@ -384,7 +401,7 @@ public class MapWnd extends Window {
 			});
 		    if((colsel.group = Utils.index(BuddyWnd.gc, pm.color)) < 0)
 			colsel.group = 0;
-		    mremove = MapWnd.this.add(new Button(200, "Remove", false) {
+		    mremove = markerwdg.add(new Button(200, "Remove", false) {
 			    public void click() {
 				view.file.remove(mark);
 				change2(null);
@@ -398,11 +415,13 @@ public class MapWnd extends Window {
 
     public void resize(Coord sz) {
 	super.resize(sz);
+	markerwdg.resize(new Coord(markerwdg.sz.x, sz.y));
+	markerwdg.c = new Coord(sz.x - markerwdg.sz.x, 0);
 	listf.resize(listf.sz.x, sz.y - 120);
-	listf.c = new Coord(sz.x - listf.sz.x, 0);
 	list.resize(listf.inner());
-	pmbtn.c = new Coord(sz.x - 200, sz.y - pmbtn.sz.y);
-	smbtn.c = new Coord(sz.x - 95, sz.y - smbtn.sz.y);
+	//listf.c = new Coord(sz.x - listf.sz.x, 0);
+	pmbtn.c = new Coord(markerwdg.sz.x - 200, markerwdg.sz.y - pmbtn.sz.y);
+	smbtn.c = new Coord(markerwdg.sz.x - 95, markerwdg.sz.y - smbtn.sz.y);
 	if(namesel != null) {
 	    namesel.c = listf.c.add(0, listf.sz.y + 10);
 	    if(colsel != null) {

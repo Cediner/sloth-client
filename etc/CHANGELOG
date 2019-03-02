@@ -7,7 +7,8 @@
     toggles it on/off under Gameplay -> "Show Hover Tooltips". You can also toggle with Shift+V
     - You now move Loftar's map around with ctrl + drag, just like the minimap. You can now move on it with just left click
     rather than ctrl + left click. Queued moves are still alt + left click. Icons won't stop alt + left click anymore
-    -
+    - Loftar's map will now show grid lines when on as well as player's view distance
+    - Loftar's map is restricted to 6 zoomlevels, the highest letting you basically see an entire continent in one view
 
 
 3/1/19
