@@ -3,7 +3,6 @@ TODO
         - follow camera + offset (akin to minimap)
         - Auto mark caves and ???
         - Ridges on the map
-        - clickable icons on loftar's map for local area minimap icons
         - Ability to hide the icon list
     - Follow movement should point a pointer on the gob you're chasing - Make this an option
     - Party members send grid id, offset every x seconds to override loftar's stuff? - Make this an option

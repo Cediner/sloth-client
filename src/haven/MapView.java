@@ -1992,12 +1992,12 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	if(grab != null)
 	    grab.mmousemove(c);
 	if(camdrag != null) {
-	    ((Camera)camera).drag(c);
+	    camera.drag(c);
 	} else if(placing != null) {
 	    if((placing.lastmc == null) || !placing.lastmc.equals(c)) {
 		delay(placing.new Adjust(c, ui.modflags()));
 	    }
-	} else if(ui.modctrl) {
+	} else if(SHOWHOVERTOOLTIPS.get()) {
 	    delay(new Hover(c));
 	} else {
 	    lasttt = "";

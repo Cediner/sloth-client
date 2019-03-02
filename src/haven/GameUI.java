@@ -748,9 +748,13 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    case 3: //Ctrl+C?
 		toggleChat();
 		return true;
+	    case 'V':
+	        DefSettings.SHOWHOVERTOOLTIPS.set(!DefSettings.SHOWHOVERTOOLTIPS.get());
+		return true;
 	    case 'B':
 		DefSettings.SHOWHITBOX.set(!DefSettings.SHOWHITBOX.get());
 		ui.sess.glob.oc.changeAllGobs();
+		return true;
 	    case 27: //Escape
 	        if(map != null && !map.hasfocus) {
 	            setfocus(map);

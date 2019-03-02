@@ -41,6 +41,7 @@ import static haven.LocalMiniMap.party;
 import static haven.LocalMiniMap.plx;
 import static haven.MCache.tilesz;
 import static haven.MCache.cmaps;
+import static haven.OCache.posres;
 
 public class MapWnd extends Window {
     public static final Resource markcurs = Resource.local().loadwait("gfx/hud/curs/flag");
@@ -134,8 +135,22 @@ public class MapWnd extends Window {
 	    if(domark && (button == 3)) {
 		domark = false;
 		return(true);
+	    } else {
+		try {
+		    final Location loc = resolve(player);
+		    if (loc != null) {
+			final Gob g = gobat(loc, c);
+			if(g != null) {
+			    mv.wdgmsg("click", rootpos().add(c), g.rc.floor(posres), button, ui.modflags(), 0,
+				    (int) g.id, g.rc.floor(posres), 0, -1);
+			    return true;
+			}
+		    }
+		} catch (Loading l) {
+		    //ignore
+		}
+		return(super.mousedown(c, button));
 	    }
-	    return(super.mousedown(c, button));
 	}
 
 	/**
@@ -143,9 +158,8 @@ public class MapWnd extends Window {
 	 */
 	private void drawicons(GOut g, final Location ploc) {
 	    final Coord pc = new Coord2d(mv.getcc()).floor(tilesz);
-	    OCache oc = ui.sess.glob.oc;
-	    synchronized(oc) {
-		for(Gob gob : oc) {
+	    synchronized(ui.sess.glob.oc) {
+		for(Gob gob : ui.sess.glob.oc) {
 		    try {
 			GobIcon icon = gob.getattr(GobIcon.class);
 			if(icon != null) {
@@ -155,7 +169,9 @@ public class MapWnd extends Window {
 				icon.tex().ifPresent(tex -> g.image(tex, gc.sub(tex.sz().div(2))));
 			    }
 			}
-		    } catch(Loading l) {}
+		    } catch(Loading l) {
+		        //fail silently
+		    }
 		}
 	    }
 
@@ -178,6 +194,36 @@ public class MapWnd extends Window {
 	    } catch(Loading l) {
 	        //Fail silently
 	    }
+	}
+
+	/**
+	 * For seeing if you right clicked a gob icon, just like LocalMinimap
+	 */
+	private Gob gobat(final Location ploc, final Coord c) {
+	    final Coord pc = new Coord2d(mv.getcc()).floor(tilesz);
+	    synchronized(ui.sess.glob.oc) {
+		for(Gob gob : ui.sess.glob.oc) {
+		    try {
+			GobIcon icon = gob.getattr(GobIcon.class);
+			if(icon != null) {
+			    final Coord mc = new Coord2d(gob.getc()).floor(tilesz);
+			    final Coord gc = xlate(new Location(ploc.seg, ploc.tc.add(mc.sub(pc))));
+			    if(gc != null) {
+				final Optional<Tex> tex = icon.tex();
+				if(tex.isPresent()) {
+				    final Coord sz = tex.get().sz();
+				    if(c.isect(gc.sub(tex.get().sz().div(2)), sz)) {
+					return gob;
+				    }
+				}
+			    }
+			}
+		    } catch(Loading l) {
+			//fail silently
+		    }
+		}
+	    }
+	    return null;
 	}
 
 

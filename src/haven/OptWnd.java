@@ -352,7 +352,8 @@ public class OptWnd extends Window {
 	        misc.add(new IndirCheckBox("Show Hidden", SHOWHIDDEN, val -> ui.sess.glob.oc.changeHiddenGobs()));
 		misc.add(ColorPreWithLabel("Hidden color: ", HIDDENCOLOR));
 	        misc.add(new IndirCheckBox("Colorful Cavedust", COLORFULDUST));
-	        misc.add(new IndirCheckBox("Show FPS", SHOWFPS));
+		misc.add(new IndirCheckBox("Show FPS", SHOWFPS));
+		misc.add(new IndirCheckBox("Show Hover Tooltips", SHOWHOVERTOOLTIPS));
 		misc.pack();
 	    }
 

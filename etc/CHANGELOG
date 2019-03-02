@@ -1,6 +1,10 @@
 3/2/19
     - Belts will now save window position
     - Locking a window will be remember like position now
+    - Added Omni's sound file
+    - Can now left/right click gobs on Loftar's map like you can on minimap
+    - Changed how hover tooltips worked for the 3D world. It's no longer ctrl + hover. There is now a setting that
+    toggles it on/off under Gameplay -> "Show Hover Tooltips". You can also toggle with Shift+V
 
 
 3/1/19
