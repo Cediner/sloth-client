@@ -353,39 +353,7 @@ public class MapFileWidget extends Widget {
     }
 
     public boolean mousedown(Coord c, int button) {
-	Coord tc = null;
-	if(curloc != null)
-	    tc = c.sub(sz.div(2)).mul(1 << dlvl).add(curloc.tc);
-	if(tc != null) {
-	    DisplayMarker mark = markerat(tc);
-	    if((mark != null) && clickmarker(mark, button))
-		return(true);
-	    if(clickloc(new Location(curloc.seg, tc), button))
-		return(true);
-	    if(button == 1 && (ui.modctrl || ui.modmeta)) {
-		//Only works if we're on the same map segment as our player
-		try {
-		    final Location pl = resolve(new MapLocator(ui.gui.map));
-		    if (curloc != null && curloc.seg == pl.seg) {
-			final Coord2d plc = new Coord2d(ui.sess.glob.oc.getgob(ui.gui.map.plgob).getc());
-			//Offset in terms of loftar map coordinates
-			//XXX: Previous worlds had randomized north/south/east/west directions, still the case? Assuming not for now.
-			final Coord2d offset = new Coord2d(pl.tc.sub(tc));
-			//Translate this to real map units and add to current map position
-			final Coord2d mc = plc.sub(offset.mul(MCache.tilesz));
-			if (ui.modmeta) {
-			    ui.gui.map.queuemove(mc);
-			} else {
-			    ui.gui.map.moveto(mc);
-			}
-		    }
-		} catch (Exception e) {
-		    logger.atSevere().withCause(e).log("Failed to resolve player location");
-		}
-		return true;
-	    }
-	}
-	if(button == 1 && ui.modflags() == 0) {
+	if(button == 1 && ui.modflags() == UI.MOD_CTRL) {
 	    Location loc = curloc;
 	    if((drag == null) && (loc != null)) {
 		drag = ui.grabmouse(this);
@@ -394,6 +362,39 @@ public class MapFileWidget extends Widget {
 		dragging = false;
 	    }
 	    return(true);
+	} else {
+	    Coord tc = null;
+	    if(curloc != null)
+		tc = c.sub(sz.div(2)).mul(1 << dlvl).add(curloc.tc);
+	    if (tc != null) {
+		DisplayMarker mark = markerat(tc);
+		if ((mark != null) && clickmarker(mark, button))
+		    return (true);
+		if (clickloc(new Location(curloc.seg, tc), button))
+		    return (true);
+		if (button == 1) {
+		    //Only works if we're on the same map segment as our player
+		    try {
+			final Location pl = resolve(new MapLocator(ui.gui.map));
+			if (curloc != null && curloc.seg == pl.seg) {
+			    final Coord2d plc = new Coord2d(ui.sess.glob.oc.getgob(ui.gui.map.plgob).getc());
+			    //Offset in terms of loftar map coordinates
+			    //XXX: Previous worlds had randomized north/south/east/west directions, still the case? Assuming not for now.
+			    final Coord2d offset = new Coord2d(pl.tc.sub(tc));
+			    //Translate this to real map units and add to current map position
+			    final Coord2d mc = plc.sub(offset.mul(MCache.tilesz));
+			    if (ui.modmeta) {
+				ui.gui.map.queuemove(mc);
+			    } else {
+				ui.gui.map.moveto(mc);
+			    }
+			}
+		    } catch (Exception e) {
+			logger.atSevere().withCause(e).log("Failed to resolve player location");
+		    }
+		    return true;
+		}
+	    }
 	}
 	return(super.mousedown(c, button));
     }

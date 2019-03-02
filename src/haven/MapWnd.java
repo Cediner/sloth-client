@@ -111,7 +111,7 @@ public class MapWnd extends Window {
 	}
 
 	public boolean clickmarker(DisplayMarker mark, int button) {
-	    if(button == 1) {
+	    if(button == 1 && !ui.modmeta) {
 		list.change2(mark.m);
 		list.display(mark.m);
 		return(true);
@@ -135,7 +135,7 @@ public class MapWnd extends Window {
 	    if(domark && (button == 3)) {
 		domark = false;
 		return(true);
-	    } else {
+	    } else if(!ui.modmeta) { ///Don't want to screw up queued moves with these icons
 		try {
 		    final Location loc = resolve(player);
 		    if (loc != null) {
@@ -149,8 +149,8 @@ public class MapWnd extends Window {
 		} catch (Loading l) {
 		    //ignore
 		}
-		return(super.mousedown(c, button));
 	    }
+	    return(super.mousedown(c, button));
 	}
 
 	/**
