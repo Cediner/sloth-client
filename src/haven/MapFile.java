@@ -266,6 +266,8 @@ public class MapFile {
 	    this.tc = tc;
 	    this.nm = nm;
 	}
+
+	public String name() { return nm; }
     }
 
     public static class PMarker extends Marker {

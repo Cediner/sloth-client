@@ -60,6 +60,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public Inventory maininv; //Inventory widget
     public CharWnd chrwdg; //Character window
     public MapWnd mapfile; //Loftar's map window
+    public MapMarkerWnd mapmarkers; //Loftar's map window
     public Widget qqview; //Current quest log widget ?
     private QuestWnd questwnd;
     public BuddyWnd buddies; //Buddy Window, tab of ZergWnd
@@ -439,7 +440,9 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		ui.destroy(mmap);
 	    if(mapfile != null) {
 		ui.destroy(mapfile);
+		ui.destroy(mapmarkers);
 		mapfile = null;
+		mapmarkers = null;
 	    }
 	    mmap = new LocalMiniMap(new Coord(133, 133), map);
 	    mmapwnd = adda(new MinimapWnd(mmap), new Coord(sz.x, 0), 1, 0);
@@ -448,7 +451,10 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		mmap.save(file);
 		mapfile = new MapWnd(mmap.save, map, Utils.getprefc("wndsz-map", new Coord(700, 500)), "Map");
 		mapfile.hide();
+		mapmarkers = new MapMarkerWnd(mapfile);
+		mapmarkers.hide();
 		add(mapfile, new Coord(50, 50));
+	    	add(mapmarkers, new Coord(50, 50));
 	    }
 	} else if(place == "menu") {
 	    menu = (MenuGrid)add(child, new Coord(sz.x-child.sz.x, sz.y-child.sz.y));
@@ -793,6 +799,14 @@ public class GameUI extends ConsoleHost implements Console.Directory {
             return true;
 	} else {
 	    return super.mousewheel(c, amount);
+	}
+    }
+
+    void toggleMarkers() {
+	if(mapmarkers != null && mapmarkers.show(!mapmarkers.visible)) {
+	    mapmarkers.raise();
+	    fitwdg(mapmarkers);
+	    setfocus(mapmarkers);
 	}
     }
 

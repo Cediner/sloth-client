@@ -31,7 +31,7 @@ import java.awt.image.BufferedImage;
 
 public class IButton extends SIWidget {
     BufferedImage up, down, hover;
-    private Runnable action = null;
+    private Runnable action;
     boolean h = false;
     boolean a = false;
     UI.Grab d = null;

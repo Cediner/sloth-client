@@ -14,6 +14,8 @@
     depend on it should update as well with the new data. You'll notice your zoom maps load in slightly delayed because
     of this as they have to regenerate.
     - Moved minimap buttons over to Loftar's map
+    - Split up Loftar's map into the map and a markers window. You can open the markers window with the flag button at
+    the top of the map window or by clicking an item as usual.
 
 3/1/19
     - Can now mark tiles with Alt + right click -> Mark for party
