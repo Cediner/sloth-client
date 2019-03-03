@@ -13,6 +13,7 @@
     - Changed out zoom maps load in from Loftar's map so if the default grid level has updated all the zoommaps that
     depend on it should update as well with the new data. You'll notice your zoom maps load in slightly delayed because
     of this as they have to regenerate.
+    - Moved minimap buttons over to Loftar's map
 
 3/1/19
     - Can now mark tiles with Alt + right click -> Mark for party

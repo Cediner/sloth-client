@@ -107,6 +107,36 @@ public class MapWnd extends Window {
 	    });
 	markerwdg.pack();
 	add(markerwdg);
+
+	addBtn("buttons/square/view", "Toggle view range", () -> DefSettings.MMSHOWVIEW.set(!DefSettings.MMSHOWVIEW.get()));
+	addBtn("buttons/square/grid", "Toggle grid on minimap", () -> DefSettings.MMSHOWGRID.set(!DefSettings.MMSHOWGRID.get()));
+	addBtn("buttons/square/realm", "Show Kingdom Claims", () -> {
+	    if((ui.gui.map != null) && !ui.gui.map.visol(4)) {
+		ui.gui.map.enol(4, 5);
+		DefSettings.SHOWKCLAIM.set(true);
+	    } else {
+		DefSettings.SHOWKCLAIM.set(false);
+		ui.gui.map.disol(4, 5);
+	    }
+	});
+	addBtn("buttons/square/vclaim", "Show Village Claims", () -> {
+	    if((ui.gui.map != null) && !ui.gui.map.visol(2)) {
+		DefSettings.SHOWVCLAIM.set(true);
+		ui.gui.map.enol(2, 3);
+	    } else {
+		DefSettings.SHOWVCLAIM.set(false);
+		ui.gui.map.disol(2, 3);
+	    }
+	});
+	addBtn("buttons/square/claim", "Show Personal Claims", () -> {
+	    if((ui.gui.map != null) && !ui.gui.map.visol(0)) {
+		DefSettings.SHOWPCLAIM.set(true);
+		ui.gui.map.enol(0, 1);
+	    } else {
+		DefSettings.SHOWPCLAIM.set(false);
+		ui.gui.map.disol(0, 1);
+	    }
+	});
 	resize(sz);
     }
 

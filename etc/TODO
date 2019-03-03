@@ -3,6 +3,7 @@ TODO
         - follow camera + offset (akin to minimap)
         - Auto mark caves and ???
         - Ability to hide the icon list
+    - Ability to make waypoints that you don't automatically go to, but can at a later date
     - Follow movement should point a pointer on the gob you're chasing - Make this an option
     - Party members send grid id, offset every x seconds to override loftar's stuff? - Make this an option
     - Need to polish queued movement. Some things cancel it that shouldn't.. can't rely on old tricks

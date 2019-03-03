@@ -21,12 +21,27 @@
     <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/hud/default/buttons/close.res/image/0.png" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/hud/default/buttons/close.res/image/1.png" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/hud/default/buttons/close.res/image/2.png" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/hud/default/buttons/small/add.res/image/0.png" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/hud/default/buttons/small/add.res/image/1.png" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/hud/default/buttons/small/add.res/image/2.png" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/hud/default/buttons/small/sub.res/image/0.png" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/hud/default/buttons/small/sub.res/image/1.png" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/hud/default/buttons/small/sub.res/image/2.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/hud/default/buttons/square/center.res/image/0.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/hud/default/buttons/square/center.res/image/1.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/hud/default/buttons/square/center.res/image/2.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/hud/default/buttons/square/grid.res/image/0.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/hud/default/buttons/square/grid.res/image/0.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/hud/default/buttons/square/grid.res/image/1.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/hud/default/buttons/square/grid.res/image/1.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/hud/default/buttons/square/grid.res/image/2.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/hud/default/buttons/square/grid.res/image/2.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/hud/default/buttons/square/trash.res/image/0.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/hud/default/buttons/square/trash.res/image/1.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/hud/default/buttons/square/trash.res/image/2.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/hud/default/buttons/square/view.res/image/0.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/hud/default/buttons/square/view.res/image/0.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/hud/default/buttons/square/view.res/image/0.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/hud/default/buttons/square/view.res/image/1.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/hud/default/buttons/square/view.res/image/1.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/hud/default/buttons/square/view.res/image/2.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/hud/default/buttons/square/view.res/image/2.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/hud/default/buttons/square/view.res/image/3.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/hud/default/buttons/square/view.res/image/3.png" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/hud/default/pointer.res/image/0.png" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/hud/sloth/buttons/circular/small/add.res/image/0.png" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/hud/sloth/buttons/circular/small/add.res/image/1.png" charset="windows-1252" />
@@ -37,6 +52,19 @@
     <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/hud/sloth/buttons/close.res/image/0.png" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/hud/sloth/buttons/close.res/image/1.png" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/hud/sloth/buttons/close.res/image/2.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/hud/sloth/buttons/square/center.res/image/0.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/hud/sloth/buttons/square/center.res/image/1.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/hud/sloth/buttons/square/center.res/image/2.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/hud/sloth/buttons/square/grid.res/image/0.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/hud/sloth/buttons/square/grid.res/image/1.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/hud/sloth/buttons/square/grid.res/image/2.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/hud/sloth/buttons/square/trash.res/image/0.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/hud/sloth/buttons/square/trash.res/image/1.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/hud/sloth/buttons/square/trash.res/image/2.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/hud/sloth/buttons/square/view.res/image/0.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/hud/sloth/buttons/square/view.res/image/1.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/hud/sloth/buttons/square/view.res/image/2.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/hud/sloth/buttons/square/view.res/image/3.png" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/hud/sloth/pointer.res/image/0.png" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/mm/hud/center.res/image/0.png" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/etc/res/unbuilt/custom/mm/hud/center.res/image/1.png" charset="windows-1252" />

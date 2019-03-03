@@ -32,6 +32,7 @@ import haven.sloth.gui.MovableWidget;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 import static haven.PUtils.*;
 import static haven.Resource.cdec;
@@ -104,6 +105,7 @@ public class Window extends MovableWidget implements DTarget {
     //close button
     public final IButton cbtn, lbtn;
     private final BufferedImage on, off;
+    public final ArrayList<IButton> btns = new ArrayList<>();
 
     public boolean dt = false;
     //Caption
@@ -172,6 +174,10 @@ public class Window extends MovableWidget implements DTarget {
 	    lbtn.up = on;
 	    lbtn.hover = off;
 	}
+    }
+
+    public void addBtn(final String res, final String tt, final Runnable action) {
+        btns.add(add(new IButton(Theme.fullres(res), tt, action)));
     }
 
     @Override
@@ -246,8 +252,16 @@ public class Window extends MovableWidget implements DTarget {
 
     private void placecbtn() {
 	cbtn.c = new Coord(sz.x - cbtn.sz.x - atl.x - cfg.btnc.x,-atl.y + cfg.btnc.y);
+	final Coord c;
 	if(lbtn != null) {
 	    lbtn.c = cbtn.c.sub(lbtn.sz.x + 5, 0);
+	    c = new Coord(lbtn.c.x - (lbtn.sz.x + 5), lbtn.c.y);
+	} else {
+	    c = new Coord(cbtn.c.x - (cbtn.sz.x + 5), cbtn.c.y);
+	}
+	for(final IButton btn : btns) {
+	    btn.c = c.copy();
+	    c.x -= btn.sz.x + 5;
 	}
     }
 
