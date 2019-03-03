@@ -29,15 +29,15 @@ package haven;
 import java.awt.Color;
 
 public abstract class Dropbox<T> extends ListWidget<T> {
-    public static final Tex drop = Resource.loadtex("gfx/hud/drop");
+    //public static final Tex drop = Resource.loadtex("gfx/hud/drop");
     public final int listh;
-    private final Coord dropc;
+    //private final Coord dropc;
     private Droplist dl;
 
     public Dropbox(int w, int listh, int itemh) {
 	super(new Coord(w, itemh), itemh);
 	this.listh = listh;
-	dropc = new Coord(sz.x - drop.sz().x, 0);
+	//dropc = new Coord(sz.x - drop.sz().x, 0);
     }
 
     private class Droplist extends Listbox<T> {
@@ -79,8 +79,11 @@ public abstract class Dropbox<T> extends ListWidget<T> {
 	g.frect(Coord.z, sz);
 	g.chcolor();
 	if(sel != null)
-	    drawitem(g.reclip(Coord.z, new Coord(sz.x - drop.sz().x, itemh)), sel, 0);
-	g.image(drop, dropc);
+	    drawitem(g.reclip(Coord.z, new Coord(sz.x, itemh)), sel, 0);
+	g.chcolor(Color.WHITE);
+	g.poly(new Coord(sz.x - 11, sz.y/4), new Coord(sz.x-1, sz.y/4), new Coord(sz.x-6, sz.y-5));
+	g.chcolor();
+	//g.image(drop, dropc);
 	super.draw(g);
     }
 

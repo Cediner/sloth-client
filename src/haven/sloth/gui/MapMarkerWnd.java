@@ -5,15 +5,16 @@ import haven.Button;
 import haven.Window;
 
 import java.awt.*;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.*;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class MapMarkerWnd extends Window {
+    private final static List<String> types = Arrays.asList("Placed", "Natural", "Custom");
     private final static Predicate<MapFile.Marker> pmarkers = (m -> m instanceof MapFile.PMarker);
-    private final static Predicate<MapFile.Marker> smarkers = (m -> m instanceof MapFile.SMarker || m instanceof MapFile.SlothMarker);
+    private final static Predicate<MapFile.Marker> smarkers = (m -> m instanceof MapFile.SMarker);
+    private final static Predicate<MapFile.Marker> slmarkers = (m -> m instanceof MapFile.SlothMarker);
     private final static Comparator<MapFile.Marker> namecmp = Comparator.comparing(MapFile.Marker::name);
     private Predicate<MapFile.Marker> mflt;
     private List<MapFile.Marker> markers = Collections.emptyList();
@@ -24,6 +25,7 @@ public class MapMarkerWnd extends Window {
     private TextEntry namesel;
     private BuddyWnd.GroupSelector colsel;
     private Button mremove;
+    private Dropbox<String> typesel;
 
     public MapMarkerWnd(final MapWnd map) {
         super(Coord.z, "Markers", "Markers");
@@ -31,14 +33,43 @@ public class MapMarkerWnd extends Window {
     	mflt = pmarkers;
 	list = add(new MarkerList(200, 20));
 	resize(list.sz.add(0, 120));
-	add(new Button(95, "Placed", () -> {
-	    mflt = pmarkers;
-	    markerseq = -1;
-	}), list.c.add(0, list.sz.y + 10));
-	add(new Button(95, "Natural", () -> {
-	    mflt = smarkers;
-	    markerseq = -1;
-	}), list.c.add(list.sz.x - 95, list.sz.y + 10));
+	typesel = add(new Dropbox<String>(200, 3, 20) {
+	    { sel = types.get(0); }
+	    @Override
+	    protected int listitems() {
+		return types.size();
+	    }
+
+	    @Override
+	    protected String listitem(int i) {
+		return types.get(i);
+	    }
+
+	    @Override
+	    protected void drawitem(GOut g, String item, int i) {
+		FastText.aprint(g, new Coord(5, sz.y / 2), 0.0, 0.5, item);
+	    }
+
+	    @Override
+	    public void change(String item) {
+		super.change(item);
+	    	switch (item) {
+		    case "Placed":
+			mflt = pmarkers;
+			markerseq = -1;
+		        break;
+		    case "Natural":
+			mflt = smarkers;
+			markerseq = -1;
+			break;
+		    case "Custom":
+			mflt = slmarkers;
+			markerseq = -1;
+			break;
+		}
+		list.display(0);
+	    }
+	}, list.c.add(0, list.sz.y + 10));
 	pack();
     }
 
@@ -87,6 +118,8 @@ public class MapMarkerWnd extends Window {
 	    g.frect(Coord.z, g.sz);
 	    if(mark instanceof MapFile.PMarker)
 		g.chcolor(((MapFile.PMarker)mark).color);
+	    else if(mark instanceof MapFile.SlothMarker)
+	        g.chcolor(((MapFile.SlothMarker) mark).color);
 	    else
 		g.chcolor();
 	    g.aimage(names.apply(mark.nm).tex(), new Coord(5, itemh / 2), 0, 0.5);
@@ -107,18 +140,26 @@ public class MapMarkerWnd extends Window {
 		if(colsel != null) {
 		    ui.destroy(colsel);
 		    colsel = null;
-		    ui.destroy(mremove);
-		    mremove = null;
+		    if(mremove != null) {
+			ui.destroy(mremove);
+			mremove = null;
+		    }
 		}
 		MapMarkerWnd.this.pack();
 	    }
 
 	    if(mark != null) {
 	        if(mark instanceof MapFile.PMarker) {
+		    typesel.sel = types.get(0);
 		    mflt = pmarkers;
 		    markerseq = -1;
-		} else {
+		} else if(mark instanceof MapFile.SMarker){
+		    typesel.sel = types.get(1);
 		    mflt = smarkers;
+		    markerseq = -1;
+		} else {
+		    typesel.sel = types.get(2);
+		    mflt = slmarkers;
 		    markerseq = -1;
 		}
 
@@ -153,6 +194,17 @@ public class MapMarkerWnd extends Window {
 			    change2(null);
 			}
 		    }, colsel.c.add(0, colsel.sz.y + 10));
+		} else if(mark instanceof MapFile.SlothMarker) {
+		    MapFile.SlothMarker pm = (MapFile.SlothMarker)mark;
+		    colsel = MapMarkerWnd.this.add(new BuddyWnd.GroupSelector(0) {
+			public void changed(int group) {
+			    this.group = group;
+			    pm.color = BuddyWnd.gc[group];
+			    map.view.file.update(mark);
+			}
+		    }, namesel.c.add(0, namesel.sz.y + 10));
+		    if((colsel.group = Utils.index(BuddyWnd.gc, pm.color)) < 0)
+			colsel.group = 0;
 		}
 		MapMarkerWnd.this.pack();
 	    }

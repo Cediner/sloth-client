@@ -168,7 +168,7 @@ public class MapFileWidget extends Widget {
 	public static final Resource.Image flagbg, flagfg;
 	public static final Coord flagcc;
 	public final Marker m;
-	public final Text tip;
+	public Text tip;
 	public Area hit;
 	private Resource.Image img;
 	private Coord cc;
@@ -188,6 +188,9 @@ public class MapFileWidget extends Widget {
 	}
 
 	public void draw(GOut g, Coord c) {
+	    if(!tip.text.equals(m.nm)) {
+	        tip = Text.render(m.nm);
+	    }
 	    if(m instanceof PMarker) {
 		Coord ul = c.sub(flagcc);
 		g.chcolor(((PMarker)m).color);
