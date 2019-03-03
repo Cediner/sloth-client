@@ -43,6 +43,11 @@ public class MapMarkerWnd extends Window {
     }
 
     @Override
+    public void close() {
+	hide();
+    }
+
+    @Override
     public void tick(double dt) {
 	super.tick(dt);
 	if(visible && (markerseq != map.view.file.markerseq)) {

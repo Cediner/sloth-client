@@ -458,7 +458,7 @@ public class MapFileWidget extends Widget {
 	if(amount > 0) {
 	    final Coord zmaps = cmaps.mul(1 << Math.min(zoomlevel + 1, dlvl + 1));
 	    if(zmaps.x != 0 && zmaps.y != 0)
-		zoomlevel = Math.min(Math.min(zoomlevel + 1, dlvl + 1), 5);
+		zoomlevel = Math.min(Math.min(zoomlevel + 1, dlvl + 1), 3);
 	} else {
 	    zoomlevel = Math.max(zoomlevel - 1, 0);
 	}

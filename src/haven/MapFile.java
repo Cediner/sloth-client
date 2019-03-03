@@ -27,7 +27,6 @@
 package haven;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.*;
 import java.io.*;
 import java.awt.Color;
@@ -69,6 +68,9 @@ public class MapFile {
 	buf.append(datum);
 	return(buf.toString());
     }
+
+    //Due to loftar's desire to use ResCache as the datastore which is too generic for this job we can't
+    //take advantage of file locks by the OS...
     private InputStream sfetch(String ctl, Object... args) throws IOException {
 	return(store.fetch(mangle(String.format(ctl, args))));
     }
@@ -110,12 +112,22 @@ public class MapFile {
 
     private void save() {
 	checklock();
-	OutputStream fp;
-	try {
-	    fp = sstore("index");
-	} catch(IOException e) {
-	    throw(new StreamMessage.IOError(e));
-	}
+	OutputStream fp = null;
+	do {
+	    try {
+		fp = sstore("index");
+	    } catch(IOException e) {
+		if (e.getMessage().contains("The process cannot access the file because it is being used by another process")) {
+		    try {
+		        Thread.sleep(100);
+		    } catch (Exception ex) {
+		        return;
+		    }
+		} else {
+		    throw (new StreamMessage.IOError(e));
+		}
+	    }
+	} while (fp == null);
 	try(StreamMessage out = new StreamMessage(fp)) {
 	    out.adduint8(1);
 	    out.addint32(knownsegs.size());
@@ -164,12 +176,22 @@ public class MapFile {
 	    }
 	}, (id, info) -> {
 	    checklock();
-	    OutputStream fp;
-	    try {
-		fp = sstore("gi-%x", info.id);
-	    } catch(IOException e) {
-		throw(new StreamMessage.IOError(e));
-	    }
+	    OutputStream fp = null;
+	    do {
+		try {
+		    fp = sstore("gi-%x", info.id);
+		} catch(IOException e) {
+		    if (e.getMessage().contains("The process cannot access the file because it is being used by another process")) {
+			try {
+			    Thread.sleep(100);
+			} catch (Exception ex) {
+			    return;
+			}
+		    } else {
+			throw (new StreamMessage.IOError(e));
+		    }
+		}
+	    } while (fp == null);
 	    try(StreamMessage out = new StreamMessage(fp)) {
 		out.adduint8(1);
 		out.addint64(info.id);
@@ -608,12 +630,22 @@ public class MapFile {
 	}
 
 	public void save(MapFile file) {
-	    OutputStream fp;
-	    try {
-		fp = file.sstore("grid-%x", id);
-	    } catch(IOException e) {
-		throw(new StreamMessage.IOError(e));
-	    }
+	    OutputStream fp = null;
+	    do {
+		try {
+		    fp = file.sstore("grid-%x", id);
+		} catch(IOException e) {
+		    if (e.getMessage().contains("The process cannot access the file because it is being used by another process")) {
+			try {
+			    Thread.sleep(100);
+			} catch (Exception ex) {
+			    return;
+			}
+		    } else {
+			throw (new StreamMessage.IOError(e));
+		    }
+		}
+	    } while (fp == null);
 	    try(StreamMessage out = new StreamMessage(fp)) {
 		save(out);
 	    }
@@ -849,27 +881,45 @@ public class MapFile {
 	}
 
 	public void save(MapFile file) {
-	    OutputStream fp;
-	    try {
-		fp = file.sstore("zgrid-%x-%d-%d-%d", seg, lvl, sc.x, sc.y);
-	    } catch(IOException e) {
-		throw(new StreamMessage.IOError(e));
-	    }
+	    OutputStream fp = null;
+	    do {
+		try {
+		    fp = file.sstore("zgrid-%x-%d-%d-%d", seg, lvl, sc.x, sc.y);
+		} catch(IOException e) {
+		    if (e.getMessage().contains("The process cannot access the file because it is being used by another process")) {
+			try {
+			    Thread.sleep(100);
+			} catch (Exception ex) {
+			    return;
+			}
+		    } else {
+			throw (new StreamMessage.IOError(e));
+		    }
+		}
+	    } while (fp == null);
 	    try(StreamMessage out = new StreamMessage(fp)) {
 		save(out);
 	    }
 	}
 
 	public static ZoomGrid load(MapFile file, long seg, int lvl, Coord sc) {
-	    InputStream fp;
-	    try {
-		fp = file.sfetch("zgrid-%x-%d-%d-%d", seg, lvl, sc.x, sc.y);
-	    } catch(FileNotFoundException e) {
-		return(null);
-	    } catch(IOException e) {
-		Debug.log.printf("mapfile warning: error when locating zoomgrid (%d, %d) in %x@%d: %s\n", sc.x, sc.y, seg, lvl, e);
-		return(null);
-	    }
+	    InputStream fp = null;
+	    do {
+		try {
+		    fp = file.sfetch("zgrid-%x-%d-%d-%d", seg, lvl, sc.x, sc.y);
+		} catch(IOException e) {
+		    Debug.log.printf("mapfile warning: error when locating zoomgrid (%d, %d) in %x@%d: %s\n", sc.x, sc.y, seg, lvl, e);
+		    if (e.getMessage().contains("The process cannot access the file because it is being used by another process")) {
+			try {
+			    Thread.sleep(100);
+			} catch (Exception ex) {
+			    return null;
+			}
+		    } else {
+		        return null;
+		    }
+		}
+	    } while (fp == null);
 	    try(StreamMessage data = new StreamMessage(fp)) {
 		if (data.eom())
 		    return (null);
@@ -939,7 +989,7 @@ public class MapFile {
 		try {
 		    file.sstore("zgrid-%x-%d-%d-%d", seg, lvl, sc.x, sc.y).close();
 		} catch(IOException e) {
-		    throw(new StreamMessage.IOError(e));
+		    //Just ignore this one
 		}
 	    }
 	}
@@ -1134,12 +1184,22 @@ public class MapFile {
 	    }
 	}, (id, seg) -> {
 	    checklock();
-	    OutputStream fp;
-	    try {
-		fp = sstore("seg-%x", seg.id);
-	    } catch(IOException e) {
-		throw(new StreamMessage.IOError(e));
-	    }
+	    OutputStream fp = null;
+	    do {
+		try {
+		    fp = sstore("seg-%x", seg.id);
+		} catch(IOException e) {
+		    if (e.getMessage().contains("The process cannot access the file because it is being used by another process")) {
+			try {
+			    Thread.sleep(100);
+			} catch (Exception ex) {
+			    return;
+			}
+		    } else {
+			throw (new StreamMessage.IOError(e));
+		    }
+		}
+	    } while (fp == null);
 	    try(StreamMessage out = new StreamMessage(fp)) {
 		out.adduint8(1);
 		ZMessage z = new ZMessage(out);
@@ -1273,26 +1333,19 @@ public class MapFile {
 	if(debug) Debug.log.printf("mapfile: update completed\n");
     }
 
-    private static final Coord[] inout = new Coord[] {
-	new Coord( 0,  0),
-	new Coord( 0, -1), new Coord( 1,  0), new Coord( 0,  1), new Coord(-1,  0),
-	new Coord( 1, -1), new Coord( 1,  1), new Coord(-1,  1), new Coord(-1, -1),
-    };
-    public void update(MCache map, Coord cgc) {
+    // No reason to add this many grids per update anymore
+    // each grid is now manually added unlike default
+    public void update(MCache map, MCache.Grid g) {
 	Collection<MCache.Grid> grids = new ArrayList<>();
-	for(Coord off : inout) {
-	    Coord gc = cgc.add(off);
-	    try {
-		grids.add(map.getgrid(gc));
-	    } catch(Loading l) {
-		continue;
-	    }
+	try {
+	    grids.add(g);
+	} catch (Loading l) {
+	    return;
 	}
-	if(!grids.isEmpty()) {
-	    synchronized(procmon) {
-		updqueue.add(new Pair<>(map, grids));
-		process();
-	    }
+
+	synchronized(procmon) {
+	    updqueue.add(new Pair<>(map, grids));
+	    process();
 	}
     }
 }

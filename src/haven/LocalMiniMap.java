@@ -233,7 +233,7 @@ public class LocalMiniMap extends Widget {
 		    queued.put(grid.id, bgrenderer.submit(() -> new MapTile(new TexI(drawmap(grid)), grid.id, grid.gc, grid.seq)));
 		    if(save != null) {
 		        //Also update loftar's stuff.
-			save.update(ui.sess.glob.map, grid.gc);
+			save.update(ui.sess.glob.map, grid);
 		    }
 		}
 

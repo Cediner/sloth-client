@@ -184,7 +184,7 @@ public class MapWnd extends Window {
 			if(ppc != null) {
 			    final Coord mc = new Coord2d(ppc).floor(tilesz);
 			    final Coord gc = xlate(new Location(ploc.seg, ploc.tc.add(mc.sub(pc))));
-			    g.chcolor(m.col.getRed(), m.col.getGreen(), m.col.getBlue(), 128);
+			    g.chcolor(m.col.getRed(), m.col.getGreen(), m.col.getBlue(), 255);
 			    if(gc != null) {
 				g.image(party, gc.sub(party.sz().div(2)));
 				g.chcolor();
@@ -298,6 +298,8 @@ public class MapWnd extends Window {
 	}
     }
 
+    //mapping id -> seg
+    private HashMap<Long, Integer> currentgrids = new HashMap<>();
     public void tick(double dt) {
 	super.tick(dt);
 	synchronized(deferred) {
@@ -311,6 +313,19 @@ public class MapWnd extends Window {
 		i.remove();
 	    }
 	}
+
+	//Check for new Map Grids that we haven't scanned
+	final HashMap<Long, Integer> newgrids = new HashMap<>();
+	synchronized(ui.sess.glob.map.grids) {
+	    for (MCache.Grid grid : ui.sess.glob.map.grids.values()) {
+	        newgrids.put(grid.id, grid.seq);
+	        //Only update if something actually changed
+	        if(!currentgrids.containsKey(grid.id) || currentgrids.get(grid.id) != grid.seq) {
+	            view.file.update(ui.sess.glob.map, grid);
+		}
+	    }
+	}
+	currentgrids = newgrids;
     }
 
     public void resize(Coord sz) {

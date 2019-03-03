@@ -49,10 +49,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public Avaview portrait; //Avatar widget
     public MenuGrid menu; //The menu grid widget
     public MapView map; // The 3D world of hafen
-    public LocalMiniMap mmap; //The minimap widget
-    private MinimapWnd mmapwnd; //The minimap window
     public Fightview fv; //Fightview widget
-    private List<Widget> meters = new LinkedList<Widget>(); //Our meters
+    private List<Widget> meters = new LinkedList<>(); //Our meters
     private Text lastmsg;
     private double msgtime;
     private Window invwnd, equwnd, makewnd; //Main Inventory window, Equipment Window, Make window
@@ -436,21 +434,15 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    child.resize(sz);
 	    map = add((MapView)child, Coord.z);
 	    map.lower();
-	    if(mmap != null)
-		ui.destroy(mmap);
 	    if(mapfile != null) {
 		ui.destroy(mapfile);
 		ui.destroy(mapmarkers);
 		mapfile = null;
 		mapmarkers = null;
 	    }
-	    mmap = new LocalMiniMap(new Coord(133, 133), map);
-	    mmapwnd = adda(new MinimapWnd(mmap), new Coord(sz.x, 0), 1, 0);
 	    if(ResCache.global != null) {
 		MapFile file = MapFile.load(ResCache.global, mapfilename());
-		mmap.save(file);
-		mapfile = new MapWnd(mmap.save, map, Utils.getprefc("wndsz-map", new Coord(700, 500)), "Map");
-		mapfile.hide();
+		mapfile = new MapWnd(file, map, Utils.getprefc("wndsz-map", new Coord(700, 500)), "Map");
 		mapmarkers = new MapMarkerWnd(mapfile);
 		mapmarkers.hide();
 		add(mapfile, new Coord(50, 50));
@@ -681,19 +673,6 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		String nm = (String) args[3];
 		if (mapfile != null)
 		    mapfile.markobj(gobid, oid, res, nm);
-		if(mmap != null) {
-		    final Gob g = ui.sess.glob.oc.getgob(gobid);
-		    if(g != null) {
-		        Coord tc = g.rc.floor(MCache.tilesz);
-			try {
-			    final MCache.Grid grid = ui.sess.glob.map.getgridt(tc);
-			    final Coord offset = tc.sub(grid.ul);
-			    mmap.addNaturalMarker(oid, nm, grid.id, offset);
-			} catch (Loading l) {
-			    //DO nothing
-			}
-		    }
-		}
 	    } break;
 	    default:
 	        super.uimsg(msg, args);
@@ -870,14 +849,6 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    chatwnd.raise();
 	    fitwdg(chatwnd);
 	    setfocus(chatwnd);
-	}
-    }
-
-    void toggleMinimap() {
-        if(mmapwnd != null && mmapwnd.show(!mmapwnd.visible)) {
-            mmapwnd.raise();
-            fitwdg(mmapwnd);
-            setfocus(mmapwnd);
 	}
     }
 

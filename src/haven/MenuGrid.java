@@ -255,9 +255,6 @@ public class MenuGrid extends MovableWidget {
 	addSpecial(new SpecialPagina(this, "management::lmap",
 		Resource.local().load("custom/paginae/default/wnd/lmap"),
 		(pag) -> ui.gui.toggleMapfile()));
-	addSpecial(new SpecialPagina(this, "management::smap",
-		Resource.local().load("custom/paginae/default/wnd/smap"),
-		(pag) -> ui.gui.toggleMinimap()));
 	addSpecial(new SpecialPagina(this, "management::opts",
 		Resource.local().load("custom/paginae/default/wnd/opts"),
 		(pag) -> ui.gui.toggleOpts()));

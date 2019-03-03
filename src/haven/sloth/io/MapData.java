@@ -50,12 +50,20 @@ import java.sql.Statement;
  * Merging is also just a matter of checking Grid for same grid_ids that have different segment ids
  *
  * For now this is just passive and will save data in the background
+ *----------
+ * Good idea, not useful though in the long run. Loftar's maps work just as good and have potential for modifications
  */
 public class MapData {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     static {
-        Storage.dynamic.ensure(sql -> {
+        Storage.dynamic.write(sql -> {
             try(final Statement stmt = sql.createStatement()) {
+                //This is no longer used, clear up space and delete these tables
+                stmt.executeUpdate("DROP TABLE map_segment");
+		stmt.executeUpdate("DROP TABLE map_grid");
+		stmt.executeUpdate("DROP TABLE map_marker");
+	    }
+                /*
                 stmt.executeUpdate("CREATE TABLE IF NOT EXISTS map_segment ( map_segment_id INTEGER PRIMARY KEY, x INTEGER, y INTEGER )");
                 stmt.executeUpdate("CREATE TABLE IF NOT EXISTS map_grid (" +
 			"map_segment_id INTEGER," +
@@ -72,8 +80,7 @@ public class MapData {
 			"color INTEGER," +
 			"x INTEGER," +
 			"y INTEGER," +
-			"CONSTRAINT map_marker_pk_id_natural PRIMARY KEY (map_marker_id, natural))");
-	    }
+			"CONSTRAINT map_marker_pk_id_natural PRIMARY KEY (map_marker_id, natural))");*/
 	});
     }
 
@@ -81,6 +88,9 @@ public class MapData {
     private long segment_id;
     private Coord center = null;
 
+    /**
+     * @deprecated
+     */
     public void newSegment(final Coord center) {
         Storage.dynamic.write(sql -> {
 	    try {
@@ -104,6 +114,9 @@ public class MapData {
 	});
     }
 
+    /**
+     * @deprecated
+     */
     public void save(final LocalMiniMap.MapTile tile) {
     	//Only matters if we had an active segment
         if(center != null) {
@@ -128,6 +141,9 @@ public class MapData {
 	}
     }
 
+    /**
+     * @deprecated
+     */
     public void saveNaturalMarker(final long oid, final String nm, final long grid_id, final Coord offset) {
 	if(center != null) {
 	    Storage.dynamic.write(sql -> {
