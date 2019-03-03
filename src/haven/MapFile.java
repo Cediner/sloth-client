@@ -32,12 +32,15 @@ import java.io.*;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
+
+import com.google.common.flogger.FluentLogger;
 import haven.Defer.Future;
 import haven.resutil.Ridges;
 
 import static haven.MCache.cmaps;
 
 public class MapFile {
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     private static final int NOZ = Integer.MIN_VALUE;
     public static boolean debug = false;
     public final ResCache store;
@@ -103,11 +106,11 @@ public class MapFile {
 			file.slothmarkers.put(mark.tc, (SlothMarker)mark);
 		}
 	    } else {
-		Debug.log.printf("mapfile warning: unknown mapfile index version: %d\n", ver);
+		logger.atFine().log("mapfile warning: unknown mapfile index version: %d\n", ver);
 		return(null);
 	    }
 	} catch(Message.BinError e) {
-	    Debug.log.printf("mapfile warning: error when loading index: %s\n", e);
+	    logger.atFine().log("mapfile warning: error when loading index: %s\n", e);
 	    return(null);
 	}
 	return(file);
@@ -120,7 +123,7 @@ public class MapFile {
 	    try {
 		fp = sstore("index");
 	    } catch(IOException e) {
-		if (e.getMessage().contains("The process cannot access the file because it is being used by another process")) {
+		if (e.getMessage().contains("another process")) {
 		    try {
 		        Thread.sleep(100);
 		    } catch (Exception ex) {
@@ -174,7 +177,7 @@ public class MapFile {
 		    throw(new Message.FormatError("Unknown gridinfo version: " + ver));
 		}
 	    } catch(Message.BinError e) {
-		Debug.log.printf("mapfile warning: error when loading gridinfo for %x: %s\n", id, e);
+		logger.atFine().log("mapfile warning: error when loading gridinfo for %x: %s\n", id, e);
 		return(null);
 	    }
 	}, (id, info) -> {
@@ -184,7 +187,7 @@ public class MapFile {
 		try {
 		    fp = sstore("gi-%x", info.id);
 		} catch(IOException e) {
-		    if (e.getMessage().contains("The process cannot access the file because it is being used by another process")) {
+		    if (e.getMessage().contains("another process")) {
 			try {
 			    Thread.sleep(100);
 			} catch (Exception ex) {
@@ -470,7 +473,7 @@ public class MapFile {
 		} catch(Loading l) {
 		    throw(l);
 		} catch(Exception e) {
-		    Debug.log.printf("mapfile warning: could not load tileset resource %s(v%d): %s\n", tilesets[t].res.name, tilesets[t].res.ver, e);
+		    logger.atFine().log("mapfile warning: could not load tileset resource %s(v%d): %s\n", tilesets[t].res.name, tilesets[t].res.ver, e);
 		}
 		if(r != null) {
 		    Resource.Image ir = r.layer(Resource.imgc);
@@ -670,7 +673,7 @@ public class MapFile {
 		try {
 		    fp = file.sstore("grid-%x", id);
 		} catch(IOException e) {
-		    if (e.getMessage().contains("The process cannot access the file because it is being used by another process")) {
+		    if (e.getMessage().contains("another process")) {
 			try {
 			    Thread.sleep(100);
 			} catch (Exception ex) {
@@ -691,7 +694,7 @@ public class MapFile {
 	    try {
 		fp = file.sfetch("grid-%x", id);
 	    } catch(IOException e) {
-		Debug.log.printf("mapfile warning: error when locating grid %x: %s\n", id, e);
+		logger.atFine().log("mapfile warning: error when locating grid %x: %s\n", id, e);
 		return(null);
 	    }
 	    try(StreamMessage data = new StreamMessage(fp)) {
@@ -729,7 +732,7 @@ public class MapFile {
 		    throw(new Message.FormatError(String.format("Unknown grid data version for %x: %d", id, ver)));
 		}
 	    } catch(Message.BinError e) {
-		Debug.log.printf("mapfile warning: error when loading grid %x: %s\n", id, e);
+		logger.atFine().log("mapfile warning: error when loading grid %x: %s\n", id, e);
 		return(null);
 	    }
 	}
@@ -921,7 +924,7 @@ public class MapFile {
 		try {
 		    fp = file.sstore("zgrid-%x-%d-%d-%d", seg, lvl, sc.x, sc.y);
 		} catch(IOException e) {
-		    if (e.getMessage().contains("The process cannot access the file because it is being used by another process")) {
+		    if (e.getMessage().contains("another process")) {
 			try {
 			    Thread.sleep(100);
 			} catch (Exception ex) {
@@ -943,8 +946,8 @@ public class MapFile {
 		try {
 		    fp = file.sfetch("zgrid-%x-%d-%d-%d", seg, lvl, sc.x, sc.y);
 		} catch(IOException e) {
-		    Debug.log.printf("mapfile warning: error when locating zoomgrid (%d, %d) in %x@%d: %s\n", sc.x, sc.y, seg, lvl, e);
-		    if (e.getMessage().contains("The process cannot access the file because it is being used by another process")) {
+		    logger.atFine().log("mapfile warning: error when locating zoomgrid (%d, %d) in %x@%d: %s\n", sc.x, sc.y, seg, lvl, e);
+		    if (e.getMessage().contains("another process")) {
 			try {
 			    Thread.sleep(100);
 			} catch (Exception ex) {
@@ -1005,7 +1008,7 @@ public class MapFile {
 		    throw(new Message.FormatError(String.format("Unknown zoomgrid data version for (%d, %d) in %x@%d: %d", sc.x, sc.y, seg, lvl, ver)));
 		}
 	    } catch(Message.BinError e) {
-		Debug.log.printf("Unknown zoomgrid data version for (%d, %d) in %x@%d: %s", sc.x, sc.y, seg, lvl, e);
+		logger.atFine().log("Unknown zoomgrid data version for (%d, %d) in %x@%d: %s", sc.x, sc.y, seg, lvl, e);
 		return(null);
 	    }
 	}
@@ -1018,7 +1021,7 @@ public class MapFile {
 		} catch(FileNotFoundException e) {
 		    return(lvl - 1);
 		} catch(IOException e) {
-		    Debug.log.printf("mapfile warning: error when invalidating zoomgrid (%d, %d) in %x@%d: %s\n", sc.x, sc.y, seg, lvl, e);
+		    logger.atFine().log("mapfile warning: error when invalidating zoomgrid (%d, %d) in %x@%d: %s\n", sc.x, sc.y, seg, lvl, e);
 		    return(lvl - 1);
 		}
 		try {
@@ -1214,7 +1217,7 @@ public class MapFile {
 		    throw(new Message.FormatError("Unknown segment data version: " + ver));
 		}
 	    } catch(Message.BinError e) {
-		Debug.log.printf("mapfile warning: error when loading segment %x: %s\n", id, e);
+		logger.atFine().log("mapfile warning: error when loading segment %x: %s\n", id, e);
 		return(null);
 	    }
 	}, (id, seg) -> {
@@ -1224,7 +1227,7 @@ public class MapFile {
 		try {
 		    fp = sstore("seg-%x", seg.id);
 		} catch(IOException e) {
-		    if (e.getMessage().contains("The process cannot access the file because it is being used by another process")) {
+		    if (e.getMessage().contains("another process")) {
 			try {
 			    Thread.sleep(100);
 			} catch (Exception ex) {
@@ -1296,15 +1299,15 @@ public class MapFile {
 		if(moff == null) {
 		    Coord psc = seg.map.reverse().get(g.id);
 		    if(psc == null) {
-			Debug.log.printf("mapfile warning: grid %x is oddly gone from segment %x; was at %s\n", g.id, seg.id, info.sc);
+			logger.atFine().log("mapfile warning: grid %x is oddly gone from segment %x; was at %s\n", g.id, seg.id, info.sc);
 			missing.add(g);
 			continue;
 		    } else if(!psc.equals(info.sc)) {
-			Debug.log.printf("mapfile warning: segment-offset mismatch for grid %x in segment %x: segment has %s, gridinfo has %s\n", g.id, seg.id, psc, info.sc);
+			logger.atFine().log("mapfile warning: segment-offset mismatch for grid %x in segment %x: segment has %s, gridinfo has %s\n", g.id, seg.id, psc, info.sc);
 			missing.add(g);
 			continue;
 		    }
-		    if(debug) Debug.log.printf("mapfile: found segment %x for grid %x\n", seg.id, g.id);
+		    if(debug) logger.atFine().log("mapfile: found segment %x for grid %x\n", seg.id, g.id);
 		    mseg = seg.id;
 		    moff = info.sc.sub(g.gc);
 		}
@@ -1328,10 +1331,10 @@ public class MapFile {
 		if(mseg == -1) {
 		    seg = new Segment(Utils.el(missing).id);
 		    moff = Coord.z;
-		    if(debug) Debug.log.printf("mapfile: creating new segment %x\n", seg.id);
+		    if(debug) logger.atFine().log("mapfile: creating new segment %x\n", seg.id);
 		} else {
 		    seg = segments.get(mseg);
-		    if(debug) Debug.log.printf("mapfile: use existing segment %x\n", seg.id);
+		    if(debug) logger.atFine().log("mapfile: use existing segment %x\n", seg.id);
 		}
 		synchronized(procmon) {
 		    dirty.add(seg);
@@ -1358,14 +1361,14 @@ public class MapFile {
 			src = a; dst = b;
 			soff = ab.inv();
 		    }
-		    if(debug) Debug.log.printf("mapfile: merging segment %x (%d) into %x (%d) at %s\n", src.id, src.map.size(), dst.id, dst.map.size(), soff);
+		    if(debug) logger.atFine().log("mapfile: merging segment %x (%d) into %x (%d) at %s\n", src.id, src.map.size(), dst.id, dst.map.size(), soff);
 		    merge(dst, src, soff);
 		}
 	    }
 	} finally {
 	    lock.writeLock().unlock();
 	}
-	if(debug) Debug.log.printf("mapfile: update completed\n");
+	if(debug) logger.atFine().log("mapfile: update completed\n");
     }
 
     // You need multiple grids around one otherwise it can merge!
