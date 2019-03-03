@@ -55,13 +55,24 @@ import java.sql.Statement;
  */
 public class MapData {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
-    static {
+    public static void init() {
         Storage.dynamic.write(sql -> {
             try(final Statement stmt = sql.createStatement()) {
-                //This is no longer used, clear up space and delete these tables
-                stmt.executeUpdate("DROP TABLE map_segment");
-		stmt.executeUpdate("DROP TABLE map_grid");
-		stmt.executeUpdate("DROP TABLE map_marker");
+		//This is no longer used, clear up space and delete these tables
+		boolean cleanup = false;
+		try (final ResultSet res = stmt.executeQuery("SELECT name FROM sqlite_master WHERE type='table'")) {
+		    while(res.next()) {
+		        if(res.getString(1).equals("map_segment")) {
+		            cleanup = true;
+		            break;
+			}
+		    }
+		}
+		if (cleanup) {
+		    stmt.executeUpdate("DROP TABLE map_segment");
+		    stmt.executeUpdate("DROP TABLE map_grid");
+		    stmt.executeUpdate("DROP TABLE map_marker");
+		}
 	    }
                 /*
                 stmt.executeUpdate("CREATE TABLE IF NOT EXISTS map_segment ( map_segment_id INTEGER PRIMARY KEY, x INTEGER, y INTEGER )");

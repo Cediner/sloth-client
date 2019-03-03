@@ -18,6 +18,8 @@
     the top of the map window or by clicking an item as usual.
     - The old minimap no longer exists. Loftar's map can do everything it could and more now.
     - Caves will now automatically mark on Loftar's map, it's under "Natural" in the lists, will be expanded on later on
+    - Cleaning up unused data in dynamic.sqlite. May take a bit to startup after this launch, but then it'll go back to
+    normal
 
 3/1/19
     - Can now mark tiles with Alt + right click -> Mark for party

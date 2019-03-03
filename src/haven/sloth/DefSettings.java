@@ -5,6 +5,7 @@ import haven.sloth.gob.*;
 import haven.sloth.gui.BeltWnd;
 import haven.sloth.io.HighlightData;
 import haven.sloth.io.ItemData;
+import haven.sloth.io.MapData;
 import haven.sloth.io.Storage;
 
 import java.awt.*;
@@ -271,6 +272,7 @@ public class DefSettings {
 	    Hidden.init();
 	    HighlightData.init();
 	    ItemData.init(optint.get());
+	    MapData.init();
 	    //Internal lookups are no longer needed
 	    optint.get().close();
 	} else {
