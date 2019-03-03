@@ -17,6 +17,7 @@
     - Split up Loftar's map into the map and a markers window. You can open the markers window with the flag button at
     the top of the map window or by clicking an item as usual.
     - The old minimap no longer exists. Loftar's map can do everything it could and more now.
+    - Caves will now automatically mark on Loftar's map, it's under "Natural" in the lists, will be expanded on later on
 
 3/1/19
     - Can now mark tiles with Alt + right click -> Mark for party

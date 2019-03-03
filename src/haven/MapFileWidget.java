@@ -37,9 +37,9 @@ import haven.MapFile.Marker;
 import haven.MapFile.PMarker;
 import haven.MapFile.SMarker;
 import haven.sloth.DefSettings;
+import haven.sloth.gob.Mark;
 
 import static haven.MCache.cmaps;
-import static haven.OCache.posres;
 
 public class MapFileWidget extends Widget {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
@@ -212,6 +212,25 @@ public class MapFileWidget extends Widget {
 		}
 		if(img != null)
 		    g.image(img, c.sub(cc));
+	    } else if(m instanceof MapFile.SlothMarker) {
+	        final MapFile.SlothMarker mark = (MapFile.SlothMarker) m;
+	        g.chcolor(mark.color);
+		try {
+		    if(cc == null) {
+			Resource res = MapFile.loadsaved(Resource.remote(), mark.res);
+			img = res.layer(Resource.imgc);
+			Resource.Neg neg = res.layer(Resource.negc);
+			cc = (neg != null)?neg.cc:img.sz.div(2);
+			if(hit == null)
+			    hit = Area.sized(cc.inv(), img.sz);
+		    }
+		} catch(Loading l) {
+		} catch(Exception e) {
+		    cc = Coord.z;
+		}
+		if(img != null)
+		    g.image(img, c.sub(cc));
+	        g.chcolor();
 	    }
 	}
     }

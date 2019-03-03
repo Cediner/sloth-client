@@ -13,7 +13,7 @@ import java.util.function.Predicate;
 
 public class MapMarkerWnd extends Window {
     private final static Predicate<MapFile.Marker> pmarkers = (m -> m instanceof MapFile.PMarker);
-    private final static Predicate<MapFile.Marker> smarkers = (m -> m instanceof MapFile.SMarker);
+    private final static Predicate<MapFile.Marker> smarkers = (m -> m instanceof MapFile.SMarker || m instanceof MapFile.SlothMarker);
     private final static Comparator<MapFile.Marker> namecmp = Comparator.comparing(MapFile.Marker::name);
     private Predicate<MapFile.Marker> mflt;
     private List<MapFile.Marker> markers = Collections.emptyList();

@@ -26,6 +26,7 @@
 
 package haven;
 
+import java.awt.*;
 import java.util.*;
 import java.awt.event.KeyEvent;
 import haven.MapFile.Marker;
@@ -387,52 +388,82 @@ public class MapWnd extends Window {
 	return(super.mouseup(c, button));
     }
 
+    void markobj(Indir<Resource> resid, String nm, Coord2d mc) {
+	/**
+	 *Marker nm = new PMarker(loc.seg.id, loc.tc, "New marker", BuddyWnd.gc[new Random().nextInt(BuddyWnd.gc.length)]);
+	 file.add(nm);
+	 ui.gui.mapmarkers.list.change2(nm);
+	 ui.gui.mapmarkers.list.display(nm);
+	 */
+	synchronized(deferred) {
+	    deferred.add(() -> {
+		final Coord tc = mc.floor(tilesz);
+		MCache.Grid obg = ui.sess.glob.map.getgrid(tc.div(cmaps));
+		if (!view.file.lock.writeLock().tryLock())
+		    throw (new Loading());
+		try {
+		    MapFile.GridInfo info = view.file.gridinfo.get(obg.id);
+		    if (info == null)
+			throw (new Loading());
+		    Coord sc = tc.add(info.sc.sub(obg.gc).mul(cmaps));
+		    if(!view.file.slothmarkers.containsKey(sc)) {
+			Resource res = resid.get();
+			view.file.add(new MapFile.SlothMarker(info.seg, sc, nm, Color.WHITE, new Resource.Spec(Resource.remote(), res.name, res.ver)));
+		    }
+		} finally {
+		    view.file.lock.writeLock().unlock();
+		}
+	    });
+	}
+    }
+
+
     void markobj(long gobid, long oid, Indir<Resource> resid, String nm) {
 	synchronized(deferred) {
 	    deferred.add(new Runnable() {
-		    double f = 0;
-		    public void run() {
-			Resource res = resid.get();
-			String rnm = nm;
-			if(rnm == null) {
-			    Resource.Tooltip tt = res.layer(Resource.tooltip);
-			    if(tt == null)
-				return;
-			    rnm = tt.t;
-			}
-			double now = Utils.rtime();
-			if(f == 0)
-			    f = now;
-			Gob gob = ui.sess.glob.oc.getgob(gobid);
-			if(gob == null) {
-			    if(now - f < 1.0)
-				throw(new Loading());
+		double f = 0;
+		public void run() {
+		    Resource res = resid.get();
+		    String rnm = nm;
+		    if(rnm == null) {
+			Resource.Tooltip tt = res.layer(Resource.tooltip);
+			if(tt == null)
 			    return;
-			}
-			Coord tc = gob.rc.floor(tilesz);
-			MCache.Grid obg = ui.sess.glob.map.getgrid(tc.div(cmaps));
-			if(!view.file.lock.writeLock().tryLock())
-			    throw(new Loading());
-			try {
-			    MapFile.GridInfo info = view.file.gridinfo.get(obg.id);
-			    if(info == null)
-				throw(new Loading());
-			    Coord sc = tc.add(info.sc.sub(obg.gc).mul(cmaps));
-			    SMarker prev = view.file.smarkers.get(oid);
-			    if(prev == null) {
-				view.file.add(new SMarker(info.seg, sc, rnm, oid, new Resource.Spec(Resource.remote(), res.name, res.ver)));
-			    } else {
-				if((prev.seg != info.seg) || !prev.tc.equals(sc)) {
-				    prev.seg = info.seg;
-				    prev.tc = sc;
-				    view.file.update(prev);
-				}
-			    }
-			} finally {
-			    view.file.lock.writeLock().unlock();
-			}
+			rnm = tt.t;
 		    }
-		});
+		    double now = Utils.rtime();
+		    if(f == 0)
+			f = now;
+		    Gob gob = ui.sess.glob.oc.getgob(gobid);
+		    if(gob == null) {
+			if(now - f < 1.0)
+			    throw(new Loading());
+			return;
+		    }
+		    Coord tc = gob.rc.floor(tilesz);
+		    MCache.Grid obg = ui.sess.glob.map.getgrid(tc.div(cmaps));
+		    if(!view.file.lock.writeLock().tryLock())
+			throw(new Loading());
+		    try {
+			MapFile.GridInfo info = view.file.gridinfo.get(obg.id);
+			if(info == null)
+			    throw(new Loading());
+			Coord sc = tc.add(info.sc.sub(obg.gc).mul(cmaps));
+			SMarker prev = view.file.smarkers.get(oid);
+			if(prev == null) {
+			    view.file.add(new SMarker(info.seg, sc, rnm, oid, new Resource.Spec(Resource.remote(), res.name, res.ver)));
+			} else {
+			    if((prev.seg != info.seg) || !prev.tc.equals(sc)) {
+				prev.seg = info.seg;
+				prev.tc = sc;
+				view.file.update(prev);
+			    }
+			}
+		    } finally {
+			view.file.lock.writeLock().unlock();
+		    }
+		}
+	    });
 	}
     }
 }

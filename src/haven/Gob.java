@@ -291,6 +291,14 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 		if (HighlightData.isHighlighted(name)) {
 		    mark(-1);
 		}
+		//TODO: fix later, Temp for now
+		if(name.equals("gfx/tiles/ridges/cavein")) {
+		    final GobIcon icon = getattr(GobIcon.class);
+		    if(icon != null) {
+		        glob.ui.gui.mapfile.markobj(icon.res, "Cave", rc);
+		    }
+		}
+
 
 		res().ifPresent((res) -> { //should always be present once name is discovered
 		    final Resource.Neg neg = res.layer(Resource.negc);

@@ -45,6 +45,7 @@ public class MapFile {
     public final Collection<Long> knownsegs = new HashSet<>();
     public final Collection<Marker> markers = new ArrayList<>();
     public final Map<Long, SMarker> smarkers = new HashMap<>();
+    public final Map<Coord, SlothMarker> slothmarkers = new HashMap<>();
     public int markerseq = 0;
     public final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
@@ -98,6 +99,8 @@ public class MapFile {
 		    file.markers.add(mark);
 		    if(mark instanceof SMarker)
 			file.smarkers.put(((SMarker)mark).oid, (SMarker)mark);
+		    else if(mark instanceof SlothMarker)
+			file.slothmarkers.put(mark.tc, (SlothMarker)mark);
 		}
 	    } else {
 		Debug.log.printf("mapfile warning: unknown mapfile index version: %d\n", ver);
@@ -312,6 +315,17 @@ public class MapFile {
 	}
     }
 
+    public static class SlothMarker extends Marker {
+        public Color color;
+        public Resource.Spec res;
+
+	public SlothMarker(long seg, Coord tc, String nm, Color color, Resource.Spec res) {
+	    super(seg, tc, nm);
+	    this.color = color;
+	    this.res = res;
+	}
+    }
+
     private static Marker loadmarker(Message fp) {
 	int ver = fp.uint8();
 	if(ver == 1) {
@@ -320,13 +334,25 @@ public class MapFile {
 	    String nm = fp.string();
 	    char type = (char)fp.uint8();
 	    switch(type) {
-	    case 'p':
+	    case 'p': {
 		Color color = fp.color();
-		return(new PMarker(seg, tc, nm, color));
-	    case 's':
+		return (new PMarker(seg, tc, nm, color));
+	    }
+	    case 's': {
 		long oid = fp.int64();
 		Resource.Spec res = new Resource.Spec(Resource.remote(), fp.string(), fp.uint16());
-		return(new SMarker(seg, tc, nm, oid, res));
+		return (new SMarker(seg, tc, nm, oid, res));
+	    }
+	    case 'r': {
+	        final int version = fp.uint8();
+	        if(version == 0) {
+		    Color color = fp.color();
+		    Resource.Spec res = new Resource.Spec(Resource.remote(), fp.string(), fp.uint16());
+		    return new SlothMarker(seg, tc, nm, color, res);
+		} else {
+		    throw(new Message.FormatError("Unknown sloth marker version: " + version));
+		}
+	    }
 	    default:
 		throw(new Message.FormatError("Unknown marker type: " + (int)type));
 	    }
@@ -344,11 +370,18 @@ public class MapFile {
 	    fp.adduint8('p');
 	    fp.addcolor(((PMarker)mark).color);
 	} else if(mark instanceof SMarker) {
-	    SMarker sm = (SMarker)mark;
+	    SMarker sm = (SMarker) mark;
 	    fp.adduint8('s');
 	    fp.addint64(sm.oid);
 	    fp.addstring(sm.res.name);
 	    fp.adduint16(sm.res.ver);
+	} else if(mark instanceof SlothMarker) {
+	    SlothMarker rm = (SlothMarker) mark;
+	    fp.adduint8('r');
+	    fp.adduint8(0); //version
+	    fp.addcolor(rm.color);
+	    fp.addstring(rm.res.name);
+	    fp.adduint16(rm.res.ver);
 	} else {
 	    throw(new ClassCastException("Can only save PMarkers and SMarkers"));
 	}
@@ -360,6 +393,8 @@ public class MapFile {
 	    if(markers.add(mark)) {
 		if(mark instanceof SMarker)
 		    smarkers.put(((SMarker)mark).oid, (SMarker)mark);
+		else if(mark instanceof SlothMarker)
+		    slothmarkers.put(mark.tc, (SlothMarker)mark);
 		defersave();
 		markerseq++;
 	    }
