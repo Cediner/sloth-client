@@ -123,16 +123,20 @@ public class MapPointer extends Widget {
     private Text.Line tt = null;
     private int dist;
     public Object tooltip(Coord c, Widget wdg) {
-	if ((this.lc != null) && (this.lc.dist(c) < 20.0D)) {
+	if ((this.lc != null) && (this.lc.dist(c) < 20.0D) && tc != null) {
 	    final Gob me = ui.sess.glob.oc.getgob(ui.gui.map.plgob);
-	    final int cdist = (int)(Math.ceil(me.rc.dist(tc)/11.0));
-	    if(cdist != dist) {
-		dist = cdist;
-		if(tt != null && tt.tex() != null)
-		    tt.tex().dispose();
-		return tt = Text.render("Distance: " + dist);
+	    if(me != null) {
+		final int cdist = (int) (Math.ceil(me.rc.dist(tc) / 11.0));
+		if (cdist != dist) {
+		    dist = cdist;
+		    if (tt != null && tt.tex() != null)
+			tt.tex().dispose();
+		    return tt = Text.render("Distance: " + dist);
+		} else {
+		    return tt;
+		}
 	    } else {
-		return tt;
+		return null;
 	    }
 	} else {
 	    return null;

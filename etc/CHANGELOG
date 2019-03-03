@@ -2,6 +2,7 @@
     - Misc fix with Avatars
     - Minimap icons should all scale with zoom level
     - Loftar map debug messages no longer print to system chat..
+    - Bug with pointers
 
 3/2/19
     - Belts will now save window position
