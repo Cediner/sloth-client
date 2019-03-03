@@ -9,7 +9,10 @@
     rather than ctrl + left click. Queued moves are still alt + left click. Icons won't stop alt + left click anymore
     - Loftar's map will now show grid lines when on as well as player's view distance
     - Loftar's map is restricted to 6 zoomlevels, the highest letting you basically see an entire continent in one view
-
+    - Loftar's map will now show ridges. Note that it may take awhile for the other zoom levels to update with ridges..
+    - Changed out zoom maps load in from Loftar's map so if the default grid level has updated all the zoommaps that
+    depend on it should update as well with the new data. You'll notice your zoom maps load in slightly delayed because
+    of this as they have to regenerate.
 
 3/1/19
     - Can now mark tiles with Alt + right click -> Mark for party

@@ -26,9 +26,8 @@
 
 package haven;
 
-import java.lang.ref.Reference;
-import java.lang.ref.SoftReference;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.*;
 import java.io.*;
 import java.awt.Color;
@@ -40,6 +39,7 @@ import haven.resutil.Ridges;
 import static haven.MCache.cmaps;
 
 public class MapFile {
+    private static final int NOZ = Integer.MIN_VALUE;
     public static boolean debug = false;
     public final ResCache store;
     public final String filename;
@@ -379,14 +379,19 @@ public class MapFile {
 	}
     }
 
+    //Loftar doesn't save z levels with this => no ridges.... Thank god he at least versions it
+    //v2 DataGrid => no zlevels
+    //v3 DataGrid => zlevels
     public static class DataGrid {
 	public final TileInfo[] tilesets;
 	public final byte[] tiles;
+	public final int[] z;
 	public final long mtime;
 
-	public DataGrid(TileInfo[] tilesets, byte[] tiles, long mtime) {
+	public DataGrid(TileInfo[] tilesets, byte[] tiles, int[] z, long mtime) {
 	    this.tilesets = tilesets;
 	    this.tiles = tiles;
+	    this.z = z;
 	    this.mtime = mtime;
 	}
 
@@ -394,8 +399,12 @@ public class MapFile {
 	    return(tiles[c.x + (c.y * cmaps.x)] & 0xff);
 	}
 
+	public int getz(Coord c) { return(z[c.x + (c.y * cmaps.x)]); }
+
 	private BufferedImage tiletex(int t, BufferedImage[] texes, boolean[] cached) {
-	    if(!cached[t]) {
+	    if(cached[t])
+	        return texes[t];
+	    else {
 		Resource r = null;
 		try {
 		    r = loadsaved(Resource.remote(), tilesets[t].res);
@@ -411,41 +420,117 @@ public class MapFile {
 		    }
 		}
 		cached[t] = true;
+		return texes[t];
 	    }
-	    return(texes[t]);
+	}
+
+	private Tiler tiler(int t, Tiler[] tilers, boolean[] cached) {
+	    if(cached[t])
+	        return tilers[t];
+	    else {
+		final Resource r = loadsaved(Resource.remote(), tilesets[t].res);
+		final Tileset ts = r.layer(Tileset.class);
+		if(ts != null) {
+		    //This can be null because some tiles are `notile`...
+		    final Tiler tile = ts.tfac().create(t, ts);
+		    tilers[t] = tile;
+		}
+		cached[t] = true;
+		return tilers[t];
+	    }
+	}
+
+	private static final Coord[] tecs = {
+		new Coord(0, -1),
+		new Coord(1, 0),
+		new Coord(0, 1),
+		new Coord(-1, 0)
+	};
+	private static final Coord[] tccs = {
+		new Coord(0, 0),
+		new Coord(1, 0),
+		new Coord(1, 1),
+		new Coord(0, 1)
+	};
+	private boolean brokenp(Tiler t, Coord tc, final Tiler[] tilers, final boolean[] tlcache) {
+	    int bz = ((Ridges.RidgeTile)t).breakz();  //The distance at which a ridge is formed
+	    //Look at the four tiles around us to get the minimum break distance
+	    for(Coord ec : tecs) {
+		t = tiler(gettile(tc.add(ec)), tilers, tlcache);
+		if(t instanceof Ridges.RidgeTile)
+		    bz = Math.min(bz, ((Ridges.RidgeTile)t).breakz());
+	    }
+
+	    //Now figure out based on other tiles around us if we hit that break limit and should be a ridge
+	    //Ignore NOZ heights as these are nonupdated maps
+	    for(int i = 0; i < 4; i++) {
+	        final int z1 = getz(tc.add(tccs[i]));
+	        final int z2 = getz(tc.add(tccs[(i + 1) % 4]));
+	        //dumb mistake - 99999999
+	        if(z1 != NOZ && z2 != NOZ && z1 != -99999999 && z2 != -99999999) {
+		    if (Math.abs(z2 - z1) > bz) {
+			return (true);
+		    }
+		}
+	    }
+	    return(false);
 	}
 
 	public BufferedImage render(Coord off) {
-	    BufferedImage[] texes = new BufferedImage[256];
-	    boolean[] cached = new boolean[256];
 	    WritableRaster buf = PUtils.imgraster(cmaps);
 	    Coord c = new Coord();
-	    for(c.y = 0; c.y < cmaps.y; c.y++) {
-		for(c.x = 0; c.x < cmaps.x; c.x++) {
-		    int t = gettile(c);
-		    BufferedImage tex = tiletex(t, texes, cached);
-		    int rgb = 0;
-		    if(tex != null)
-			rgb = tex.getRGB(Utils.floormod(c.x + off.x, tex.getWidth()),
-					 Utils.floormod(c.y + off.y, tex.getHeight()));
-		    buf.setSample(c.x, c.y, 0, (rgb & 0x00ff0000) >>> 16);
-		    buf.setSample(c.x, c.y, 1, (rgb & 0x0000ff00) >>>  8);
-		    buf.setSample(c.x, c.y, 2, (rgb & 0x000000ff) >>>  0);
-		    buf.setSample(c.x, c.y, 3, (rgb & 0xff000000) >>> 24);
+	    {
+		BufferedImage[] texes = new BufferedImage[256];
+		boolean[] cached = new boolean[256];
+		for (c.y = 0; c.y < cmaps.y; c.y++) {
+		    for (c.x = 0; c.x < cmaps.x; c.x++) {
+			int t = gettile(c);
+			BufferedImage tex = tiletex(t, texes, cached);
+			int rgb = 0;
+			if (tex != null)
+			    rgb = tex.getRGB(Utils.floormod(c.x + off.x, tex.getWidth()),
+				    Utils.floormod(c.y + off.y, tex.getHeight()));
+			buf.setSample(c.x, c.y, 0, (rgb & 0x00ff0000) >>> 16);
+			buf.setSample(c.x, c.y, 1, (rgb & 0x0000ff00) >>> 8);
+			buf.setSample(c.x, c.y, 2, (rgb & 0x000000ff) >>> 0);
+			buf.setSample(c.x, c.y, 3, (rgb & 0xff000000) >>> 24);
+		    }
+		}
+		for (c.y = 1; c.y < cmaps.y - 1; c.y++) {
+		    for (c.x = 1; c.x < cmaps.x - 1; c.x++) {
+			int p = tilesets[gettile(c)].prio;
+			if ((tilesets[gettile(c.add(-1, 0))].prio > p) ||
+				(tilesets[gettile(c.add(1, 0))].prio > p) ||
+				(tilesets[gettile(c.add(0, -1))].prio > p) ||
+				(tilesets[gettile(c.add(0, 1))].prio > p)) {
+			    buf.setSample(c.x, c.y, 0, 0);
+			    buf.setSample(c.x, c.y, 1, 0);
+			    buf.setSample(c.x, c.y, 2, 0);
+			    buf.setSample(c.x, c.y, 3, 255);
+			}
+		    }
 		}
 	    }
-	    for(c.y = 1; c.y < cmaps.y - 1; c.y++) {
-		for(c.x = 1; c.x < cmaps.x - 1; c.x++) {
-		    int p = tilesets[gettile(c)].prio;
-		    if((tilesets[gettile(c.add(-1, 0))].prio > p) ||
-		       (tilesets[gettile(c.add( 1, 0))].prio > p) ||
-		       (tilesets[gettile(c.add(0, -1))].prio > p) ||
-		       (tilesets[gettile(c.add(0,  1))].prio > p))
-		    {
-			buf.setSample(c.x, c.y, 0, 0);
-			buf.setSample(c.x, c.y, 1, 0);
-			buf.setSample(c.x, c.y, 2, 0);
-			buf.setSample(c.x, c.y, 3, 255);
+
+	    if(z[0] != NOZ) {
+		Tiler[] tilers = new Tiler[256];
+		boolean[] tlcached = new boolean[256];
+		for(c.y = 1; c.y < MCache.cmaps.y - 1; ++c.y) {
+		    for(c.x = 1; c.x < MCache.cmaps.x - 1; ++c.x) {
+		        final Tiler t = tiler(gettile(c), tilers, tlcached);
+			if (t instanceof Ridges.RidgeTile && brokenp(t, c, tilers, tlcached)) {
+			    for (int y = c.y - 1; y <= c.y + 1; ++y) {
+				for (int x = c.x - 1; x <= c.x + 1; ++x) {
+				    Color cc = new Color(buf.getSample(x, y, 0), buf.getSample(x, y, 1),
+					    buf.getSample(x, y, 2), buf.getSample(x, y, 3));
+				    final Color blended = Utils.blendcol(cc, Color.BLACK, x == c.x && y == c.y ? 1.0 : 0.1);
+				    buf.setSample(x, y, 0, blended.getRed());
+				    buf.setSample(x, y, 1, blended.getGreen());
+				    buf.setSample(x, y, 2, blended.getBlue());
+				    buf.setSample(x, y, 3, blended.getAlpha());
+				}
+			    }
+			}
 		    }
 		}
 	    }
@@ -455,7 +540,7 @@ public class MapFile {
 	public static final Resource.Spec notile = new Resource.Spec(Resource.remote(), "gfx/tiles/notile", -1);
 	public static final DataGrid nogrid;
 	static {
-	    nogrid = new DataGrid(new TileInfo[] {new TileInfo(notile, 0)}, new byte[cmaps.x * cmaps.y], 0);
+	    nogrid = new DataGrid(new TileInfo[] {new TileInfo(notile, 0)}, new byte[cmaps.x * cmaps.y], new int[cmaps.x * cmaps.y], 0);
 	}
     }
 
@@ -463,8 +548,8 @@ public class MapFile {
 	public final long id;
 	private int useq = -1;
 
-	public Grid(long id, TileInfo[] tilesets, byte[] tiles, long mtime) {
-	    super(tilesets, tiles, mtime);
+	public Grid(long id, TileInfo[] tilesets, byte[] tiles, int[] z, long mtime) {
+	    super(tilesets, tiles, z, mtime);
 	    this.id = id;
 	}
 
@@ -492,15 +577,18 @@ public class MapFile {
 	    for(int i = 0; i < nt; i++)
 		infos[i] = new TileInfo(sets[i], prios[i]);
 	    byte[] tiles = new byte[cmaps.x * cmaps.y];
-	    for(int i = 0; i < cg.tiles.length; i++)
-		tiles[i] = (byte)(tmap[cg.tiles[i]]);
-	    Grid g = new Grid(cg.id, infos, tiles, System.currentTimeMillis());
+	    int[] z = new int[cmaps.x * cmaps.y];
+	    for(int i = 0; i < cg.tiles.length; i++) {
+		tiles[i] = (byte) (tmap[cg.tiles[i]]);
+	    	z[i] = cg.z[i];
+	    }
+	    Grid g = new Grid(cg.id, infos, tiles, z, System.currentTimeMillis());
 	    g.useq = oseq;
 	    return(g);
 	}
 
 	public void save(Message fp) {
-	    fp.adduint8(2);
+	    fp.adduint8(3);
 	    ZMessage z = new ZMessage(fp);
 	    z.addint64(id);
 	    z.addint64(mtime);
@@ -511,6 +599,9 @@ public class MapFile {
 		z.adduint8(tilesets[i].prio);
 	    }
 	    z.addbytes(tiles);
+	    for(int i = 0;i < this.z.length; ++i) {
+	        z.addint32(this.z[i]);
+	    }
 	    z.finish();
 	}
 
@@ -546,7 +637,25 @@ public class MapFile {
 		    for(int i = 0, no = z.uint8(); i < no; i++)
 			tilesets.add(new TileInfo(new Resource.Spec(Resource.remote(), z.string(), z.uint16()), z.uint8()));
 		    byte[] tiles = z.bytes(cmaps.x * cmaps.y);
-		    return(new Grid(id, tilesets.toArray(new TileInfo[0]), tiles, mtime));
+		    int[] zmap = new int[cmaps.x*cmaps.y];
+		    for(int i = 0; i < zmap.length; ++i)
+		        zmap[i] = NOZ;
+		    return(new Grid(id, tilesets.toArray(new TileInfo[0]), tiles, zmap, mtime));
+		} else if(ver == 3) {
+		    ZMessage z = new ZMessage(data);
+		    long storedid = z.int64();
+		    if(storedid != id)
+			throw(new Message.FormatError(String.format("Grid ID mismatch: expected %s, got %s", id, storedid)));
+		    long mtime = z.int64();
+		    List<TileInfo> tilesets = new ArrayList<>();
+		    for(int i = 0, no = z.uint8(); i < no; i++)
+			tilesets.add(new TileInfo(new Resource.Spec(Resource.remote(), z.string(), z.uint16()), z.uint8()));
+		    byte[] tiles = z.bytes(cmaps.x * cmaps.y);
+		    int[] zmap = new int[cmaps.x*cmaps.y];
+		    for(int i = 0; i < zmap.length; ++i) {
+			zmap[i] = z.int32();
+		    }
+		    return(new Grid(id, tilesets.toArray(new TileInfo[0]), tiles, zmap, mtime));
 		} else {
 		    throw(new Message.FormatError(String.format("Unknown grid data version for %x: %d", id, ver)));
 		}
@@ -557,21 +666,41 @@ public class MapFile {
 	}
     }
 
+    //And this is probably why Loftar avoid storing z levels
     public static class ZoomGrid extends DataGrid {
 	public final long seg;
 	public final int lvl;
 	public final Coord sc;
 
-	public ZoomGrid(long seg, int lvl, Coord sc, TileInfo[] tilesets, byte[] tiles, long mtime) {
-	    super(tilesets, tiles, mtime);
+	public ZoomGrid(long seg, int lvl, Coord sc, TileInfo[] tilesets, byte[] tiles, int[] z, long mtime) {
+	    super(tilesets, tiles, z, mtime);
 	    this.seg = seg;
 	    this.lvl = lvl;
 	    this.sc = sc;
 	}
 
+	/**
+	 * Get the max mtime of the grids that make up this zoomgrid
+	 */
+	public static long localmtime(MapFile file, Segment seg, int lvl, Coord sc) {
+	    if((lvl < 1) || ((sc.x & ((1 << lvl) - 1)) != 0) || ((sc.y & ((1 << lvl) - 1)) != 0))
+		throw(new IllegalArgumentException(String.format("%s %s", sc, lvl)));
+	    DataGrid[] lower = new DataGrid[4];
+	    long maxmtime = 0;
+	    for(int i = 0; i < 4; i++) {
+		int x = i % 2, y = i / 2;
+		lower[i] = fetchg(file, seg, lvl - 1, sc.add(x << (lvl - 1), y << (lvl - 1)));
+		if(lower[i] != null) {
+		    maxmtime = Math.max(maxmtime, lower[i].mtime);
+		}
+	    }
+	    return maxmtime;
+	}
+
 	public static ZoomGrid fetch(MapFile file, Segment seg, int lvl, Coord sc) {
 	    ZoomGrid loaded = load(file, seg.id, lvl, sc);
-	    if(loaded != null)
+	    //zoom grids should update anytime a grid they are made from updated
+	    if(loaded != null && loaded.mtime >= localmtime(file, seg, lvl, sc))
 		return(loaded);
 	    return(from(file, seg, lvl, sc));
 	}
@@ -588,7 +717,7 @@ public class MapFile {
 	}
 
 	public static ZoomGrid from(MapFile file, Segment seg, int lvl, Coord sc) {
-	    if((lvl < 1) || ((sc.x & ((1 << lvl) - 1)) != 0) || ((sc.x & ((1 << lvl) - 1)) != 0))
+	    if((lvl < 1) || ((sc.x & ((1 << lvl) - 1)) != 0) || ((sc.y & ((1 << lvl) - 1)) != 0))
 		throw(new IllegalArgumentException(String.format("%s %s", sc, lvl)));
 	    DataGrid[] lower = new DataGrid[4];
 	    boolean any = false;
@@ -642,6 +771,10 @@ public class MapFile {
 	    }
 
 	    byte[] tiles = new byte[cmaps.x * cmaps.y];
+	    int[] z = new int[cmaps.x * cmaps.y];
+	    //Each zoom level works by zooming out twice the distance as before.
+	    //It figures out which tile it should render by taking the highest tileid of the 4 around the original point
+	    //For z levels we'll do the same, altho ridges may be slightly off on zoommaps.
 	    for(int gn = 0; gn < 4; gn++) {
 		int gx = gn % 2, gy = gn / 2;
 		DataGrid cg = lower[gn];
@@ -653,13 +786,16 @@ public class MapFile {
 		    tmap[i] = rinfos.get(cg.tilesets[i].res.name).byteValue();
 		Coord off = cmaps.div(2).mul(gx, gy);
 		byte[] tc = new byte[4];
+		int maxz;
 		byte[] tcn = new byte[4];
 		for(int y = 0; y < cmaps.y / 2; y++) {
 		    for(int x = 0; x < cmaps.x / 2; x++) {
+			maxz = NOZ;
 			int nd = 0;
 			for(int sy = 0; sy < 2; sy++) {
 			    for(int sx = 0; sx < 2; sx++) {
 				byte st = tmap[cg.gettile(new Coord(x * 2, y * 2))];
+				maxz = Math.max(maxz, cg.getz(new Coord(x * 2, y * 2)));
 				st: {
 				    for(int i = 0; i < nd; i++) {
 					if(tc[i] == st) {
@@ -679,16 +815,19 @@ public class MapFile {
 				mi = i;
 			}
 			tiles[(x + off.x) + ((y + off.y) * cmaps.x)] = tc[mi];
+			z[(x + off.x) + ((y + off.y) * cmaps.x)] = maxz;
 		    }
 		}
 	    }
-	    ZoomGrid ret = new ZoomGrid(seg.id, lvl, sc, infos, tiles, maxmtime);
+	    ZoomGrid ret = new ZoomGrid(seg.id, lvl, sc, infos, tiles, z, maxmtime);
 	    ret.save(file);
 	    return(ret);
 	}
 
+	//v1 = no z levels
+	//v2 = z levels
 	public void save(Message fp) {
-	    fp.adduint8(1);
+	    fp.adduint8(2);
 	    ZMessage z = new ZMessage(fp);
 	    z.addint64(seg);
 	    z.addint32(lvl);
@@ -701,6 +840,9 @@ public class MapFile {
 		z.adduint8(tilesets[i].prio);
 	    }
 	    z.addbytes(tiles);
+	    for(int i = 0;i < this.z.length; ++i) {
+		z.addint32(this.z[i]);
+	    }
 	    z.finish();
 	}
 
@@ -727,28 +869,52 @@ public class MapFile {
 		return(null);
 	    }
 	    try(StreamMessage data = new StreamMessage(fp)) {
-		if(data.eom())
-		    return(null);
+		if (data.eom())
+		    return (null);
 		int ver = data.uint8();
-		if(ver == 1) {
+		if (ver == 1) {
 		    ZMessage z = new ZMessage(data);
 		    long storedseg = z.int64();
-		    if(storedseg != seg)
-			throw(new Message.FormatError(String.format("Zoomgrid segment mismatch: expected %s, got %s", seg, storedseg)));
+		    if (storedseg != seg)
+			throw (new Message.FormatError(String.format("Zoomgrid segment mismatch: expected %s, got %s", seg, storedseg)));
 		    long storedlvl = z.int32();
-		    if(storedlvl != lvl)
-			throw(new Message.FormatError(String.format("Zoomgrid level mismatch: expected %s, got %s", lvl, storedlvl)));
+		    if (storedlvl != lvl)
+			throw (new Message.FormatError(String.format("Zoomgrid level mismatch: expected %s, got %s", lvl, storedlvl)));
 		    Coord storedsc = z.coord();
-		    if(!sc.equals(storedsc))
-			throw(new Message.FormatError(String.format("Zoomgrid coord mismatch: expected %s, got %s", sc, storedsc)));
+		    if (!sc.equals(storedsc))
+			throw (new Message.FormatError(String.format("Zoomgrid coord mismatch: expected %s, got %s", sc, storedsc)));
 
 		    long mtime = z.int64();
-		    List<TileInfo> tilesets = new ArrayList<TileInfo>();
-		    for(int i = 0, no = z.uint8(); i < no; i++)
+		    List<TileInfo> tilesets = new ArrayList<>();
+		    for (int i = 0, no = z.uint8(); i < no; i++)
 			tilesets.add(new TileInfo(new Resource.Spec(Resource.remote(), z.string(), z.uint16()), z.uint8()));
 		    byte[] tiles = z.bytes(cmaps.x * cmaps.y);
-		    return(new ZoomGrid(seg, lvl, sc, tilesets.toArray(new TileInfo[0]), tiles, mtime));
-		} else {
+		    int[] zmap = new int[cmaps.x * cmaps.y];
+		    for (int i = 0; i < zmap.length; ++i)
+			zmap[i] = NOZ;
+		    return (new ZoomGrid(seg, lvl, sc, tilesets.toArray(new TileInfo[0]), tiles, zmap, mtime));
+		} else if(ver == 2) {
+		    ZMessage z = new ZMessage(data);
+		    long storedseg = z.int64();
+		    if (storedseg != seg)
+			throw (new Message.FormatError(String.format("Zoomgrid segment mismatch: expected %s, got %s", seg, storedseg)));
+		    long storedlvl = z.int32();
+		    if (storedlvl != lvl)
+			throw (new Message.FormatError(String.format("Zoomgrid level mismatch: expected %s, got %s", lvl, storedlvl)));
+		    Coord storedsc = z.coord();
+		    if (!sc.equals(storedsc))
+			throw (new Message.FormatError(String.format("Zoomgrid coord mismatch: expected %s, got %s", sc, storedsc)));
+
+		    long mtime = z.int64();
+		    List<TileInfo> tilesets = new ArrayList<>();
+		    for (int i = 0, no = z.uint8(); i < no; i++)
+			tilesets.add(new TileInfo(new Resource.Spec(Resource.remote(), z.string(), z.uint16()), z.uint8()));
+		    byte[] tiles = z.bytes(cmaps.x * cmaps.y);
+		    int[] zmap = new int[cmaps.x * cmaps.y];
+		    for (int i = 0; i < zmap.length; ++i)
+			zmap[i] = z.int32();
+		    return (new ZoomGrid(seg, lvl, sc, tilesets.toArray(new TileInfo[0]), tiles, zmap, mtime));
+	    	} else {
 		    throw(new Message.FormatError(String.format("Unknown zoomgrid data version for (%d, %d) in %x@%d: %d", sc.x, sc.y, seg, lvl, ver)));
 		}
 	    } catch(Message.BinError e) {
@@ -1046,9 +1212,12 @@ public class MapFile {
 		    moff = info.sc.sub(g.gc);
 		}
 		Grid cur = seg.loaded(g.id);
-		if(!((cur != null) && (cur.useq == g.seq))) {
+		//I want to force update on anything still sporting NOZ or day old grids..
+		if(cur == null || cur.useq != g.seq || g.z[0] == NOZ) {
 		    Grid sg = Grid.from(map, g);
 		    sg.save(MapFile.this);
+		    seg.include(sg, g.gc.add(moff));
+		    //seg.updateGrid(sg.id, sg);
 		}
 		if(seg.id != mseg) {
 		    if(merge == null)
