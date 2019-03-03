@@ -110,6 +110,7 @@ public class DefSettings {
     public static final IndirSetting<Integer> TIMERVOLUME =  new IndirSetting<>(global, "audio.timer-volume");                //[Int] Timer volume
     public static final IndirSetting<Boolean> NOGOBAUDIO = new IndirSetting<>(global, "audio.no-gob-audio");
     public static final IndirSetting<Boolean> SHOWHOVERTOOLTIPS = new IndirSetting<>(global, "gameplay.show-hover-tooltip");  //[Bool] Toggle hover tooltips
+    public static final IndirSetting<Boolean> SHOWMMMARKERS = new IndirSetting<>(global, "gameplay.show-minimap-markers");
 
     //Themes
     public static final IndirSetting<String[]> THEMES = new IndirSetting<>(session, "theme.themes");

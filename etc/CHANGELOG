@@ -1,3 +1,7 @@
+3/3/19
+    - Misc fix with Avatars
+    - Minimap icons should all scale with zoom level
+
 3/2/19
     - Belts will now save window position
     - Locking a window will be remember like position now

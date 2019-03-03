@@ -37,7 +37,6 @@ import haven.MapFile.Marker;
 import haven.MapFile.PMarker;
 import haven.MapFile.SMarker;
 import haven.sloth.DefSettings;
-import haven.sloth.gob.Mark;
 
 import static haven.MCache.cmaps;
 
@@ -272,6 +271,8 @@ public class MapFileWidget extends Widget {
 	    markers = null;
 	}
     }
+
+    public int dlvl() { return dlvl; }
 
     public Coord xlate(Location loc) {
 	Location curloc = this.curloc;

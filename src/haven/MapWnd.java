@@ -168,7 +168,10 @@ public class MapWnd extends Window {
 			    final Coord mc = new Coord2d(gob.getc()).floor(tilesz);
 			    final Coord gc = xlate(new Location(ploc.seg, ploc.tc.add(mc.sub(pc))));
 			    if(gc != null) {
-				icon.tex().ifPresent(tex -> g.image(tex, gc.sub(tex.sz().div(2))));
+				icon.tex().ifPresent(tex -> {
+				    final Coord sz = tex.sz();
+				    g.image(tex, gc.sub(sz.div(2)), sz);
+				});
 			    }
 			}
 		    } catch(Loading l) {
@@ -180,6 +183,7 @@ public class MapWnd extends Window {
 	    //draw party icons as well
 	    try {
 		synchronized(ui.sess.glob.party) {
+		    final Coord psz = party.sz();
 		    for(Party.Member m : ui.sess.glob.party.memb.values()) {
 			Coord2d ppc = m.getc();
 			if(ppc != null) {
@@ -187,7 +191,7 @@ public class MapWnd extends Window {
 			    final Coord gc = xlate(new Location(ploc.seg, ploc.tc.add(mc.sub(pc))));
 			    g.chcolor(m.col.getRed(), m.col.getGreen(), m.col.getBlue(), 255);
 			    if(gc != null) {
-				g.image(party, gc.sub(party.sz().div(2)));
+				g.image(party, gc.sub(psz.div(2)), psz);
 				g.chcolor();
 			    }
 			}
@@ -262,7 +266,8 @@ public class MapWnd extends Window {
 	 */
 	private void drawview(GOut g, final Coord ploc) {
 	    if (DefSettings.MMSHOWVIEW.get()) {
-		g.image(viewbox, ploc.sub(viewbox.sz().div(2)));
+	        final Coord vsz = viewbox.sz().div(1 << dlvl());
+		g.image(viewbox, ploc.sub(vsz.div(2)), vsz);
 	    }
 	}
 
@@ -317,15 +322,23 @@ public class MapWnd extends Window {
 
 	//Check for new Map Grids that we haven't scanned
 	final HashMap<Long, Integer> newgrids = new HashMap<>();
+	final ArrayList<MCache.Grid> grids;
 	synchronized(ui.sess.glob.map.grids) {
-	    for (MCache.Grid grid : ui.sess.glob.map.grids.values()) {
-	        newgrids.put(grid.id, grid.seq);
-	        //Only update if something actually changed
-	        if(!currentgrids.containsKey(grid.id) || currentgrids.get(grid.id) != grid.seq) {
-	            view.file.update(ui.sess.glob.map, grid);
-		}
+	    grids = new ArrayList<>(ui.sess.glob.map.grids.values());
+	}
+
+	boolean upd = false;
+	for (MCache.Grid grid : grids) {
+	    newgrids.put(grid.id, grid.seq);
+	    //Only update if something actually changed
+	    if(!currentgrids.containsKey(grid.id) || currentgrids.get(grid.id) != grid.seq) {
+		upd = true;
 	    }
 	}
+	if(upd) {
+	    view.file.updategrids(ui.sess.glob.map, grids);
+	}
+
 	currentgrids = newgrids;
     }
 

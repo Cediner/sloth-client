@@ -306,10 +306,11 @@ public class Avaview extends PView {
 	if(player || party) {
 	    final Coord2d rel = player ? relpos() : parent.relpos();
 	    Storage.dynamic.write(sql -> {
-		final PreparedStatement stmt = Storage.dynamic.prepare("INSERT OR REPLACE INTO widget_position VALUES (?, ?, ?)");
+		final PreparedStatement stmt = Storage.dynamic.prepare("INSERT OR REPLACE INTO widget_position VALUES (?, ?, ?, ?)");
 		stmt.setString(1, player ? plkey : Partyview.ptkey);
 		stmt.setDouble(2, rel.x);
 		stmt.setDouble(3, rel.y);
+		stmt.setBoolean(4, false);
 		stmt.executeUpdate();
 	    });
 	}

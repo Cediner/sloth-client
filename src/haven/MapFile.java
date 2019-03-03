@@ -1368,19 +1368,13 @@ public class MapFile {
 	if(debug) Debug.log.printf("mapfile: update completed\n");
     }
 
-    // No reason to add this many grids per update anymore
-    // each grid is now manually added unlike default
-    public void update(MCache map, MCache.Grid g) {
-	Collection<MCache.Grid> grids = new ArrayList<>();
-	try {
-	    grids.add(g);
-	} catch (Loading l) {
-	    return;
-	}
-
-	synchronized(procmon) {
-	    updqueue.add(new Pair<>(map, grids));
-	    process();
+    // You need multiple grids around one otherwise it can merge!
+    public void updategrids(MCache map, Collection<MCache.Grid> grids) {
+	if(!grids.isEmpty()) {
+	    synchronized(procmon) {
+		updqueue.add(new Pair<>(map, grids));
+		process();
+	    }
 	}
     }
 }
