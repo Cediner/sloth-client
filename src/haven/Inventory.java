@@ -33,7 +33,7 @@ public class Inventory extends Widget implements DTarget {
     public static final Coord sqsz = new Coord(33, 33);
     public boolean dropul = true;
     public Coord isz;
-    Map<GItem, WItem> wmap = new HashMap<GItem, WItem>();
+    Map<GItem, WItem> wmap = new HashMap<>();
 
     @RName("inv")
     public static class $_ implements Factory {
@@ -95,6 +95,19 @@ public class Inventory extends Widget implements DTarget {
 	    dc = cc.div(sqsz);
 	wdgmsg("drop", dc);
 	return(true);
+    }
+
+    void dropAllAlike(final String nm, final Coord c) {
+        final ArrayList<GItem> drop = new ArrayList<>();
+        for(final GItem gi : wmap.keySet()) {
+            gi.name().ifPresent(gnm -> {
+                if(gnm.equals(nm))
+                    drop.add(gi);
+	    });
+	}
+        for(final GItem gi : drop) {
+            gi.wdgmsg("drop", c);
+	}
     }
 	
     public boolean iteminteract(Coord cc, Coord ul) {

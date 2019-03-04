@@ -1,7 +1,10 @@
 TODO
+    - Marker list, can't scroll out of range of current selected item
     - auto toggle tracking on login and crim acts, put these are options under Gameplay
     - Loftar map
+        - Auto add icons for: village idol, minehole, minehole ladders,
         - follow camera + offset (akin to minimap)
+        - Switch cache location for this client in short run. APPDATA -> <base folder>/data/cache
         - Switch to sqlite for storage, not dynamic. It's own map.sqlite to keep it separate.
     - Party
         - Party members send grid id, offset every x seconds to override loftar's stuff? - Make this an option
@@ -20,11 +23,8 @@ TODO
     - Movable Fightsess (split into two parts maybe?)
     - Fightsess move icons clickable
     - Grid View + tooltips = non-bold lines. Something from tooltips must be causing an extra GL command to fuck over lines
-    - Infinite zoom out on Overview map
-        - This has more to do with merging the overview map with the minimap -> probably won't happen
     - UI
         - Keybinds
-        - Separate Study Window
     - Smart Aim
     - Scripting
         - Proximity aggroing with keybind or menugrid shortcut (SCRIPT)
@@ -50,3 +50,4 @@ TODO
             - Don't delete grids ("dont-delete-grids" -> False)
                 - Map Grid radius for drawing, default: 2 ("map-draw-radius" -> 2)
     - Enable profiling -> Show profiling windows via Options under "UI"
+    - UI scaling

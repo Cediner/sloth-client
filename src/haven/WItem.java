@@ -281,6 +281,8 @@ public class WItem extends Widget implements DTarget {
 		    item.wdgmsg("transfer", c, n);
 		} else if (ui.modctrl) {
 		    item.wdgmsg("drop", c);
+		} else if (ui.modmeta && parent instanceof Inventory) {
+		    item.name().ifPresent(name -> ((Inventory)parent).dropAllAlike(name, c));
 		} else {
 		    item.wdgmsg("take", c);
 		}
