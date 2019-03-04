@@ -140,6 +140,8 @@ public class MapFileWidget extends Widget {
     }
 
     public static class DisplayGrid {
+        //TODO: Make the transition more smooth when our cgrid updates. Right now it blacks out while loading the new img
+	//      Just like how Grid's are refreshed
 	public final Segment seg;
 	public final Coord sc;
 	public final Indir<? extends DataGrid> gref;

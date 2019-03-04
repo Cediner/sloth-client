@@ -34,14 +34,17 @@ import haven.MapFile.PMarker;
 import haven.MapFile.SMarker;
 import haven.MapFileWidget.*;
 import haven.sloth.DefSettings;
+import haven.sloth.gob.Type;
 
-import static haven.LocalMiniMap.party;
 import static haven.LocalMiniMap.plx;
 import static haven.MCache.tilesz;
 import static haven.MCache.cmaps;
 import static haven.OCache.posres;
 
 public class MapWnd extends Window {
+    public static final Tex party = Resource.loadtex("custom/mm/pl/party");
+    private static final Tex friend = Resource.loadtex("custom/mm/pl/friend");
+    private static final Tex unknown = Resource.loadtex("custom/mm/pl/unknown");
     private static final Tex viewbox = Resource.loadtex("custom/mm/hud/view", 3);
     public static final Resource markcurs = Resource.local().loadwait("gfx/hud/curs/flag");
     public final MapFileWidget view;
@@ -155,32 +158,9 @@ public class MapWnd extends Window {
 	    return(super.mousedown(c, button));
 	}
 
-	/**
-	 * Draw gob icons relative to the players location
-	 */
-	private void drawicons(GOut g, final Location ploc) {
+	private Set<Long> drawparty(GOut g, final Location ploc) {
+	    final Set<Long> ignore = new HashSet<>();
 	    final Coord pc = new Coord2d(mv.getcc()).floor(tilesz);
-	    synchronized(ui.sess.glob.oc) {
-		for(Gob gob : ui.sess.glob.oc) {
-		    try {
-			GobIcon icon = gob.getattr(GobIcon.class);
-			if(icon != null) {
-			    final Coord mc = new Coord2d(gob.getc()).floor(tilesz);
-			    final Coord gc = xlate(new Location(ploc.seg, ploc.tc.add(mc.sub(pc))));
-			    if(gc != null) {
-				icon.tex().ifPresent(tex -> {
-				    final Coord sz = tex.sz();
-				    g.image(tex, gc.sub(sz.div(2)), sz);
-				});
-			    }
-			}
-		    } catch(Loading l) {
-		        //fail silently
-		    }
-		}
-	    }
-
-	    //draw party icons as well
 	    try {
 		synchronized(ui.sess.glob.party) {
 		    final Coord psz = party.sz();
@@ -190,6 +170,7 @@ public class MapWnd extends Window {
 			    final Coord mc = new Coord2d(ppc).floor(tilesz);
 			    final Coord gc = xlate(new Location(ploc.seg, ploc.tc.add(mc.sub(pc))));
 			    g.chcolor(m.col.getRed(), m.col.getGreen(), m.col.getBlue(), 255);
+			    ignore.add(m.gobid);
 			    if(gc != null) {
 				g.image(party, gc.sub(psz.div(2)), psz);
 				g.chcolor();
@@ -198,7 +179,53 @@ public class MapWnd extends Window {
 		    }
 		}
 	    } catch(Loading l) {
-	        //Fail silently
+		//Fail silently
+	    }
+	    return ignore;
+	}
+
+	/**
+	 * Draw gob icons relative to the players location
+	 */
+	private void drawicons(GOut g, final Location ploc, final Set<Long> ignore) {
+	    final Coord pc = new Coord2d(mv.getcc()).floor(tilesz);
+	    synchronized(ui.sess.glob.oc) {
+		for(Gob gob : ui.sess.glob.oc) {
+		    if (!ignore.contains(gob.id)) {
+			if (gob.type == Type.HUMAN && gob.id != ui.gui.map.plgob) {
+			    final Coord mc = new Coord2d(gob.getc()).floor(tilesz);
+			    try {
+			        final Coord gc = xlate(new Location(ploc.seg, ploc.tc.add(mc.sub(pc))));
+				final KinInfo kin = gob.getattr(KinInfo.class);
+				if (kin != null) {
+				    g.chcolor(BuddyWnd.gc[kin.group]);
+				    g.image(friend, gc.sub(friend.sz().div(2)));
+				    g.chcolor();
+				} else {
+				    g.image(unknown, gc.sub(unknown.sz().div(2)));
+				}
+			    } catch (Loading l) {
+				//fail silently
+			    }
+			} else {
+			    try {
+				GobIcon icon = gob.getattr(GobIcon.class);
+				if (icon != null) {
+				    final Coord mc = new Coord2d(gob.getc()).floor(tilesz);
+				    final Coord gc = xlate(new Location(ploc.seg, ploc.tc.add(mc.sub(pc))));
+				    if (gc != null) {
+					icon.tex().ifPresent(tex -> {
+					    final Coord sz = tex.sz();
+					    g.image(tex, gc.sub(sz.div(2)), sz);
+					});
+				    }
+				}
+			    } catch (Loading l) {
+				//fail silently
+			    }
+			}
+		    }
+		}
 	    }
 	}
 
@@ -287,8 +314,10 @@ public class MapWnd extends Window {
 		    g.chcolor();
 		    //Draw our view
 		    drawview(g, ploc);
+		    //Draw party
+		    final Set<Long> ignore = drawparty(g, loc);
 		    //Draw gob icons
-		    drawicons(g, loc);
+		    drawicons(g, loc, ignore);
 		    //Draw Movement queue if any exit
 		    drawmovement(g.reclip(view.c, view.sz), loc);
 		}
@@ -402,12 +431,6 @@ public class MapWnd extends Window {
     }
 
     void markobj(Indir<Resource> resid, String nm, Coord2d mc) {
-	/**
-	 *Marker nm = new PMarker(loc.seg.id, loc.tc, "New marker", BuddyWnd.gc[new Random().nextInt(BuddyWnd.gc.length)]);
-	 file.add(nm);
-	 ui.gui.mapmarkers.list.change2(nm);
-	 ui.gui.mapmarkers.list.display(nm);
-	 */
 	synchronized(deferred) {
 	    deferred.add(() -> {
 		final Coord tc = mc.floor(tilesz);

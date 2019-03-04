@@ -4,6 +4,7 @@
     - Loftar map debug messages no longer print to system chat..
     - Bug with pointers
     - Custom markers are now a separate category in the marker list. They can be renamed and recolored now.
+    - Added back unknown gobs icon to the minimap
 
 3/2/19
     - Belts will now save window position

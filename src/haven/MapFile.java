@@ -39,6 +39,7 @@ import haven.resutil.Ridges;
 
 import static haven.MCache.cmaps;
 
+//TODO: move storage to sqlite for several advantages with locking, etc
 public class MapFile {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     private static final int NOZ = Integer.MIN_VALUE;
