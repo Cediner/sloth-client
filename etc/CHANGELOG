@@ -1,3 +1,12 @@
+3/4/19
+    - Options for having tracking/criminal acts toggled on when logging in under Gameplay settings
+    - Switch toggle hitboxes to Ctrl+H and toggle tooltips to Ctrl+R
+    - Moved the hafen cache files from %APPDATA% to <hafen-jar-directory>/data/cache/
+    1. Backup your %APPDATA%/Haven and Hearth folder up
+    2. Make <hafen-jar-directory>/data/cache/ folder
+    3. Copy over all the %APPDATA%/Haven and Hearth/data/* files to <hafen-jar-directory>/data/cache/
+    4. You can delete %APPDATA%/Haven and Hearth/ but keep your backup just in case.
+
 3/3/19
     - Misc fix with Avatars
     - Minimap icons should all scale with zoom level
@@ -7,13 +16,6 @@
     - Added back unknown gobs icon to the minimap
     - Minimap should no longer blip black when rendering an update to it
     - Drop all of an item kind added back. Alt + Click to do it.
-    - Options for having tracking/criminal acts toggled on when logging in under Gameplay settings
-    - Switch toggle hitboxes to Ctrl+H and toggle tooltips to Ctrl+R
-    - Moved the hafen cache files from %APPDATA% to <hafen-jar-directory>/data/cache/
-    1. Backup your %APPDATA%/Haven and Hearth folder up
-    2. Make <hafen-jar-directory>/data/cache/ folder
-    3. Copy over all the %APPDATA%/Haven and Hearth/data/* files to <hafen-jar-directory>/data/cache/
-    4. You can delete %APPDATA%/Haven and Hearth/ but keep your backup just in case.
 
 3/2/19
     - Belts will now save window position
