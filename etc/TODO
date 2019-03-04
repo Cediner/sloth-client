@@ -2,7 +2,6 @@ TODO
     - auto toggle tracking on login and crim acts, put these are options under Gameplay
     - Loftar map
         - follow camera + offset (akin to minimap)
-        - unknown gobs on map, didn't move it over
         - Switch to sqlite for storage, not dynamic. It's own map.sqlite to keep it separate.
     - Party
         - Party members send grid id, offset every x seconds to override loftar's stuff? - Make this an option

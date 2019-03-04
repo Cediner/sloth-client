@@ -146,7 +146,8 @@ public class MapFileWidget extends Widget {
 	public final Coord sc;
 	public final Indir<? extends DataGrid> gref;
 	private DataGrid cgrid = null;
-	private Defer.Future<Tex> img = null;
+	private Defer.Future<Tex> fimg = null;
+	private Tex img = null;
 
 	public DisplayGrid(Segment seg, Coord sc, Indir<? extends DataGrid> gref) {
 	    this.seg = seg;
@@ -156,13 +157,26 @@ public class MapFileWidget extends Widget {
 
 	public Tex img() {
 	    DataGrid grid = gref.get();
-	    if(grid != cgrid) {
-		if(img != null)
-		    img.cancel();
-		img = Defer.later(() -> new TexI(grid.render(sc.mul(cmaps))));
+	    if(fimg != null) { //Check if our next Tex is done rendering
+	        if(fimg.done()) {
+	            //if so set it
+		    try {
+			img = fimg.get();
+		    } catch (Exception e) {
+		        logger.atSevere().withCause(e).log("Failed to render a minimap grid");
+		    } finally {
+			fimg = null;
+		    }
+		}
+	    }
+	    if(grid != cgrid) { //Check if our backing grid has changed
+	        //If so cancel what we're currently working on and queue the new rendering
+		if(fimg != null)
+		    fimg.cancel();
+		fimg = Defer.later(() -> new TexI(grid.render(sc.mul(cmaps))));
 		cgrid = grid;
 	    }
-	    return((img == null)?null:img.get());
+	    return img;
 	}
     }
 
