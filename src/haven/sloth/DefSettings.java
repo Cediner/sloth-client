@@ -92,6 +92,10 @@ public class DefSettings {
     public static final IndirSetting<Integer> BADKIN =  new IndirSetting<>(global, "gameplay.bad-kin-color");                 //[Int] Bad kin color, default: 2 (red)
     public static final IndirSetting<Boolean> ALWAYSLONGTIP =  new IndirSetting<>(global, "gameplay.always-show-longtip");    //[Bool] Toggle only longtips on item tooltips
     public static final IndirSetting<Boolean> SHOWFPS =  new IndirSetting<>(global, "gameplay.show-fps");                     //[Bool] Toggle FPS counter
+    public static final IndirSetting<Boolean> SHOWHOVERTOOLTIPS = new IndirSetting<>(global, "gameplay.show-hover-tooltip");  //[Bool] Toggle hover tooltips
+    public static final IndirSetting<Boolean> SHOWMMMARKERS = new IndirSetting<>(global, "gameplay.show-minimap-markers");    //[Bool] Toggle BIG minimap icons
+    public static final IndirSetting<Boolean> AUTOTRACK = new IndirSetting<>(global, "gameplay.auto-turn-on-tracking");       //[Bool] Toggle turning on tracking on login
+    public static final IndirSetting<Boolean> AUTOCRIME = new IndirSetting<>(global, "gameplay.auto-turn-on-crime");          //[Bool] Toggle turning on criminal acts on login
     public static final IndirSetting<Boolean> SHOWFKBELT =  new IndirSetting<>(global, "belt.fk.show");                       //[Bool] Toggle F key belt
     public static final IndirSetting<Integer> FKBELTPAGE =  new IndirSetting<>(global, "belt.fk.page");                       //[Int] Page F key belt is on
     public static final IndirSetting<String> FKBELTSTYLE =  new IndirSetting<>(global, "belt.fk.style");                      //[String] F key belt style
@@ -109,8 +113,6 @@ public class DefSettings {
     public static final IndirSetting<Boolean> FREECAMLOCKELAV =  new IndirSetting<>(global, "camera.free.lock-elevation");    //[Bool] Lock freecam elevation angle
     public static final IndirSetting<Integer> TIMERVOLUME =  new IndirSetting<>(global, "audio.timer-volume");                //[Int] Timer volume
     public static final IndirSetting<Boolean> NOGOBAUDIO = new IndirSetting<>(global, "audio.no-gob-audio");
-    public static final IndirSetting<Boolean> SHOWHOVERTOOLTIPS = new IndirSetting<>(global, "gameplay.show-hover-tooltip");  //[Bool] Toggle hover tooltips
-    public static final IndirSetting<Boolean> SHOWMMMARKERS = new IndirSetting<>(global, "gameplay.show-minimap-markers");
 
     //Themes
     public static final IndirSetting<String[]> THEMES = new IndirSetting<>(session, "theme.themes");
@@ -211,6 +213,8 @@ public class DefSettings {
 	ALWAYSLONGTIP.ensure(true);
 	SHOWFPS.ensure(true);
 	SHOWHOVERTOOLTIPS.ensure(false);
+	AUTOTRACK.ensure(true);
+	AUTOCRIME.ensure(false);
 	//Belts
 	SHOWFKBELT.ensure(false);
 	FKBELTPAGE.ensure(0);

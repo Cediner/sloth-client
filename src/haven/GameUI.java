@@ -26,6 +26,7 @@
 
 package haven;
 
+import com.google.common.flogger.FluentLogger;
 import haven.sloth.DefSettings;
 import haven.sloth.Theme;
 import haven.sloth.gfx.MapPointer;
@@ -41,6 +42,7 @@ import java.awt.image.WritableRaster;
 import static haven.Inventory.invsq;
 
 public class GameUI extends ConsoleHost implements Console.Directory {
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     public static final Text.Foundry msgfoundry = new Text.Foundry(Text.dfont, 14);
     private static final int blpw = 142, brpw = 142;
     public final String chrid, genus;
@@ -450,6 +452,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    }
 	} else if(place == "menu") {
 	    menu = (MenuGrid)add(child, new Coord(sz.x-child.sz.x, sz.y-child.sz.y));
+
 	    //Define belts here once map has its gob id
 	    final BeltData data = new BeltData(Context.accname+"::"+Context.charname);
 	    fbelt = add(new BeltWnd("fk", data, KeyEvent.VK_F1, KeyEvent.VK_F10,5,50), new Coord(0, 50));

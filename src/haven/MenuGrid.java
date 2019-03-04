@@ -30,7 +30,10 @@ import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.font.TextAttribute;
 import java.awt.image.BufferedImage;
+
+import com.google.common.flogger.FluentLogger;
 import haven.Resource.AButton;
+import haven.sloth.DefSettings;
 import haven.sloth.gui.DeletedManager;
 import haven.sloth.gui.HiddenManager;
 import haven.sloth.gui.MovableWidget;
@@ -42,6 +45,7 @@ import java.util.*;
 import java.util.function.Consumer;
 
 public class MenuGrid extends MovableWidget {
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     public final static Tex bg = Resource.loadtex("gfx/hud/invsq");
     public final static Coord bgsz = bg.sz().add(-1, -1);
     public final static RichText.Foundry ttfnd = new RichText.Foundry(TextAttribute.FAMILY, "SansSerif", TextAttribute.SIZE, 10);
@@ -276,6 +280,27 @@ public class MenuGrid extends MovableWidget {
 	addSpecial(new SpecialPagina(this, "management::crafting",
 		Resource.local().load("custom/paginae/default/wnd/crafting"),
 		(pag) -> ui.gui.toggleMakeWnd()));
+    }
+
+    @Override
+    protected void binded() {
+	super.binded();
+	if(DefSettings.AUTOTRACK.get()) {
+	    try {
+		final Resource res = Resource.remote().loadwait("paginae/act/tracking");
+		wdgmsg("act", (Object[]) res.layer(Resource.action).ad);
+	    } catch (Exception e) {
+		logger.atSevere().withCause(e).log("Failed to turn on tracking");
+	    }
+	}
+	if(DefSettings.AUTOCRIME.get()) {
+	    try {
+		final Resource res = Resource.remote().loadwait("paginae/act/crime");
+		wdgmsg("act", (Object[]) res.layer(Resource.action).ad);
+	    } catch (Exception e) {
+		logger.atSevere().withCause(e).log("Failed to turn on criminal acts");
+	    }
+	}
     }
 
     private void addSpecial(final SpecialPagina pag) {
