@@ -319,6 +319,7 @@ public class MapFile {
 	}
     }
 
+    //Simple custom icons that are a combo of PMarker (color) and SMarker (custom res)
     public static class SlothMarker extends Marker {
         public Color color;
         public Resource.Spec res;
@@ -329,6 +330,16 @@ public class MapFile {
 	    this.res = res;
 	}
     }
+
+    /*
+    TODO: Another Marker that extends SlothMaker
+          It'll be only for { caves, minehole, minehole ladder } (client automatically adds these icons)
+          It'll have a link to another segment id and a marker associated to that segment id
+          Player will have to make the link or maybe automatically??
+          When it does have an associated segment id and marker on right click will show the minimap at that marker
+          that way you can move around layers by right clicking caves/mineholes, etc as long as you have them
+          associated to exits.
+     */
 
     private static Marker loadmarker(Message fp) {
 	int ver = fp.uint8();

@@ -6,6 +6,10 @@
     2. Make <hafen-jar-directory>/data/cache/ folder
     3. Copy over all the %APPDATA%/Haven and Hearth/data/* files to <hafen-jar-directory>/data/cache/
     4. You can delete %APPDATA%/Haven and Hearth/ but keep your backup just in case.
+    - Changed keybinds around.
+        Ctrl+P : pause
+        Ctrl+G: grid
+        Ctrl+Q: Tooltips
 
 3/3/19
     - Misc fix with Avatars

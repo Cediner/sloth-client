@@ -736,7 +736,10 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    case 3: //Ctrl+C?
 		toggleChat();
 		return true;
-	    case 18:
+	    case 7: //Ctrl+G
+		DefSettings.SHOWGRID.set(!DefSettings.SHOWGRID.get());
+		return true;
+	    case 17:
 	        DefSettings.SHOWHOVERTOOLTIPS.set(!DefSettings.SHOWHOVERTOOLTIPS.get());
 		return true;
 	    case 8:
