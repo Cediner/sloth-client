@@ -1,6 +1,5 @@
 TODO
     - Marker list, can't scroll out of range of current selected item
-    - auto toggle tracking on login and crim acts, put these are options under Gameplay
     - Loftar map
         - Auto add icons for: village idol, minehole, minehole ladders,
         - follow camera + offset (akin to minimap)
