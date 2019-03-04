@@ -8,6 +8,7 @@
     - Minimap should no longer blip black when rendering an update to it
     - Drop all of an item kind added back. Alt + Click to do it.
     - Options for having tracking/criminal acts toggled on when logging in under Gameplay settings
+    - Switch toggle hitboxes to Ctrl+H and toggle tooltips to Ctrl+R
 
 3/2/19
     - Belts will now save window position

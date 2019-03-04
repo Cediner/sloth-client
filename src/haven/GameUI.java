@@ -736,10 +736,10 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    case 3: //Ctrl+C?
 		toggleChat();
 		return true;
-	    case 'V':
+	    case 18:
 	        DefSettings.SHOWHOVERTOOLTIPS.set(!DefSettings.SHOWHOVERTOOLTIPS.get());
 		return true;
-	    case 'B':
+	    case 8:
 		DefSettings.SHOWHITBOX.set(!DefSettings.SHOWHITBOX.get());
 		ui.sess.glob.oc.changeAllGobs();
 		return true;
