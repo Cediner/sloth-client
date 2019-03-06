@@ -51,6 +51,11 @@ public class MapFile {
     public final Map<Long, SMarker> smarkers = new HashMap<>();
     public final Map<Coord, SlothMarker> slothmarkers = new HashMap<>();
     public int markerseq = 0;
+
+    //A global lock that locks e v e r y t h i n g even when one small grid changes
+    //Most of the write-lock sections are too big as well and don't make complete sense
+    //Everything write worthy should just be deferred to a single thread to handle and writelock sections should
+    //be minimized.
     public final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
     public MapFile(ResCache store, String filename) {
@@ -339,6 +344,7 @@ public class MapFile {
           When it does have an associated segment id and marker on right click will show the minimap at that marker
           that way you can move around layers by right clicking caves/mineholes, etc as long as you have them
           associated to exits.
+          Need to worry about merging. If the target segment id gets merged we need to account for that...
      */
 
     private static Marker loadmarker(Message fp) {

@@ -156,26 +156,32 @@ public class MapFileWidget extends Widget {
 	}
 
 	public Tex img() {
-	    DataGrid grid = gref.get();
-	    if(fimg != null) { //Check if our next Tex is done rendering
-	        if(fimg.done()) {
-	            //if so set it
+	    if (fimg != null) { //Check if our next Tex is done rendering
+		if (fimg.done()) {
+		    //if so set it
 		    try {
 			img = fimg.get();
 		    } catch (Exception e) {
-		        logger.atSevere().withCause(e).log("Failed to render a minimap grid");
+			logger.atSevere().withCause(e).log("Failed to render a minimap grid");
 		    } finally {
 			fimg = null;
 		    }
 		}
 	    }
-	    if(grid != cgrid) { //Check if our backing grid has changed
-	        //If so cancel what we're currently working on and queue the new rendering
-		if(fimg != null)
-		    fimg.cancel();
-		fimg = Defer.later(() -> new TexI(grid.render(sc.mul(cmaps))));
-		cgrid = grid;
+	    try {
+		DataGrid grid = gref.get();
+		if (grid != cgrid) { //Check if our backing grid has changed
+		    //If so cancel what we're currently working on and queue the new rendering
+		    if (fimg != null)
+			fimg.cancel();
+		    fimg = Defer.later(() -> new TexI(grid.render(sc.mul(cmaps))));
+		    cgrid = grid;
+		}
+	    } catch (Exception e) {
+		//ignore
 	    }
+	    if(img == null && cgrid != null)
+	        return null;
 	    return img;
 	}
     }
@@ -362,6 +368,9 @@ public class MapFileWidget extends Widget {
 	}
     }
 
+    /**
+     * @deprecated
+     */
     private static boolean hascomplete(DisplayGrid[] disp, Area dext, Coord c) {
 	DisplayGrid dg = disp[dext.ri(c)];
 	if(dg == null)
@@ -369,6 +378,9 @@ public class MapFileWidget extends Widget {
 	return(dg.gref.get() != null);
     }
 
+    /**
+     * @deprecated
+     */
     private boolean allowzoomout() {
 	DisplayGrid[] disp = this.display;
 	Area dext = this.dgext;
