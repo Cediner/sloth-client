@@ -42,7 +42,6 @@ import static haven.MCache.cmaps;
 
 public class MapFileWidget extends Widget {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
-
     public final MapFile file;
     public Location curloc;
     private Locator setloc;
@@ -57,7 +56,6 @@ public class MapFileWidget extends Widget {
     private UI.Grab drag;
     private boolean dragging;
     private Coord dsc, dmc;
-    private boolean hmarkers = false;
 
     public MapFileWidget(MapFile file, Coord sz) {
 	super();
@@ -191,7 +189,7 @@ public class MapFileWidget extends Widget {
 	public static final Coord flagcc;
 	public final Marker m;
 	public Text tip;
-	public Area hit;
+	private Area hit;
 	private Resource.Image img;
 	private Coord cc;
 
@@ -207,6 +205,17 @@ public class MapFileWidget extends Widget {
 	    this.tip = Text.render(m.nm);
 	    if(marker instanceof PMarker)
 		this.hit = Area.sized(flagcc.inv(), flagbg.sz);
+	}
+
+	private Area hit() {
+	    if(!(m instanceof MapFile.SlothMarker)) {
+	        return hit;
+	    } else if(img != null) {
+	        final Coord sz = DefSettings.SMALLMMMARKERS.get() ? img.tex().sz().div(2) : img.tex().sz();
+	        return Area.sized(sz.div(2).inv(), sz);
+	    } else {
+	        return null;
+	    }
 	}
 
 	public void draw(GOut g, Coord c) {
@@ -239,21 +248,18 @@ public class MapFileWidget extends Widget {
 	    } else if(m instanceof MapFile.SlothMarker) {
 	        final MapFile.SlothMarker mark = (MapFile.SlothMarker) m;
 	        g.chcolor(mark.color);
-		try {
-		    if(cc == null) {
-			Resource res = MapFile.loadsaved(Resource.remote(), mark.res);
+	        if(img != null) {
+	            final Coord sz = !DefSettings.SMALLMMMARKERS.get() ? Utils.imgsz(img.img) : Utils.imgsz(img.img).div(2);
+		    cc = sz.div(2);
+		    g.image(img.tex(), c.sub(cc), sz);
+		} else {
+		    try {
+			Resource res = MapFile.loadsaved(Resource.remote(), ((MapFile.SlothMarker) m).res);
 			img = res.layer(Resource.imgc);
-			Resource.Neg neg = res.layer(Resource.negc);
-			cc = (neg != null)?neg.cc:img.sz.div(2);
-			if(hit == null)
-			    hit = Area.sized(cc.inv(), img.sz);
+		    } catch (Loading l) {
+		        //ignore
 		    }
-		} catch(Loading l) {
-		} catch(Exception e) {
-		    cc = Coord.z;
 		}
-		if(img != null)
-		    g.image(img, c.sub(cc));
 	        g.chcolor();
 	    }
 	}
@@ -358,7 +364,7 @@ public class MapFileWidget extends Widget {
 	    g.chcolor();
 	}
 
-	if(!hmarkers) {
+	if(DefSettings.SHOWMMMARKERS.get()) {
 	    if((markers == null) || (file.markerseq != markerseq))
 		remark(loc, dtext.margin(cmaps.mul(1 << dlvl)));
 	    if(markers != null) {
@@ -366,39 +372,6 @@ public class MapFileWidget extends Widget {
 		    mark.draw(g, mark.m.tc.sub(loc.tc).div(1 << dlvl).add(hsz));
 	    }
 	}
-    }
-
-    /**
-     * @deprecated
-     */
-    private static boolean hascomplete(DisplayGrid[] disp, Area dext, Coord c) {
-	DisplayGrid dg = disp[dext.ri(c)];
-	if(dg == null)
-	    return(false);
-	return(dg.gref.get() != null);
-    }
-
-    /**
-     * @deprecated
-     */
-    private boolean allowzoomout() {
-	DisplayGrid[] disp = this.display;
-	Area dext = this.dgext;
-	try {
-	    for(int x = dext.ul.x; x < dext.br.x; x++) {
-		if(hascomplete(disp, dext, new Coord(x, dext.ul.y)) ||
-		   hascomplete(disp, dext, new Coord(x, dext.br.y - 1)))
-		    return(true);
-	    }
-	    for(int y = dext.ul.y; y < dext.br.y; y++) {
-		if(hascomplete(disp, dext, new Coord(dext.ul.x, y)) ||
-		   hascomplete(disp, dext, new Coord(dext.br.x - 1, y)))
-		    return(true);
-	    }
-	} catch(Loading l) {
-	    return(false);
-	}
-	return(false);
     }
 
     public void center(Locator loc) {
@@ -420,9 +393,9 @@ public class MapFileWidget extends Widget {
     }
 
     private DisplayMarker markerat(Coord tc) {
-	if(!hmarkers && (markers != null)) {
+	if(DefSettings.SHOWMMMARKERS.get() && (markers != null)) {
 	    for(DisplayMarker mark : markers) {
-		if((mark.hit != null) && mark.hit.contains(tc.sub(mark.m.tc).div(1 << dlvl)))
+		if((mark.hit() != null) && mark.hit().contains(tc.sub(mark.m.tc).div(1 << dlvl)))
 		    return(mark);
 	    }
 	}
@@ -474,14 +447,6 @@ public class MapFileWidget extends Widget {
 	    }
 	}
 	return(super.mousedown(c, button));
-    }
-
-    public boolean globtype(char key, java.awt.event.KeyEvent ev) {
-	if((key == 'm') && tvisible()) {
-	    hmarkers = !hmarkers;
-	    return(true);
-	}
-	return(super.globtype(key, ev));
     }
 
     public void mousemove(Coord c) {

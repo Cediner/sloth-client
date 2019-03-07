@@ -310,6 +310,7 @@ public class OptWnd extends Window {
 	    final Grouping crops = new LinearGrouping("Crops/Flavor Objs", spacer);
 	    final Grouping gobs = new LinearGrouping("Gobs", spacer);
 	    final Grouping animals = new LinearGrouping("Animals", spacer);
+	    final Grouping minimap = new LinearGrouping("Minimap", spacer);
 	    final Grouping misc = new LinearGrouping("Misc", spacer);
 	    { //flowermenu
 	        flowermenu.add(new IndirCheckBox("Quick flowermenu", QUICKMENU));
@@ -347,6 +348,11 @@ public class OptWnd extends Window {
 	        animals.add(ColorPreWithLabel("Animal path color: ", ANIMALPATHCOL));
 		animals.pack();
 	    }
+	    { //minimap
+		minimap.add(new IndirCheckBox("Show Minimap icons", SHOWMMMARKERS));
+		minimap.add(new IndirCheckBox("Make Minimap icons small", SMALLMMMARKERS));
+		minimap.pack();
+	    }
 	    { //misc
 	        misc.add(new IndirCheckBox("Show Hitbox", SHOWHITBOX, val -> ui.sess.glob.oc.changeAllGobs()));
 	        misc.add(new IndirCheckBox("Show Hidden", SHOWHIDDEN, val -> ui.sess.glob.oc.changeHiddenGobs()));
@@ -363,6 +369,7 @@ public class OptWnd extends Window {
 	    c.y += gameplay.add(crops, c.copy()).sz.y;
 	    c.y += gameplay.add(gobs, c.copy()).sz.y;
 	    c.y += gameplay.add(animals, c.copy()).sz.y;
+	    c.y += gameplay.add(minimap, c.copy()).sz.y;
 	    c.y += gameplay.add(misc, c.copy()).sz.y;
 	    gameplay.add(new PButton(200, "Back", 27, main), c.copy());
 	    gameplay.pack();

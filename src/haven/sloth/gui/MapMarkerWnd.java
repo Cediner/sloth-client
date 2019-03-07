@@ -11,10 +11,11 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class MapMarkerWnd extends Window {
-    private final static List<String> types = Arrays.asList("Placed", "Natural", "Custom");
+    private final static List<String> types = Arrays.asList("Placed", "Natural", "Custom", "Linked");
     private final static Predicate<MapFile.Marker> pmarkers = (m -> m instanceof MapFile.PMarker);
     private final static Predicate<MapFile.Marker> smarkers = (m -> m instanceof MapFile.SMarker);
-    private final static Predicate<MapFile.Marker> slmarkers = (m -> m instanceof MapFile.SlothMarker);
+    private final static Predicate<MapFile.Marker> slmarkers = (m -> m instanceof MapFile.SlothMarker && !(m instanceof MapFile.LinkedMarker));
+    private final static Predicate<MapFile.Marker> lmarkers = (m -> m instanceof MapFile.LinkedMarker);
     private final static Comparator<MapFile.Marker> namecmp = Comparator.comparing(MapFile.Marker::name);
     private Predicate<MapFile.Marker> mflt;
     private List<MapFile.Marker> markers = Collections.emptyList();
@@ -26,6 +27,7 @@ public class MapMarkerWnd extends Window {
     private BuddyWnd.GroupSelector colsel;
     private Button mremove;
     private Dropbox<String> typesel;
+    private Dropbox<MapFile.Marker> linker;
 
     public MapMarkerWnd(final MapWnd map) {
         super(Coord.z, "Markers", "Markers");
@@ -33,7 +35,7 @@ public class MapMarkerWnd extends Window {
     	mflt = pmarkers;
 	list = add(new MarkerList(200, 20));
 	resize(list.sz.add(0, 120));
-	typesel = add(new Dropbox<String>(200, 3, 20) {
+	typesel = add(new Dropbox<String>(200, types.size(), 20) {
 	    { sel = types.get(0); }
 	    @Override
 	    protected int listitems() {
@@ -66,6 +68,10 @@ public class MapMarkerWnd extends Window {
 			mflt = slmarkers;
 			markerseq = -1;
 			break;
+		    case "Linked":
+		        mflt = lmarkers;
+		        markerseq = -1;
+		        break;
 		}
 		list.display(0);
 	    }
@@ -122,7 +128,11 @@ public class MapMarkerWnd extends Window {
 	        g.chcolor(((MapFile.SlothMarker) mark).color);
 	    else
 		g.chcolor();
-	    g.aimage(names.apply(mark.nm).tex(), new Coord(5, itemh / 2), 0, 0.5);
+	    if(!(mark instanceof MapFile.LinkedMarker))
+	    	g.aimage(names.apply(mark.nm).tex(), new Coord(5, itemh / 2), 0, 0.5);
+	    else
+	        g.aimage(names.apply(String.format("[%d ⟶ %d] %s", ((MapFile.LinkedMarker) mark).id, ((MapFile.LinkedMarker) mark).lid, mark.nm)).tex(),
+			new Coord(5, itemh/2), 0, 0.5);
 	}
 
 	public void change(MapFile.Marker mark) {
@@ -144,6 +154,10 @@ public class MapMarkerWnd extends Window {
 			ui.destroy(mremove);
 			mremove = null;
 		    }
+		    if(linker != null) {
+		        ui.destroy(linker);
+		        linker = null;
+		    }
 		}
 		MapMarkerWnd.this.pack();
 	    }
@@ -156,6 +170,10 @@ public class MapMarkerWnd extends Window {
 		} else if(mark instanceof MapFile.SMarker){
 		    typesel.sel = types.get(1);
 		    mflt = smarkers;
+		    markerseq = -1;
+		} else if(mark instanceof MapFile.LinkedMarker) {
+		    typesel.sel = types.get(3);
+		    mflt = lmarkers;
 		    markerseq = -1;
 		} else {
 		    typesel.sel = types.get(2);
@@ -205,6 +223,54 @@ public class MapMarkerWnd extends Window {
 		    }, namesel.c.add(0, namesel.sz.y + 10));
 		    if((colsel.group = Utils.index(BuddyWnd.gc, pm.color)) < 0)
 			colsel.group = 0;
+		    if(mark instanceof MapFile.LinkedMarker) {
+			linker = MapMarkerWnd.this.add(new Dropbox<MapFile.Marker>(200, 5, 20) {
+			    private List<MapFile.Marker> lst;
+			    {
+				if(map.view.file.lock.readLock().tryLock()) {
+				    try {
+					lst = map.view.file.markers.stream()
+						.filter(m -> m != mark && m instanceof MapFile.LinkedMarker &&
+								MapFile.canLink(((MapFile.LinkedMarker) mark).type, ((MapFile.LinkedMarker) m).type))
+						.sorted(mcmp).collect(java.util.stream.Collectors.toList());
+					list.display();
+				    } finally {
+					map.view.file.lock.readLock().unlock();
+				    }
+				}
+				if(((MapFile.LinkedMarker) mark).lid != -1)
+				    sel = map.view.file.lmarkers.get(((MapFile.LinkedMarker) mark).lid);
+			    }
+
+			    @Override
+			    public void change(MapFile.Marker item) {
+				super.change(item);
+				final MapFile.LinkedMarker link = (MapFile.LinkedMarker) item;
+				if (((MapFile.LinkedMarker) mark).lid != -1) {
+				    map.view.file.lmarkers.get(((MapFile.LinkedMarker) mark).lid).lid = -1;
+				}
+				((MapFile.LinkedMarker) mark).lid = link.id;
+				link.lid = ((MapFile.LinkedMarker) mark).id;
+				map.view.file.update(mark);
+				map.view.file.update(link);
+			    }
+
+			    @Override
+			    protected MapFile.Marker listitem(int i) {
+				return lst.get(i);
+			    }
+
+			    @Override
+			    protected int listitems() {
+				return lst.size();
+			    }
+
+			    @Override
+			    protected void drawitem(GOut g, MapFile.Marker item, int i) {
+				FastText.aprintf(g, new Coord(5, itemh/2), 0.0, 0.5, "[%d] %s", ((MapFile.LinkedMarker) item).id, item.nm);
+			    }
+			}, colsel.c.add(0, colsel.sz.y + 10));
+		    }
 		}
 		MapMarkerWnd.this.pack();
 	    }

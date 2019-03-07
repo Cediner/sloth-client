@@ -77,7 +77,10 @@ public class UI {
 		});
 	    setcmd("lo", new Command() {
 		    public void run(Console cons, String[] args) {
-			sess.close();
+		        if(gui != null)
+		            gui.act("lo");
+		        else
+		            sess.close();
 		    }
 		});
 	}

@@ -31,6 +31,7 @@ import haven.sloth.DefSettings;
 import haven.sloth.gfx.HitboxMesh;
 import haven.sloth.gob.*;
 import haven.sloth.io.HighlightData;
+import haven.sloth.io.MarkerData;
 
 import java.util.*;
 
@@ -291,14 +292,8 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 		if (HighlightData.isHighlighted(name)) {
 		    mark(-1);
 		}
-		//TODO: fix later, Temp for now
-		if(name.equals("gfx/tiles/ridges/cavein")) {
-		    final GobIcon icon = getattr(GobIcon.class);
-		    if(icon != null) {
-		        glob.ui.gui.mapfile.markobj(icon.res, "Cave", rc);
-		    }
-		}
 
+		MarkerData.marker(name).ifPresent(mark -> glob.ui.gui.mapfile.markobj(mark, rc));
 
 		res().ifPresent((res) -> { //should always be present once name is discovered
 		    final Resource.Neg neg = res.layer(Resource.negc);

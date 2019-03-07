@@ -31,9 +31,9 @@ import java.io.*;
 public interface ResCache {
     public OutputStream store(String name) throws IOException;
     public InputStream fetch(String name) throws IOException;
-    
+
     public static ResCache global = StupidJavaCodeContainer.makeglobal();
-    
+
     public static class StupidJavaCodeContainer {
 	private static ResCache makeglobal() {
 	    return(HashDirCache.create());
@@ -49,7 +49,7 @@ public interface ResCache {
 		    }
 		});
 	}
-	
+
 	public InputStream fetch(String name) throws IOException {
 	    throw(new FileNotFoundException());
 	}

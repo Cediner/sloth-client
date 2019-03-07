@@ -1,3 +1,13 @@
+3/5/19
+    - :lo will do the logout animation now when in game
+    - bumped SlothMarkers to v1
+    - Added LinkedMarkers defaulting at v2. You can use these markers to link different maps together. To link them
+    to another marker you need to go into the Markers List and select the marker it links to. Once linked you can
+    right click it on the map to then go to that marker. Caves can link to other caves only.
+    - Added in map icons for village idol, mineholes, and ladders. Minehole can only link to ladders and vice versa.
+    - Added in Option under Gameplay to halve the size of minimap icons. Also option for hiding icons all together, no
+    longer 'm' key
+
 3/4/19
     - Options for having tracking/criminal acts toggled on when logging in under Gameplay settings
     - Switch toggle hitboxes to Ctrl+H and toggle tooltips to Ctrl+R

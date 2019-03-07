@@ -93,7 +93,8 @@ public class DefSettings {
     public static final IndirSetting<Boolean> ALWAYSLONGTIP =  new IndirSetting<>(global, "gameplay.always-show-longtip");    //[Bool] Toggle only longtips on item tooltips
     public static final IndirSetting<Boolean> SHOWFPS =  new IndirSetting<>(global, "gameplay.show-fps");                     //[Bool] Toggle FPS counter
     public static final IndirSetting<Boolean> SHOWHOVERTOOLTIPS = new IndirSetting<>(global, "gameplay.show-hover-tooltip");  //[Bool] Toggle hover tooltips
-    public static final IndirSetting<Boolean> SHOWMMMARKERS = new IndirSetting<>(global, "gameplay.show-minimap-markers");    //[Bool] Toggle BIG minimap icons
+    public static final IndirSetting<Boolean> SHOWMMMARKERS = new IndirSetting<>(global, "gameplay.show-minimap-markers");    //[Bool] Toggle minimap icons
+    public static final IndirSetting<Boolean> SMALLMMMARKERS = new IndirSetting<>(global, "gameplay.small-minimap-markers");  //[Bool] Toggle SMALL minimap icons
     public static final IndirSetting<Boolean> AUTOTRACK = new IndirSetting<>(global, "gameplay.auto-turn-on-tracking");       //[Bool] Toggle turning on tracking on login
     public static final IndirSetting<Boolean> AUTOCRIME = new IndirSetting<>(global, "gameplay.auto-turn-on-crime");          //[Bool] Toggle turning on criminal acts on login
     public static final IndirSetting<Boolean> SHOWFKBELT =  new IndirSetting<>(global, "belt.fk.show");                       //[Bool] Toggle F key belt
@@ -215,6 +216,8 @@ public class DefSettings {
 	SHOWHOVERTOOLTIPS.ensure(false);
 	AUTOTRACK.ensure(true);
 	AUTOCRIME.ensure(false);
+	SMALLMMMARKERS.ensure(false);
+	SHOWMMMARKERS.ensure(true);
 	//Belts
 	SHOWFKBELT.ensure(false);
 	FKBELTPAGE.ensure(0);

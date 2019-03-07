@@ -1,4 +1,5 @@
 TODO
+    - Move away from GL 1.x calls for UI
     - Marker list, can't scroll out of range of current selected item
     - Loftar map
         - Auto add icons for: village idol, minehole, minehole ladders,

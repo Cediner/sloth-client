@@ -27,6 +27,7 @@
 package haven;
 
 import java.awt.*;
+import java.lang.annotation.Target;
 import java.util.*;
 import java.awt.event.KeyEvent;
 import haven.MapFile.Marker;
@@ -35,10 +36,12 @@ import haven.MapFile.SMarker;
 import haven.MapFileWidget.*;
 import haven.sloth.DefSettings;
 import haven.sloth.gob.Type;
+import haven.sloth.io.MarkerData;
 
 import static haven.LocalMiniMap.plx;
 import static haven.MCache.tilesz;
 import static haven.MCache.cmaps;
+import static haven.MapFile.NOLINK;
 import static haven.OCache.posres;
 
 public class MapWnd extends Window {
@@ -46,7 +49,7 @@ public class MapWnd extends Window {
     private static final Tex friend = Resource.loadtex("custom/mm/pl/friend");
     private static final Tex unknown = Resource.loadtex("custom/mm/pl/unknown");
     private static final Tex viewbox = Resource.loadtex("custom/mm/hud/view", 3);
-    public static final Resource markcurs = Resource.local().loadwait("gfx/hud/curs/flag");
+    private static final Resource markcurs = Resource.local().loadwait("gfx/hud/curs/flag");
     public final MapFileWidget view;
     public final MapView mv;
     private final Locator player;
@@ -120,13 +123,19 @@ public class MapWnd extends Window {
 		ui.gui.mapmarkers.list.change2(mark.m);
 		ui.gui.mapmarkers.list.display(mark.m);
 		return(true);
+	    } else if(button == 3 && mark.m instanceof MapFile.LinkedMarker && ((MapFile.LinkedMarker) mark.m).lid != NOLINK) {
+		final Marker target = view.file.lmarkers.get(((MapFile.LinkedMarker) mark.m).lid);
+		if (target != null) {
+		    view.center(new MapFileWidget.SpecLocator(target.seg, target.tc));
+		}
 	    }
 	    return(false);
 	}
 
 	public boolean clickloc(Location loc, int button) {
 	    if(domark && (button == 1)) {
-		Marker nm = new PMarker(loc.seg.id, loc.tc, "New marker", BuddyWnd.gc[new Random().nextInt(BuddyWnd.gc.length)]);
+		Marker nm = new PMarker(loc.seg.id, loc.tc, "New marker",
+			BuddyWnd.gc[new Random().nextInt(BuddyWnd.gc.length)]);
 		file.add(nm);
 		ui.gui.mapmarkers.list.change2(nm);
 		ui.gui.mapmarkers.list.display(nm);
@@ -196,13 +205,15 @@ public class MapWnd extends Window {
 			    final Coord mc = new Coord2d(gob.getc()).floor(tilesz);
 			    try {
 			        final Coord gc = xlate(new Location(ploc.seg, ploc.tc.add(mc.sub(pc))));
-				final KinInfo kin = gob.getattr(KinInfo.class);
-				if (kin != null) {
-				    g.chcolor(BuddyWnd.gc[kin.group]);
-				    g.image(friend, gc.sub(friend.sz().div(2)));
-				    g.chcolor();
-				} else {
-				    g.image(unknown, gc.sub(unknown.sz().div(2)));
+				if(gc != null) {
+				    final KinInfo kin = gob.getattr(KinInfo.class);
+				    if (kin != null) {
+					g.chcolor(BuddyWnd.gc[kin.group]);
+					g.image(friend, gc.sub(friend.sz().div(2)));
+					g.chcolor();
+				    } else {
+					g.image(unknown, gc.sub(unknown.sz().div(2)));
+				    }
 				}
 			    } catch (Loading l) {
 				//fail silently
@@ -298,6 +309,21 @@ public class MapWnd extends Window {
 	    }
 	}
 
+	private Optional<Location> resolveo(final Locator loc) {
+	    try {
+	        return Optional.ofNullable(resolve(loc));
+	    } catch (Loading l) {
+	        return Optional.empty();
+	    }
+	}
+
+	private Optional<Coord> xlateo(final Location loc) {
+	    return Optional.ofNullable(xlate(loc));
+	}
+
+	private Location lastloc;
+	private Coord lastploc;
+	private long lastseg = -1;
 	public void draw(GOut g) {
 	    g.chcolor(0, 0, 0, 128);
 	    g.frect(Coord.z, sz);
@@ -306,20 +332,25 @@ public class MapWnd extends Window {
 
 	    //Draw the player
 	    try {
-	        final Location loc = resolve(player);
-		Coord ploc = xlate(loc);
-		if(ploc != null) {
-		    g.chcolor(255, 0, 0, 255);
-		    g.image(plx.layer(Resource.imgc), ploc.sub(plx.layer(Resource.negc).cc));
-		    g.chcolor();
-		    //Draw our view
-		    drawview(g, ploc);
-		    //Draw party
-		    final Set<Long> ignore = drawparty(g, loc);
-		    //Draw gob icons
-		    drawicons(g, loc, ignore);
-		    //Draw Movement queue if any exit
-		    drawmovement(g.reclip(view.c, view.sz), loc);
+	        final Location loc = resolveo(player).orElse(lastloc);
+	        if(loc != null && (curloc == null || curloc.seg.id == lastseg || lastseg == -1)) {
+	            lastloc = loc;
+		    final Coord ploc = xlateo(loc).orElse(lastploc);
+		    if (ploc != null) {
+			lastploc = ploc;
+			lastseg = curloc.seg.id;
+			g.chcolor(255, 0, 0, 255);
+			g.image(plx.layer(Resource.imgc), ploc.sub(plx.layer(Resource.negc).cc));
+			g.chcolor();
+			//Draw our view
+			drawview(g, ploc);
+			//Draw party
+			final Set<Long> ignore = drawparty(g, loc);
+			//Draw gob icons
+			drawicons(g, loc, ignore);
+			//Draw Movement queue if any exit
+			drawmovement(g.reclip(view.c, view.sz), loc);
+		    }
 		}
 	    } catch(Loading l) {
 	        //ignore
@@ -430,8 +461,40 @@ public class MapWnd extends Window {
 	return(super.mouseup(c, button));
     }
 
-    void markobj(Indir<Resource> resid, String nm, Coord2d mc) {
-	synchronized(deferred) {
+    void markobj(MarkerData.Marker marker, Coord2d mc) {
+        if(marker instanceof MarkerData.LinkedMarker)
+            markobj((MarkerData.LinkedMarker)marker, mc);
+        else {
+	    synchronized (deferred) {
+		deferred.add(() -> {
+		    final Coord tc = mc.floor(tilesz);
+		    MCache.Grid obg = ui.sess.glob.map.getgrid(tc.div(cmaps));
+		    if (!view.file.lock.writeLock().tryLock())
+			throw (new Loading());
+		    try {
+			MapFile.GridInfo info = view.file.gridinfo.get(obg.id);
+			if (info == null)
+			    throw (new Loading());
+			Coord sc = tc.add(info.sc.sub(obg.gc).mul(cmaps));
+			//Check for duplicate
+			for (final Marker mark : view.file.markers) {
+			    if (mark instanceof MapFile.SlothMarker && mark.seg == info.seg && sc.equals(mark.tc))
+				return; //Duplicate
+			}
+
+			final Marker mark = new MapFile.SlothMarker(info.seg, sc, marker.defname,
+				Color.WHITE, new Resource.Spec(Resource.remote(), marker.res));
+			view.file.add(mark);
+		    } finally {
+			view.file.lock.writeLock().unlock();
+		    }
+		});
+	    }
+	}
+    }
+
+    private void markobj(MarkerData.LinkedMarker marker, Coord2d mc) {
+	synchronized (deferred) {
 	    deferred.add(() -> {
 		final Coord tc = mc.floor(tilesz);
 		MCache.Grid obg = ui.sess.glob.map.getgrid(tc.div(cmaps));
@@ -442,17 +505,21 @@ public class MapWnd extends Window {
 		    if (info == null)
 			throw (new Loading());
 		    Coord sc = tc.add(info.sc.sub(obg.gc).mul(cmaps));
-		    if(!view.file.slothmarkers.containsKey(sc)) {
-			Resource res = resid.get();
-			view.file.add(new MapFile.SlothMarker(info.seg, sc, nm, Color.WHITE, new Resource.Spec(Resource.remote(), res.name, res.ver)));
+		    //Check for duplicate
+		    for (final Marker mark : view.file.markers) {
+			if (mark instanceof MapFile.LinkedMarker && mark.seg == info.seg && sc.equals(mark.tc))
+			    return; //Duplicate
 		    }
+
+		    final Marker mark = new MapFile.LinkedMarker(info.seg, sc, marker.defname,
+			    Color.WHITE, new Resource.Spec(Resource.remote(), marker.res), view.file.markerids.next(), marker.ltype);
+		    view.file.add(mark);
 		} finally {
 		    view.file.lock.writeLock().unlock();
 		}
 	    });
 	}
     }
-
 
     void markobj(long gobid, long oid, Indir<Resource> resid, String nm) {
 	synchronized(deferred) {
@@ -487,7 +554,8 @@ public class MapWnd extends Window {
 			Coord sc = tc.add(info.sc.sub(obg.gc).mul(cmaps));
 			SMarker prev = view.file.smarkers.get(oid);
 			if(prev == null) {
-			    view.file.add(new SMarker(info.seg, sc, rnm, oid, new Resource.Spec(Resource.remote(), res.name, res.ver)));
+			    view.file.add(new SMarker(info.seg, sc, rnm, oid,
+				    new Resource.Spec(Resource.remote(), res.name, res.ver)));
 			} else {
 			    if((prev.seg != info.seg) || !prev.tc.equals(sc)) {
 				prev.seg = info.seg;
