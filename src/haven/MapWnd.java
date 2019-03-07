@@ -286,13 +286,20 @@ public class MapWnd extends Window {
 	    if (movingto != null) {
 		//Make the line first
 		g.chcolor(DefSettings.MMPATHCOL.get());
+		final Coord cloc = xlate(ploc);
 		last = xlate(new Location(ploc.seg, ploc.tc.add(movingto.floor(tilesz).sub(pc))));
-		g.dottedline(xlate(ploc), last, 2);
-		if (queue.hasNext()) {
-		    while(queue.hasNext()) {
-			final Coord next = xlate(new Location(ploc.seg, ploc.tc.add(queue.next().floor(tilesz).sub(pc))));
-			g.dottedline(last, next, 2);
-			last = next;
+		if(last != null && cloc != null) {
+		    g.dottedline(cloc, last, 2);
+		    if (queue.hasNext()) {
+			while (queue.hasNext()) {
+			    final Coord next = xlate(new Location(ploc.seg, ploc.tc.add(queue.next().floor(tilesz).sub(pc))));
+			    if(next != null) {
+				g.dottedline(last, next, 2);
+				last = next;
+			    } else {
+			        break;
+			    }
+			}
 		    }
 		}
 	    }
@@ -321,9 +328,6 @@ public class MapWnd extends Window {
 	    return Optional.ofNullable(xlate(loc));
 	}
 
-	private Location lastloc;
-	private Coord lastploc;
-	private long lastseg = -1;
 	public void draw(GOut g) {
 	    g.chcolor(0, 0, 0, 128);
 	    g.frect(Coord.z, sz);
@@ -332,29 +336,20 @@ public class MapWnd extends Window {
 
 	    //Draw the player
 	    try {
-	        final Optional<Location> loco = resolveo(player);
-	        final Location loc = loco.orElse(lastloc);
-	        if(loc != null) {
-	            lastloc = loc;
-	            if(loco.isPresent() || curloc == null || curloc.seg.id == lastseg) {
-			final Coord ploc = xlateo(loc).orElse(lastploc);
-			if (ploc != null) {
-			    lastploc = ploc;
-			    lastseg = curloc.seg.id;
-			    g.chcolor(255, 0, 0, 255);
-			    g.image(plx.layer(Resource.imgc), ploc.sub(plx.layer(Resource.negc).cc));
-			    g.chcolor();
-			    //Draw our view
-			    drawview(g, ploc);
-			    //Draw party
-			    final Set<Long> ignore = drawparty(g, loc);
-			    //Draw gob icons
-			    drawicons(g, loc, ignore);
-			    //Draw Movement queue if any exit
-			    drawmovement(g.reclip(view.c, view.sz), loc);
-			}
-		    }
-		}
+	        resolveo(player).ifPresent(loc ->
+	            xlateo(loc).ifPresent(ploc -> {
+			g.chcolor(255, 0, 0, 255);
+			g.image(plx.layer(Resource.imgc), ploc.sub(plx.layer(Resource.negc).cc));
+			g.chcolor();
+			//Draw our view
+			drawview(g, ploc);
+			//Draw party
+			final Set<Long> ignore = drawparty(g, loc);
+			//Draw gob icons
+			drawicons(g, loc, ignore);
+			//Draw Movement queue if any exit
+			drawmovement(g.reclip(view.c, view.sz), loc);
+		    }));
 	    } catch(Loading l) {
 	        //ignore
 	    }

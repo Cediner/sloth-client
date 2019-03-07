@@ -4,6 +4,8 @@
     longer 'm' key
     - Changed map merging to localized area to avoid bad merges when two different maps exist in MCache that shouldn't
     be connected.
+    - Fixed crash with queued moves and going to other maps
+    - Reverted change to try to stop icons blipping when minimap grids update. Needs a better solution
 
 3/5/19
     - :lo will do the logout animation now when in game
