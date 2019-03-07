@@ -1460,4 +1460,27 @@ public class MapFile {
 	    }
 	}
     }
+
+    private static final Coord[] inout = new Coord[] {
+	    new Coord( 0,  0),
+	    new Coord( 0, -1), new Coord( 1,  0), new Coord( 0,  1), new Coord(-1,  0),
+	    new Coord( 1, -1), new Coord( 1,  1), new Coord(-1,  1), new Coord(-1, -1),
+    };
+    public void update(MCache map, Coord cgc) {
+	Collection<MCache.Grid> grids = new ArrayList<>();
+	for(Coord off : inout) {
+	    Coord gc = cgc.add(off);
+	    try {
+		grids.add(map.getgrid(gc));
+	    } catch(Loading l) {
+		continue;
+	    }
+	}
+	if(!grids.isEmpty()) {
+	    synchronized(procmon) {
+		updqueue.add(new Pair<>(map, grids));
+		process();
+	    }
+	}
+    }
 }

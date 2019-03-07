@@ -332,24 +332,27 @@ public class MapWnd extends Window {
 
 	    //Draw the player
 	    try {
-	        final Location loc = resolveo(player).orElse(lastloc);
-	        if(loc != null && (curloc == null || curloc.seg.id == lastseg || lastseg == -1)) {
+	        final Optional<Location> loco = resolveo(player);
+	        final Location loc = loco.orElse(lastloc);
+	        if(loc != null) {
 	            lastloc = loc;
-		    final Coord ploc = xlateo(loc).orElse(lastploc);
-		    if (ploc != null) {
-			lastploc = ploc;
-			lastseg = curloc.seg.id;
-			g.chcolor(255, 0, 0, 255);
-			g.image(plx.layer(Resource.imgc), ploc.sub(plx.layer(Resource.negc).cc));
-			g.chcolor();
-			//Draw our view
-			drawview(g, ploc);
-			//Draw party
-			final Set<Long> ignore = drawparty(g, loc);
-			//Draw gob icons
-			drawicons(g, loc, ignore);
-			//Draw Movement queue if any exit
-			drawmovement(g.reclip(view.c, view.sz), loc);
+	            if(loco.isPresent() || curloc == null || curloc.seg.id == lastseg) {
+			final Coord ploc = xlateo(loc).orElse(lastploc);
+			if (ploc != null) {
+			    lastploc = ploc;
+			    lastseg = curloc.seg.id;
+			    g.chcolor(255, 0, 0, 255);
+			    g.image(plx.layer(Resource.imgc), ploc.sub(plx.layer(Resource.negc).cc));
+			    g.chcolor();
+			    //Draw our view
+			    drawview(g, ploc);
+			    //Draw party
+			    final Set<Long> ignore = drawparty(g, loc);
+			    //Draw gob icons
+			    drawicons(g, loc, ignore);
+			    //Draw Movement queue if any exit
+			    drawmovement(g.reclip(view.c, view.sz), loc);
+			}
 		    }
 		}
 	    } catch(Loading l) {
@@ -382,21 +385,13 @@ public class MapWnd extends Window {
 
 	//Check for new Map Grids that we haven't scanned
 	final HashMap<Long, Integer> newgrids = new HashMap<>();
-	final ArrayList<MCache.Grid> grids;
 	synchronized(ui.sess.glob.map.grids) {
-	    grids = new ArrayList<>(ui.sess.glob.map.grids.values());
-	}
-
-	boolean upd = false;
-	for (MCache.Grid grid : grids) {
-	    newgrids.put(grid.id, grid.seq);
-	    //Only update if something actually changed
-	    if(!currentgrids.containsKey(grid.id) || currentgrids.get(grid.id) != grid.seq) {
-		upd = true;
+	    for (MCache.Grid grid : ui.sess.glob.map.grids.values()) {
+		newgrids.put(grid.id, grid.seq);
+		if(!currentgrids.containsKey(grid.id) || currentgrids.get(grid.id) != grid.seq) {
+		    view.file.update(ui.sess.glob.map, grid.gc);
+		}
 	    }
-	}
-	if(upd) {
-	    view.file.updategrids(ui.sess.glob.map, grids);
 	}
 
 	currentgrids = newgrids;
