@@ -2,6 +2,7 @@
     - Added in KeyBind system
     - Changed profiler windows to be one window for all of them
     - Other minor fixes
+    - Widgets that are no longer visible shouldn't consume mouse events or key events
 
 3/6/19
     - Added in map icons for village idol, mineholes, and ladders. Minehole can only link to ladders and vice versa.

@@ -288,8 +288,11 @@ public class UI {
     public void type(KeyEvent ev) {
 	setmods(ev);
 	for(Grab g : c(keygrab)) {
-	    if(g.wdg.type(ev.getKeyChar(), ev))
-		return;
+	    //Make sure this wdg is visible the entire way up
+	    if(g.wdg.tvisible()) {
+		if (g.wdg.type(ev.getKeyChar(), ev))
+		    return;
+	    }
 	}
 	if(!root.type(ev.getKeyChar(), ev))
 	    root.globtype(ev.getKeyChar(), ev);
@@ -298,8 +301,11 @@ public class UI {
     public void keydown(KeyEvent ev) {
 	setmods(ev);
 	for(Grab g : c(keygrab)) {
-	    if(g.wdg.keydown(ev))
-		return;
+	    //Make sure this wdg is visible the entire way up
+	    if(g.wdg.tvisible()) {
+		if (g.wdg.keydown(ev))
+		    return;
+	    }
 	}
 	if(!root.keydown(ev))
 	    root.globtype((char)0, ev);
@@ -308,8 +314,11 @@ public class UI {
     public void keyup(KeyEvent ev) {
 	setmods(ev);
 	for(Grab g : c(keygrab)) {
-	    if(g.wdg.keyup(ev))
-		return;
+	    //Make sure this wdg is visible the entire way up
+	    if(g.wdg.tvisible()) {
+		if (g.wdg.keyup(ev))
+		    return;
+	    }
 	}
 	root.keyup(ev);
     }
@@ -336,15 +345,12 @@ public class UI {
     public void mousedown(MouseEvent ev, Coord c, int button) {
 	setmods(ev);
 	lcc = mc = c;
-	grabs: for(Grab g : c(mousegrab)) {
+	for(Grab g : c(mousegrab)) {
 	    //Make sure this wdg is visible the entire way up
-	    for(Widget wdg = g.wdg; wdg.parent != null; wdg = wdg.parent) {
-	        if(!wdg.visible) {
-	            continue grabs;
-		}
+	    if(g.wdg.tvisible()) {
+		if (g.wdg.mousedown(wdgxlate(c, g.wdg), button))
+		    return;
 	    }
-	    if(g.wdg.mousedown(wdgxlate(c, g.wdg), button))
-		return;
 	}
 	root.mousedown(c, button);
     }
@@ -352,15 +358,12 @@ public class UI {
     public void mouseup(MouseEvent ev, Coord c, int button) {
 	setmods(ev);
 	mc = c;
-	grabs: for(Grab g : c(mousegrab)) {
+	for(Grab g : c(mousegrab)) {
 	    //Make sure this wdg is visible the entire way up
-	    for(Widget wdg = g.wdg; wdg.parent != null; wdg = wdg.parent) {
-		if(!wdg.visible) {
-		    continue grabs;
-		}
+	    if(g.wdg.tvisible()) {
+		if (g.wdg.mouseup(wdgxlate(c, g.wdg), button))
+		    return;
 	    }
-	    if(g.wdg.mouseup(wdgxlate(c, g.wdg), button))
-		return;
 	}
 	root.mouseup(c, button);
     }
@@ -375,8 +378,10 @@ public class UI {
 	setmods(ev);
 	lcc = mc = c;
 	for(Grab g : c(mousegrab)) {
-	    if(g.wdg.mousewheel(wdgxlate(c, g.wdg), amount))
-		return;
+	    if(g.wdg.tvisible()) {
+		if (g.wdg.mousewheel(wdgxlate(c, g.wdg), amount))
+		    return;
+	    }
 	}
 	root.mousewheel(c, amount);
     }
