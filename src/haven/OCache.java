@@ -81,7 +81,7 @@ public class OCache implements Iterable<Gob> {
 	    cb.changed(ob);
     }
 
-    synchronized void changeAllGobs() {
+    public synchronized void changeAllGobs() {
 	for(final Gob g : this) {
 	    changed(g);
 	}

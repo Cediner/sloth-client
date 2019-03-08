@@ -357,9 +357,11 @@ public class MapFile {
     public static final byte MINEHOLE = (byte)0;
     public static final byte LADDER = (byte)1;
     public static final byte CAVE =  (byte)2;
+    public static final byte CAVEIN = (byte)3;
 
     public static boolean canLink(final byte l1, final byte l2) {
-        return (l1 == l2 && l1 == CAVE) ||
+        return (l1 == CAVE && l2 == CAVEIN) ||
+		(l1 == CAVEIN && l2 == CAVE) ||
 		(l1 == MINEHOLE && l2 == LADDER) ||
 		(l1 == LADDER && l2 == MINEHOLE);
     }

@@ -28,6 +28,7 @@ package haven;
 
 import com.google.common.flogger.FluentLogger;
 
+import java.lang.ref.WeakReference;
 import java.util.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -121,7 +122,7 @@ public class UI {
 	rwidgets.put(root, 0);
 	this.sess = sess;
 	if(sess != null)
-	    this.sess.glob.ui = this;
+	    this.sess.glob.ui = new WeakReference<>(this);
     }
 	
     public void setreceiver(Receiver rcvr) {

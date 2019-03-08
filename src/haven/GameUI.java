@@ -710,69 +710,6 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    wdg.c.y = sz.y - wdg.sz.y;
     }
 
-    public boolean globtype(char key, KeyEvent ev) {
-        switch (key) {
-	    case 1: //Ctrl+A
-		toggleMapfile();
-		return true;
-	    case 9: //Tab
-		toggleInv();
-		return true;
-	    case 5: //Ctrl+E
-	        toggleEquipment();
-		return true;
-	    case 20: //Ctrl+T
-		toggleCharWnd();
-		return true;
-	    case 2: //Ctrl+B
-		toggleKin();
-		return true;
-	    case 15: //Ctrl+O
-	        toggleOpts();
-		return true;
-	    case ':':
-		entercmd();
-		return true;
-	    case 3: //Ctrl+C?
-		toggleChat();
-		return true;
-	    case 7: //Ctrl+G
-		DefSettings.SHOWGRID.set(!DefSettings.SHOWGRID.get());
-		return true;
-	    case 17:
-	        DefSettings.SHOWHOVERTOOLTIPS.set(!DefSettings.SHOWHOVERTOOLTIPS.get());
-		return true;
-	    case 8:
-		DefSettings.SHOWHITBOX.set(!DefSettings.SHOWHITBOX.get());
-		ui.sess.glob.oc.changeAllGobs();
-		return true;
-	    case 27: //Escape
-	        if(map != null && !map.hasfocus) {
-	            setfocus(map);
-	            return true;
-		}
-	        break;
-	    case '`':
-	        if(vhand != null) {
-		    vhand.setLock(!vhand.locked());
-		    return true;
-		}
-		break;
-	    case 'q':
-		if(vhand != null) {
-		    vhand.item.wdgmsg("iact", new Coord(1, 1), ui.modflags());
-		    return true;
-		}
-		break;
-	    case 's':
-	        if((Config.screenurl != null) && (ev.getModifiersEx() & (KeyEvent.META_DOWN_MASK | KeyEvent.ALT_DOWN_MASK)) != 0) {
-			Screenshooter.take(this, Config.screenurl);
-			return true;
-		}
-	}
-	return super.globtype(key, ev);
-    }
-    
     public boolean mousedown(Coord c, int button) {
 	return(super.mousedown(c, button));
     }
@@ -850,7 +787,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	}
     }
 
-    void toggleChat() {
+    public void toggleChat() {
 	if(chatwnd != null && chatwnd.show(!chatwnd.visible)) {
 	    chatwnd.raise();
 	    fitwdg(chatwnd);
@@ -858,7 +795,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	}
     }
 
-    void toggleMapfile() {
+    public void toggleMapfile() {
 	if((mapfile != null) && mapfile.show(!mapfile.visible)) {
 	    mapfile.raise();
 	    fitwdg(mapfile);
@@ -866,7 +803,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	}
     }
 
-    void toggleInv() {
+    public void toggleInv() {
 	if((invwnd != null) && invwnd.show(!invwnd.visible)) {
 	    invwnd.raise();
 	    fitwdg(invwnd);
@@ -874,7 +811,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	}
     }
 
-    void toggleEquipment() {
+    public void toggleEquipment() {
 	if((equwnd != null) && equwnd.show(!equwnd.visible)) {
 	    equwnd.raise();
 	    fitwdg(equwnd);
@@ -882,7 +819,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	}
     }
 
-    void toggleCharWnd() {
+    public void toggleCharWnd() {
 	if((chrwdg != null) && chrwdg.show(!chrwdg.visible)) {
 	    chrwdg.raise();
 	    fitwdg(chrwdg);
@@ -890,7 +827,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	}
     }
 
-    void toggleKin() {
+    public void toggleKin() {
 	if(zerg.show(!zerg.visible)) {
 	    zerg.raise();
 	    fitwdg(zerg);
@@ -898,7 +835,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	}
     }
 
-    void toggleOpts() {
+    public void toggleOpts() {
         //XXX: Not a fan of this with how Options are shown right now...
 	//     Indir options would help, but it needs to ripple to Checkbox, etc
 	if(opts.show(!opts.visible)) {

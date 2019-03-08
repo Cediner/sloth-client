@@ -268,7 +268,8 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
      */
     private void discovered(final String name) {
         //Don't try to discover anything until we know who the plgob is.
-        if(glob.ui.gui != null && glob.ui.gui.map != null && glob.ui.gui.map.plgob != -1) {
+	final UI ui = glob.ui.get();
+        if(ui != null && ui.gui != null && ui.gui.map != null && ui.gui.map.plgob != -1) {
 	    //Before we do anything make sure we care about this
 	    if (!Deleted.isDeleted(name)) {
 		//Gobs we care about
@@ -293,7 +294,7 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 		    mark(-1);
 		}
 
-		MarkerData.marker(name).ifPresent(mark -> glob.ui.gui.mapfile.markobj(mark, rc));
+		MarkerData.marker(name).ifPresent(mark -> ui.gui.mapfile.markobj(mark, rc));
 
 		res().ifPresent((res) -> { //should always be present once name is discovered
 		    final Resource.Neg neg = res.layer(Resource.negc);

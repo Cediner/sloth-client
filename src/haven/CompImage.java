@@ -61,7 +61,12 @@ public class CompImage {
 		public void draw(Graphics g, Coord c) {
 		    g.drawImage(img, c.x, c.y, null);
 		}
-		public Coord sz() {return(PUtils.imgsz(img));}
+		public Coord sz() {
+		    if(img != null)
+		        return(PUtils.imgsz(img));
+		    else
+		        return new Coord(0, 0);
+		}
 	    });
     }
 

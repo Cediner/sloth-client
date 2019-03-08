@@ -28,19 +28,19 @@ package haven;
 
 import java.util.*;
 
-public class Profwnd extends Window {
+public class Profwdg extends Widget {
     public final Profile prof;
     public double mt = 0.05;
     private static final int h = 80;
     private final TexIM tex;
     
-    public Profwnd(Profile prof, String title) {
-	super(new Coord(prof.hist.length, h), title);
+    public Profwdg(Profile prof) {
+	super(new Coord(prof.hist.length, h));
 	this.prof = prof;
 	this.tex = new TexIM(new Coord(prof.hist.length, h));
     }
     
-    public void cdraw(GOut g) {
+    public void draw(GOut g) {
 	double[] ttl = new double[prof.hist.length];
 	for(int i = 0; i < prof.hist.length; i++) {
 	    if(prof.hist[i] != null)

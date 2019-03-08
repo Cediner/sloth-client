@@ -54,6 +54,8 @@ public abstract class ConsoleHost extends Widget {
 	}
 	
 	protected void done(String line) {
+	    if(line.startsWith(":"))
+	        line = line.substring(1);
 	    history.add(line);
 	    try {
 		ui.cons.run(line);

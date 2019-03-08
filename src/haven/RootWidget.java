@@ -26,14 +26,14 @@
 
 package haven;
 
-import haven.sloth.DefSettings;
+
+import haven.sloth.gui.KeyBinds;
 
 import java.awt.event.KeyEvent;
 
 public class RootWidget extends ConsoleHost {
     public static final Resource defcurs = Resource.local().loadwait("gfx/hud/curs/arw");
-    Profile guprof, grprof, ggprof;
-    boolean afk = false;
+    public Profile guprof, grprof, ggprof;
     private char last_gk;
     private long last_gk_time;
 	
@@ -42,28 +42,17 @@ public class RootWidget extends ConsoleHost {
 	setfocusctl(true);
 	hasfocus = true;
 	cursor = defcurs.indir();
+	add(new KeyBinds());
     }
-	
+
+    @Override
+    protected void added() {
+	super.added();
+    }
+
     public boolean globtype(char key, KeyEvent ev) {
 	if(!super.globtype(key, ev)) {
-	    if(key == '`') {
-		GameUI gi = findchild(GameUI.class);
-		if (Config.profile) {
-		    add(new Profwnd(guprof, "UI profile"), new Coord(100, 100));
-		    add(new Profwnd(grprof, "GL profile"), new Coord(450, 100));
-		    if ((gi != null) && (gi.map != null)) {
-			add(new Profwnd(gi.map.prof, "Map profile"), new Coord(100, 250));
-			add(new Profwnd(gi.map.setupprof, "Map Setup profile"), new Coord(450, 250));
-		    }
-		}
-		if (Config.profilegpu) {
-		    add(new Profwnd(ggprof, "GPU profile"), new Coord(800, 100));
-		}
-	    } else if(key == 16) { //Ctrl+P
-		DefSettings.PAUSED.set(!DefSettings.PAUSED.get());
-	    } else if(key == ':') {
-		entercmd();
-	    } else if(key != 0 && (last_gk != key || (System.currentTimeMillis() - last_gk_time) >= 500)) {
+	    if(key != 0 && (last_gk != key || (System.currentTimeMillis() - last_gk_time) >= 500)) {
 		wdgmsg("gk", (int)key);
 		last_gk = key;
 		last_gk_time = System.currentTimeMillis();

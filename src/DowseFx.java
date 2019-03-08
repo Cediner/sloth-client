@@ -39,8 +39,11 @@ public class DowseFx extends Sprite {
 	    this.a2 = d1;
 	}
 	if(owner instanceof Gob) {
-	    final Gob g = (Gob)owner;
-	    g.glob.ui.gui.add(new DowseWnd(a1, a2, col -> this.col = new States.ColState(col), this::delete));
+	    final Gob g = (Gob) owner;
+	    final UI ui = g.glob.ui.get();
+	    if (ui != null) {
+		ui.gui.add(new DowseWnd(a1, a2, col -> this.col = new States.ColState(col), this::delete));
+	    }
 	}
     }
 

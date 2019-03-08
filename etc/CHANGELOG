@@ -1,3 +1,8 @@
+3/8/19
+    - Added in KeyBind system
+    - Changed profiler windows to be one window for all of them
+    - Other minor fixes
+
 3/6/19
     - Added in map icons for village idol, mineholes, and ladders. Minehole can only link to ladders and vice versa.
     - Added in Option under Gameplay to halve the size of minimap icons. Also option for hiding icons all together, no
