@@ -171,22 +171,22 @@ public class KeyBinds {
 	}));
 
 	//Fight moves binding
-	for(int i = 1; i <= 10; ++i) {
-	    final int fn = i-1;
-	    final String seq = i <= 5 ? ""+i : "S-"+((i+1) % 6);
-	    add(new KeyBind("Fight Move "+seq, new IndirSetting<>(DefSettings.global, "keybind.fight."+seq), ""+seq, ui -> {
-		if (ui.gui != null && ui.gui.fv != null && ui.gui.fs != null) {
-		    ui.gui.fs.use(fn);
-		    return true;
-		} else {
-		    return false;
-		}
-	    }));
+	for(final KeyBind kb : Fightsess.keys) {
+	    add(kb);
 	}
     }
 
     public void add(final KeyBind kb) {
         keybinds.add(kb);
+    }
+
+    boolean validBinding(final IndirSetting<String> key) {
+	for(final KeyBind kb : keybinds) {
+	    if(kb.keybind == key || !kb.keybind.get().equals(key.get()))
+		continue;
+	    return false;
+	}
+	return true;
     }
 
     boolean validBinding(final String binding) {

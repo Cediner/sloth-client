@@ -460,7 +460,7 @@ public class OptWnd extends Window {
 	    final Coord c = new Coord(0, 0);
 	    final Grouping binds = new GridGrouping("Keybinds", spacer, 600);
 	    {//Key Binds
-		binds.add(new Img(RichText.render("Click on the black box to start editing. Right click to cancel or Enter to confirm. If your choice shows up Red then it is invalid and you need to cancel.", 200).tex()));
+		binds.add(new Img(RichText.render("Click on the black box to start editing. Right click to cancel or Enter to confirm. If your choice shows up Red/Purple then it overlaps another keybind.", 200).tex()));
 		for (final KeyBinds.KeyBind kb : ui.root.kbs.keybinds) {
 		    binds.add(KeyBindEditWithLabel(kb.name, kb.keybind));
 		}

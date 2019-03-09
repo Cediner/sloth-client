@@ -1,5 +1,8 @@
 3/9/19
     - Keybinds now include all the hotbars and the fight bars
+    - Fight key binds now show the correct binding in their tooltip when you hover over the move icon
+    - Trying to modify multiple key bindings don't lock you from doing other keybinds.
+    - Changed the color of a keybind that overlaps vs one that overlaps but isn't set yet. Red vs Purple.
 
 3/8/19
     - Added in KeyBind system

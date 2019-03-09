@@ -25,6 +25,8 @@ public class KeyBindEdit extends Widget {
     @Override
     public boolean mousedown(Coord c, int button) {
         if(button == 1) {
+            if(kgrab != null)
+                kgrab.remove();
 	    kgrab = ui.grabkeys(this);
 	    state = State.EDITING;
 	    keyseq = "";
@@ -43,9 +45,11 @@ public class KeyBindEdit extends Widget {
 	g.chcolor();
 
 	if (state == State.NOTEDITING) {
+	    g.chcolor(ui.root.kbs.validBinding(keybind) ? Color.WHITE : Color.RED);
 	    FastText.aprint(g, sz.div(2), 0.5, 0.5, keybind.get());
+	    g.chcolor();
 	} else {
-	    g.chcolor(state != State.INVALID ? Color.GREEN : Color.RED);
+	    g.chcolor(state != State.INVALID ? Color.GREEN : Color.MAGENTA);
 	    FastText.aprint(g, sz.div(2), 0.5, 0.5, keyseq);
 	    g.chcolor();
 	}
@@ -79,13 +83,15 @@ public class KeyBindEdit extends Widget {
 		        else
 		            state = State.INVALID;
 		    	break;
+		    case INVALID:
 		    case DONE:
 		        if(ev.getKeyCode() == KeyEvent.VK_ENTER) {
-		            if(state == State.DONE) {
-		                keybind.set(this.keyseq);
-			    }
+			    keybind.set(this.keyseq);
 			    state = State.NOTEDITING;
 			    kgrab.remove();
+			} else {
+		            //Don't get stuck locked in here if they refuse to press enter
+		            return false;
 			}
 		        break;
 		}

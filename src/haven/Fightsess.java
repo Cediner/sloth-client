@@ -26,6 +26,10 @@
 
 package haven;
 
+import haven.sloth.DefSettings;
+import haven.sloth.IndirSetting;
+import haven.sloth.gui.KeyBinds;
+
 import java.util.*;
 import java.awt.Color;
 import java.awt.event.InputEvent;
@@ -239,7 +243,22 @@ public class Fightsess extends Widget {
 
     private Widget prevtt = null;
     private Text acttip = null;
-    public static final String[] keytips = {"1", "2", "3", "4", "5", "Shift+1", "Shift+2", "Shift+3", "Shift+4", "Shift+5"};
+    public static final KeyBinds.KeyBind[] keys = new KeyBinds.KeyBind[10];
+    static {
+	for(int i = 1; i <= 10; ++i) {
+	    final int fn = i - 1;
+	    final String seq = i <= 5 ? "" + i : "S-" + ((i + 1) % 6);
+	    keys[i-1] = new KeyBinds.KeyBind("Fight Move " + seq, new IndirSetting<>(DefSettings.global, "keybind.fight." + seq), "" + seq, ui -> {
+		if (ui.gui != null && ui.gui.fv != null && ui.gui.fs != null) {
+		    ui.gui.fs.use(fn);
+		    return true;
+		} else {
+		    return false;
+		}
+	    });
+	}
+    }
+
     public Object tooltip(Coord c, Widget prev) {
 	for(Buff buff : fv.buffs.children(Buff.class)) {
 	    Coord dc = pcc.add(-buff.c.x - Buff.cframe.sz().x - 20, buff.c.y + pho - Buff.cframe.sz().y);
@@ -272,7 +291,7 @@ public class Fightsess extends Widget {
 		    Tex img = act.get().layer(Resource.imgc).tex();
 		    ca = ca.sub(img.sz().div(2));
 		    if(c.isect(ca, img.sz())) {
-			String tip = act.get().layer(Resource.tooltip).t + " ($b{$col[255,128,0]{" + keytips[i] + "}})";
+			String tip = act.get().layer(Resource.tooltip).t + " ($b{$col[255,128,0]{" + keys[i].keybind.get() + "}})";
 			if((acttip == null) || !acttip.text.equals(tip))
 			    acttip = RichText.render(tip, -1);
 			return(acttip);
