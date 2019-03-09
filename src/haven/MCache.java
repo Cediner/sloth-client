@@ -26,6 +26,7 @@
 
 package haven;
 
+import haven.resutil.WaterTile;
 import haven.sloth.gfx.GridMesh;
 
 import java.util.*;

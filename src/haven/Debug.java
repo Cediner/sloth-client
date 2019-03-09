@@ -43,7 +43,8 @@ public class Debug {
 	try {
 	    javax.imageio.ImageIO.write(img, "PNG", path);
 	} catch(IOException e) {
-	    throw(new RuntimeException(e));
+	    e.printStackTrace();
+	    //throw(new RuntimeException(e));
 	}
     }
 

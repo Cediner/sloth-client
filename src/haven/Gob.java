@@ -27,6 +27,7 @@
 package haven;
 
 import com.google.common.flogger.FluentLogger;
+import haven.resutil.WaterTile;
 import haven.sloth.DefSettings;
 import haven.sloth.gfx.HitboxMesh;
 import haven.sloth.gob.*;
@@ -190,6 +191,11 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 		if(DefSettings.FLATWORLD.get())
 		    c.z = 0;
 		c.y = -c.y;
+		if(type == Type.ANIMAL) {
+		    Tiler tl = glob.map.tiler(glob.map.gettile_safe(rc.floor(MCache.tilesz)));
+		    if (tl instanceof WaterTile)
+			c.z += 5;
+		}
 		if((this.c == null) || !c.equals(this.c))
 		    xl.update(Transform.makexlate(new Matrix4f(), this.c = c));
 		if(this.a != Gob.this.a)
@@ -372,7 +378,7 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 		sb.append("\n");
 	    }
 	}
-	sb.append("Position: "); sb.append(rc); sb.append("\n");
+	sb.append("Position: "); sb.append(getc()); sb.append("\n");
 	return sb.toString();
     }
 

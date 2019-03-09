@@ -3,6 +3,9 @@
     - Fight key binds now show the correct binding in their tooltip when you hover over the move icon
     - Trying to modify multiple key bindings don't lock you from doing other keybinds.
     - Changed the color of a keybind that overlaps vs one that overlaps but isn't set yet. Red vs Purple.
+    - Water no longer renders the skybox surface, this also means lighting affects it now
+    - Fixed misc bugs
+    - Animals now are 5 units higher when on water tiles. Should make it easier to pick up, etc.
 
 3/8/19
     - Added in KeyBind system

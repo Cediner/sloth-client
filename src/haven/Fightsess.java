@@ -80,6 +80,12 @@ public class Fightsess extends Widget {
 	presize();
     }
 
+    @Override
+    protected void removed() {
+	super.removed();
+    	ui.gui.fs = null;
+    }
+
     public void presize() {
 	resize(parent.sz);
 	pcc = sz.div(2);

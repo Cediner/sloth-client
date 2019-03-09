@@ -35,6 +35,11 @@ public abstract class Variable {
 	this.name = name;
     }
 
+    @Override
+    public String toString() {
+	return String.format("Var: %s [%s]", name, type);
+    }
+
     public class Ref extends LValue {
 	public void walk(Walker w) {}
 
