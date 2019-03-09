@@ -13,8 +13,8 @@ import java.util.List;
  */
 public class KeyBinds {
     @FunctionalInterface
-    private interface Command {
-        void run(final UI ui);
+    public interface Command {
+        boolean run(final UI ui);
     }
 
     public static class KeyBind {
@@ -43,66 +43,113 @@ public class KeyBinds {
         //In game events
 	//Window toggles
         add(new KeyBind("Toggle Minimap", new IndirSetting<>(DefSettings.global, "keybind.toggle-minimap"), "C-A", ui -> {
-            if(ui.gui != null)
-                ui.gui.toggleMapfile();
+            if(ui.gui != null) {
+		ui.gui.toggleMapfile();
+		return true;
+            } else {
+                return false;
+	    }
 	}));
 	add(new KeyBind("Toggle Inventory", new IndirSetting<>(DefSettings.global, "keybind.toggle-inventory"), "Tab", ui -> {
-	    if(ui.gui != null)
+	    if(ui.gui != null) {
 	        ui.gui.toggleInv();
+		return true;
+	    } else {
+		return false;
+	    }
 	}));
 	add(new KeyBind("Toggle Equipment", new IndirSetting<>(DefSettings.global, "keybind.toggle-equipment"), "C-E", ui -> {
-	    if(ui.gui != null)
+	    if(ui.gui != null) {
 	        ui.gui.toggleEquipment();
+		return true;
+	    } else {
+		return false;
+	    }
 	}));
-	add(new KeyBind("Toggle Character Sheet", new IndirSetting<>(DefSettings.global, "keybind.toggle-charwnd"), "C-T", ui -> {
-	    if(ui.gui != null)
+	add(new KeyBind("Toggle CharSheet", new IndirSetting<>(DefSettings.global, "keybind.toggle-charwnd"), "C-T", ui -> {
+	    if(ui.gui != null) {
 	    	ui.gui.toggleCharWnd();
+		return true;
+	    } else {
+		return false;
+	    }
 	}));
 	add(new KeyBind("Toggle Kin List", new IndirSetting<>(DefSettings.global, "keybind.toggle-kinlist"), "C-B", ui -> {
-	    if(ui.gui != null)
+	    if(ui.gui != null) {
 	        ui.gui.toggleKin();
+		return true;
+	    } else {
+		return false;
+	    }
 	}));
 	add(new KeyBind("Toggle Options", new IndirSetting<>(DefSettings.global, "keybind.toggle-options"), "C-O", ui -> {
-	    if(ui.gui != null)
-	    	ui.gui.toggleOpts();
+	    if(ui.gui != null) {
+		ui.gui.toggleOpts();
+		return true;
+	    } else {
+		return false;
+	    }
 	}));
 	add(new KeyBind("Toggle Chat", new IndirSetting<>(DefSettings.global, "keybind.toggle-chatwnd"), "C-C", ui -> {
-	    if(ui.gui != null)
+	    if(ui.gui != null) {
 	    	ui.gui.toggleChat();
+		return true;
+	    } else {
+		return false;
+	    }
 	}));
 	//Special settings toggles
-	add(new KeyBind("Toggle grid lines", new IndirSetting<>(DefSettings.global, "keybind.toggle-grid"), "C-G", ui ->
-		DefSettings.SHOWGRID.set(!DefSettings.SHOWGRID.get())));
-	add(new KeyBind("Toggle hovertips", new IndirSetting<>(DefSettings.global, "keybind.toggle-hovertips"), "C-Q", ui ->
-		DefSettings.SHOWHOVERTOOLTIPS.set(!DefSettings.SHOWHOVERTOOLTIPS.get())));
+	add(new KeyBind("Toggle grid lines", new IndirSetting<>(DefSettings.global, "keybind.toggle-grid"), "C-G", ui -> {
+	    DefSettings.SHOWGRID.set(!DefSettings.SHOWGRID.get());
+	    return true;
+	}));
+	add(new KeyBind("Toggle hovertips", new IndirSetting<>(DefSettings.global, "keybind.toggle-hovertips"), "C-Q", ui -> {
+	    DefSettings.SHOWHOVERTOOLTIPS.set(!DefSettings.SHOWHOVERTOOLTIPS.get());
+	    return true;
+	}));
 	add(new KeyBind("Toggle hitboxes", new IndirSetting<>(DefSettings.global, "keybind.toggle-hitboxes"), "C-H", ui -> {
 	    DefSettings.SHOWHITBOX.set(!DefSettings.SHOWHITBOX.get());
 	    ui.sess.glob.oc.changeAllGobs();
+	    return true;
 	}));
 	//Misc
 	add(new KeyBind("Focus map", new IndirSetting<>(DefSettings.global, "keybind.focus-map"), "Escape", ui -> {
 	    if(ui.gui != null && ui.gui.map != null && !ui.gui.map.hasfocus) {
 		ui.gui.setfocus(ui.gui.map);
+		return true;
+	    } else {
+	        return false;
 	    }
 	}));
 	//Item locking for held item
 	add(new KeyBind("Lock item on mouse", new IndirSetting<>(DefSettings.global, "keybind.lock-held"), "Back Quote", ui -> {
 	    if(ui.gui != null && ui.gui.vhand != null) {
 		ui.gui.vhand.setLock(!ui.gui.vhand.locked());
+		return true;
+	    } else {
+	        return false;
 	    }
 	}));
 	//Loftar screenshooter
 	add(new KeyBind("Screenshot", new IndirSetting<>(DefSettings.global, "keybind.screenshot"), "M-S", ui -> {
 	    if(ui.gui != null && Config.screenurl != null) {
 		Screenshooter.take(ui.gui, Config.screenurl);
+		return true;
+	    } else {
+	        return false;
 	    }
 	}));
 	//Admin Console
-	add(new KeyBind("Console", new IndirSetting<>(DefSettings.global, "keybind.toggle-cmd"), "S-Semicolon", ui -> ui.root.entercmd()));
+	add(new KeyBind("Console", new IndirSetting<>(DefSettings.global, "keybind.toggle-cmd"), "S-Semicolon", ui ->  {
+	    ui.root.entercmd();
+	    return true;
+	}));
 
 	//Misc
-	add(new KeyBind("Toggle Pause", new IndirSetting<>(DefSettings.global, "keybind.toggle-pause"), "C-P", ui ->
-		DefSettings.PAUSED.set(!DefSettings.PAUSED.get())));
+	add(new KeyBind("Toggle Pause", new IndirSetting<>(DefSettings.global, "keybind.toggle-pause"), "C-P", ui -> {
+	    DefSettings.PAUSED.set(!DefSettings.PAUSED.get());
+	    return true;
+	}));
 	add(new KeyBind("Toggle profiler", new IndirSetting<>(DefSettings.global, "keybind.toggle-profiler"), "C-L", ui -> {
 	    if(Config.profile || Config.profilegpu) {
 		final ProfWnd wnd = ui.gui.add(new ProfWnd());
@@ -117,12 +164,28 @@ public class KeyBinds {
 		if (Config.profilegpu) {
 		    wnd.add(ui.root.ggprof, "GPU profile");
 		}
+		return true;
+	    } else {
+	        return false;
 	    }
 	}));
 
+	//Fight moves binding
+	for(int i = 1; i <= 10; ++i) {
+	    final int fn = i-1;
+	    final String seq = i <= 5 ? ""+i : "S-"+((i+1) % 6);
+	    add(new KeyBind("Fight Move "+seq, new IndirSetting<>(DefSettings.global, "keybind.fight."+seq), ""+seq, ui -> {
+		if (ui.gui != null && ui.gui.fv != null && ui.gui.fs != null) {
+		    ui.gui.fs.use(fn);
+		    return true;
+		} else {
+		    return false;
+		}
+	    }));
+	}
     }
 
-    private void add(final KeyBind kb) {
+    public void add(final KeyBind kb) {
         keybinds.add(kb);
     }
 
@@ -155,8 +218,7 @@ public class KeyBinds {
 		final String seq = keyseq.toString();
 
 		for(final KeyBind kb : keybinds) {
-		    if(kb.keybind.get().equals(seq)) {
-			kb.cmd.run(ui);
+		    if(kb.keybind.get().equals(seq) && kb.cmd.run(ui)) {
 			return true;
 		    }
 		}

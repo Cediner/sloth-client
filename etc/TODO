@@ -23,8 +23,6 @@ TODO
     - Movable Fightsess (split into two parts maybe?)
     - Fightsess move icons clickable
     - Grid View + tooltips = non-bold lines. Something from tooltips must be causing an extra GL command to fuck over lines
-    - UI
-        - Keybinds
     - Smart Aim
     - Scripting
         - Proximity aggroing with keybind or menugrid shortcut (SCRIPT)

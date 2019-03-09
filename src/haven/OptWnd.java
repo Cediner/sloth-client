@@ -35,10 +35,10 @@ import java.awt.*;
 import static haven.sloth.DefSettings.*;
 
 public class OptWnd extends Window {
-    private final Panel main, video, audio;
+    private final Panel main;
     public Panel current;
 
-    void chpanel(Panel p) {
+    private void chpanel(Panel p) {
 	if(current != null)
 	    current.hide();
 	(current = p).show();
@@ -73,12 +73,6 @@ public class OptWnd extends Window {
 	    visible = false;
 	    c = Coord.z;
 	}
-    }
-
-    private void error(String msg) {
-	GameUI gui = getparent(GameUI.class);
-	if(gui != null)
-	    gui.error(msg);
     }
 
     public class VideoPanel extends Panel {
@@ -242,10 +236,10 @@ public class OptWnd extends Window {
     }
 
     private OptWnd(boolean gopts, final UI ui) {
-	super(Coord.z, "Options", "Options",true);
+	super(Coord.z, "Options", "Options");
 	main = add(new Panel());
-	video = add(new VideoPanel(main));
-	audio = add(new Panel());
+	final Panel video = add(new VideoPanel(main));
+	final Panel audio = add(new Panel());
 	final Panel gameplay = add(new Panel());
 	final Panel camera = add(new Panel());
 	final Panel uip = add(new Panel());
@@ -464,10 +458,8 @@ public class OptWnd extends Window {
 
 	{//Keybind settings
 	    final Coord c = new Coord(0, 0);
-	    final Grouping binds = new LinearGrouping("Keybinds", spacer);
+	    final Grouping binds = new GridGrouping("Keybinds", spacer, 600);
 	    {//Key Binds
-	        //TODO: finish, make a new KeyBindEdit widget, takes lbl + indirsetting. should have a black box
-		//      displaying current keybind and when clicked allows you to change it if valid
 		binds.add(new Img(RichText.render("Click on the black box to start editing. Right click to cancel or Enter to confirm. If your choice shows up Red then it is invalid and you need to cancel.", 200).tex()));
 		for (final KeyBinds.KeyBind kb : ui.root.kbs.keybinds) {
 		    binds.add(KeyBindEditWithLabel(kb.name, kb.keybind));

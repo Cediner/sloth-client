@@ -237,7 +237,7 @@ public class Window extends MovableWidget implements DTarget {
     public Coord contentsz() {
 	Coord max = new Coord(0, 0);
 	for(Widget wdg = child; wdg != null; wdg = wdg.next) {
-	    if(wdg == cbtn)
+	    if(wdg == cbtn || wdg == lbtn)
 		continue;
 	    if(!wdg.visible)
 		continue;

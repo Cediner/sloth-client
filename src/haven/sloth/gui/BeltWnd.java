@@ -2,12 +2,11 @@ package haven.sloth.gui;
 
 import haven.*;
 import haven.sloth.DefSettings;
+import haven.sloth.IndirSetting;
 import haven.sloth.io.BeltData;
 
-import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -24,8 +23,7 @@ public class BeltWnd extends MovableWidget {
 
     public class BeltBtn extends Widget implements DTarget, DropTarget {
         //Key to activate
-        private final int key;
-        private final Tex tkey;
+        private final IndirSetting<String> key;
         //Server slot id
 	private int slot;
 	//What to render, either a Pagina or a Resource, never both
@@ -37,12 +35,10 @@ public class BeltWnd extends MovableWidget {
 	//tooltip
 	private BufferedImage tt;
 
-        private BeltBtn(final int key) {
+        private BeltBtn(final IndirSetting<String> key) {
             super(Inventory.invsq.sz());
             this.key = key;
             cancancel = false;
-            final String nm = KeyEvent.getKeyText(key).replace("NumPad-", "N");
-            this.tkey = new TexI(Utils.outline2(Text.render(nm).img, Color.BLACK));
 	}
 
 	private Optional<Tex> img() {
@@ -70,11 +66,12 @@ public class BeltWnd extends MovableWidget {
 		}
 	    });
 	    //always show our hotkey key
-	    final Coord tkeyc = sz.sub(tkey.sz());
+	    final Coord ksz = FastText.size(key.get().replace("NumPad-", "N"));
+	    final Coord tkeyc = sz.sub(ksz);
 	    g.chcolor(new java.awt.Color(128, 128, 128, 128));
 	    g.frect(tkeyc, new Coord(sz.x, tkeyc.y), sz, new Coord(tkeyc.x, sz.y));
 	    g.chcolor();
-	    g.image(tkey, tkeyc);
+	    FastText.aprint(g, sz, 1, 1, key.get().replace("NumPad-", "N"));
 	}
 
 	private void reset() {
@@ -117,23 +114,11 @@ public class BeltWnd extends MovableWidget {
             return null; //no tt
 	}
 
-	private void use() {
+	public void use() {
             if(res != null) {
                 ui.gui.wdgmsg("belt", slot, 1, ui.modflags());
 	    } else if(pag != null) {
                 pag.use();
-	    }
-	}
-
-	@Override
-	public boolean globtype(char k, KeyEvent ev) {
-            if(k != 0)
-                return false;
-            if(ev.getKeyCode() == this.key) {
-                use();
-	    	return true;
-            } else {
-                return false;
 	    }
 	}
 
@@ -302,6 +287,18 @@ public class BeltWnd extends MovableWidget {
     protected void added() {
         super.added();
 	upd_page();
+	for(int i = 0; i < btns.length; ++i) {
+	    final BeltBtn btn = btns[i];
+	    ui.root.kbs.add(new KeyBinds.KeyBind(String.format("Hotbar %s - %d", name, i), btn.key,
+		    btn.key.get(), ui -> {
+	        if(BeltWnd.this.visible) {
+		    btn.use();
+		    return true;
+	        } else {
+	            return false;
+		}
+	    }));
+	}
     }
 
     @Override
@@ -333,7 +330,9 @@ public class BeltWnd extends MovableWidget {
     private void makebtns(int [] keys) {
 	int i = 0;
 	for(int k : keys) {
-	    btns[i++] = add(new BeltBtn(k), new Coord(0,0));
+	    final IndirSetting<String> kb = new IndirSetting<>(DefSettings.global, "keybind.hotbar-"+k);
+	    kb.ensure(KeyEvent.getKeyText(k));
+	    btns[i++] = add(new BeltBtn(kb), new Coord(0,0));
 	}
 	reposition();
     }

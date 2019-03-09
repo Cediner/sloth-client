@@ -52,6 +52,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public MenuGrid menu; //The menu grid widget
     public MapView map; // The 3D world of hafen
     public Fightview fv; //Fightview widget
+    public Fightsess fs;
     private List<Widget> meters = new LinkedList<>(); //Our meters
     private Text lastmsg;
     private double msgtime;
@@ -133,8 +134,6 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	buffs = add(new Bufflist(), new Coord(95, 65));
 	portrait = add(new Avaview(Avaview.dasz, plid, "plavacam"), new Coord(10, 10));
 	add(new Cal(), new Coord(sz.x/2, 10));
-	opts = add(new OptWnd(ui));
-	opts.hide();
 	zerg = add(new Zergwnd(), new Coord(187, 50));
 	zerg.hide();
 	questwnd = add(new QuestWnd(), new Coord(0, sz.y-200));
@@ -458,6 +457,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    fbelt = add(new BeltWnd("fk", data, KeyEvent.VK_F1, KeyEvent.VK_F10,5,50), new Coord(0, 50));
 	    npbelt = add(new BeltWnd("np", data, KeyEvent.VK_NUMPAD0, KeyEvent.VK_NUMPAD9,4,100), new Coord(0, 100));
 	    nbelt = add(new BeltWnd("n", data, KeyEvent.VK_0, KeyEvent.VK_9, 5, 0), new Coord(0, 150));
+	    opts = add(new OptWnd(ui));
+	    opts.hide();
 
 	    paginasearch = add(new ActWnd("Menu Search"));
 	    paginasearch.hide();
@@ -465,7 +466,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	} else if(place == "fight") {
 	    fv = adda((Fightview)child, sz.x, 0, 1.0, 0.0);
 	} else if(place == "fsess") {
-	    add(child, Coord.z);
+	    fs = add((Fightsess)child, Coord.z);
 	} else if(place == "inv") {
 	    invwnd = new Hidewnd(Coord.z, "Inventory") {
 		    public void cresize(Widget ch) {
