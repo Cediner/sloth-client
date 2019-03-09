@@ -3,7 +3,6 @@ package haven.sloth.gfx;
 import haven.*;
 import haven.sloth.DefSettings;
 
-import java.awt.*;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 import java.util.concurrent.ConcurrentHashMap;
@@ -45,7 +44,6 @@ public class HitboxMesh extends FastMesh {
 	    FloatBuffer cl = Utils.mkfbuf(8 * 4);
 	    ShortBuffer sa = Utils.mksbuf(6 * 5);
 
-	    int i = 0;
 	    float h = 2f;
 	    float
 		    rx = off.x, ry = off.y,

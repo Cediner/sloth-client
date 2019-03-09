@@ -28,9 +28,11 @@ package haven;
 
 import haven.sloth.DefSettings;
 import haven.sloth.IndirSetting;
+import haven.sloth.gfx.HitboxMesh;
 import haven.sloth.gui.*;
 
 import java.awt.*;
+import java.util.function.Consumer;
 
 import static haven.sloth.DefSettings.*;
 
@@ -218,6 +220,18 @@ public class OptWnd extends Window {
 	container.pack();
 	return container;
     }
+
+    private Widget ColorPreWithLabel(final String text, final IndirSetting<Color> cl, final Consumer<Color> cb) {
+	final Widget container = new Widget();
+	final Label lbl = new Label(text);
+	final IndirColorPreview pre = new IndirColorPreview(new Coord(16, 16), cl, cb);
+	final int height = Math.max(lbl.sz.y, pre.sz.y) / 2;
+	container.add(lbl, new Coord(0, height - lbl.sz.y/2));
+	container.add(pre, new Coord(lbl.sz.x, height - pre.sz.y/2));
+	container.pack();
+	return container;
+    }
+
     private Widget KeyBindEditWithLabel(final String text, final IndirSetting<String> keybind) {
 	final Widget container = new Widget();
 	final Label lbl = new Label(text);
@@ -335,6 +349,8 @@ public class OptWnd extends Window {
 		crops.pack();
 	    }
 	    { //gobs
+	        gobs.add(new IndirCheckBox("Toggle halo pointers", SHOWHALO));
+	        gobs.add(new IndirCheckBox("Toggle halo pointers on hearthing", SHOWHALOONHEARTH));
 	        gobs.add(new IndirCheckBox("Show Gob HP (Performance hit)", SHOWGOBHP, val -> {
 		    if(ui.sess != null) {
 			ui.sess.glob.oc.changeHealthGobs();
@@ -362,7 +378,7 @@ public class OptWnd extends Window {
 	    { //misc
 	        misc.add(new IndirCheckBox("Show Hitbox", SHOWHITBOX, val -> ui.sess.glob.oc.changeAllGobs()));
 	        misc.add(new IndirCheckBox("Show Hidden", SHOWHIDDEN, val -> ui.sess.glob.oc.changeHiddenGobs()));
-		misc.add(ColorPreWithLabel("Hidden color: ", HIDDENCOLOR));
+		misc.add(ColorPreWithLabel("Hidden color: ", HIDDENCOLOR, val -> HitboxMesh.updateColor(new States.ColState(val))));
 	        misc.add(new IndirCheckBox("Colorful Cavedust", COLORFULDUST));
 		misc.add(new IndirCheckBox("Show FPS", SHOWFPS));
 		misc.add(new IndirCheckBox("Show Hover Tooltips", SHOWHOVERTOOLTIPS));

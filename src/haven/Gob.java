@@ -299,6 +299,9 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 		if (HighlightData.isHighlighted(name)) {
 		    mark(-1);
 		}
+		if(type == Type.HUMAN) {
+		    setattr(new Halo(this));
+		}
 
 		MarkerData.marker(name).ifPresent(mark -> ui.gui.mapfile.markobj(mark, rc));
 
@@ -382,7 +385,7 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 	return sb.toString();
     }
 
-    private String rnm(Indir<Resource> r) {
+    public String rnm(Indir<Resource> r) {
 	try {
 	    if(r != null && r.get() != null)
 		return r.get().name;

@@ -6,6 +6,9 @@
     - Water no longer renders the skybox surface, this also means lighting affects it now
     - Fixed misc bugs
     - Animals now are 5 units higher when on water tiles. Should make it easier to pick up, etc.
+    - Added in a halo pointer to show where humans are pointing. There are two toggles for this in Options -> Gameplay.
+    Toggle halo pointers makes them display at all times
+    Toggle halo pointers on hearthing makes them display when hearthing or knocked out
 
 3/8/19
     - Added in KeyBind system
@@ -16,7 +19,7 @@
 
 3/6/19
     - Added in map icons for village idol, mineholes, and ladders. Minehole can only link to ladders and vice versa.
-    - Added in Option under Gameplay to halve the size of minimap icons. Also option for hiding icons all together, no
+    - Added in Option under Gameplay to halve the size of minimap icons. Also option for hiding icons all together, no55
     longer 'm' key
     - Changed map merging to localized area to avoid bad merges when two different maps exist in MCache that shouldn't
     be connected.
