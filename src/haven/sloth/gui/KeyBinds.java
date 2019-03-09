@@ -126,7 +126,7 @@ public class KeyBinds {
         keybinds.add(kb);
     }
 
-    public boolean validBinding(final String binding) {
+    boolean validBinding(final String binding) {
         for(final KeyBind kb : keybinds) {
             if(!kb.keybind.get().equals(binding))
                 continue;
@@ -135,7 +135,7 @@ public class KeyBinds {
         return true;
     }
 
-    public boolean globtype(char key, KeyEvent ev, final UI ui) {
+    public boolean globtype(KeyEvent ev, final UI ui) {
         switch (ev.getKeyCode()) {
 	    case 0x0:
 	    case KeyEvent.VK_SHIFT:
