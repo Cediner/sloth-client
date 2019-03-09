@@ -93,8 +93,6 @@ public class LoginScreen extends Widget {
 
 	final int spacer = 5;
 	add(new Img(bg), Coord.z);
-	adda(new Button(100, "Options", () -> adda(new OptWnd(),sz.div(2), 0.5, 0.5)),
-		10, sz.y - 10, 0, 1);
 	adda(new IButton("gfx/hud/buttons/login", "u", "d", "o", this::login) {
 	    protected void depress() {Audio.play(Button.lbtdown.stream());}
 	    protected void unpress() {Audio.play(Button.lbtup.stream());}
@@ -185,5 +183,7 @@ public class LoginScreen extends Widget {
 	presize();
 	parent.setfocus(this);
 	setfocus(username);
+	adda(new Button(100, "Options", () -> adda(new OptWnd(ui),sz.div(2), 0.5, 0.5)),
+		10, sz.y - 10, 0, 1);
     }
 }

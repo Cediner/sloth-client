@@ -133,7 +133,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	buffs = add(new Bufflist(), new Coord(95, 65));
 	portrait = add(new Avaview(Avaview.dasz, plid, "plavacam"), new Coord(10, 10));
 	add(new Cal(), new Coord(sz.x/2, 10));
-	opts = add(new OptWnd());
+	opts = add(new OptWnd(ui));
 	opts.hide();
 	zerg = add(new Zergwnd(), new Coord(187, 50));
 	zerg.hide();

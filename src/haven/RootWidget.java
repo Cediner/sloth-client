@@ -36,13 +36,14 @@ public class RootWidget extends ConsoleHost {
     public Profile guprof, grprof, ggprof;
     private char last_gk;
     private long last_gk_time;
+
+    public KeyBinds kbs = new KeyBinds();
 	
     public RootWidget(UI ui, Coord sz) {
 	super(ui, new Coord(0, 0), sz);
 	setfocusctl(true);
 	hasfocus = true;
 	cursor = defcurs.indir();
-	add(new KeyBinds());
     }
 
     @Override
@@ -52,7 +53,9 @@ public class RootWidget extends ConsoleHost {
 
     public boolean globtype(char key, KeyEvent ev) {
 	if(!super.globtype(key, ev)) {
-	    if(key != 0 && (last_gk != key || (System.currentTimeMillis() - last_gk_time) >= 500)) {
+	    if(kbs.globtype(key, ev, ui)) {
+	        return true;
+	    } else if(key != 0 && (last_gk != key || (System.currentTimeMillis() - last_gk_time) >= 500)) {
 		wdgmsg("gk", (int)key);
 		last_gk = key;
 		last_gk_time = System.currentTimeMillis();

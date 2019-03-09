@@ -224,6 +224,16 @@ public class OptWnd extends Window {
 	container.pack();
 	return container;
     }
+    private Widget KeyBindEditWithLabel(final String text, final IndirSetting<String> keybind) {
+	final Widget container = new Widget();
+	final Label lbl = new Label(text);
+	final KeyBindEdit kbe = new KeyBindEdit(keybind);
+	final int height = Math.max(lbl.sz.y, kbe.sz.y) / 2;
+	container.add(lbl, new Coord(0, height - lbl.sz.y/2));
+	container.add(kbe, new Coord(200-kbe.sz.x, height - kbe.sz.y/2));
+	container.pack();
+	return container;
+    }
 
     private void setcam(final String cam) {
 	if(ui.gui != null) {
@@ -231,7 +241,7 @@ public class OptWnd extends Window {
 	}
     }
 
-    private OptWnd(boolean gopts) {
+    private OptWnd(boolean gopts, final UI ui) {
 	super(Coord.z, "Options", "Options",true);
 	main = add(new Panel());
 	video = add(new VideoPanel(main));
@@ -239,6 +249,7 @@ public class OptWnd extends Window {
 	final Panel gameplay = add(new Panel());
 	final Panel camera = add(new Panel());
 	final Panel uip = add(new Panel());
+	final Panel kbp = add(new Panel());
 	final int spacer = 5;
 	int y;
 
@@ -247,6 +258,7 @@ public class OptWnd extends Window {
 	main.add(new PButton(200, "Gameplay settings", 'g', gameplay), new Coord(0, 60));
 	main.add(new PButton(200, "UI settings", 'u', uip), new Coord(0, 90));
 	main.add(new PButton(200, "Camera settings", 'c', camera), new Coord(0, 120));
+	main.add(new PButton(200, "Keybind settings", 'k', kbp), new Coord(0, 150));
 	if(gopts) {
 	    main.add(new Button(200, "Switch character") {
 		    public void click() {
@@ -450,11 +462,29 @@ public class OptWnd extends Window {
 	    uip.pack();
 	}
 
+	{//Keybind settings
+	    final Coord c = new Coord(0, 0);
+	    final Grouping binds = new LinearGrouping("Keybinds", spacer);
+	    {//Key Binds
+	        //TODO: finish, make a new KeyBindEdit widget, takes lbl + indirsetting. should have a black box
+		//      displaying current keybind and when clicked allows you to change it if valid
+		binds.add(new Img(RichText.render("Click on the black box to start editing. Right click to cancel or Enter to confirm. If your choice shows up Red then it is invalid and you need to cancel.", 200).tex()));
+		for (final KeyBinds.KeyBind kb : ui.root.kbs.keybinds) {
+		    binds.add(KeyBindEditWithLabel(kb.name, kb.keybind));
+		}
+		binds.pack();
+	    }
+
+	    c.y += kbp.add(binds, c.copy()).sz.y + spacer;
+	    kbp.add(new PButton(200, "Back", 27, main), c.copy());
+	    kbp.pack();
+	}
+
 	chpanel(main);
     }
 
-    OptWnd() {
-	this(true);
+    OptWnd(final UI ui) {
+	this(true, ui);
     }
 
     public void wdgmsg(Widget sender, String msg, Object... args) {
