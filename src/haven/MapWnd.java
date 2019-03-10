@@ -27,7 +27,6 @@
 package haven;
 
 import java.awt.*;
-import java.lang.annotation.Target;
 import java.util.*;
 import java.awt.event.KeyEvent;
 import haven.MapFile.Marker;
@@ -163,6 +162,11 @@ public class MapWnd extends Window {
 		} catch (Loading l) {
 		    //ignore
 		}
+	    } else if(button == 3 && curloc != null) {
+		final Coord tc = c.sub(sz.div(2)).mul(1 << dlvl()).add(curloc.tc);
+		final Coord gc = tc.div(cmaps);
+	        curloc.seg.invalidate(gc, file);
+	        return true;
 	    }
 	    return(super.mousedown(c, button));
 	}
@@ -191,6 +195,40 @@ public class MapWnd extends Window {
 		//Fail silently
 	    }
 	    return ignore;
+	}
+
+	@Override
+	public Object tooltip(Coord c, Widget prev) {
+	    if(DefSettings.SHOWHOVERTOOLTIPS.get()) {
+		try {
+		    final Location loc = resolve(player);
+		    if (loc != null) {
+			final Gob g = gobat(loc, c);
+			if(g != null) {
+			    final Optional<String> res = g.resname();
+			    if(res.isPresent())
+			        return res.get();
+			}
+		    }
+
+
+		    if(curloc != null) {
+			final Coord tc = c.sub(sz.div(2)).mul(1 << dlvl()).add(curloc.tc);
+			final Coord gc = tc.div(cmaps);
+			try {
+			    return tc + "\n" + gc + "\n" + curloc.seg.gridid(gc) + " [" + curloc.seg.gridseq(gc) + "]";
+			} catch (Exception e) {
+			    //ignore
+			}
+		    }
+		    return super.tooltip(c, prev);
+		} catch (Loading l) {
+		    //ignore
+		    return super.tooltip(c, prev);
+		}
+	    } else {
+		return super.tooltip(c, prev);
+	    }
 	}
 
 	/**

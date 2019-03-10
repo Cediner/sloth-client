@@ -1940,9 +1940,10 @@ public class MapView extends PView implements DTarget, Console.Directory {
 		} else {
 		    try {
 		        final int tile_id = ui.sess.glob.map.gettile_safe(mc.div(MCache.tilesz).floor());
+		        final MCache.Grid grid = ui.sess.glob.map.getgrid(mc.floor(tilesz).div(MCache.cmaps));
 			final Resource res = ui.sess.glob.map.tilesetr(tile_id);
 			final String name = ui.sess.glob.map.tiler(tile_id).getClass().getSimpleName();
-			updatett("Tile: " + res.name + "[" + tile_id +"] of type " + name + "\n" + mc);
+			updatett("Tile: " + res.name + "[" + tile_id +"] of type " + name + "\n" + mc + " ["+grid.id+"]");
 		    } catch(Exception e) {
 		        lasttt = "";
 			tt = null;
@@ -1951,9 +1952,10 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    } else {
 		try {
 		    final int tile_id = ui.sess.glob.map.gettile_safe(mc.div(MCache.tilesz).floor());
+		    final MCache.Grid grid = ui.sess.glob.map.getgrid(mc.floor(tilesz).div(MCache.cmaps));
 		    final Resource res = ui.sess.glob.map.tilesetr(tile_id);
 		    final String name = ui.sess.glob.map.tiler(tile_id).getClass().getSimpleName();
-		    updatett("Tile: " + res.name + "[" + tile_id +"] of type " + name + "\n" + mc);
+		    updatett("Tile: " + res.name + "[" + tile_id +"] of type " + name + "\n" + mc + " ["+grid.id+"]");
 		} catch(Exception e) {
 		    lasttt = "";
 		    tt = null;

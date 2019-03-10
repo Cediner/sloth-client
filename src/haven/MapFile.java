@@ -769,6 +769,10 @@ public class MapFile {
 	    }
 	}
 
+	public void remove() {
+	    useq = -2;
+	}
+
 	public static Grid load(MapFile file, long id) {
 	    InputStream fp;
 	    try {
@@ -1182,6 +1186,27 @@ public class MapFile {
 	}
 	public Indir<Grid> grid(long id) {return(grid0(id));}
 
+	public long gridid(Coord gc) {
+	    return map.get(gc);
+	}
+
+	public int gridseq(Coord gc) {
+	    if(map.containsKey(gc)) {
+	        return cache.get(map.get(gc)).loaded.useq;
+	    } else {
+	        return -10;
+	    }
+	}
+
+	public void invalidate(final Coord gc, final MapFile file) {
+	    if(map.containsKey(gc)) {
+	        final long id = map.get(gc);
+	        final Grid grid = cache.get(id).loaded;
+	        grid.useq = -2;
+	        grid.save(file);
+	    }
+	}
+
 	private class ByCoord implements Indir<Grid> {
 	    final Coord sc;
 	    Cached cur;
@@ -1290,8 +1315,11 @@ public class MapFile {
 		    long storedid = z.int64();
 		    if(storedid != id)
 			throw(new Message.FormatError(String.format("Segment ID mismatch: expected %x, got %x", id, storedid)));
-		    for(int i = 0, no = z.int32(); i < no; i++)
-			seg.map.put(z.coord(), z.int64());
+		    for(int i = 0, no = z.int32(); i < no; i++) {
+		        final Coord sc = z.coord();
+		        final long gid = z.int64();
+			seg.map.put(sc, gid);
+		    }
 		    return(seg);
 		} else {
 		    throw(new Message.FormatError("Unknown segment data version: " + ver));
