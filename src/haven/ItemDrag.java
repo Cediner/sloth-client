@@ -26,6 +26,9 @@
 
 package haven;
 
+import haven.resutil.WaterTile;
+import haven.sloth.DefSettings;
+
 /**
  * This is specifically the item you're holding on your mouse
  */
@@ -56,6 +59,17 @@ public class ItemDrag extends WItem {
 
     public boolean dropon(Widget w, Coord c) {
 	if(w instanceof DTarget) {
+	    if(DefSettings.WATERDROPITEMCTRL.get()) {
+		if (w instanceof MapView) {
+		    final Gob pl = ui.sess.glob.oc.getgob(ui.gui.map.plgob);
+		    if (pl != null) {
+			if (ui.sess.glob.map.tiler(ui.sess.glob.map.gettile_safe(new Coord2d(pl.getc()).floor(MCache.tilesz))) instanceof WaterTile && !ui.modctrl) {
+			    return false;
+			}
+		    }
+		}
+	    }
+
 	    if(((DTarget)w).drop(c, c.add(doff.inv())))
 		return(true);
 	}
@@ -94,14 +108,6 @@ public class ItemDrag extends WItem {
             return true;
 	}
 
-        /* Loftars way of walking around with items on mouse
-	if(ui.modctrl) {
-	    GameUI gui = getparent(GameUI.class);
-	    if((gui != null) && (gui.map != null)) {
-		ui.modctrl = false;
-		return(gui.map.mousedown(gui.map.rootxlate(c.add(rootpos())), button));
-	    }
-	} */
 	if(!locked()) {
 	    if (button == 1) {
 		dropon(parent, c.add(this.c));

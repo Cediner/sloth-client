@@ -2,6 +2,8 @@
     - Small fix to window drawing
     - Ability to delete loftar map grids in case you have screwed up ones. Alt + Right click will delete it. Go out of
     distance and then back in to make it update. Zoom maps won't update right away.
+    - Added in option to drop items while over water only when holding ctrl. It can be toggled under Options -> Gameplay.
+    By default it's on
 
 3/9/19
     - Keybinds now include all the hotbars and the fight bars

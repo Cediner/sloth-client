@@ -384,6 +384,7 @@ public class OptWnd extends Window {
 		misc.add(new IndirCheckBox("Show Hover Tooltips", SHOWHOVERTOOLTIPS));
 		misc.add(new IndirCheckBox("Turn on Tracking on login", AUTOTRACK));
 		misc.add(new IndirCheckBox("Turn on Criminal Acts on login", AUTOCRIME));
+		misc.add(new IndirCheckBox("Hold ctrl to drop over water", WATERDROPITEMCTRL));
 		misc.pack();
 	    }
 

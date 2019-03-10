@@ -99,6 +99,8 @@ public class DefSettings {
     public static final IndirSetting<Boolean> AUTOCRIME = new IndirSetting<>(global, "gameplay.auto-turn-on-crime");          //[Bool] Toggle turning on criminal acts on login
     public static final IndirSetting<Boolean> SHOWHALO = new IndirSetting<>(global, "gameplay.show-gob-halo");                //[Bool] Toggle halo on human gobs
     public static final IndirSetting<Boolean> SHOWHALOONHEARTH = new IndirSetting<>(global, "gameplay.show-gob-halo-hearth"); //[Bool] Toggle halo on human gobs
+    public static final IndirSetting<Boolean> WATERDROPITEMCTRL = new IndirSetting<>(global, "gameplay.drop-item-on-water-with-ctrl"); //[Bool] Toggle the need to hold ctrl to drop items while over water
+
     public static final IndirSetting<Boolean> SHOWFKBELT =  new IndirSetting<>(global, "belt.fk.show");                       //[Bool] Toggle F key belt
     public static final IndirSetting<Integer> FKBELTPAGE =  new IndirSetting<>(global, "belt.fk.page");                       //[Int] Page F key belt is on
     public static final IndirSetting<String> FKBELTSTYLE =  new IndirSetting<>(global, "belt.fk.style");                      //[String] F key belt style
@@ -222,6 +224,7 @@ public class DefSettings {
 	SHOWMMMARKERS.ensure(true);
 	SHOWHALO.ensure(false);
 	SHOWHALOONHEARTH.ensure(true);
+	WATERDROPITEMCTRL.ensure(true);
 	//Belts
 	SHOWFKBELT.ensure(false);
 	FKBELTPAGE.ensure(0);
