@@ -4,6 +4,10 @@
     distance and then back in to make it update. Zoom maps won't update right away.
     - Added in option to drop items while over water only when holding ctrl. It can be toggled under Options -> Gameplay.
     By default it's on
+    - Added keybind for picking up the closest forage item. This also include small animals when you have the option
+    toggled (on by default, Options -> Gameplay). Small animals include: cavemoth, rat, centipedes, hedgehogs, jellyfish,
+    squirrel, snail, irrbloss, and bats
+
 
 3/9/19
     - Keybinds now include all the hotbars and the fight bars

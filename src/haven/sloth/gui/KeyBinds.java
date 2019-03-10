@@ -3,10 +3,12 @@ package haven.sloth.gui;
 import haven.*;
 import haven.sloth.DefSettings;
 import haven.sloth.IndirSetting;
+import haven.sloth.io.ForagableData;
 
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Invisible widget used for capturing keys and doing events
@@ -168,6 +170,42 @@ public class KeyBinds {
 	    } else {
 	        return false;
 	    }
+	}));
+	add(new KeyBind("Forage closest item", new IndirSetting<>(DefSettings.global, "keybind.forage-closest-item"), "Q", ui -> {
+	   if(ui.gui != null && ui.gui.map != null) {
+	       final Gob pl = ui.sess.glob.oc.getgob(ui.gui.map.plgob);
+	       if(pl != null) {
+	           final Coord3f plc = pl.getc();
+		   Gob target = null;
+		   float dist = Float.MAX_VALUE;
+		   synchronized (ui.sess.glob.oc) {
+		       for (final Gob g : ui.sess.glob.oc) {
+			   final Optional<String> name = g.resname();
+			   if (name.isPresent() && ForagableData.isForagable(name.get())) {
+			       final float gdist = plc.dist(g.getc());
+			       if (target != null && gdist < dist) {
+			           target = g;
+			           dist = gdist;
+			       } else {
+				   target = g;
+				   dist = gdist;
+			       }
+			   }
+		       }
+		   }
+		   if (target != null) {
+		       final Coord tc = target.rc.floor(OCache.posres);
+		       ui.gui.map.wdgmsg("click", target.sc, tc, 3, 0, 0, (int) target.id, tc, 0, -1);
+		       return true;
+		   } else {
+		       return false;
+		   }
+	       } else {
+	           return false;
+	       }
+	   } else {
+	       return false;
+	   }
 	}));
 
 	//Fight moves binding

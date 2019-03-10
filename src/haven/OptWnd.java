@@ -365,6 +365,7 @@ public class OptWnd extends Window {
 		gobs.pack();
 	    }
 	    { //animals
+	        animals.add(new IndirCheckBox("Forage small animals with keybind", FORAGEANIMALS));
 	        animals.add(new IndirCheckBox("Show Dangerous Animal Radius", SHOWANIMALRADIUS));
 	        animals.add(new IndirCheckBox("Show Animal Paths", SHOWANIMALPATH));
 	        animals.add(ColorPreWithLabel("Animal path color: ", ANIMALPATHCOL));
