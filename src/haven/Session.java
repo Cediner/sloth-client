@@ -301,7 +301,11 @@ public class Session implements Resource.Resolver {
 		int resid = msg.uint16();
 		String resname = msg.string();
 		int resver = msg.uint16();
-		cachedres(resid).set(resname, resver);
+		try {
+		    cachedres(resid).set(resname, resver);
+		} catch(Exception e) {
+		    e.printStackTrace();
+		}
 	    } else if(msg.type == RMessage.RMSG_PARTY) {
 		glob.party.msg(msg);
 	    } else if(msg.type == RMessage.RMSG_SFX) {

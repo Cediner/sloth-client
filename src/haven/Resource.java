@@ -477,8 +477,10 @@ public class Resource implements Serializable {
 		    Queued cq = queued.get(name);
 		    if(cq != null) {
 			if(ver != -1) {
-			    if(ver < cq.ver) {
-				throw(new LoadException(String.format("Weird version number on %s (%d > %d)", cq.name, cq.ver, ver), null));
+			    if(ver < cq.ver) { //who cares, don't kill the client over this...
+				//throw(new LoadException(String.format("Weird version number on %s (%d > %d)", cq.name, cq.ver, ver), null));
+				cq.boostprio(prio);
+				return(cq);
 			    } else if(ver == cq.ver) {
 				cq.boostprio(prio);
 				return(cq);
