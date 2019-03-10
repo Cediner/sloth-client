@@ -165,7 +165,7 @@ public class MapWnd extends Window {
 	    } else if(button == 3 && curloc != null) {
 		final Coord tc = c.sub(sz.div(2)).mul(1 << dlvl()).add(curloc.tc);
 		final Coord gc = tc.div(cmaps);
-	        curloc.seg.invalidate(gc, file);
+	        curloc.seg.invalidate(gc);
 	        return true;
 	    }
 	    return(super.mousedown(c, button));

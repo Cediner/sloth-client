@@ -234,6 +234,7 @@ public class MapFile {
     private Thread processor = null;
     private final Collection<Pair<MCache, Collection<MCache.Grid>>> updqueue = new HashSet<>();
     private final Collection<Segment> dirty = new HashSet<>();
+    private final Collection<Pair<Long, GridInfo>> gidirty = new HashSet<>();
     private boolean gdirty = false;
     private class Processor extends HackThread {
 	Processor() {
@@ -253,6 +254,9 @@ public class MapFile {
 			} else if(!dirty.isEmpty()) {
 			    Segment seg = Utils.take(dirty);
 			    task = locked(() -> segments.put(seg.id, seg), lock.writeLock());
+			} else if (!gidirty.isEmpty()) {
+			    Pair<Long, GridInfo> pair = Utils.take(gidirty);
+			    task = locked(() -> gridinfo.put(pair.a,  pair.b), lock.writeLock());
 			} else if(gdirty) {
 			    task = locked(MapFile.this::save, lock.readLock());
 			    gdirty = false;
@@ -1198,12 +1202,15 @@ public class MapFile {
 	    }
 	}
 
-	public void invalidate(final Coord gc, final MapFile file) {
+	public void invalidate(final Coord gc) {
 	    if(map.containsKey(gc)) {
-	        final long id = map.get(gc);
-	        final Grid grid = cache.get(id).loaded;
-	        grid.useq = -2;
-	        grid.save(file);
+	        final long id = map.remove(gc);
+	        cache.remove(id);
+		synchronized(procmon) {
+		    dirty.add(this);
+		    gidirty.add(new Pair<>(id, new GridInfo(id, -1, gc)));
+		    process();
+		}
 	    }
 	}
 
@@ -1351,8 +1358,9 @@ public class MapFile {
 		ZMessage z = new ZMessage(out);
 		z.addint64(seg.id);
 		z.addint32(seg.map.size());
-		for(Map.Entry<Coord, Long> e : seg.map.entrySet())
+		for(Map.Entry<Coord, Long> e : seg.map.entrySet()) {
 		    z.addcoord(e.getKey()).addint64(e.getValue());
+		}
 		z.finish();
 	    }
 	    if(knownsegs.add(id))

@@ -204,16 +204,17 @@ public class Window extends MovableWidget implements DTarget {
 
     protected void drawframe(GOut g) {
 	g.chcolor(DefSettings.WNDCOL.get());
+	//draw background
+	g.rimagev(bgl, ctl, csz.y);
+	g.rimagev(bgr, ctl.add(csz.x-bgr.sz().x, 0), csz.y);
+	g.rimage(bg, ctl.add(bgl.sz().x, 0), csz.sub(bgl.sz().x + bgr.sz().x, 0));
+
+
         //corners
         g.image(cl, Coord.z);
         g.image(bl, new Coord(0, sz.y-bl.sz().y));
         g.image(br, sz.sub(br.sz()));
        	g.image(cr, new Coord(sz.x - cr.sz().x, 0));
-
-	//draw background
-	g.rimagev(bgl, ctl, csz.y);
-	g.rimagev(bgr, ctl.add(csz.x-bgr.sz().x, 0), csz.y);
-	g.rimage(bg, ctl.add(bgl.sz().x, 0), csz.sub(bgl.sz().x + bgr.sz().x, 0));
 
        	//horizontal and vertical tiling of the long parts
 	g.rimagev(lm, new Coord(0, cl.sz().y), sz.y - bl.sz().y - cl.sz().y);
