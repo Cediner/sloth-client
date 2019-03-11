@@ -1,5 +1,6 @@
 package haven.sloth.gui;
 
+import com.google.common.flogger.FluentLogger;
 import haven.*;
 import haven.sloth.DefSettings;
 import haven.sloth.IndirSetting;
@@ -15,6 +16,7 @@ import java.util.Optional;
  * Invisible widget used for capturing keys and doing events
  */
 public class KeyBinds {
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     @FunctionalInterface
     public interface Command {
         boolean run(final UI ui);
@@ -182,7 +184,7 @@ public class KeyBinds {
 		   synchronized (ui.sess.glob.oc) {
 		       for (final Gob g : ui.sess.glob.oc) {
 			   final Optional<String> name = g.resname();
-			   if (name.isPresent() && ForagableData.isForagable(name.get())) {
+			   if (name.isPresent() && ForagableData.isForagable(name.get(), g)) {
 			       final float gdist = plc.dist(g.getc());
 			       if (target != null && gdist < dist) {
 			           target = g;
@@ -227,7 +229,7 @@ public class KeyBinds {
 			    if (target != null && gdist < dist) {
 				target = g;
 				dist = gdist;
-			    } else {
+			    } else if(target == null) {
 				target = g;
 				dist = gdist;
 			    }

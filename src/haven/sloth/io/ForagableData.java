@@ -1,25 +1,12 @@
 package haven.sloth.io;
 
+import haven.Gob;
 import haven.sloth.DefSettings;
-
-import java.util.HashSet;
-import java.util.Set;
+import haven.sloth.gob.Type;
 
 public class ForagableData {
-    private static final Set<String> extras = new HashSet<>();
-    static {
-        extras.add("gfx/kritter/cavemoth/cavemoth");
-        extras.add("gfx/kritter/rat/rat");
-        extras.add("gfx/kritter/cavecentipede/cavecentipede");
-        extras.add("gfx/kritter/hedgehog/hedgehog");
-        extras.add("gfx/kritter/jellyfish/jellyfish");
-        extras.add("gfx/kritter/squirrel/squirrel");
-        extras.add("gfx/kritter/forestsnail/forestsnail");
-        extras.add("gfx/kritter/irrbloss/irrbloss");
-	extras.add("gfx/kritter/bat/bat");
-    }
-
-    public static boolean isForagable(final String name) {
-        return name.startsWith("gfx/terobjs/herbs/") || (DefSettings.FORAGEANIMALS.get() && extras.contains(name));
+    public static boolean isForagable(final String name, final Gob g) {
+        return name.startsWith("gfx/terobjs/herbs/") || (DefSettings.FORAGEANIMALS.get() && g.type == Type.SMALLANIMAL) ||
+                (name.equals("gfx/kritter/bat/bat") && g.isDead());
     }
 }

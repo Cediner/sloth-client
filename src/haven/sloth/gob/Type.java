@@ -10,6 +10,8 @@ public enum Type {
     PLANT,
     HUMAN,
     ANIMAL,
+    TAMEDANIMAL,
+    SMALLANIMAL,
     VEHICLE,
     TILE,
     SOUND,

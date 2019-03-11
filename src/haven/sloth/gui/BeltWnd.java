@@ -254,6 +254,7 @@ public class BeltWnd extends MovableWidget {
 	}));
         lock = add(new IButton("custom/belt/default/lock", "Lock belt", () -> {
             locked = !locked;
+            DefSettings.global.set("belt."+name+".locked", locked);
             BeltWnd.this.lock.hover = locked ? BeltWnd.this.on : BeltWnd.this.off;
             BeltWnd.this.lock.up = locked ? BeltWnd.this.off : BeltWnd.this.on;
 	}));

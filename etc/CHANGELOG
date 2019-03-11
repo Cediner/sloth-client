@@ -17,6 +17,9 @@
     - Added lock button to hotbars. When on it'll be light up yellowish and will prevent you from dragging buttons or
     right clicking them to clear it. You'll still be able to use them with keybinds or left click while your mouse is
     over it.
+    - More foragable small animals added when using the keybind to pick up the closest
+    - Fixed belt lock not saving
+    - Changed around what would be aggroable with the "Aggro animals closest to mouse". Horses are not included.
 
 
 3/9/19
