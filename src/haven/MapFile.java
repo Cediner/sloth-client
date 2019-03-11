@@ -99,6 +99,7 @@ public class MapFile {
 	try {
 	    fp = file.sfetch("index");
 	} catch(FileNotFoundException e) {
+	    file.markerids = new IDPool(0, Long.MAX_VALUE);
 	    return(file);
 	} catch(IOException e) {
 	    return(null);
