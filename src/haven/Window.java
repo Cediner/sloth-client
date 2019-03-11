@@ -115,6 +115,8 @@ public class Window extends MovableWidget implements DTarget {
     //close position, close size
     public Coord ctl, csz;
 
+    private boolean hidable = false, hidden;
+
     @RName("wnd")
     public static class $_ implements Factory {
 	public Widget create(UI ui, Object[] args) {
@@ -176,6 +178,11 @@ public class Window extends MovableWidget implements DTarget {
 	}
     }
 
+    public void makeHidable() {
+        hidable = true;
+        hidden = false;
+    }
+
     public void addBtn(final String res, final String tt, final Runnable action) {
         btns.add(add(new IButton(Theme.fullres(res), tt, action)));
     }
@@ -230,7 +237,9 @@ public class Window extends MovableWidget implements DTarget {
     }
 
     public void draw(GOut g) {
-	drawframe(g);
+        if(!hidden) {
+	    drawframe(g);
+	}
 	cdraw(g.reclip(atl, asz));
 	super.draw(g);
     }
@@ -344,6 +353,21 @@ public class Window extends MovableWidget implements DTarget {
     }
 
     public void mousemove(Coord c) {
+	if (hidable) {
+	    if (c.isect(Coord.z, sz) || moving()) {
+		hidden = false;
+		cbtn.visible = true;
+		if (lbtn != null)
+		    lbtn.visible = true;
+		btns.forEach(btn -> btn.visible = true);
+	    } else {
+		hidden = true;
+		cbtn.visible = false;
+		if (lbtn != null)
+		    lbtn.visible = false;
+		btns.forEach(btn -> btn.visible = false);
+	    }
+	}
 	super.mousemove(c);
     }
 
