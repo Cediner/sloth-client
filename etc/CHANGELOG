@@ -7,6 +7,9 @@
     - Added keybind for picking up the closest forage item. This also include small animals when you have the option
     toggled (on by default, Options -> Gameplay). Small animals include: cavemoth, rat, centipedes, hedgehogs, jellyfish,
     squirrel, snail, irrbloss, and bats
+    - Added keybind for promixity aggroing or animals and players. C-F and C-D by default. The aggroing of players only
+    works if they are unkinned or a bad kin color.
+    - Added the speed cycle keybind as C-R like default
 
 
 3/9/19

@@ -85,6 +85,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     private ActWnd paginasearch;
     private TimersWnd timers;
     public MapPointer pointer;
+    public Speedget speed;
     
     @RName("gameui")
     public static class $_ implements Factory {

@@ -20,10 +20,6 @@ public class ForagableData {
     }
 
     public static boolean isForagable(final String name) {
-        if(name.startsWith("gfx/terobjs/herbs/")) {
-            return true;
-	} else {
-            return DefSettings.FORAGEANIMALS.get() && extras.contains(name);
-	}
+        return name.startsWith("gfx/terobjs/herbs/") || (DefSettings.FORAGEANIMALS.get() && extras.contains(name));
     }
 }

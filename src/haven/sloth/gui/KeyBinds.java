@@ -3,6 +3,7 @@ package haven.sloth.gui;
 import haven.*;
 import haven.sloth.DefSettings;
 import haven.sloth.IndirSetting;
+import haven.sloth.gob.Type;
 import haven.sloth.io.ForagableData;
 
 import java.awt.event.KeyEvent;
@@ -186,7 +187,7 @@ public class KeyBinds {
 			       if (target != null && gdist < dist) {
 			           target = g;
 			           dist = gdist;
-			       } else {
+			       } else if(target == null) {
 				   target = g;
 				   dist = gdist;
 			       }
@@ -206,6 +207,77 @@ public class KeyBinds {
 	   } else {
 	       return false;
 	   }
+	}));
+	add(new KeyBind("Cycle character speed", new IndirSetting<>(DefSettings.global, "keybind.cycle-char-speed"), "C-R", ui -> {
+	    if(ui.gui != null && ui.gui.speed != null) {
+	        ui.gui.speed.cyclespeed();
+	        return true;
+	    } else {
+	        return false;
+	    }
+	}));
+	add(new KeyBind("Aggro animal nearest to mouse", new IndirSetting<>(DefSettings.global, "keybind.aggro-nearest-animal-to-mouse"), "C-F", ui -> {
+	    if(ui.gui != null && ui.gui.map != null && ui.gui.menu != null) {
+		Gob target = null;
+		double dist = Float.MAX_VALUE;
+		synchronized (ui.sess.glob.oc) {
+		    for (final Gob g : ui.sess.glob.oc) {
+			if(g.type == Type.ANIMAL && g.sc != null && !g.isDead()) {
+			    final double gdist = ui.mc.dist(g.sc);
+			    if (target != null && gdist < dist) {
+				target = g;
+				dist = gdist;
+			    } else {
+				target = g;
+				dist = gdist;
+			    }
+			}
+		    }
+		}
+		if (target != null) {
+		    final Coord tc = target.rc.floor(OCache.posres);
+		    ui.gui.menu.wdgmsg("act", (Object[])new Object[] { "aggro" });
+		    ui.gui.map.wdgmsg("click", target.sc, tc, 1, 0, 0, (int) target.id, tc, 0, -1);
+		    return true;
+		} else {
+		    return false;
+		}
+	    } else {
+		return false;
+	    }
+	}));
+	add(new KeyBind("Aggro player nearest to mouse", new IndirSetting<>(DefSettings.global, "keybind.aggro-nearest-player-to-mouse"), "C-D", ui -> {
+	    if(ui.gui != null && ui.gui.map != null && ui.gui.menu != null) {
+		Gob target = null;
+		double dist = Float.MAX_VALUE;
+		synchronized (ui.sess.glob.oc) {
+		    for (final Gob g : ui.sess.glob.oc) {
+			if(g.id != ui.gui.map.plgob && g.type == Type.HUMAN && g.sc != null && !g.isDead()) {
+			    final KinInfo kin = g.getattr(KinInfo.class);
+			    if(kin == null || kin.group == DefSettings.BADKIN.get()) {
+				final double gdist = ui.mc.dist(g.sc);
+				if (target != null && gdist < dist) {
+				    target = g;
+				    dist = gdist;
+				} else if(target == null) {
+				    target = g;
+				    dist = gdist;
+				}
+			    }
+			}
+		    }
+		}
+		if (target != null) {
+		    final Coord tc = target.rc.floor(OCache.posres);
+		    ui.gui.menu.wdgmsg("act", (Object[])new Object[] { "aggro" });
+		    ui.gui.map.wdgmsg("click", target.sc, tc, 1, 0, 0, (int) target.id, tc, 0, -1);
+		    return true;
+		} else {
+		    return false;
+		}
+	    } else {
+		return false;
+	    }
 	}));
 
 	//Fight moves binding

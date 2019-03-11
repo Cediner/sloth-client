@@ -1,7 +1,4 @@
 TODO
-    - Ard
-        - Aggro players in proximity to the mouse cursor
-        - Aggro animals in proximity to the mouse cursor
     - Add more keybinds for switching through hotbar pages
         - Ie: Alt+1 = page 1 of number bar, Alt+2 = page 2, etc
     - Move away from GL 1.x calls for UI

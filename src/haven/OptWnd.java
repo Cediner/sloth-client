@@ -238,7 +238,7 @@ public class OptWnd extends Window {
 	final KeyBindEdit kbe = new KeyBindEdit(keybind);
 	final int height = Math.max(lbl.sz.y, kbe.sz.y) / 2;
 	container.add(lbl, new Coord(0, height - lbl.sz.y/2));
-	container.add(kbe, new Coord(200-kbe.sz.x, height - kbe.sz.y/2));
+	container.add(kbe, new Coord(lbl.sz.x+5, height - kbe.sz.y/2));
 	container.pack();
 	return container;
     }
