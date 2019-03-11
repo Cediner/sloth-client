@@ -1,4 +1,5 @@
 TODO
+    - Fix GLSettings
     - Move away from GL 1.x calls for UI
     - Marker list, can't scroll out of range of current selected item
     - Loftar map
@@ -20,7 +21,6 @@ TODO
     - Scripting
     - Inventories
         - Transfer all of one kind (Shift + Right click), being lock aware
-    - Fix "Show Animations" to actually stop animations
     - Allow targetting of objs and the TargetSprite
     - Queued movement
         - Show path for this

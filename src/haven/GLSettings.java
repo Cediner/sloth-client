@@ -124,6 +124,7 @@ public class GLSettings implements java.io.Serializable {
 	}
     });              //[Bool] Toggle alpha coverage for multisampling
 
+    //TODO: Fix this up. Loftar's settings will initialize before the ensure statements because of how this works. Will break fresh client users
     public GLSettings(GLConfig cfg) {
 	this.cfg = cfg;
 	//GLSettings

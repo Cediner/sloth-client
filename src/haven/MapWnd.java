@@ -79,6 +79,7 @@ public class MapWnd extends Window {
 	    }, Coord.z);
 	toolbar.pack();
 
+	makeHidable();
 	addBtn("buttons/square/view", "Toggle view range", () -> DefSettings.MMSHOWVIEW.set(!DefSettings.MMSHOWVIEW.get()));
 	addBtn("buttons/square/grid", "Toggle grid on minimap", () -> DefSettings.MMSHOWGRID.set(!DefSettings.MMSHOWGRID.get()));
 	addBtn("buttons/square/markers", "Open Markers list", () -> ui.gui.toggleMarkers());

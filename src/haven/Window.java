@@ -29,6 +29,7 @@ package haven;
 import haven.sloth.DefSettings;
 import haven.sloth.Theme;
 import haven.sloth.gui.MovableWidget;
+import haven.sloth.io.HiddenWndData;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
@@ -104,6 +105,7 @@ public class Window extends MovableWidget implements DTarget {
     public final Coord mrgn;
     //close button
     public final IButton cbtn, lbtn;
+    private IButton hbtn;
     private final BufferedImage on, off;
     public final ArrayList<IButton> btns = new ArrayList<>();
 
@@ -179,12 +181,33 @@ public class Window extends MovableWidget implements DTarget {
     }
 
     public void makeHidable() {
-        hidable = true;
-        hidden = false;
+        hbtn = addBtn("buttons/hide", null, this::toggleHide);
+        if(cap != null) {
+	    hidable = HiddenWndData.shouldHide(cap.text);
+	    hidden = false;
+	    if(hidable) {
+		final BufferedImage tmp = hbtn.down;
+		hbtn.down = hbtn.up;
+		hbtn.up = tmp;
+	    }
+	}
     }
 
-    public void addBtn(final String res, final String tt, final Runnable action) {
-        btns.add(add(new IButton(Theme.fullres(res), tt, action)));
+    public void toggleHide() {
+	hidable = !hidable;
+	hidden = false;
+	final BufferedImage tmp = hbtn.down;
+	hbtn.down = hbtn.up;
+	hbtn.up = tmp;
+	if(cap != null) {
+	    HiddenWndData.saveHide(cap.text, hidable);
+	}
+    }
+
+    public IButton addBtn(final String res, final String tt, final Runnable action) {
+        final IButton btn = add(new IButton(Theme.fullres(res), tt, action));
+        btns.add(btn);
+        return btn;
     }
 
     @Override

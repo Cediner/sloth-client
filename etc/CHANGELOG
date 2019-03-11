@@ -21,6 +21,7 @@
     - Fixed belt lock not saving
     - Changed around what would be aggroable with the "Aggro animals closest to mouse". Horses are not included.
     - Quest window now hides its frame unless you mouse over it
+    - Minimap window also has the ability to hide the frame.
 
 
 3/9/19
