@@ -13,6 +13,7 @@
     - Added keybinds for switching between hotbar pages. By default only the number hotbar is defined as Alt-1 through
     Alt-5. The rest are left undefined.
     - You can now undefine keybinds if you don't want them by ctrl+right clicking their black box in the Keybind settings.
+    - Alt + Right click now doesn't drop items that were locked..
 
 
 3/9/19

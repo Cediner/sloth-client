@@ -42,6 +42,7 @@ public class Settings {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     private static final Pattern
     	kvpair = Pattern.compile("^([a-zA-Z.\\-_0-9]+)\\s*=\\s*(.+)$"),
+    	ekvpair = Pattern.compile("^([a-zA-Z.\\-_0-9]+)\\s*=\\s*"),
     	bool = Pattern.compile("^((true)|(false))$"),
     	intval = Pattern.compile("^(-?[0-9]+)$"),
     	dval = Pattern.compile("^(-?[0-9]*\\.[0-9]+)$"),
@@ -101,10 +102,10 @@ public class Settings {
 			} else {
 			    find = kvpair.matcher(ln);
 			    if (find.find()) {
-				final String key = section+"."+find.group(1).trim();
+				final String key = section + "." + find.group(1).trim();
 				final String val = find.group(2).trim();
 				logger.atFine().log("Found %s = %s", key, val);
-				if(!section.equals("keybind")) {
+				if (!section.equals("keybind")) {
 				    for (final Pattern pat : parsers.keySet()) {
 					find = pat.matcher(val);
 					if (find.find()) {
@@ -119,7 +120,12 @@ public class Settings {
 				    settings.put(key, val);
 				}
 			    } else {
-				logger.atInfo().log("[%s] Unknown setting line: %s", filename, ln);
+				find = ekvpair.matcher(ln);
+				if (find.matches()) {
+				    settings.put(section + "." + find.group(1).trim(), "");
+				} else {
+				    logger.atInfo().log("[%s] Unknown setting line: %s", filename, ln);
+				}
 			    }
 			}
 		    }

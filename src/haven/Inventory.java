@@ -99,10 +99,10 @@ public class Inventory extends Widget implements DTarget {
 
     void dropAllAlike(final String nm, final Coord c) {
         final ArrayList<GItem> drop = new ArrayList<>();
-        for(final GItem gi : wmap.keySet()) {
-            gi.name().ifPresent(gnm -> {
-                if(gnm.equals(nm))
-                    drop.add(gi);
+        for(final WItem gi : wmap.values()) {
+            gi.item.name().ifPresent(gnm -> {
+                if(gnm.equals(nm) && !gi.locked())
+                    drop.add(gi.item);
 	    });
 	}
         for(final GItem gi : drop) {
