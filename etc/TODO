@@ -1,6 +1,4 @@
 TODO
-    - Add more keybinds for switching through hotbar pages
-        - Ie: Alt+1 = page 1 of number bar, Alt+2 = page 2, etc
     - Move away from GL 1.x calls for UI
     - Marker list, can't scroll out of range of current selected item
     - Loftar map

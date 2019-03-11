@@ -300,12 +300,16 @@ public class KeyBinds {
     }
 
     boolean validBinding(final String binding) {
-        for(final KeyBind kb : keybinds) {
-            if(!kb.keybind.get().equals(binding))
-                continue;
-	    return false;
+        if(binding.equals(""))
+            return true;
+        else {
+	    for (final KeyBind kb : keybinds) {
+		if (!kb.keybind.get().equals(binding))
+		    continue;
+		return false;
+	    }
+	    return true;
 	}
-        return true;
     }
 
     public boolean globtype(KeyEvent ev, final UI ui) {
@@ -327,9 +331,11 @@ public class KeyBinds {
 		keyseq.append(KeyEvent.getKeyText(ev.getKeyCode()));
 		final String seq = keyseq.toString();
 
-		for(final KeyBind kb : keybinds) {
-		    if(kb.keybind.get().equals(seq) && kb.cmd.run(ui)) {
-			return true;
+		if(!seq.equals("")) {
+		    for (final KeyBind kb : keybinds) {
+			if (kb.keybind.get().equals(seq) && kb.cmd.run(ui)) {
+			    return true;
+			}
 		    }
 		}
 		return false;

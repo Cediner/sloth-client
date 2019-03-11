@@ -34,6 +34,8 @@ public class KeyBindEdit extends Widget {
 	    state = State.NOTEDITING;
             kgrab.remove();
             kgrab = null;
+	} else if(button == 3 && ui.modctrl) {
+            keybind.set("");
 	}
         return true;
     }

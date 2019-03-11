@@ -299,6 +299,21 @@ public class BeltWnd extends MovableWidget {
 		}
 	    }));
 	}
+	for(int i = 1; i <= pagecount; ++i) {
+	    final int page = i-1;
+	    ui.root.kbs.add(new KeyBinds.KeyBind(String.format("Hotbar %s - Page %d", name, i),
+		    new IndirSetting<>(DefSettings.global, String.format("keybind.hotbar-%s-page-%d", name, i)),
+		    name.equals("n") ? "M-"+i : "",
+		    ui ->  {
+	        	if(visible) {
+			    this.page = page;
+			    upd_page();
+			    return true;
+			} else {
+	        	    return false;
+			}
+		    }));
+	}
     }
 
     @Override

@@ -10,6 +10,9 @@
     - Added keybind for promixity aggroing or animals and players. C-F and C-D by default. The aggroing of players only
     works if they are unkinned or a bad kin color.
     - Added the speed cycle keybind as C-R like default
+    - Added keybinds for switching between hotbar pages. By default only the number hotbar is defined as Alt-1 through
+    Alt-5. The rest are left undefined.
+    - You can now undefine keybinds if you don't want them by ctrl+right clicking their black box in the Keybind settings.
 
 
 3/9/19
