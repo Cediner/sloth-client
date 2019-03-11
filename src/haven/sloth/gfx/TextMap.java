@@ -37,10 +37,19 @@ public class TextMap {
         return c;
     }
 
+    public Coord sizes(final String text) {
+	final Coord c = new Coord(0, height);
+	for(final char chr : text.toCharArray()) {
+	    final TextureAtlas.Img img = ch(chr, true);
+	    c.x += img.sz.x;
+	}
+	return c;
+    }
+
     private void aprint(GOut g, Coord c, double ax, double ay, boolean stroke, String text) {
 	Coord lc = new Coord(c);
 	if(ax > 0)
-	    lc.x -= size(text).x * ax;
+	    lc.x -= (!stroke ? size(text).x : sizes(text).x) * ax;
 	if(ay > 0)
 	    lc.y -= height * ay;
 	for(int i = 0; i < text.length(); i++) {

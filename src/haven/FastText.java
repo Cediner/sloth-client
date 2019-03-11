@@ -42,6 +42,8 @@ public class FastText {
     }
 
     public static Coord size(String text) { return textmap.size(text); }
+
+    public static Coord sizes(String text) { return textmap.sizes(text); }
     
     public static int textw(String text) {
         return textmap.size(text).x;

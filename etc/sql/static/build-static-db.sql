@@ -101,6 +101,7 @@ INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/dragonfly/drago
 INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/wolverine/wolverine', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
 INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/adder/adder', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
 INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/beaver/beaver', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/swan/swan', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
 -- vehicles
 -- tiles
 INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/beach', (SELECT type_id FROM type WHERE name_key = 'TILE'));

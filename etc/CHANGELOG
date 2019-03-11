@@ -14,6 +14,9 @@
     Alt-5. The rest are left undefined.
     - You can now undefine keybinds if you don't want them by ctrl+right clicking their black box in the Keybind settings.
     - Alt + Right click now doesn't drop items that were locked..
+    - Added lock button to hotbars. When on it'll be light up yellowish and will prevent you from dragging buttons or
+    right clicking them to clear it. You'll still be able to use them with keybinds or left click while your mouse is
+    over it.
 
 
 3/9/19
