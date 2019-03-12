@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static haven.OCache.posres;
+
 /**
  * Invisible widget used for capturing keys and doing events
  */
@@ -240,6 +242,7 @@ public class KeyBinds {
 		    final Coord tc = target.rc.floor(OCache.posres);
 		    ui.gui.menu.wdgmsg("act", (Object[])new Object[] { "aggro" });
 		    ui.gui.map.wdgmsg("click", target.sc, tc, 1, 0, 0, (int) target.id, tc, 0, -1);
+		    ui.gui.map.wdgmsg("click", target.sc, tc, 3, 0);
 		    return true;
 		} else {
 		    return false;
@@ -273,6 +276,7 @@ public class KeyBinds {
 		    final Coord tc = target.rc.floor(OCache.posres);
 		    ui.gui.menu.wdgmsg("act", (Object[])new Object[] { "aggro" });
 		    ui.gui.map.wdgmsg("click", target.sc, tc, 1, 0, 0, (int) target.id, tc, 0, -1);
+		    ui.gui.map.wdgmsg("click", target.sc, tc, 3, 0);
 		    return true;
 		} else {
 		    return false;
