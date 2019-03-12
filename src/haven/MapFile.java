@@ -423,7 +423,8 @@ public class MapFile {
 		    final int version = fp.uint8();
 		    if(version == 1 || version == 2) {
 			Color color = fp.color();
-			Resource.Spec res = new Resource.Spec(Resource.remote(), fp.string(), fp.uint16());
+			final String resnm = fp.string();
+			Resource.Spec res = new Resource.Spec(Resource.remote(), resnm.equals("gfx/hud/mmap/cave") ? "custom/mm/icons/cave" : resnm, fp.uint16());
 			final long id = fp.int64();
 			final byte ltype = version == 2 ? (byte)fp.uint8() : CAVE;
 			final long lid = fp.int64();
