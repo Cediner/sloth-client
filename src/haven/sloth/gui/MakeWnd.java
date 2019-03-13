@@ -140,7 +140,13 @@ public class MakeWnd extends Window implements ObservableListener<MenuGrid.Pagin
 		//Ignore
 	    }
 	}
-	return pagina.res.get().name.contains("paginae/craft/");
+	try {
+	    return pagina.res().name.contains("paginae/craft/");
+	} catch (Exception e) {
+	    //Ignore it for now.
+	    //TODO: maybe fix this later.
+	    return false;
+	}
     }
 
     private boolean isIncluded(MenuGrid.Pagina pagina) {
