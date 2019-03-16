@@ -299,7 +299,7 @@ public class HavenPanel extends GLCanvas implements Runnable, Console.Directory 
 	    ui.draw(g);
 	}
 
-	if(Config.dbtext) {
+	if(DefSettings.DEBUG.get()) {
 	    int y = h - 165;
 	    FastText.aprintf(g, new Coord(10, y -= 15), 0, 1, "FPS: %d (%d%%, %d%% idle)", fps, (int)(uidle * 100.0), (int)(ridle * 100.0));
 	    Runtime rt = Runtime.getRuntime();

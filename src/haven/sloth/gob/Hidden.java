@@ -3,6 +3,7 @@ package haven.sloth.gob;
 import haven.*;
 import haven.sloth.gfx.HitboxMesh;
 import haven.sloth.io.Storage;
+import haven.sloth.script.pathfinding.Hitbox;
 import haven.sloth.util.ObservableCollection;
 import haven.sloth.util.ObservableListener;
 
@@ -80,12 +81,9 @@ public class Hidden extends GAttrib {
 
     private void make() {
         gob.res().ifPresent((res) -> {
-            final Resource.Neg neg = res.layer(Resource.negc);
-            if(neg != null) {
-                Coord hsz = new Coord(Math.abs(neg.bc.x) + Math.abs(neg.bs.x),
-                        Math.abs(neg.bc.y) + Math.abs(neg.bc.y));
-                Coord hoff = neg.bc;
-                mesh = HitboxMesh.makehb(hsz, hoff);
+            final Hitbox hb = Hitbox.hbfor(gob, true);
+            if(hb != null) {
+                mesh = HitboxMesh.makehb(hb.size(), hb.offset());
             } else {
                 mesh = HitboxMesh.makehb(new Coord(11,11), Coord.z);
             }

@@ -332,6 +332,7 @@ public class OptWnd extends Window {
 	    final Grouping animals = new LinearGrouping("Animals", spacer);
 	    final Grouping minimap = new LinearGrouping("Minimap", spacer);
 	    final Grouping misc = new LinearGrouping("Misc", spacer);
+	    final Grouping pathfinding = new LinearGrouping("Pathfinder", spacer);
 	    { //flowermenu
 	        flowermenu.add(new IndirCheckBox("Quick flowermenu", QUICKMENU));
 	        flowermenu.add(new IndirCheckBox("Don't close flowermenu on clicks", BUGGEDMENU));
@@ -388,6 +389,12 @@ public class OptWnd extends Window {
 		misc.add(new IndirCheckBox("Hold ctrl to drop over water", WATERDROPITEMCTRL));
 		misc.pack();
 	    }
+	    { //pathfinder
+	        final String[] tiers = { "Perfect", "Middle Ground", "Faster" };
+		pathfinding.add(new IndirLabel(() -> String.format("Pathfinding Tier: %s", tiers[PATHFINDINGTIER.get()-1])));
+		pathfinding.add(new IndirHSlider(200, 1, 3, PATHFINDINGTIER));
+		pathfinding.pack();
+	    }
 
 	    c.y += gameplay.add(flowermenu, c.copy()).sz.y;
 	    c.y += gameplay.add(crops, c.copy()).sz.y;
@@ -395,6 +402,7 @@ public class OptWnd extends Window {
 	    c.y += gameplay.add(animals, c.copy()).sz.y;
 	    c.y += gameplay.add(minimap, c.copy()).sz.y;
 	    c.y += gameplay.add(misc, c.copy()).sz.y;
+	    c.y += gameplay.add(pathfinding, c.copy()).sz.y;
 	    gameplay.add(new PButton(200, "Back", 27, main), c.copy());
 	    gameplay.pack();
 	}

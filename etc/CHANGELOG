@@ -1,3 +1,11 @@
+3/14/19
+    - Hidden boxes and hitboxes are more accurate and include more objects now.
+    - Basic workings of pathfinding added back in from Ape. Some things are missing but more to come.
+
+3/13/19
+    - Gob tooltips when hovering over them will now show what GobID they are holding or being held by
+    - custom cave icon pushed now so caves show again on the map
+
 3/12/19
     - Auto aggro keybinds will turn off aggro icon automatically now
     - Misc bug fix

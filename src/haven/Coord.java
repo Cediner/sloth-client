@@ -46,6 +46,10 @@ public class Coord implements Comparable<Coord>, java.io.Serializable {
 	this.y = y;
     }
 
+    public Coord(float x, float y) {
+        this((int)x, (int)y);
+    }
+
     public Coord(Coord c) {
 	this(c.x, c.y);
     }
@@ -212,6 +216,14 @@ public class Coord implements Comparable<Coord>, java.io.Serializable {
 		return(Math.atan((double)c.y / (double)c.x));
 	    }
 	}
+    }
+
+    public Coord rot(float angl) {
+	final float
+		cos = (float)Math.cos(angl),
+		sin = (float)Math.sin(angl);
+	return new Coord(x*cos - y*sin,
+		x*sin + y*cos);
     }
 
     public double abs() {

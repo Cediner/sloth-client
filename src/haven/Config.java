@@ -26,6 +26,8 @@
 
 package haven;
 
+import haven.sloth.DefSettings;
+
 import java.net.URL;
 import java.io.PrintStream;
 import static haven.Utils.getprop;
@@ -115,7 +117,7 @@ public class Config {
 		System.exit(0);
 		break;
 	    case 'd':
-		dbtext = true;
+		DefSettings.DEBUG.set(true);
 		break;
 	    case 'P':
 		profile = true;
@@ -165,7 +167,7 @@ public class Config {
     static {
 	Console.setscmd("stats", new Console.Command() {
 		public void run(Console cons, String[] args) {
-		    dbtext = Utils.parsebool(args[1]);
+		    DefSettings.DEBUG.set(Utils.parsebool(args[1]));
 		}
 	    });
 	Console.setscmd("profile", new Console.Command() {

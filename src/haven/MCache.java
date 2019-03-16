@@ -28,6 +28,8 @@ package haven;
 
 import haven.resutil.WaterTile;
 import haven.sloth.gfx.GridMesh;
+import haven.sloth.script.pathfinding.Pathfinder;
+import haven.sloth.script.pathfinding.Tile;
 
 import java.util.*;
 import java.lang.ref.*;
@@ -99,6 +101,7 @@ public class MCache {
 	public final int tiles[] = new int[cmaps.x * cmaps.y];
 	public final int z[] = new int[cmaps.x * cmaps.y];
 	public final int ol[] = new int[cmaps.x * cmaps.y];
+	public final Tile hitmap[] = new Tile[cmaps.x * cmaps.y];
 	public final Coord gc, ul;
 	public long id;
 	public int seq = -1;

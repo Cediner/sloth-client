@@ -101,7 +101,7 @@ public class DefSettings {
     public static final IndirSetting<Boolean> SHOWHALOONHEARTH = new IndirSetting<>(global, "gameplay.show-gob-halo-hearth"); //[Bool] Toggle halo on human gobs
     public static final IndirSetting<Boolean> WATERDROPITEMCTRL = new IndirSetting<>(global, "gameplay.drop-item-on-water-with-ctrl"); //[Bool] Toggle the need to hold ctrl to drop items while over water
     public static final IndirSetting<Boolean> FORAGEANIMALS = new IndirSetting<>(global, "gameplay.small-animaling-foraging"); //[Bool] Consider small animals with the forage keybind
-
+    public static final IndirSetting<Integer> PATHFINDINGTIER = new IndirSetting<>(global, "gameplay.pathfinding-tier");	    //[Int] 0, 1, 2 = { perfect, medium, fast }
     public static final IndirSetting<Boolean> SHOWFKBELT =  new IndirSetting<>(global, "belt.fk.show");                       //[Bool] Toggle F key belt
     public static final IndirSetting<Integer> FKBELTPAGE =  new IndirSetting<>(global, "belt.fk.page");                       //[Int] Page F key belt is on
     public static final IndirSetting<String> FKBELTSTYLE =  new IndirSetting<>(global, "belt.fk.style");                      //[String] F key belt style
@@ -122,6 +122,9 @@ public class DefSettings {
     public static final IndirSetting<Boolean> FREECAMLOCKELAV =  new IndirSetting<>(global, "camera.free.lock-elevation");    //[Bool] Lock freecam elevation angle
     public static final IndirSetting<Integer> TIMERVOLUME =  new IndirSetting<>(global, "audio.timer-volume");                //[Int] Timer volume
     public static final IndirSetting<Boolean> NOGOBAUDIO = new IndirSetting<>(global, "audio.no-gob-audio");
+
+    //Debug
+    public static final IndirSetting<Boolean> DEBUG = new IndirSetting<>(global, "system.debug");
 
     //Themes
     public static final IndirSetting<String[]> THEMES = new IndirSetting<>(session, "theme.themes");
@@ -230,6 +233,8 @@ public class DefSettings {
 	SHOWHALOONHEARTH.ensure(true);
 	WATERDROPITEMCTRL.ensure(true);
 	FORAGEANIMALS.ensure(true);
+	PATHFINDINGTIER.ensure(1);
+	DEBUG.ensure(false);
 	//Belts
 	SHOWFKBELT.ensure(false);
 	FKBELTPAGE.ensure(0);

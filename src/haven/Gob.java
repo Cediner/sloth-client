@@ -33,6 +33,7 @@ import haven.sloth.gfx.HitboxMesh;
 import haven.sloth.gob.*;
 import haven.sloth.io.HighlightData;
 import haven.sloth.io.MarkerData;
+import haven.sloth.script.pathfinding.Hitbox;
 
 import java.util.*;
 
@@ -248,6 +249,7 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 	}
     };
     private List<Overlay> dols = new ArrayList<>();
+    private List<GAttrib> dattrs = new ArrayList<>();
 
     private final Collection<ResAttr.Cell<?>> rdata = new LinkedList<ResAttr.Cell<?>>();
     private final Collection<ResAttr.Load> lrdata = new LinkedList<ResAttr.Load>();
@@ -306,12 +308,9 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 		MarkerData.marker(name).ifPresent(mark -> ui.gui.mapfile.markobj(mark, rc));
 
 		res().ifPresent((res) -> { //should always be present once name is discovered
-		    final Resource.Neg neg = res.layer(Resource.negc);
-		    if (neg != null) {
-			Coord hsz = new Coord(Math.abs(neg.bc.x) + Math.abs(neg.bs.x),
-				Math.abs(neg.bc.y) + Math.abs(neg.bc.y));
-			Coord hoff = neg.bc;
-			hitbox = HitboxMesh.makehb(hsz, hoff);
+		    final Hitbox hb = Hitbox.hbfor(this, true);
+		    if (hb != null) {
+			hitbox = HitboxMesh.makehb(hb.size(), hb.offset());
 		    }
 		});
 	    } else {
@@ -322,6 +321,8 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 	    discovered = true;
 	}
     }
+
+    public boolean isDiscovered() { return discovered; }
 
     public void mark(final int life) {
         if(findol(Mark.id) == null) {
@@ -344,6 +345,12 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 
 	for(GAttrib a : attr.values())
 	    a.ctick(dt);
+	final Iterator<GAttrib> ditr = dattrs.iterator();
+	while(ditr.hasNext()) {
+	    setattr(ditr.next());
+	    ditr.remove();
+	}
+
 	for(Iterator<Overlay> i = ols.iterator(); i.hasNext();) {
 	    Overlay ol = i.next();
 	    if(ol.spr == null) {
@@ -370,6 +377,23 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
         sb.append("Res: " ); sb.append(resname().orElse(""));
         sb.append(" ["); sb.append(id); sb.append("]\n");
         sb.append("staticp: "); sb.append(staticp() != null ? "static" : "dynamic"); sb.append("\n");
+        final Holding holding = getattr(Holding.class);
+        if(holding != null) {
+	    sb.append("Holding: ");
+	    sb.append(holding.held.id);
+	    sb.append(" - ");
+	    sb.append(holding.held.resname().orElse("Unknown"));
+	    sb.append("\n");
+	} else {
+	    final HeldBy heldby = getattr(HeldBy.class);
+	    if (heldby != null) {
+		sb.append("Held By: ");
+		sb.append(heldby.holder.id);
+		sb.append(" - ");
+		sb.append(heldby.holder.resname().orElse("Unknown"));
+		sb.append("\n");
+	    }
+	}
 	ResDrawable dw = getattr(ResDrawable.class);
 	if (dw != null) {
 	    sb.append("sdt: "); sb.append(dw.sdtnum()); sb.append("\n");
@@ -531,6 +555,10 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
             renderedattrs.add((haven.sloth.gob.Rendered)a);
 	Class<? extends GAttrib> ac = attrclass(a.getClass());
 	attr.put(ac, a);
+    }
+
+    public void delayedsetattr(GAttrib a) {
+        dattrs.add(a);
     }
 
     public <C extends GAttrib> C getattr(Class<C> c) {

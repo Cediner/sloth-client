@@ -43,6 +43,8 @@ import haven.sloth.DefSettings;
 import haven.sloth.gob.*;
 import haven.sloth.gui.SoundSelector;
 import haven.sloth.io.HighlightData;
+import haven.sloth.script.pathfinding.Move;
+import haven.sloth.script.pathfinding.Pathfinder;
 
 public class MapView extends PView implements DTarget, Console.Directory {
     public static long plgobid;
@@ -1839,7 +1841,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 
 	private void showSpecialMenu(final Coord2d mc) {
 	    final FlowerMenu modmenu = new FlowerMenu((selection) -> {
-	        if(selection >= 1 && selection <= 3) {
+	        if(selection >= 2 && selection <= 4) {
 		    final Gob g = ui.sess.glob.oc.getgob(next--, 0);
 		    ui.sess.glob.oc.move(g, mc, Math.toRadians(130));
 		    ui.sess.glob.oc.composite(g, Resource.remote().load("gfx/kritter/spermwhale/spermwhale"));
@@ -1863,7 +1865,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 			    final Coord2d tcd = mc.div(tilesz);
 
 			    ui.sess.glob.map.getgridto(tc).ifPresent(grid -> {
-			        final Coord2d offset = tcd.sub(new Coord2d(grid.ul));
+				final Coord2d offset = tcd.sub(new Coord2d(grid.ul));
 				for (Widget wdg = ui.gui.chat.lchild; wdg != null; wdg = wdg.prev) {
 				    if (wdg instanceof ChatUI.PartyChat) {
 					final ChatUI.PartyChat chat = (ChatUI.PartyChat) wdg;
@@ -1871,11 +1873,20 @@ public class MapView extends PView implements DTarget, Console.Directory {
 				    }
 				}
 			    });
-			}
-			break;
+			} break;
+			case 1: {
+			    final Pathfinder finder = new Pathfinder(ui, new Coord2d(ui.sess.glob.oc.getgob(plgob).getc()), mc, 40);
+			    final List<Move> moves = finder.path(mc.floor(), PATHFINDINGTIER.get() != 1);
+			    if(moves != null) {
+			        clearmovequeue();
+			        for(Move m : moves) {
+			            queuemove(m.dest());
+				}
+			    }
+			} break;
 		    }
 		}
-	    }, "Mark for party", "Add Whale (KO'd)", "Add Whale (Dead)", "Add Whale (Swimming)");
+	    }, "Mark for party", "Test", "Add Whale (KO'd)", "Add Whale (Dead)", "Add Whale (Swimming)");
 	    ui.gui.add(modmenu, ui.mc);
 	}
 	

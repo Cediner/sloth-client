@@ -27,7 +27,9 @@
 package haven;
 
 import haven.sloth.gob.Growth;
+import haven.sloth.gob.HeldBy;
 import haven.sloth.gob.Hidden;
+import haven.sloth.gob.Holding;
 
 import java.util.*;
 
@@ -593,6 +595,11 @@ public class OCache implements Iterable<Gob> {
     public synchronized void follow(Gob g, long oid, Indir<Resource> xfres, String xfname) {
 	if(oid == 0xffffffffl) {
 	    g.delattr(Following.class);
+	    final HeldBy heldby = g.getattr(HeldBy.class);
+	    if(heldby != null) {
+	        g.delattr(HeldBy.class);
+	        heldby.holder.delattr(Holding.class);
+	    }
 	} else {
 	    Following flw = g.getattr(Following.class);
 	    if(flw == null) {
