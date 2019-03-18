@@ -26,15 +26,20 @@
 
 package haven;
 
-import haven.resutil.WaterTile;
 import haven.sloth.gfx.GridMesh;
-import haven.sloth.script.pathfinding.Pathfinder;
 import haven.sloth.script.pathfinding.Tile;
 
 import java.util.*;
 import java.lang.ref.*;
+import java.util.regex.Pattern;
 
 public class MCache {
+    //All for hitmaps/pathfinding
+    private static final Pattern deepwater = Pattern.compile("(gfx/tiles/deep)|(gfx/tiles/odeep)|(gfx/tiles/odeeper)");
+    private static final Pattern shallowater = Pattern.compile("(gfx/tiles/water)|(gfx/tiles/owater)");
+    private static final Tile[] id2tile = new Tile[256];
+
+    //
     public static final Coord2d tilesz = new Coord2d(11, 11);
     public static final Coord tilesz2 = tilesz.round(); /* XXX: Remove me in due time. */
     public static final Coord cmaps = new Coord(100, 100);
@@ -142,6 +147,12 @@ public class MCache {
 	    cuts = new Cut[cutn.x * cutn.y];
 	    for(int i = 0; i < cuts.length; i++)
 		cuts[i] = new Cut();
+	}
+
+	public Tile gethitmap(Coord tc) { return hitmap[tc.x + (tc.y * cmaps.x)]; }
+
+	public void sethitmap(Coord tc, Tile t) {
+	    hitmap[tc.x + (tc.y * cmaps.x)] = t;
 	}
 
 	public int gettile(Coord tc) {
@@ -361,9 +372,19 @@ public class MCache {
 		String resnm = blob.string();
 		int resver = blob.uint16();
 		nsets[tileid] = new Resource.Spec(Resource.remote(), resnm, resver);
+
+		if(shallowater.matcher(resnm).matches()) {
+		    id2tile[tileid] = Tile.SHALLOWWATER;
+		} else if(deepwater.matcher(resnm).matches()) {
+		    id2tile[tileid] = Tile.DEEPWATER;
+		}
 	    }
-	    for(int i = 0; i < tiles.length; i++)
+	    for(int i = 0; i < tiles.length; i++) {
 		tiles[i] = blob.uint8();
+
+		//we can figure out shallow vs deep hitmap from this info, ridges will come later
+		hitmap[i] = id2tile[tiles[i]];
+	    }
 	    for(int i = 0; i < z.length; i++)
 		z[i] = blob.int16();
 	    for(int i = 0; i < ol.length; i++)
@@ -505,6 +526,21 @@ public class MCache {
 	} else {
 	    return 0;
 	}
+    }
+
+    public Tile gethitmap(Coord tc) {
+	final Optional<Grid> g = getgridto(tc);
+	if (g.isPresent()) {
+	    return g.get().gethitmap(tc.sub(g.get().ul));
+	} else {
+	    return null;
+	}
+    }
+
+    public void sethitmap(Coord tc, Tile t) {
+	getgridto(tc).ifPresent(g -> {
+	    g.sethitmap(tc.sub(g.ul), t);
+	});
     }
 
     public int gettile(Coord tc) {

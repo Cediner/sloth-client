@@ -34,6 +34,7 @@ import haven.Surface.Vertex;
 import haven.Tiler.MPart;
 import haven.Surface.MeshVertex;
 import haven.sloth.DefSettings;
+import haven.sloth.script.pathfinding.Tile;
 
 import static haven.Utils.clip;
 
@@ -135,10 +136,16 @@ public class Ridges extends MapMesh.Hooks {
     }
     private int eo(Coord c, int e) {return(eo(c.x, c.y, e));}
 
+    /**
+     * This returns a map of where ridge meshes are.
+     * Oddly enough there are ridges that are in the game but not accounted for here
+     * particularly ones that happen on diagonals.
+     */
     private boolean[] breaks() {
 	Scan ts = new Scan(new Coord(-1, -1), m.sz.add(2, 2));
-	int[] bz = new int[ts.l];
 	Coord c = new Coord();
+	/*
+	int[] bz = new int[ts.l];
 	for(c.y = ts.ul.y; c.y < ts.br.y; c.y++) {
 	    for(c.x = ts.ul.x; c.x < ts.br.x; c.x++) {
 		MCache map = m.map;
@@ -148,18 +155,49 @@ public class Ridges extends MapMesh.Hooks {
 		else
 		    bz[ts.o(c)] = Integer.MAX_VALUE;
 	    }
-	}
+	}*/
 	boolean[] breaks = new boolean[(m.sz.x + 1) * (m.sz.y + 1) * 2];
 	for(c.y = 0; c.y <= m.sz.y; c.y++) {
 	    for(c.x = 0; c.x <= m.sz.x; c.x++) {
-		Coord tc = m.ul.add(c);
+		final Coord tc = m.ul.add(c);
+		Tiler t = m.map.tiler(m.map.gettile(tc));
+		if(t instanceof RidgeTile) {
+		    int minbz = ((RidgeTile)t).breakz();
+		    for(Coord ec : tecs) {
+			t = m.map.tiler(m.map.gettile(tc.add(ec)));
+			if(t instanceof RidgeTile) {
+			    minbz = Math.min(minbz, ((RidgeTile)t).breakz());
+			}
+		    }
+		    for(int i = 0; i < 4; i++) {
+			if(Math.abs(m.map.getz(tc.add(tccs[(i + 1) % 4])) - m.map.getz(tc.add(tccs[i]))) > minbz) {
+			    final int ind = eo(c, i);
+			    if(ind < breaks.length) {
+				breaks[eo(c, i)] = true;
+			    }
+			    m.map.sethitmap(tc, Tile.RIDGE);
+			}
+		    }
+		}
+
+		//XXX: This is an odd one. Loftar has brokenp setup differently than this. Brokenp tells you exactly
+		//where a ridge is while this will miss a few, BUT it will result in a mapmesh that fits together
+		//more smoothly whereas if you do above (brokenp) you'll get mapmeshes with black space next to
+		//some ridges because they no longer line up nice and pretty
+		//For now I think i'll sacrifice prettiness over accuracy.
+		/*
 		int ul = m.map.getz(tc);
 		int xd = Math.abs(ul - m.map.getz(tc.add(1, 0)));
-		if((xd > bz[ts.o(c.x, c.y)]) && (xd > bz[ts.o(c.x, c.y - 1)]))
+		if((xd > bz[ts.o(c.x, c.y)]) && (xd > bz[ts.o(c.x, c.y - 1)])) {
 		    breaks[eo(c, 0)] = true;
+		    m.map.sethitmap(tc, Tile.RIDGE);
+		}
 		int yd = Math.abs(ul - m.map.getz(tc.add(0, 1)));
-		if((yd > bz[ts.o(c.x, c.y)]) && (yd > bz[ts.o(c.x - 1, c.y)]))
+		if((yd > bz[ts.o(c.x, c.y)]) && (yd > bz[ts.o(c.x - 1, c.y)])) {
 		    breaks[eo(c, 3)] = true;
+		    m.map.sethitmap(tc, Tile.RIDGE);
+		}
+		*/
 	    }
 	}
 	return(breaks);
@@ -709,6 +747,7 @@ public class Ridges extends MapMesh.Hooks {
 	Tiler t = map.tiler(map.gettile_safe(tc));
 	if(!(t instanceof RidgeTile))
 	    return(false);
+	// Breakz is determined by the max breakz of us and the 4 tiles around me in each direction
 	int bz = ((RidgeTile)t).breakz();
 	for(Coord ec : tecs) {
 	    t = map.tiler(map.gettile_safe(tc.add(ec)));

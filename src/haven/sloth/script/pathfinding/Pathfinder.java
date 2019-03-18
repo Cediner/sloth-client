@@ -344,6 +344,21 @@ public class Pathfinder {
 	try {
 	    javax.imageio.ImageIO.write(buf, "png", new File("hitmap.png"));
 	} catch(Exception e) { e.printStackTrace(); }
+	{
+	    final Coord end = tilify(br), start = tilify(ul);
+	    final BufferedImage buf2 = new BufferedImage((end.x - start.x) / MCache.tilesz2.x, (end.y - start.y) / MCache.tilesz2.x, BufferedImage.TYPE_INT_RGB);
+	    Coord xy = new Coord();
+	    for(xy.x = start.x; xy.x != end.x; xy.x += MCache.tilesz2.x) {
+		for(xy.y = start.y; xy.y != end.y; xy.y += MCache.tilesz2.y) {
+		    final Coord xy2 = xy.div(MCache.tilesz2);
+		    if(ui.sess.glob.map.gethitmap(xy2) != null)
+			buf2.setRGB((xy.x - start.x) / MCache.tilesz2.x, (xy.y - start.y) / MCache.tilesz2.y, tmap.get(ui.sess.glob.map.gethitmap(xy2)).getRGB());
+		}
+	    }
+	    try {
+		javax.imageio.ImageIO.write(buf2, "png", new File("hitmap3.png"));
+	    } catch(Exception e) { e.printStackTrace(); }
+	}
     }
 
     private void save(Coord start, List<Move> paths) {
