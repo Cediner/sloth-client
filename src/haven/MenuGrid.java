@@ -34,11 +34,7 @@ import java.awt.image.BufferedImage;
 import com.google.common.flogger.FluentLogger;
 import haven.Resource.AButton;
 import haven.sloth.DefSettings;
-import haven.sloth.gui.DeletedManager;
-import haven.sloth.gui.HiddenManager;
 import haven.sloth.gui.MovableWidget;
-import haven.sloth.gui.SoundManager;
-import haven.sloth.util.Images;
 import haven.sloth.util.ObservableCollection;
 
 import java.util.*;

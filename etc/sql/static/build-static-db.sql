@@ -312,6 +312,33 @@ INSERT OR IGNORE INTO object (name, type_id) VALUES('sfx/terobjs/woodspin', (SEL
 INSERT OR IGNORE INTO object (name, type_id) VALUES('custom/sfx/howl', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
 INSERT OR IGNORE INTO object (name, type_id) VALUES('custom/sfx/timer', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
 INSERT OR IGNORE INTO object (name, type_id) VALUES('custom/sfx/omni/Z_WW_Secret', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('custom/sfx/omni/BounceOdd', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('custom/sfx/omni/Pinging', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('custom/sfx/omni/Z_LOZ_Secret', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('custom/sfx/omni/Z_OOT_Fanfare_HeartContainer', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('custom/sfx/omni/Z_OOT_Fanfare_Item', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('custom/sfx/omni/Z_OOT_Fanfare_SmallItem', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('custom/sfx/omni/Z_OOT_Get_SmallItem', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('custom/sfx/omni/Z_OOT_GoldSkulltula_Token', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('custom/sfx/omni/Z_OOT_Navi_Hey', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('custom/sfx/omni/Z_OOT_Navi_In', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('custom/sfx/omni/Z_OOT_Navi_Listen', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('custom/sfx/omni/Z_OOT_Navi_Out', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('custom/sfx/omni/Z_OOT_Navi_WatchOut', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('custom/sfx/omni/Z_PH_Fanfare_GetNothing', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('custom/sfx/omni/Z_PH_Fanfare_GetRupoor', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('custom/sfx/omni/Z_SS_Groose_Doh', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('custom/sfx/omni/Z_SS_Groose_Ohh', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('custom/sfx/omni/Z_SS_Heart', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('custom/sfx/omni/Z_SS_Rupee', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('custom/sfx/omni/Z_SS_Rupee_Blue', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('custom/sfx/omni/Z_SS_StaminaFruit', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('custom/sfx/omni/Z_SS_StaminaFruit_Regrow', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('custom/sfx/omni/Z_ST_Fanfare_GetSmallItem', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('custom/sfx/omni/Z_TP_Secret', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('custom/sfx/omni/Z_WW_Get_Item', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('custom/sfx/omni/Z_WW_Get_Rupee_Blue', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
+INSERT OR IGNORE INTO object (name, type_id) VALUES('custom/sfx/omni/Z_WW_Secret', (SELECT type_id FROM type WHERE name_key = 'SOUND'));
 
 CREATE TABLE IF NOT EXISTS growth (
     object_id   INTEGER,    -- Objects that can grow and have stages
