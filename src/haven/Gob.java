@@ -33,6 +33,7 @@ import haven.sloth.gfx.HitboxMesh;
 import haven.sloth.gob.*;
 import haven.sloth.io.HighlightData;
 import haven.sloth.io.MarkerData;
+import haven.sloth.script.pathfinding.GobHitmap;
 import haven.sloth.script.pathfinding.Hitbox;
 
 import java.util.*;
@@ -253,7 +254,8 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 
     private final Collection<ResAttr.Cell<?>> rdata = new LinkedList<ResAttr.Cell<?>>();
     private final Collection<ResAttr.Load> lrdata = new LinkedList<ResAttr.Load>();
-    private HitboxMesh hitbox;
+    private HitboxMesh hitboxmesh;
+    private List<Coord> hitboxcoords;
 
     private boolean discovered = false;
     public Type type;
@@ -308,9 +310,10 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 		MarkerData.marker(name).ifPresent(mark -> ui.gui.mapfile.markobj(mark, rc));
 
 		res().ifPresent((res) -> { //should always be present once name is discovered
-		    final Hitbox hb = Hitbox.hbfor(this, true);
-		    if (hb != null) {
-			hitbox = HitboxMesh.makehb(hb.size(), hb.offset());
+		    final Hitbox hitbox = Hitbox.hbfor(this, true);
+		    if (hitbox != null) {
+			hitboxmesh = HitboxMesh.makehb(hitbox.size(), hitbox.offset());
+			hitboxcoords = glob.gobhitmap.add(this);
 		    }
 		});
 	    } else {
@@ -512,6 +515,9 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
     }
 
     public void dispose() {
+        synchronized (glob.gobhitmap) {
+            glob.gobhitmap.rem(this, hitboxcoords);
+	}
 	for(GAttrib a : attr.values())
 	    a.dispose();
 	for(ResAttr.Cell rd : rdata) {
@@ -520,12 +526,29 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 	}
     }
 
+    public void updsdt() {
+        resname().ifPresent(name -> {
+            if(name.endsWith("gate") || name.endsWith("/pow")) {
+		synchronized (glob.gobhitmap) {
+		    glob.gobhitmap.rem(this, hitboxcoords);
+		    hitboxcoords = glob.gobhitmap.add(this);
+		}
+	    }
+	});
+    }
+
     public void move(Coord2d c, double a) {
 	Moving m = getattr(Moving.class);
 	if(m != null)
 	    m.move(c);
-	this.rc = c;
-	this.a = a;
+	synchronized (glob.gobhitmap) {
+	    if(discovered)
+	        glob.gobhitmap.rem(this,hitboxcoords);
+	    this.rc = c;
+	    this.a = a;
+	    if(discovered)
+		hitboxcoords = glob.gobhitmap.add(this);
+	}
     }
 
     public Coord3f getc() {
@@ -713,8 +736,8 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 	    if (ki != null)
 		rl.add(ki.fx, null);
 
-	    if(DefSettings.SHOWHITBOX.get() && hitbox != null) {
-	        rl.add(hitbox, null);
+	    if(DefSettings.SHOWHITBOX.get() && hitboxmesh != null) {
+	        rl.add(hitboxmesh, null);
 	    }
 	} else {
 	    //hidden gob, only show its square if allowed

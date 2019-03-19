@@ -26,6 +26,8 @@
 
 package haven;
 
+import haven.sloth.script.pathfinding.GobHitmap;
+
 import java.lang.ref.WeakReference;
 import java.util.*;
 import java.awt.Color;
@@ -33,6 +35,7 @@ import java.awt.Color;
 public class Glob {
     //TODO: Glob should honestly make the ui, not have the UI attach onto it.
     public WeakReference<UI> ui;
+    public final GobHitmap gobhitmap;
     public double time, epoch = Utils.rtime();
     public Astronomy ast;
     public final OCache oc = new OCache(this);
@@ -53,6 +56,7 @@ public class Glob {
     
     public Glob(Session sess) {
 	this.sess = sess;
+	gobhitmap = new GobHitmap();
 	map = new MCache(sess);
 	party = new Party(this);
     }

@@ -1,12 +1,12 @@
 TODO
+    - Cave walls
+        - Make them straight by default
+        - Give option that tiles them directly on the ground rather than a wall
     - Pathfinding
         - Currently pathfinder uses its own local map and coordinates, it should just use the game's coordinates
-          and make use of a HashMap for Gobs and Grids can store their own 100x100 hitmaps
+          and make use of a HashMap for Gobs and Grids can store their own 100x100 hitmaps [Partially done]
         - continuous updating for long distance clicks.
             - If it founds out it needs to update its path it can do adjust as needed based off new path
-        - MCache.Grid should just store a hitmap that I can just apply as needed or do lookups on
-            - Pathfinder itself should only care where gobs are
-            - Gobs should update their position on a Gob hitmap since most gobs are static
     - Fix GLSettings
     - Move away from GL 1.x calls for UI
     - Marker list, can't scroll out of range of current selected item

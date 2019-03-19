@@ -37,6 +37,7 @@ public class MCache {
     //All for hitmaps/pathfinding
     private static final Pattern deepwater = Pattern.compile("(gfx/tiles/deep)|(gfx/tiles/odeep)|(gfx/tiles/odeeper)");
     private static final Pattern shallowater = Pattern.compile("(gfx/tiles/water)|(gfx/tiles/owater)");
+    private static final Pattern cave = Pattern.compile("(gfx/tiles/cave)|(gfx/tiles/rocks/.+)");
     private static final Tile[] id2tile = new Tile[256];
 
     //
@@ -377,6 +378,8 @@ public class MCache {
 		    id2tile[tileid] = Tile.SHALLOWWATER;
 		} else if(deepwater.matcher(resnm).matches()) {
 		    id2tile[tileid] = Tile.DEEPWATER;
+		} else if(cave.matcher(resnm).matches()) {
+		    id2tile[tileid] = Tile.CAVE;
 		}
 	    }
 	    for(int i = 0; i < tiles.length; i++) {

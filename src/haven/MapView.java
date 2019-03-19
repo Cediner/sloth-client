@@ -1875,6 +1875,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 			    });
 			} break;
 			case 1: {
+			    glob.gobhitmap.debug();
 			    final Pathfinder finder = new Pathfinder(ui, new Coord2d(ui.sess.glob.oc.getgob(plgob).getc()), mc, 40);
 			    final List<Move> moves = finder.path(mc.floor(), PATHFINDINGTIER.get() != 1);
 			    if(moves != null) {

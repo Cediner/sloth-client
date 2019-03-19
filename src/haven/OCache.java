@@ -320,6 +320,7 @@ public class OCache implements Iterable<Gob> {
 	if((d != null) && (d.res == res) && !d.sdt.equals(sdt) && (d.spr != null) && (d.spr instanceof Gob.Overlay.CUpd)) {
 	    ((Gob.Overlay.CUpd)d.spr).update(sdt);
 	    d.sdt = sdt;
+	    g.updsdt();
 	} else if((d == null) || (d.res != res) || !d.sdt.equals(sdt)) {
 	    g.setattr(new ResDrawable(g, res, sdt));
 	}
