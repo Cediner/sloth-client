@@ -1,7 +1,4 @@
 TODO
-    - Cave walls
-        - Make them straight by default
-        - Give option that tiles them directly on the ground rather than a wall
     - Pathfinding
         - Currently pathfinder uses its own local map and coordinates, it should just use the game's coordinates
           and make use of a HashMap for Gobs and Grids can store their own 100x100 hitmaps [Partially done]

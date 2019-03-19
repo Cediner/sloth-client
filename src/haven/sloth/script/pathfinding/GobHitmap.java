@@ -251,7 +251,7 @@ public class GobHitmap {
 		    }
 	    }
 	} else {
-	    logger.atWarning().log("No hitbox found for %s", g.resname());
+	    logger.atFine().log("No hitbox found for %s", g.resname());
 	}
 	return coords;
     }
