@@ -43,8 +43,9 @@ import haven.sloth.DefSettings;
 import haven.sloth.gob.*;
 import haven.sloth.gui.SoundSelector;
 import haven.sloth.io.HighlightData;
+import haven.sloth.script.pathfinding.APathfinder;
+import haven.sloth.script.pathfinding.ApePathfinder;
 import haven.sloth.script.pathfinding.Move;
-import haven.sloth.script.pathfinding.Pathfinder;
 
 public class MapView extends PView implements DTarget, Console.Directory {
     public static long plgobid;
@@ -1876,8 +1877,9 @@ public class MapView extends PView implements DTarget, Console.Directory {
 			} break;
 			case 1: {
 			    glob.gobhitmap.debug();
-			    final Pathfinder finder = new Pathfinder(ui, new Coord2d(ui.sess.glob.oc.getgob(plgob).getc()), mc);
-			    final List<Move> moves = finder.path(mc.floor(), PATHFINDINGTIER.get() != 1);
+			    final APathfinder finder = new APathfinder(ui);
+			    final List<Move> moves = finder.path(new Coord(ui.sess.glob.oc.getgob(plgob).getc()), mc.floor(),
+				    PATHFINDINGTIER.get() != 1);
 			    if(moves != null) {
 			        clearmovequeue();
 			        for(Move m : moves) {

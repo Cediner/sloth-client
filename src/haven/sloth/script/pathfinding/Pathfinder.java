@@ -2,79 +2,79 @@ package haven.sloth.script.pathfinding;
 
 import com.google.common.flogger.FluentLogger;
 import haven.*;
-import haven.sloth.DefSettings;
+import haven.glsl.Array;
 import haven.sloth.gob.HeldBy;
 
 import java.util.*;
-import java.util.List;
-
 
 public class Pathfinder {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
-    private static final Coord[][] dirs = new Coord[3][4];
-    private static Hitbox plhb;
+    protected static final Coord[][] dirs = new Coord[4][];
+    protected static Hitbox plhb;
     static {
 	plhb = Hitbox.hbfor("gfx/borka/body");
 
 	final int x = plhb.size().x, y = plhb.size().y;
+	//perfect
+	dirs[0] = new Coord[8];
 	dirs[0][0] = new Coord(1, 0);
 	dirs[0][1] = new Coord(-1, 0);
 	dirs[0][2] = new Coord(0, 1);
 	dirs[0][3] = new Coord(0, -1);
-	dirs[1][0] = new Coord(x, 0);
-	dirs[1][1] = new Coord(-x, 0);
-	dirs[1][2] = new Coord(0, y);
-	dirs[1][3] = new Coord(0, -y);
-	dirs[2][0] = new Coord(x * 2, 0);
-	dirs[2][1] = new Coord(-x * 2, 0);
-	dirs[2][2] = new Coord(0, y * 2);
-	dirs[2][3] = new Coord(0, -y * 2);
+	dirs[0][4] = new Coord(1, 1);
+	dirs[0][5] = new Coord(1, -1);
+	dirs[0][6] = new Coord(-1, -1);
+	dirs[0][7] = new Coord(-1, 1);
+	//half hitbox steps
+	dirs[1] = new Coord[4];
+	dirs[1][0] = new Coord(x/2, 0);
+	dirs[1][1] = new Coord(-x/2, 0);
+	dirs[1][2] = new Coord(0, y/2);
+	dirs[1][3] = new Coord(0, -y/2);
+	dirs[2] = new Coord[4];
+	//hitbox sized steps, any bigger and i'd have to walk my path every move to ensure i didn't
+	//jump over something bad
+	dirs[2][0] = new Coord(x, 0);
+	dirs[2][1] = new Coord(-x, 0);
+	dirs[2][2] = new Coord(0, y);
+	dirs[2][3] = new Coord(0, -y);
+	//a mix of all three
+	dirs[3] = new Coord[12];
+	dirs[3][0] = dirs[2][0];
+	dirs[3][1] = dirs[2][1];
+	dirs[3][2] = dirs[2][2];
+	dirs[3][3] = dirs[2][3];
+	dirs[3][4] = dirs[1][0];
+	dirs[3][5] = dirs[1][1];
+	dirs[3][6] = dirs[1][2];
+	dirs[3][7] = dirs[1][3];
+	dirs[3][8] = dirs[0][0];
+	dirs[3][9] = dirs[0][1];
+	dirs[3][10] = dirs[0][2];
+	dirs[3][11] = dirs[0][3];
     }
 
     @FunctionalInterface
     interface HitFun {
-        boolean check(final Coord mc);
+	boolean check(final Coord mc);
     }
 
-    private final Coord start;
-    private final Coord target;
-    private final Gob targetgob;
-    public final UI ui;
-    private boolean boating;
+    protected final UI ui;
+    private final HitFun hitfun;
 
-    public Pathfinder(final UI ui, final Coord2d start, final Coord2d target) {
-        this.ui = ui;
-	this.start = start.floor();
-	this.target = target.floor();
-	this.targetgob = null;
-
-	//Check to see if we're boating
-	boating = areWeBoating();
-    }
-
-    public Pathfinder(final UI ui, final Coord2d start, final Gob g) {
+    public Pathfinder(final UI ui) {
 	this.ui = ui;
-	this.start = start.floor();
-	this.target = new Coord2d(g.getc()).floor();
-	this.targetgob = g;
 	//Check to see if we're boating
-	boating = areWeBoating();
+	hitfun = areWeBoating() ? this::hitOnBoat : this::hitOnLand;
     }
 
     private boolean areWeBoating() {
-        final Gob me = ui.sess.glob.oc.getgob(ui.gui.map.plgob);
-        if(me != null) {
-            return me.getattr(HeldBy.class) != null;
+	final Gob me = ui.sess.glob.oc.getgob(ui.gui.map.plgob);
+	if(me != null) {
+	    return me.getattr(HeldBy.class) != null;
 	} else {
 	    return false;
 	}
-    }
-
-    private Coord tilify(Coord c) {
-	c = c.div(MCache.tilesz2);
-	c = c.mul(MCache.tilesz2);
-	c = c.add(MCache.tilesz2.div(2));
-	return c;
     }
 
     /**
@@ -128,16 +128,19 @@ public class Pathfinder {
 	Coord xy = new Coord(0, 0);
 	for(xy.x = c.x; xy.x < br.x; ++xy.x)
 	    for(xy.y = c.y; xy.y < br.y; ++xy.y)
-	        if(ui.sess.glob.map.gethitmap(xy.div(MCache.tilesz2)) != null)
-	            return true;
+		if(ui.sess.glob.map.gethitmap(xy.div(MCache.tilesz2)) != null)
+		    return true;
 	return false;
     }
 
-    private boolean checkHit(final Coord mc, final HitFun hit) {
-	return hitGob(mc) || hit.check(mc);
+    protected boolean checkHit(final Coord mc) {
+	return hitGob(mc) || hitfun.check(mc);
     }
 
-    public boolean walk(final Coord start, final Coord end, final HitFun hit) {
+    /**
+     * Walks a path between two points to see if we'll hit anything
+     */
+    protected boolean walk(final Coord start, final Coord end) {
 	if(end.x - start.x != 0) {
 	    final double slope = (double)(end.y-start.y)/(double)(end.x-start.x);
 	    final double b = -(slope*start.x)+start.y;
@@ -148,7 +151,7 @@ public class Pathfinder {
 		int x, y;
 		for(y = start.y; y != end.y; y += dy) {
 		    x = (int) ((y - b)/slope);
-		    if(checkHit(new Coord(x,y), hit))
+		    if(checkHit(new Coord(x,y)))
 			return false;
 		}
 	    } else {
@@ -156,7 +159,7 @@ public class Pathfinder {
 		int x, y;
 		for(x = start.x; x != end.x; x += dx) {
 		    y = (int) (slope * x + b);
-		    if(checkHit(new Coord(x,y), hit))
+		    if(checkHit(new Coord(x,y)))
 			return false;
 		}
 	    }
@@ -167,114 +170,58 @@ public class Pathfinder {
 	    dy = Integer.compare(dy, 0);
 	    int y;
 	    for(y = start.y; y != end.y; y += dy) {
-		if(checkHit(new Coord(start.x,y), hit))
+		if(checkHit(new Coord(start.x,y)))
 		    return false;
 	    }
 	}
 	return true;
     }
 
-
-    private ArrayList<Move> advreduce(List<Coord> lines, final HitFun hit) {
-	final ArrayList<Move> blines = new ArrayList<>(lines.size());
-	Coord cur, next;
-	Coord best = null;
-	int i,j, besti = 0;
-	for(i=0;i<lines.size();++i) {
-	    cur = lines.get(i);
-	    for(j=i+1;j<lines.size();++j) {
-		next = lines.get(j);
-		if(walk(cur,next,hit)){
-		    best = next;
-		    besti = j;
-		}
-	    }
-	    if(best != null){
-		blines.add(new Move(new Coord2d(best)));
-		i = besti;
-		best = null;
-	    } else {
-		blines.add(new Move(new Coord2d(cur)));
-	    }
+    protected List<Coord> collect(final Coord end, final Map<Coord, Coord> parent) {
+        final ArrayList<Coord> moves = new ArrayList<>();
+        moves.add(end);
+        for(Coord next = parent.get(end); next != null; next = parent.get(next)) {
+            moves.add(next);
 	}
-	return blines;
+        //reverse start -> finish
+	Collections.reverse(moves);
+        return moves;
     }
 
 
-
-    private Path findpath(Coord st, Coord goal, boolean allowbest, int level, final HitFun hit) {
-	PriorityQueue<Path> pq = new PriorityQueue<> ();
-	HashMap<Coord, Path> memo = new HashMap<>();
-	Path cur;
-	Path best;
-	pq.add((best = new Path(st, goal)));
-
-	while(pq.size() > 0) {
-	    cur = pq.poll();
-	    //check if goal
-	    if(cur.c.equals(goal))
-		return cur;
-	    if(cur.gval < best.gval)
-		best = cur;
-	    //add successors
-	    for(Coord s : dirs[level]) {
-		Coord nc = cur.c.add(s);
-		if(!checkHit(nc, hit)){
-		    Path np = new Path(nc, cur, goal);
-		    if(memo.get(nc) == null || memo.get(nc).hval > np.hval) {
-			memo.put(np.c, np);
-			pq.add(np);
+    /**
+     * Reduce the nodes we have into lines the end points will be our clicks
+     * to walk the path
+     *
+     * TODO: this could be improved by trying farthest away first rather than closest. Even binary search
+     */
+    protected ArrayList<Move> advreduce(List<Coord> lines) {
+        if(lines != null) {
+	    final ArrayList<Move> blines = new ArrayList<>(lines.size());
+	    Coord cur, next;
+	    Coord best = null;
+	    int i, j, besti = 0;
+	    for (i = 0; i < lines.size(); ++i) {
+		cur = lines.get(i);
+		for (j = i + 1; j < lines.size(); ++j) {
+		    next = lines.get(j);
+		    if (walk(cur, next)) {
+			best = next;
+			besti = j;
 		    }
 		}
+		if (best != null) {
+		    blines.add(new Move(new Coord2d(best)));
+		    i = besti;
+		    best = null;
+		} else {
+		    blines.add(new Move(new Coord2d(cur)));
+		}
 	    }
+	    return blines;
+	} else {
+            return null;
 	}
-
-	if(allowbest) {
-	    if(best.c.equals(st))
-		return new Path(goal, null, goal);
-	    return new Path(goal, best, goal);
-	}
-	return null;
     }
 
-
-    public ArrayList<Move> path(Coord goal, boolean allowbest) {
-	Path path;
-	final HitFun hit = !boating ? this::hitOnLand : this::hitOnBoat;
-	switch(DefSettings.PATHFINDINGTIER.get()) {
-	    case 1:
-		Path ret = findpath(start, goal, allowbest, 0, hit);
-		if(ret != null) {
-		    return advreduce(ret.fullpath(), hit);
-		}
-		break;
-	    case 2:
-		path = findpath(start, goal, allowbest, 1, hit);
-		if(path != null) {
-		    return advreduce(path.fullpath(), hit);
-		}
-		break;
-	    case 3:
-		//First pass
-		path = findpath(start, goal, allowbest, 2, hit);
-		if(path != null) {
-		    List<Coord> ipaths = path.fullpath();
-		    ArrayList<Coord> fin = new ArrayList<>();
-		    Coord next = ipaths.get(0);
-		    int i;
-
-		    //Second pass
-		    for(i=0;i<ipaths.size()-2;++i) {
-			path = findpath(next, ipaths.get(i+1), allowbest, 1, hit);
-			if(path != null) {
-			    fin.addAll(path.fullpath());
-			    next = fin.get(fin.size()-1);
-			}
-		    }
-		    return advreduce(fin, hit);
-		}
-		break;
-	}
-	return null;
-    }
 }
