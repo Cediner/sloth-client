@@ -77,6 +77,10 @@ public class GobHitmap {
 	}
     }
 
+    public synchronized boolean checkHit(final Coord c) {
+        return map.containsKey(c);
+    }
+
     public synchronized List<Coord> add(final Gob g) {
         final UI ui = g.glob.ui.get();
         if(ui != null && g.id != ui.gui.map.plgob) {

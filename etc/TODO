@@ -1,9 +1,11 @@
 TODO
     - Pathfinding
-        - Currently pathfinder uses its own local map and coordinates, it should just use the game's coordinates
-          and make use of a HashMap for Gobs and Grids can store their own 100x100 hitmaps [Partially done]
         - continuous updating for long distance clicks.
             - If it founds out it needs to update its path it can do adjust as needed based off new path
+        - Adaptive pathfinding tier
+            - Right now it's fixed tiers where the pathing is perfect or "fastest". To speed things up even further
+            it should be able to start at "fastest" and adapt on the fly as to if it needs to be more perfect or not
+            That way in tight spaces it'll use the perfect pathing while in long straights it can do the fastest pathing
     - Fix GLSettings
     - Move away from GL 1.x calls for UI
     - Marker list, can't scroll out of range of current selected item

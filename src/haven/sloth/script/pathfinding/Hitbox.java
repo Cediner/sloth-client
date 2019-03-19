@@ -31,7 +31,7 @@ public class Hitbox {
         hitboxes.put("gfx/terobjs/bumlings", new Hitbox(new Coord(8, 8), new Coord(-16, -16)));
 
         //walls
-        final Hitbox wallseg = new Hitbox(new Coord(-5, -5), new Coord(11,11));
+        final Hitbox wallseg = new Hitbox(new Coord(-6, -6), new Coord(11,11));
         final Hitbox gate = new Hitbox(new Coord(-5, -10), new Coord(11, 22));
         final Hitbox biggate = new Hitbox(new Coord(-5, -16), new Coord(11, 33));
         hitboxes.put("gfx/terobjs/arch/brickwallcp", wallseg);
