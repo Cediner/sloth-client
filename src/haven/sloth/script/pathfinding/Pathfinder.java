@@ -9,14 +9,12 @@ import java.util.*;
 
 public class Pathfinder {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
-    protected static final Coord[][] dirs = new Coord[4][];
+    protected static final Coord[][] dirs = new Coord[1][8];
     protected static Hitbox plhb;
     static {
 	plhb = Hitbox.hbfor("gfx/borka/body");
 
-	final int x = plhb.size().x, y = plhb.size().y;
 	//perfect
-	dirs[0] = new Coord[8];
 	dirs[0][0] = new Coord(1, 0);
 	dirs[0][1] = new Coord(-1, 0);
 	dirs[0][2] = new Coord(0, 1);
@@ -25,33 +23,6 @@ public class Pathfinder {
 	dirs[0][5] = new Coord(1, -1);
 	dirs[0][6] = new Coord(-1, -1);
 	dirs[0][7] = new Coord(-1, 1);
-	//half hitbox steps
-	dirs[1] = new Coord[4];
-	dirs[1][0] = new Coord(x/2, 0);
-	dirs[1][1] = new Coord(-x/2, 0);
-	dirs[1][2] = new Coord(0, y/2);
-	dirs[1][3] = new Coord(0, -y/2);
-	dirs[2] = new Coord[4];
-	//hitbox sized steps, any bigger and i'd have to walk my path every move to ensure i didn't
-	//jump over something bad
-	dirs[2][0] = new Coord(x, 0);
-	dirs[2][1] = new Coord(-x, 0);
-	dirs[2][2] = new Coord(0, y);
-	dirs[2][3] = new Coord(0, -y);
-	//a mix of all three
-	dirs[3] = new Coord[12];
-	dirs[3][0] = dirs[2][0];
-	dirs[3][1] = dirs[2][1];
-	dirs[3][2] = dirs[2][2];
-	dirs[3][3] = dirs[2][3];
-	dirs[3][4] = dirs[1][0];
-	dirs[3][5] = dirs[1][1];
-	dirs[3][6] = dirs[1][2];
-	dirs[3][7] = dirs[1][3];
-	dirs[3][8] = dirs[0][0];
-	dirs[3][9] = dirs[0][1];
-	dirs[3][10] = dirs[0][2];
-	dirs[3][11] = dirs[0][3];
     }
 
     @FunctionalInterface
@@ -59,13 +30,35 @@ public class Pathfinder {
 	boolean check(final Coord mc);
     }
 
+    @FunctionalInterface
+    interface HeuristicFun {
+        double distance(final Coord c, final Coord goal);
+    }
+
     protected final UI ui;
     private final HitFun hitfun;
+    final HeuristicFun heuristic;
 
-    public Pathfinder(final UI ui) {
+    Pathfinder(final UI ui) {
 	this.ui = ui;
 	//Check to see if we're boating
 	hitfun = areWeBoating() ? this::hitOnBoat : this::hitOnLand;
+	heuristic = this::manhattanDistance;
+    }
+
+    //D and D2 can scale based off terrain/speed we can run, future something to look at maybe.
+    private static final double D = 1;
+    private static final double D2 = Math.sqrt(2);
+    private double diagonalDistance(final Coord c, final Coord goal) {
+	final double dx = Math.abs(c.x - goal.x);
+	final double dy = Math.abs(c.y - goal.y);
+	return D * (dx + dy) + (D2 - 2 * D) * Math.min(dx, dy);
+    }
+
+    private double manhattanDistance(final Coord c, final Coord goal) {
+	final double dx = Math.abs(c.x - goal.x);
+	final double dy = Math.abs(c.y - goal.y);
+	return D * (dx + dy);
     }
 
     private boolean areWeBoating() {
@@ -133,14 +126,14 @@ public class Pathfinder {
 	return false;
     }
 
-    protected boolean checkHit(final Coord mc) {
+    final boolean checkHit(final Coord mc) {
 	return hitGob(mc) || hitfun.check(mc);
     }
 
     /**
      * Walks a path between two points to see if we'll hit anything
      */
-    protected boolean walk(final Coord start, final Coord end) {
+    final protected boolean walk(final Coord start, final Coord end) {
 	if(end.x - start.x != 0) {
 	    final double slope = (double)(end.y-start.y)/(double)(end.x-start.x);
 	    final double b = -(slope*start.x)+start.y;
@@ -177,11 +170,11 @@ public class Pathfinder {
 	return true;
     }
 
-    protected List<Coord> collect(final Coord end, final Map<Coord, Coord> parent) {
+    final List<Coord> collect(final Node end) {
         final ArrayList<Coord> moves = new ArrayList<>();
-        moves.add(end);
-        for(Coord next = parent.get(end); next != null; next = parent.get(next)) {
-            moves.add(next);
+        moves.add(end.c);
+        for(Node next = end.parent; next != null; next = next.parent) {
+            moves.add(next.c);
 	}
         //reverse start -> finish
 	Collections.reverse(moves);
@@ -194,8 +187,12 @@ public class Pathfinder {
      * to walk the path
      *
      * TODO: this could be improved by trying farthest away first rather than closest. Even binary search
+     *
+     * In a way this tries to improve our result since it operates with the assumption that our List<Coord>
+     *     may not be as optimal as we think or not optimal in the sense of how many clicks we have to do
+     *     more clicks -> Slowdown -> bad and we'd rather have long straight lines rather than many short
      */
-    protected ArrayList<Move> advreduce(List<Coord> lines) {
+    final ArrayList<Move> advreduce(List<Coord> lines) {
         if(lines != null) {
 	    final ArrayList<Move> blines = new ArrayList<>(lines.size());
 	    Coord cur, next;

@@ -39,7 +39,7 @@ public class EnvMap extends GLState {
     private static final Uniform csky = new Uniform(SAMPLERCUBE);
     private static final Uniform ccol = new Uniform(VEC3);
     private static final Uniform icam = new Uniform(MAT3);
-    private static final TexCube sky = WaterTile.sky;
+    private static final TexCube sky = new TexCube(Resource.loadimg("gfx/tiles/skycube"));
     public final float[] col;
     private TexUnit tsky;
     

@@ -390,9 +390,9 @@ public class OptWnd extends Window {
 		misc.pack();
 	    }
 	    { //pathfinder
-	        final String[] tiers = { "Perfect", "Middle Ground", "Faster", "Mix" };
+	        final String[] tiers = { "Perfect", "Fastest" };
 		pathfinding.add(new IndirLabel(() -> String.format("Pathfinding Tier: %s", tiers[PATHFINDINGTIER.get()-1])));
-		pathfinding.add(new IndirHSlider(200, 1, 4, PATHFINDINGTIER));
+		pathfinding.add(new IndirHSlider(200, 1, 2, PATHFINDINGTIER));
 		pathfinding.pack();
 	    }
 
