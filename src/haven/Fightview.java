@@ -100,7 +100,7 @@ public class Fightview extends Widget {
 	}
 
 	private void updateDefWeights() {
-            //TODO: account for defenses you had but no longer do.
+	    final Set<DefenseType> notfound = new HashSet<>(Arrays.asList(DefenseType.values()));
 	    for(Widget wdg = buffs.child; wdg != null; wdg = wdg.next) {
 		if(wdg instanceof Buff) {
 		    final Buff b = (Buff) wdg;
@@ -109,12 +109,18 @@ public class Fightview extends Widget {
 			if(type != null) {
 			    preweights.put(type, defweights.get(type));
 			    defweights.put(type, b.ameter() / 100.0);
+			    notfound.remove(type);
 			} else if(Cards.lookup.get(res.layer(Resource.tooltip).t) instanceof Maneuver) {
 			    maneuver = (Maneuver) Cards.lookup.get(res.layer(Resource.tooltip).t);
 			    maneuvermeter = b.ameter() / 100.0;
 			}
 		    });
 		}
+	    }
+
+	    for(final DefenseType zero : notfound) {
+	        //no longer has this defense.
+	        defweights.put(zero, 0.0);
 	    }
 	}
 
@@ -180,6 +186,7 @@ public class Fightview extends Widget {
 	    rel.tick();
 	}
 
+	final Set<DefenseType> notfound = new HashSet<>(Arrays.asList(DefenseType.values()));
 	for(Widget wdg = buffs.child; wdg != null; wdg = wdg.next) {
 	    if(wdg instanceof Buff) {
 		final Buff b = (Buff) wdg;
@@ -187,12 +194,18 @@ public class Fightview extends Widget {
 		    final DefenseType type = DefenseType.lookup.getOrDefault(res.name, null);
 		    if(type != null) {
 			defweights.put(type, b.ameter() / 100.0);
+			notfound.remove(type);
 		    } else if(Cards.lookup.get(res.layer(Resource.tooltip).t) instanceof Maneuver) {
 			maneuver = (Maneuver) Cards.lookup.get(res.layer(Resource.tooltip).t);
 			maneuvermeter = b.ameter() / 100.0;
 		    }
 		});
 	    }
+	}
+
+	for(final DefenseType zero : notfound) {
+	    //no longer has this defense.
+	    defweights.put(zero, 0.0);
 	}
     }
 
