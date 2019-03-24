@@ -1,5 +1,11 @@
 package haven.sloth.gui.fight;
 
+
+/**
+ * TODO: Revamp this system. Cards should have two functions: calculatePreState and calculatePostState and
+ *       Whether or not they are allowed. This more accurate reflects how some moves affect you before it goes off
+ *       and others affect after the move goes off (ie: maneuver and attacks)
+ */
 public class Card {
     public final String name;
     private final boolean cooldownHasMu;

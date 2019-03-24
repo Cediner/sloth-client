@@ -31,10 +31,7 @@ import haven.res.ui.tt.wpn.Damage;
 import haven.sloth.DefSettings;
 import haven.sloth.IndirSetting;
 import haven.sloth.gui.KeyBinds;
-import haven.sloth.gui.fight.Attack;
-import haven.sloth.gui.fight.Card;
-import haven.sloth.gui.fight.Cards;
-import haven.sloth.gui.fight.Weapons;
+import haven.sloth.gui.fight.*;
 
 import java.lang.ref.WeakReference;
 import java.util.*;
@@ -52,7 +49,8 @@ public class Fightsess extends Widget {
     public static final Coord indbframeo = (indframe.sz().sub(32, 32)).div(2);
     public static final Tex useframe = Resource.loadtex("gfx/hud/combat/lastframe");
     public static final Coord useframeo = (useframe.sz().sub(32, 32)).div(2);
-    public static final int actpitch = 50;
+    public static final int actpitchx = 75;
+    public static final int actpitchy = 75;
     public final Action[] actions;
     public int use = -1, useb = -1;
     public Coord pcc;
@@ -62,6 +60,7 @@ public class Fightsess extends Widget {
     public static class Action {
 	public final Indir<Resource> res;
 	public Card card;
+	public int cards;
 	public double cs, ct;
 	private boolean discovered;
 
@@ -70,10 +69,11 @@ public class Fightsess extends Widget {
 	    this.discovered = false;
 	}
 
-	void tick() {
+	void tick(final UI ui) {
 	    if (!discovered) {
 		try {
 		    card = Cards.lookup.getOrDefault(res.get().layer(Resource.tooltip).t, Cards.unknown);
+		    cards = ui.gui.chrwdg.fight.cards(res.get().name);
 		    discovered = true;
 		} catch (Loading l) {
 		    //ignore
@@ -143,7 +143,7 @@ public class Fightsess extends Widget {
 	    spr.tick((int)(dt * 1000));
 	for(int i = 0; i < actions.length; ++i) {
 	    if(actions[i] != null) {
-	        actions[i].tick();
+	        actions[i].tick(ui);
 	    }
 	}
 	curfx.clear();
@@ -161,7 +161,7 @@ public class Fightsess extends Widget {
 
     private static Coord actc(int i) {
 	int rl = 5;
-	return(new Coord((actpitch * (i % rl)) - (((rl - 1) * actpitch) / 2), 125 + ((i / rl) * actpitch)));
+	return(new Coord((actpitchx * (i % rl)) - (((rl - 1) * actpitchx) / 2), 125 + ((i / rl) * actpitchy)));
     }
 
     private static final Coord cmc = new Coord(0, 67);
@@ -199,6 +199,19 @@ public class Fightsess extends Widget {
 		g.chcolor();
 	    }
 	    g.image(cdframe, cdc.sub(cdframe.sz().div(2)));
+	    if(fv.current != null && fv.current.estimatedBlockWeight != 0) {
+	        final int stat;
+	        final WeightType type;
+	        if(fv.current.maneuver != null) {
+		    stat = (int)fv.current.maneuver.calculateStat(fv.current.estimatedBlockWeight);
+		    type = fv.current.maneuver.type;
+	        } else {
+	            //An animal, just assume blockweight -> UA
+		    type = WeightType.UA;
+		    stat = (int)fv.current.estimatedBlockWeight;
+		}
+	        FastText.aprintsf(g, cdc.add(0, -50), 0.5, 0.0, "%s: %d", type, stat);
+	    }
 	}
 	try {
 	    Indir<Resource> lastact = fv.lastact;
@@ -284,11 +297,45 @@ public class Fightsess extends Widget {
 			g.image(actframe, ic.sub(actframeo));
 		    }
 
-		    if(act.card instanceof Attack && fv.current != null) {
-		        final Attack atk = (Attack)act.card;
-		        final Pair<Double, Double> dmg = atk.calculateDamage(weapdmg, weapq, weappen,
-				str(), fv.current.defweights);
-		        FastText.printf(g, ic.add(0, 35), "%d/%d", Math.round(dmg.a), Math.round(dmg.b));
+		    if(fv.current != null) {
+			if (act.card instanceof Attack) {
+			    final Attack atk = (Attack) act.card;
+			    final Pair<Double, Double> dmg = atk.calculateDamage(weapdmg, weapq, weappen,
+				    str(), fv.current.defweights);
+			    FastText.printsf(g, ic.add(0, 35), "%d/%d", Math.round(dmg.a), Math.round(dmg.b));
+			    final int ua = ui.sess.glob.cattr.get("unarmed").comp;
+			    final int mc = ui.sess.glob.cattr.get("melee").comp;
+
+			    final Map<DefenseType, Double> newWeights = atk.calculateEnemyDefWeights(fv.maneuver, fv.maneuvermeter,
+				    ua, mc, act.cards,
+				    fv.current.defweights, fv.current.estimatedBlockWeight);
+			    FastText.printsf(g, ic.add(0, 45), "%d/%d/%d/%d",
+				    Math.round(newWeights.get(DefenseType.RED)*100),
+				    Math.round(newWeights.get(DefenseType.GREEN)*100),
+				    Math.round(newWeights.get(DefenseType.BLUE)*100),
+				    Math.round(newWeights.get(DefenseType.YELLOW)*100));
+			} else if(act.card instanceof Restoration) {
+			    final Restoration restro = (Restoration)act.card;
+			    final Map<DefenseType, Double> newWeights = restro.getFutureWeights(act.cards, fv.defweights);
+			    FastText.printsf(g, ic.add(0, 35), "%d/%d/%d/%d",
+				    Math.round(newWeights.get(DefenseType.RED)*100),
+				    Math.round(newWeights.get(DefenseType.GREEN)*100),
+				    Math.round(newWeights.get(DefenseType.BLUE)*100),
+				    Math.round(newWeights.get(DefenseType.YELLOW)*100));
+			    if(act.card == Cards.flex) {
+				final int ua = ui.sess.glob.cattr.get("unarmed").comp;
+				final int mc = ui.sess.glob.cattr.get("melee").comp;
+
+				final Map<DefenseType, Double> enemyWeights = restro.calculateEnemyDefWeights(fv.maneuver, fv.maneuvermeter,
+					ua, mc, act.cards,
+					fv.current.defweights, fv.current.estimatedBlockWeight);
+				FastText.printsf(g, ic.add(0, 45), "%d/%d/%d/%d",
+					Math.round(enemyWeights.get(DefenseType.RED)*100),
+					Math.round(enemyWeights.get(DefenseType.GREEN)*100),
+					Math.round(enemyWeights.get(DefenseType.BLUE)*100),
+					Math.round(enemyWeights.get(DefenseType.YELLOW)*100));
+			    }
+			}
 		    }
 		}
 	    } catch(Loading l) {}

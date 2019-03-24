@@ -1,6 +1,11 @@
 3/24/19
     - You should now see how much damage your attack moves will do under their icons. This is the expected value
     if they aren't wearing any armor.
+    - You'll now also see the future estimated weights of yourself or the person your attacking depending on the move type.
+    The ordering is Red/Green/Blue/Yellow.
+    Flex will show both future weight of yourself (on top) and your opponent (on bottom)
+    The numbers should become more accurate as you hit them more to figure out their UA/MC, but will probably fall
+    within a % range around their UA/MC since buffs are in integers and not decimals
 
 3/19/19
     - Cave walls are now shorter and flat

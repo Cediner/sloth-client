@@ -61,6 +61,7 @@ public class CharWnd extends Window {
     public final ExpGrid exps;
     public final Widget woundbox;
     public final WoundList wounds;
+    public FightWnd fight;
     public Wound.Info wound;
     private final Tabs.Tab questtab;
     public final Widget questbox;
@@ -2144,6 +2145,7 @@ public class CharWnd extends Window {
 	    Widget inf = sattr.add(new StudyInfo(new Coord(attrw - 150, child.sz.y), child), new Coord(260 + 150, child.c.y).add(wbox.btloff().x, 0));
 	    Frame.around(sattr, Collections.singletonList(inf));
 	} else if(place == "fmg") {
+	    fight = (FightWnd)child;
 	    fgt.add(child, 0, 0);
 	} else if(place == "wound") {
 	    this.wound = (Wound.Info)child;

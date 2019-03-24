@@ -27,7 +27,7 @@
 package haven;
 
 import haven.sloth.Theme;
-import haven.sloth.gui.fight.DefenseType;
+import haven.sloth.gui.fight.*;
 
 import java.awt.*;
 import java.util.*;
@@ -47,6 +47,8 @@ public class Fightview extends Widget {
     public Indir<Resource> lastact = null;
     public double lastuse = 0;
     public final Bufflist buffs = add(new Bufflist()); {buffs.hide();} //your buffs
+    public Maneuver maneuver;
+    public double maneuvermeter;
     public final Map<DefenseType, Double> defweights = new HashMap<>();
     
     public class Relation {
@@ -59,15 +61,21 @@ public class Fightview extends Widget {
 	public Indir<Resource> lastact = null;
 	public double lastuse = 0;
 
+	public Maneuver maneuver;
+	public double maneuvermeter;
+	public final Map<DefenseType, Double> preweights = new HashMap<>();
 	public final Map<DefenseType, Double> defweights = new HashMap<>();
+	public double estimatedBlockWeight = 0;
         
         public Relation(long gobid) {
             this.gobid = gobid;
             add(this.ava = new Avaview(avasz, gobid, "fightcam")).canactivate = true;
 	    add(this.give = new GiveButton(0, new Coord(15, 15)));
 	    add(this.purs = new Button(70, "Pursue"));
-	    for(DefenseType type : DefenseType.values())
+	    for(DefenseType type : DefenseType.values()) {
 		defweights.put(type, 0.0);
+	    	preweights.put(type, 0.0);
+	    }
         }
 	
 	public void give(int state) {
@@ -91,17 +99,76 @@ public class Fightview extends Widget {
 	    lastuse = Utils.rtime();
 	}
 
-	public void tick() {
-            for(Widget wdg = buffs.child; wdg != null; wdg = wdg.next) {
-                if(wdg instanceof Buff) {
-                    final Buff b = (Buff) wdg;
-                    b.res().ifPresent(res -> {
-                        final DefenseType type = DefenseType.lookup.getOrDefault(res.name, null);
-                        if(type != null) {
-                            defweights.put(type, b.ameter() / 100.0);
+	private void updateDefWeights() {
+            //TODO: account for defenses you had but no longer do.
+	    for(Widget wdg = buffs.child; wdg != null; wdg = wdg.next) {
+		if(wdg instanceof Buff) {
+		    final Buff b = (Buff) wdg;
+		    b.res().ifPresent(res -> {
+			final DefenseType type = DefenseType.lookup.getOrDefault(res.name, null);
+			if(type != null) {
+			    preweights.put(type, defweights.get(type));
+			    defweights.put(type, b.ameter() / 100.0);
+			} else if(Cards.lookup.get(res.layer(Resource.tooltip).t) instanceof Maneuver) {
+			    maneuver = (Maneuver) Cards.lookup.get(res.layer(Resource.tooltip).t);
+			    maneuvermeter = b.ameter() / 100.0;
 			}
 		    });
 		}
+	    }
+	}
+
+	public void tick() {
+            updateDefWeights();
+	}
+
+	void checkWeight() {
+            final double SMOOTHED_ALPHA = 0.9;
+            updateDefWeights();
+            //Now use pre/post to determine block weight based off what we did to them
+	    try {
+	        if(Fightview.this.lastact != null) {
+		    final Card c = Cards.lookup.getOrDefault(Fightview.this.lastact.get().layer(Resource.tooltip).t, Cards.unknown);
+		    final double blockweight;
+		    if (c instanceof Attack || c == Cards.flex) {
+		        final Attacks atk = (Attacks) c;
+			final int ua = ui.sess.glob.cattr.get("unarmed").comp;
+			final int mc = ui.sess.glob.cattr.get("melee").comp;
+			final int cards = ui.gui.chrwdg.fight.cards(Fightview.this.lastact.get().name);
+			if(maneuver == Cards.oakstance) {
+			    final double atkweight = atk.getAttackweight(Fightview.this.maneuver, Fightview.this.maneuvermeter, ua, mc, cards);
+			    final double estblockweight = estimatedBlockWeight == 0 ? atkweight : estimatedBlockWeight;
+			    final Map<DefenseType, Double> expected = atk.calculateEnemyDefWeights(Fightview.this.maneuver, Fightview.this.maneuvermeter, ua, mc, cards, preweights, estblockweight);
+			    DefenseType max = DefenseType.GREEN;
+			    double maxv = 0;
+			    for(DefenseType type : DefenseType.values()) {
+			        if(expected.get(type) > maxv) {
+			            max = type;
+			            maxv = expected.get(type);
+				}
+			    }
+
+			    //Factor back in the 0.05% taken away
+			    expected.put(DefenseType.GREEN, defweights.get(DefenseType.GREEN));
+			    expected.put(DefenseType.BLUE, defweights.get(DefenseType.BLUE));
+			    expected.put(DefenseType.YELLOW, defweights.get(DefenseType.YELLOW));
+			    expected.put(DefenseType.RED, defweights.get(DefenseType.RED));
+			    //Stats are no longer relevant for maneuvers, and the effects of maneuvers are always constant.
+			    maxv = expected.get(max) + (expected.get(max) * 0.05);
+			    expected.put(max, maxv);
+			    //figuring our the weight from an oakstance hit that goes past 50% starts to cause issues and ruins the estimation
+			    blockweight = maxv < 0.50 ? atk.guessEnemyBlockWeight(Fightview.this.maneuver, Fightview.this.maneuvermeter, ua, mc, cards, preweights, expected) : Double.POSITIVE_INFINITY;
+			} else {
+			    blockweight = atk.guessEnemyBlockWeight(Fightview.this.maneuver, Fightview.this.maneuvermeter, ua, mc, cards, preweights, defweights);
+			}
+
+			if(!Double.isInfinite(blockweight)) {
+			    estimatedBlockWeight = estimatedBlockWeight != 0 ? (SMOOTHED_ALPHA * estimatedBlockWeight) + ((1 - SMOOTHED_ALPHA) * blockweight) : blockweight;
+			}
+		    }
+		}
+	    } catch (Loading l) {
+	        //Ignore, but really should never hit here
 	    }
 	}
     }
@@ -119,7 +186,10 @@ public class Fightview extends Widget {
 		b.res().ifPresent(res -> {
 		    final DefenseType type = DefenseType.lookup.getOrDefault(res.name, null);
 		    if(type != null) {
-			defweights.put(type, 100.0 / b.ameter());
+			defweights.put(type, b.ameter() / 100.0);
+		    } else if(Cards.lookup.get(res.layer(Resource.tooltip).t) instanceof Maneuver) {
+			maneuver = (Maneuver) Cards.lookup.get(res.layer(Resource.tooltip).t);
+			maneuvermeter = b.ameter() / 100.0;
 		    }
 		});
 	    }
@@ -280,6 +350,8 @@ public class Fightview extends Widget {
 	    } return;
 	    case "used":
 		use((args[0] == null)?null:ui.sess.getres((Integer)args[0]));
+		if(current != null)
+		    current.checkWeight();
 		return;
 	    case "ruse": {
 		Relation rel = getrel((Integer) args[0]);

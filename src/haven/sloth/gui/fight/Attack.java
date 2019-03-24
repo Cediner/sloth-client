@@ -6,7 +6,7 @@ import java.util.*;
 
 import static haven.sloth.gui.fight.WeightType.UA;
 
-public class Attack extends Card {
+public class Attack extends Card implements Attacks {
     private final boolean attackHasMu;
     private final double attackweight;
     private Map<DefenseType, Double> openingweights = new HashMap<>();
@@ -80,6 +80,20 @@ public class Attack extends Card {
         return new Pair<>(fulldamage, grivdamage);
     }
 
+    public double getAttackweight(final Maneuver maneuver, final double maneuvermeter,
+				  final int ua, final int mc, final int cards) {
+        final double maneuverWeight;
+        if(maneuver == Cards.bloodlust) {
+	    //your attack weight will be increased by four times the amount that Bloodlust is charged.
+            maneuverWeight = 1.0 + (4.0 * maneuvermeter);
+	} else if(maneuver == Cards.oakstance) {
+            maneuverWeight = 0.5;
+	} else {
+            maneuverWeight = 1.0;
+	}
+        return type == UA ? ua * attackweight * maneuverWeight * Mu(cards) : mc * attackweight * maneuverWeight * Mu(cards);
+    }
+
     /**
      * Spending more points on a combat effect increases the efficiency of said combat effect in that school.
      * The meaning of increasing the weight of some particular combat effect is indicated in the descriptive
@@ -97,17 +111,19 @@ public class Attack extends Card {
      * 	sqrt(block weight/attack weight)
      *
      * So:
-     *  def -> def + (((1 - def_{old}) * opening * sqrt(blockweight/(attackweight * Mu))))
+     *  def -> def + (((1 - def_{old}) * opening * sqrt(sqrt((attackweight * Mu)/blockweight))))
      *
      */
-    public Map<DefenseType, Double> calculateEnemyDefWeights(final int ua, final int mc, final int cards,
+    public Map<DefenseType, Double> calculateEnemyDefWeights(final Maneuver maneuver, final double maneuvermeter,
+							     final int ua, final int mc, final int cards,
 							     final Map<DefenseType, Double> enemyDefWeight,
 							     final double enemyBlockWeight) {
-        final double atkweight = type == UA ? ua * attackweight * Mu(cards) : mc * attackweight * Mu(cards);
+        final double atkweight = getAttackweight(maneuver, maneuvermeter, ua, mc, cards);
+        final double blockweight = enemyBlockWeight == 0 ? atkweight : enemyBlockWeight;
         final Map<DefenseType, Double> futureWeights = new HashMap<>();
         for(final DefenseType def : DefenseType.values()) {
             futureWeights.put(def, enemyDefWeight.get(def) + ((1 - enemyDefWeight.get(def)) * openingweights.get(def)
-		    * Math.sqrt(enemyBlockWeight/(atkweight))));
+		    * Math.sqrt(Math.sqrt(atkweight / blockweight))));
 	}
         return futureWeights;
     }
@@ -120,20 +136,24 @@ public class Attack extends Card {
      * because:
      * 	a) Opening weights are only precise to the integer, not decimal
      */
-    public double guessEnemyBlockWeight(final int ua, final int mc, final int cards,
+    public double guessEnemyBlockWeight(final Maneuver maneuver, final double maneuvermeter,
+					final int ua, final int mc, final int cards,
 					final Map<DefenseType, Double> beforeWeights,
 					final Map<DefenseType, Double> afterWeights) {
-	final double atkweight = type == UA ? ua * attackweight * Mu(cards) : mc * attackweight * Mu(cards);
+	final double atkweight = getAttackweight(maneuver, maneuvermeter, ua, mc, cards);
 	double blockweight = 0;
 	int openings = 0;
 	//I only care about the colors I would have hit
 	for(final DefenseType def : DefenseType.values()) {
 	    if(openingweights.get(def) != 0) {
+	        if(afterWeights.get(def) >= 0.80) {
+	            return Double.POSITIVE_INFINITY;
+		}
 		//How much we actually gained
 		final double truth = afterWeights.get(def) - beforeWeights.get(def);
 		//The block weight needed to hit this
-		//blockweight = (truth / ((1 - d_o) * opening)^2 * atkweight
-		blockweight += Math.pow((truth / ((1 - beforeWeights.get(def)) * openingweights.get(def))), 2) * atkweight;
+		//blockweight = atkweight/(((ndef - odef)/((1-odef)*opening))^2)^2
+		blockweight += atkweight / Math.pow(Math.pow((truth / ((1 - beforeWeights.get(def)) * openingweights.get(def))), 2), 2);
 		openings++;
 	    }
 	}

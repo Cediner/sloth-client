@@ -42,7 +42,7 @@ public class FightWnd extends Widget {
     public int maxact;
     public final Actions actlist;
     public final Savelist savelist;
-    public List<Action> acts = new ArrayList<Action>();
+    public List<Action> acts = new ArrayList<>();
     public final Action[] order;
     public int usesave;
     private final Text[] saves;
@@ -52,6 +52,19 @@ public class FightWnd extends Widget {
 
     public static interface IconInfo {
 	public void draw(BufferedImage img, Graphics g);
+    }
+
+    public int cards(final String name) {
+        for(final Action act : acts) {
+            try {
+                if(act.res.get().name.equals(name)) {
+                    return act.u;
+		}
+	    } catch (Loading l) {
+                //ignore
+	    }
+	}
+        return 1;
     }
 
     private static final OwnerContext.ClassResolver<FightWnd> actxr = new OwnerContext.ClassResolver<FightWnd>()
