@@ -34,7 +34,7 @@ public class Bufflist extends MovableWidget {
     static final int margin = 2;
     static final int num = 5;
 
-    Bufflist() {
+    public Bufflist() {
         super("Bufflist");
     }
 

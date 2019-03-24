@@ -29,8 +29,10 @@ package haven;
 import haven.res.ui.tt.Armor;
 import haven.res.ui.tt.ISlots;
 import haven.res.ui.tt.attrmod.AttrMod;
+import haven.res.ui.tt.wpn.Damage;
 
 import java.awt.*;
+import java.lang.ref.WeakReference;
 import java.util.*;
 import java.util.List;
 
@@ -48,8 +50,8 @@ public class Equipory extends Widget implements DTarget {
 	new Coord(rx, 33),
 	new Coord(0, 66),
 	new Coord(rx, 66),
-	new Coord(0, 99),
-	new Coord(rx, 99),
+	new Coord(0, 99), //Weapon slot	[6]
+	new Coord(rx, 99),   //Weapon slot   [7]
 	new Coord(0, 132),
 	new Coord(rx, 132),
 	new Coord(0, 165),
@@ -129,6 +131,18 @@ public class Equipory extends Widget implements DTarget {
 	public int slots();
     }
 
+    private GItem lweap, rweap;
+
+    public GItem getWeapon() {
+        if(lweap != null && lweap.getinfo(Damage.class).isPresent()) {
+            return lweap;
+	} else if(rweap != null && rweap.getinfo(Damage.class).isPresent()) {
+            return rweap;
+	} else {
+            return null;
+	}
+    }
+
     public void addchild(Widget child, Object... args) {
 	if(child instanceof GItem) {
 	    add(child);
@@ -137,6 +151,10 @@ public class Equipory extends Widget implements DTarget {
 	    for(int i = 0; i < args.length; i++) {
 		int ep = (Integer)args[i];
 		v[i] = add(new WItem(g), ecoords[ep].add(1, 1));
+	    	if(ep == 6)
+	    	    lweap = g;
+	    	else if(ep == 7)
+	    	    rweap = g;
 	    }
 	    wmap.put(g, v);
 	} else {
@@ -150,6 +168,10 @@ public class Equipory extends Widget implements DTarget {
 	    GItem i = (GItem)w;
 	    for(WItem v : wmap.remove(i))
 		ui.destroy(v);
+	    if(lweap == i)
+	        lweap = null;
+	    else if(rweap == i)
+	        rweap = null;
 	}
     }
 

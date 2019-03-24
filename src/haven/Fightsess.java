@@ -26,10 +26,17 @@
 
 package haven;
 
+import haven.res.ui.tt.wpn.Armpen;
+import haven.res.ui.tt.wpn.Damage;
 import haven.sloth.DefSettings;
 import haven.sloth.IndirSetting;
 import haven.sloth.gui.KeyBinds;
+import haven.sloth.gui.fight.Attack;
+import haven.sloth.gui.fight.Card;
+import haven.sloth.gui.fight.Cards;
+import haven.sloth.gui.fight.Weapons;
 
+import java.lang.ref.WeakReference;
 import java.util.*;
 import java.awt.Color;
 import java.awt.event.InputEvent;
@@ -54,10 +61,24 @@ public class Fightsess extends Widget {
 
     public static class Action {
 	public final Indir<Resource> res;
+	public Card card;
 	public double cs, ct;
+	private boolean discovered;
 
 	public Action(Indir<Resource> res) {
 	    this.res = res;
+	    this.discovered = false;
+	}
+
+	void tick() {
+	    if (!discovered) {
+		try {
+		    card = Cards.lookup.getOrDefault(res.get().layer(Resource.tooltip).t, Cards.unknown);
+		    discovered = true;
+		} catch (Loading l) {
+		    //ignore
+		}
+	    }
 	}
     }
 
@@ -120,6 +141,11 @@ public class Fightsess extends Widget {
     public void tick(double dt) {
 	for(Sprite spr : curfx)
 	    spr.tick((int)(dt * 1000));
+	for(int i = 0; i < actions.length; ++i) {
+	    if(actions[i] != null) {
+	        actions[i].tick();
+	    }
+	}
 	curfx.clear();
     }
 
@@ -220,6 +246,20 @@ public class Fightsess extends Widget {
 	    } catch(Loading l) {
 	    }
 	}
+
+	//My cards
+	final GItem weapon = weap();
+	final int weapq;
+	final int weapdmg;
+	final double weappen;
+	if(weapon != null) {
+	    weapq = weapon.quality;
+	    weapdmg = Weapons.lookup.getOrDefault(weapon.name().orElse(""), 0);
+	    weappen = weapon.getinfo(Armpen.class).orElse(Armpen.NOPEN).deg;
+	} else {
+	    weapq = weapdmg = 0;
+	    weappen = 0.0;
+	}
 	for(int i = 0; i < actions.length; i++) {
 	    Coord ca = pcc.add(actc(i));
 	    Action act = actions[i];
@@ -230,6 +270,7 @@ public class Fightsess extends Widget {
 		    Coord ic = ca.sub(img.sz().div(2));
 		    g.image(img, ic);
 		    if(now < act.ct) {
+			//This is from an era when moves had their own cooldown
 			double a = (now - act.cs) / (act.ct - act.cs);
 			g.chcolor(0, 0, 0, 128);
 			g.prect(ca, ic.sub(ca), ic.add(img.sz()).sub(ca), (1.0 - a) * Math.PI * 2);
@@ -242,9 +283,25 @@ public class Fightsess extends Widget {
 		    } else {
 			g.image(actframe, ic.sub(actframeo));
 		    }
+
+		    if(act.card instanceof Attack && fv.current != null) {
+		        final Attack atk = (Attack)act.card;
+		        final Pair<Double, Double> dmg = atk.calculateDamage(weapdmg, weapq, weappen,
+				str(), fv.current.defweights);
+		        FastText.printf(g, ic.add(0, 35), "%d/%d", Math.round(dmg.a), Math.round(dmg.b));
+		    }
 		}
 	    } catch(Loading l) {}
 	}
+    }
+
+    private GItem weap() {
+        return ui.gui.equ != null ? ui.gui.equ.getWeapon() : null;
+    }
+
+    private int str() {
+        final Glob.CAttr strattr = ui.sess.glob.cattr.get("str");
+        return strattr.comp;
     }
 
     private Widget prevtt = null;
@@ -364,31 +421,4 @@ public class Fightsess extends Widget {
 	    last_sent = System.currentTimeMillis();
 	}
     }
-
-    /*
-    public boolean globtype(char key, KeyEvent ev) {
-	if((key == 0) && (ev.getModifiersEx() & (InputEvent.CTRL_DOWN_MASK | KeyEvent.META_DOWN_MASK | KeyEvent.ALT_DOWN_MASK)) == 0) {
-	    int n = -1;
-	    switch(ev.getKeyCode()) {
-	    case KeyEvent.VK_1: n = 0; break;
-	    case KeyEvent.VK_2: n = 1; break;
-	    case KeyEvent.VK_3: n = 2; break;
-	    case KeyEvent.VK_4: n = 3; break;
-	    case KeyEvent.VK_5: n = 4; break;
-	    }
-	    if((n >= 0) && ((ev.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) != 0))
-		n += 5;
-	    int fn = n;
-	    if ((n >= 0) && (n < actions.length)) {
-	        if((last_button != fn || (System.currentTimeMillis() - last_sent) >= 100)) {
-		    wdgmsg("use", fn, 1, ui.modflags());
-		    last_button = fn;
-		    last_sent = System.currentTimeMillis();
-		}
-	        //only true if you press one of the actions.length buttons and not all...
-		return (true);
-	    }
-	}
-	return(super.globtype(key, ev));
-    }*/
 }

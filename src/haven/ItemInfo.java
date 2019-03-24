@@ -31,6 +31,8 @@ import haven.res.ui.tt.ArmorFactory;
 import haven.res.ui.tt.ISlots;
 import haven.res.ui.tt.Wear;
 import haven.res.ui.tt.defn.DefName;
+import haven.res.ui.tt.wpn.Armpen;
+import haven.res.ui.tt.wpn.Damage;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -335,6 +337,8 @@ public abstract class ItemInfo {
         builtinfacts.put("ui/tt/slots", new ISlots.Fac());
         builtinfacts.put("ui/tt/defn", new DefName());
         builtinfacts.put("ui/tt/wear", new Wear.Fac());
+        builtinfacts.put("ui/tt/wpn/dmg", new Damage.Fac());
+        builtinfacts.put("ui/tt/wpn/armpen", new Armpen.Fac());
     }
 
     public static List<ItemInfo> buildinfo(Owner owner, Raw raw) {

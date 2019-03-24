@@ -133,7 +133,7 @@ public class Buff extends Widget implements ItemInfo.ResOwner {
 	    //do nothing
 	}
 
-	if(this.ameter >= 0) {
+	if(ameter != null) {
 	    final int width = FastText.textw(this.ameter+"");
 	    final Coord c = new Coord(sz.x/2-width/2, sz.y/2 - 5);
 	    final Coord tc = c.sub(0, 3);
@@ -237,6 +237,22 @@ public class Buff extends Widget implements ItemInfo.ResOwner {
 	    }
 	} catch(Loading e) {
 	    return("...");
+	}
+    }
+
+    public int ameter() {
+        return ameter;
+    }
+
+    public Optional<Resource> res() {
+        try {
+            if(res != null) {
+		return Optional.of(res.get());
+	    } else {
+                return Optional.empty();
+	    }
+	} catch (Loading e) {
+            return Optional.empty();
 	}
     }
 

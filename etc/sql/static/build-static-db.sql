@@ -471,6 +471,13 @@ INSERT OR IGNORE INTO item_type (name_key) VALUES ("TOOL");
 INSERT OR IGNORE INTO item_type (name_key) VALUES ("ARROW");
 INSERT OR IGNORE INTO item_type (name_key) VALUES ("FISHING");
 
+INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'WEAPON'), "BATTLEAXE OF THE TWELFTH BAY");
+INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'WEAPON'), "BOAR SPEAR");
+INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'WEAPON'), "BRONZE SWORD");
+INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'WEAPON'), "CUTBLADE");
+INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'WEAPON'), "FYRDSMAN'S SWORD");
+INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'WEAPON'), "HIRDSMAN'S SWORD");
+
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'CONTAINER'), 'WATERSKIN');
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'CONTAINER'), 'WATERFLASK');
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'CONTAINER'), 'BIRCHBARK KUKSA');
@@ -492,7 +499,6 @@ INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "BAT HAT");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'ARMOR'), "BAT WING");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "BATTLE STANDARD");
-INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'WEAPON'), "BATTLEAXE OF THE TWELFTH BAY");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "BEAR CAPE");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "BEAR COAT");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "BEAR TOOTH TALISMAN");
@@ -509,7 +515,6 @@ INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "BLUEBELL HAT");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "BLUEBERRY HAT");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "BLUEBUCKET HAT");
-INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'WEAPON'), "BOAR SPEAR");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'ARMOR'), "BOAR TUSK HELMET");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "BOBBY HELMET");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'ARROW'), "BONE ARROW");
@@ -521,7 +526,6 @@ INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "BRAIN IN A JAR");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'ARMOR'), "BRONZE HELM");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'ARMOR'), "BRONZE PLATE");
-INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'WEAPON'), "BRONZE SWORD");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "BROWN PAPER BAG");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "BULL PIPE");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "BUNNY SLIPPERS");
@@ -551,7 +555,6 @@ INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "CROWN OF LOWER EGYPT");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "CROWN OF UPPER EGYPT");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "CUPCAKE HAT");
-INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'WEAPON'), "CUTBLADE");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'ARMOR'), "CUTTHROAT CUIRASS");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'WEAPON'), "CUTTHROAT KNUCKLES");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "CYLINDER HAT");
@@ -587,7 +590,6 @@ INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "FULL METAL HELMET");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "FUR BOOTS");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "FUR CLOAK");
-INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'WEAPON'), "FYRDSMAN'S SWORD");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "GAME TIME TOKEN");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "GAUZE");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "GILDABLE EQUIPMENT");
@@ -609,7 +611,6 @@ INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "HIGHLAND BONNET");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "HIRDSMAN'S CAPE");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'ARMOR'), "HIRDSMAN'S HELMET");
-INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'WEAPON'), "HIRDSMAN'S SWORD");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "HOLY HALO");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'ARMOR'), "HORSE NOMAD'S HELM");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "HUNTER'S BELT");

@@ -43,8 +43,6 @@ import haven.sloth.DefSettings;
 import haven.sloth.gob.*;
 import haven.sloth.gui.SoundSelector;
 import haven.sloth.io.HighlightData;
-import haven.sloth.script.pathfinding.APathfinder;
-import haven.sloth.script.pathfinding.ApePathfinder;
 import haven.sloth.script.pathfinding.Move;
 import haven.sloth.script.pathfinding.NBAPathfinder;
 

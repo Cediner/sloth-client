@@ -27,6 +27,7 @@
 package haven;
 
 import haven.sloth.Theme;
+import haven.sloth.gui.fight.DefenseType;
 
 import java.awt.*;
 import java.util.*;
@@ -46,6 +47,7 @@ public class Fightview extends Widget {
     public Indir<Resource> lastact = null;
     public double lastuse = 0;
     public final Bufflist buffs = add(new Bufflist()); {buffs.hide();} //your buffs
+    public final Map<DefenseType, Double> defweights = new HashMap<>();
     
     public class Relation {
         public final long gobid;
@@ -56,12 +58,16 @@ public class Fightview extends Widget {
 	public int ip, oip;
 	public Indir<Resource> lastact = null;
 	public double lastuse = 0;
+
+	public final Map<DefenseType, Double> defweights = new HashMap<>();
         
         public Relation(long gobid) {
             this.gobid = gobid;
             add(this.ava = new Avaview(avasz, gobid, "fightcam")).canactivate = true;
 	    add(this.give = new GiveButton(0, new Coord(15, 15)));
 	    add(this.purs = new Button(70, "Pursue"));
+	    for(DefenseType type : DefenseType.values())
+		defweights.put(type, 0.0);
         }
 	
 	public void give(int state) {
@@ -84,6 +90,40 @@ public class Fightview extends Widget {
 	    lastact = act;
 	    lastuse = Utils.rtime();
 	}
+
+	public void tick() {
+            for(Widget wdg = buffs.child; wdg != null; wdg = wdg.next) {
+                if(wdg instanceof Buff) {
+                    final Buff b = (Buff) wdg;
+                    b.res().ifPresent(res -> {
+                        final DefenseType type = DefenseType.lookup.getOrDefault(res.name, null);
+                        if(type != null) {
+                            defweights.put(type, b.ameter() / 100.0);
+			}
+		    });
+		}
+	    }
+	}
+    }
+
+    @Override
+    public void tick(double dt) {
+	super.tick(dt);
+	for(Relation rel : lsrel) {
+	    rel.tick();
+	}
+
+	for(Widget wdg = buffs.child; wdg != null; wdg = wdg.next) {
+	    if(wdg instanceof Buff) {
+		final Buff b = (Buff) wdg;
+		b.res().ifPresent(res -> {
+		    final DefenseType type = DefenseType.lookup.getOrDefault(res.name, null);
+		    if(type != null) {
+			defweights.put(type, 100.0 / b.ameter());
+		    }
+		});
+	    }
+	}
     }
 
     public void use(Indir<Resource> act) {
@@ -100,6 +140,8 @@ public class Fightview extends Widget {
     
     public Fightview() {
         super(new Coord(width, (bg.sz().y + ymarg) * height));
+        for(DefenseType type : DefenseType.values())
+            defweights.put(type, 0.0);
     }
 
     public void addchild(Widget child, Object... args) {
