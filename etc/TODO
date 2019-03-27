@@ -1,4 +1,5 @@
 TODO
+    - fix some of the color changes not updating -> ex: hidden, path cols.. they aren't indir
     - Add back in remaining study time to tooltip
     - Pathfinding
         - continuous updating for long distance clicks.

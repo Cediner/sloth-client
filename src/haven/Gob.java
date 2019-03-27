@@ -33,7 +33,6 @@ import haven.sloth.gfx.HitboxMesh;
 import haven.sloth.gob.*;
 import haven.sloth.io.HighlightData;
 import haven.sloth.io.MarkerData;
-import haven.sloth.script.pathfinding.GobHitmap;
 import haven.sloth.script.pathfinding.Hitbox;
 
 import java.util.*;

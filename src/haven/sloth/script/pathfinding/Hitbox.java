@@ -93,7 +93,7 @@ public class Hitbox {
         final Resource.Neg neg = res.layer(Resource.negc);
         if(neg != null) {
             Coord hsz = new Coord(Math.abs(neg.bc.x) + Math.abs(neg.bs.x),
-                    Math.abs(neg.bc.y) + Math.abs(neg.bc.y));
+                    Math.abs(neg.bc.y) + Math.abs(neg.bs.y));
             Coord hoff = neg.bc;
             final Hitbox hb = new Hitbox(hoff, hsz, true, false);
             hitboxes.put(res.name, hb);
@@ -105,7 +105,7 @@ public class Hitbox {
                     final Resource.Neg meshneg = meshres.get().layer(Resource.negc);
                     if(meshneg != null) {
                         Coord hsz = new Coord(Math.abs(meshneg.bc.x) + Math.abs(meshneg.bs.x),
-                                Math.abs(meshneg.bc.y) + Math.abs(meshneg.bc.y));
+                                Math.abs(meshneg.bc.y) + Math.abs(meshneg.bs.y));
                         Coord hoff = meshneg.bc;
                         final Hitbox hb = new Hitbox(hoff, hsz, true, false);
                         hitboxes.put(res.name, hb);
