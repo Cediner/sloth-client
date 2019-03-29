@@ -1848,17 +1848,17 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	        if(selection >= 2 && selection <= 4) {
 		    final Gob g = ui.sess.glob.oc.getgob(next--, 0);
 		    ui.sess.glob.oc.move(g, mc, Math.toRadians(130));
-		    ui.sess.glob.oc.composite(g, Resource.remote().load("gfx/kritter/spermwhale/spermwhale"));
+		    ui.sess.glob.oc.composite(g, Resource.remote().load("gfx/kritter/fox/fox"));
 		    final List<ResData> data = new ArrayList<>();
-		    data.add(new ResData(Resource.remote().load("gfx/kritter/spermwhale/spermwhale"), Message.nil));
+		    data.add(new ResData(Resource.remote().load("gfx/kritter/fox/fox"), Message.nil));
 		    final List<Composited.MD> mds = new ArrayList<>();
-		    mds.add(new Composited.MD(Resource.remote().load("gfx/kritter/spermwhale/spermwhale"), data));
+		    mds.add(new Composited.MD(Resource.remote().load("gfx/kritter/fox/fox"), data));
 		    ui.sess.glob.oc.cmpmod(g, mds);
 		    final List<ResData> pose = new ArrayList<>();
 		    switch (selection) {
-			case 1: pose.add(new ResData(Resource.remote().load("gfx/kritter/spermwhale/knock"), Message.nil)); break;
-			case 2: pose.add(new ResData(Resource.remote().load("gfx/kritter/spermwhale/waterdead"), Message.nil)); break;
-			case 3: pose.add(new ResData(Resource.remote().load("gfx/kritter/spermwhale/swimming"), Message.nil)); break;
+			case 1: pose.add(new ResData(Resource.remote().load("gfx/kritter/fox/knock"), Message.nil)); break;
+			case 2: pose.add(new ResData(Resource.remote().load("gfx/kritter/fox/knock"), Message.nil)); break;
+			case 3: pose.add(new ResData(Resource.remote().load("gfx/kritter/fox/knock"), Message.nil)); break;
 		    }
 		    ui.sess.glob.oc.cmppose(g, 11, pose, null, false, 0);
 		} else {

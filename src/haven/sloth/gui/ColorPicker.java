@@ -17,7 +17,7 @@ public class ColorPicker extends Window {
     private final ColorPreview prev;
     private final Consumer<Color> callback;
 
-    ColorPicker(final Color def, final Consumer<Color> callback){
+    public ColorPicker(final Color def, final Consumer<Color> callback){
 	super(Coord.z, "Color Picker", "Color Picker");
 	this.callback = callback;
 	this.col = def;

@@ -86,6 +86,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     private TimersWnd timers;
     public MapPointer pointer;
     public Speedget speed;
+    private ScriptManager scripts;
     
     @RName("gameui")
     public static class $_ implements Factory {
@@ -150,6 +151,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     	timers.hide();
     	highlighted = add(new HighlightManager());
     	highlighted.hide();
+    	scripts = add(new ScriptManager());
+    	scripts.hide();
     	pointer = add(new MapPointer());
     }
     
@@ -755,6 +758,14 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    paginasearch.raise();
 	    fitwdg(paginasearch);
 	    setfocus(paginasearch);
+	}
+    }
+
+    void toggleScripts() {
+	if(scripts != null && scripts.show(!scripts.visible)) {
+	    scripts.raise();
+	    fitwdg(scripts);
+	    setfocus(scripts);
 	}
     }
 

@@ -30,6 +30,10 @@ import haven.sloth.DefSettings;
 import haven.sloth.IndirSetting;
 import haven.sloth.gfx.HitboxMesh;
 import haven.sloth.gui.*;
+import haven.sloth.gui.indir.*;
+import haven.sloth.gui.layout.GridGrouping;
+import haven.sloth.gui.layout.Grouping;
+import haven.sloth.gui.layout.LinearGrouping;
 
 import java.awt.*;
 import java.util.function.Consumer;

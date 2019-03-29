@@ -4,6 +4,7 @@ import haven.Coord;
 import haven.Profile;
 import haven.Profwdg;
 import haven.Window;
+import haven.sloth.gui.layout.LinearGrouping;
 
 public class ProfWnd extends Window {
     private LinearGrouping container;

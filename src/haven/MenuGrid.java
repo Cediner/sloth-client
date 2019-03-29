@@ -276,6 +276,9 @@ public class MenuGrid extends MovableWidget {
 	addSpecial(new SpecialPagina(this, "management::crafting",
 		Resource.local().load("custom/paginae/default/wnd/crafting"),
 		(pag) -> ui.gui.toggleMakeWnd()));
+	addSpecial(new SpecialPagina(this, "management::scripts",
+		Resource.local().load("custom/paginae/default/wnd/scripts"),
+		(pag) -> ui.gui.toggleScripts()));
     }
 
     @Override
