@@ -1,3 +1,6 @@
+3/29/19
+    - Added in Top down ortho camera, can rotate by dragging around
+
 3/24/19
     - You should now see how much damage your attack moves will do under their icons. This is the expected value
     if they aren't wearing any armor.

@@ -419,6 +419,7 @@ public class OptWnd extends Window {
 		rgrp.add("Angle Locked Ortho Cam", "ortho");
 		rgrp.add("Free Cam", "bad");
 		rgrp.add("Follow Cam", "follow");
+		rgrp.add("Top Down Cam", "topdown");
 	    }
 	    final Grouping freeg = new LinearGrouping("Free Cam Settings", spacer);
 	    { //Free Cam Settings

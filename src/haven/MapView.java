@@ -279,164 +279,240 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	}
     }
     static {camtypes.put("bad", FreeCam.class);}
+
+    public class TopDownCam extends Camera {
+		private final float pi2 = (float)(Math.PI * 2);
+    	private Coord3f cc;
+		private float dist = 500.0f;
+		private final float elev = (float)Math.toRadians(90);
+		protected float field = (float)(100 * Math.sqrt(2));
+		private float tfield = field;
+		private Coord dragorig = null;
+		private float angl = 0.0f;
+		private float tangl = angl;
+		private float anglorig;
+
+		public TopDownCam() { }
+
+		public void tick2(double dt) {
+			Coord3f cc = getcc();
+			if(FLATWORLD.get())
+				cc.z = 0;
+			cc.y = -cc.y;
+			this.cc = cc;
+		}
+
+		public void tick(double dt) {
+			tick2(dt);
+			float aspect = ((float)sz.y) / ((float)sz.x);
+
+			//Smooth transition for angle
+			angl = angl + ((tangl - angl) * (1f - (float)Math.pow(500, -dt)));
+			while(angl > pi2) {angl -= pi2; tangl -= pi2; anglorig -= pi2;}
+			while(angl < 0)   {angl += pi2; tangl += pi2; anglorig += pi2;}
+			if(Math.abs(tangl - angl) < 0.001)
+				angl = tangl;
+
+			//Smooth transition for zoom in/out
+			field = field + ((tfield - field) * (1f - (float)Math.pow(500, -dt)));
+			if(Math.abs(tfield - field) < 0.1)
+				field = tfield;
+
+			view.update(PointedCam.compute(cc.add(camoff).add(0.0f, 0.0f, 15f), dist, elev, angl));
+			proj.update(Projection.makeortho(new Matrix4f(), -field, field, -field * aspect, field * aspect, 1, 5000));
+		}
+
+		public float angle() {
+			return(angl);
+		}
+
+		public boolean click(Coord c) {
+			anglorig = angl;
+			dragorig = c;
+			return(true);
+		}
+
+		public void drag(Coord c) {
+			tangl = anglorig + ((float)(c.x - dragorig.x) / 100.0f);
+		}
+
+		public void release() {
+			tangl = (float)(Math.floor((tangl + Math.PI/4) / (Math.PI/2)) * Math.PI/2);
+		}
+
+		private void chfield(float nf) {
+			tfield = nf;
+			tfield = Math.max(tfield, 50);
+		}
+
+		public boolean wheel(Coord c, int amount) {
+			chfield(tfield + amount * 10);
+			return(true);
+		}
+
+		public String toString() {
+			return(String.format("%f", dist));
+		}
+	}
+	static { camtypes.put("topdown", TopDownCam.class); }
     
     public class OrthoCam extends Camera {
-	public boolean exact;
-	protected float dist = 500.0f;
-	protected float elev = (float)Math.PI / 6.0f;
-	protected float angl = -(float)Math.PI / 4.0f;
-	protected float field = (float)(100 * Math.sqrt(2));
-	private Coord dragorig = null;
-	private float anglorig;
-	protected Coord3f cc, jc;
+		public boolean exact;
+		protected float dist = 500.0f;
+		protected float elev = (float)Math.PI / 6.0f;
+		protected float angl = -(float)Math.PI / 4.0f;
+		protected float field = (float)(100 * Math.sqrt(2));
+		private Coord dragorig = null;
+		private float anglorig;
+		protected Coord3f cc, jc;
 
-	public OrthoCam(boolean exact) {
-	    this.exact = exact;
-	}
+		public OrthoCam(boolean exact) {
+			this.exact = exact;
+		}
 
-	public OrthoCam() {this(false);}
+		public OrthoCam() {this(false);}
 
-	public void tick2(double dt) {
-	    Coord3f cc = getcc();
-	    if(FLATWORLD.get())
-	        cc.z = 0;
-	    cc.y = -cc.y;
-	    this.cc = cc;
-	}
+		public void tick2(double dt) {
+			Coord3f cc = getcc();
+			if(FLATWORLD.get())
+				cc.z = 0;
+			cc.y = -cc.y;
+			this.cc = cc;
+		}
 
-	public void tick(double dt) {
-	    tick2(dt);
-	    float aspect = ((float)sz.y) / ((float)sz.x);
-	    Matrix4f vm = PointedCam.compute(cc.add(camoff).add(0.0f, 0.0f, 15f), dist, elev, angl);
-	    if(exact) {
-		if(jc == null)
-		    jc = cc;
-		float pfac = sz.x / (field * 2);
-		Coord3f vjc = vm.mul4(jc).mul(pfac);
-		Coord3f corr = new Coord3f(Math.round(vjc.x) - vjc.x, Math.round(vjc.y) - vjc.y, 0).div(pfac);
-		if((Math.abs(vjc.x) > 500) || (Math.abs(vjc.y) > 500))
-		    jc = null;
-		vm = Location.makexlate(new Matrix4f(), corr).mul1(vm);
-	    }
-	    view.update(vm);
-	    proj.update(Projection.makeortho(new Matrix4f(), -field, field, -field * aspect, field * aspect, 1, 5000));
-	}
+		public void tick(double dt) {
+			tick2(dt);
+			float aspect = ((float)sz.y) / ((float)sz.x);
+			Matrix4f vm = PointedCam.compute(cc.add(camoff).add(0.0f, 0.0f, 15f), dist, elev, angl);
+			if(exact) {
+			if(jc == null)
+				jc = cc;
+			float pfac = sz.x / (field * 2);
+			Coord3f vjc = vm.mul4(jc).mul(pfac);
+			Coord3f corr = new Coord3f(Math.round(vjc.x) - vjc.x, Math.round(vjc.y) - vjc.y, 0).div(pfac);
+			if((Math.abs(vjc.x) > 500) || (Math.abs(vjc.y) > 500))
+				jc = null;
+			vm = Location.makexlate(new Matrix4f(), corr).mul1(vm);
+			}
+			view.update(vm);
+			proj.update(Projection.makeortho(new Matrix4f(), -field, field, -field * aspect, field * aspect, 1, 5000));
+		}
 
-	public float angle() {
-	    return(angl);
-	}
+		public float angle() {
+			return(angl);
+		}
 
-	public boolean click(Coord c) {
-	    anglorig = angl;
-	    dragorig = c;
-	    return(true);
-	}
+		public boolean click(Coord c) {
+			anglorig = angl;
+			dragorig = c;
+			return(true);
+		}
 
-	public void drag(Coord c) {
-	    angl = anglorig + ((float)(c.x - dragorig.x) / 100.0f);
-	    angl = angl % ((float)Math.PI * 2.0f);
-	}
+		public void drag(Coord c) {
+			angl = anglorig + ((float)(c.x - dragorig.x) / 100.0f);
+			angl = angl % ((float)Math.PI * 2.0f);
+		}
 
-	public String toString() {
-	    return(String.format("%f %f %f %f", dist, elev / Math.PI, angl / Math.PI, field));
-	}
+		public String toString() {
+			return(String.format("%f %f %f %f", dist, elev / Math.PI, angl / Math.PI, field));
+		}
     }
 
     public class SOrthoCam extends OrthoCam {
-	private Coord dragorig = null;
-	private float anglorig;
-	private float tangl = angl;
-	private float tfield = field;
-	private final float pi2 = (float)(Math.PI * 2);
-	private boolean lock = true;
+		private Coord dragorig = null;
+		private float anglorig;
+		private float tangl = angl;
+		private float tfield = field;
+		private final float pi2 = (float)(Math.PI * 2);
+		private boolean lock = true;
 
-	public SOrthoCam(boolean exact, boolean lock) {
-	    super(exact);
-	    this.lock = lock;
-	}
-
-	public SOrthoCam(String... args) {
-	    PosixArgs opt = PosixArgs.getopt(args, "e");
-	    for(char c : opt.parsed()) {
-		switch(c) {
-		case 'e':
-		    exact = true;
-		    break;
+		public SOrthoCam(boolean exact, boolean lock) {
+			super(exact);
+			this.lock = lock;
 		}
-	    }
-	}
 
-	public void tick2(double dt) {
-	    Coord3f mc = getcc();
-	    if(FLATWORLD.get())
-		mc.z = 0;
-	    mc.y = -mc.y;
-	    if((cc == null) || (Math.hypot(mc.x - cc.x, mc.y - cc.y) > 250))
-		cc = mc;
-	    else if(!exact || (mc.dist(cc) > 2))
-		cc = cc.add(mc.sub(cc).mul(1f - (float)Math.pow(500, -dt)));
+		public SOrthoCam(String... args) {
+			PosixArgs opt = PosixArgs.getopt(args, "e");
+			for(char c : opt.parsed()) {
+			switch(c) {
+			case 'e':
+				exact = true;
+				break;
+			}
+			}
+		}
 
-	    angl = angl + ((tangl - angl) * (1f - (float)Math.pow(500, -dt)));
-	    while(angl > pi2) {angl -= pi2; tangl -= pi2; anglorig -= pi2;}
-	    while(angl < 0)   {angl += pi2; tangl += pi2; anglorig += pi2;}
-	    if(Math.abs(tangl - angl) < 0.001)
-		angl = tangl;
-	    else
-		jc = cc;
+		public void tick2(double dt) {
+			Coord3f mc = getcc();
+			if(FLATWORLD.get())
+			mc.z = 0;
+			mc.y = -mc.y;
+			if((cc == null) || (Math.hypot(mc.x - cc.x, mc.y - cc.y) > 250))
+			cc = mc;
+			else if(!exact || (mc.dist(cc) > 2))
+			cc = cc.add(mc.sub(cc).mul(1f - (float)Math.pow(500, -dt)));
 
-	    field = field + ((tfield - field) * (1f - (float)Math.pow(500, -dt)));
-	    if(Math.abs(tfield - field) < 0.1)
-		field = tfield;
-	    else
-		jc = cc;
-	}
+			angl = angl + ((tangl - angl) * (1f - (float)Math.pow(500, -dt)));
+			while(angl > pi2) {angl -= pi2; tangl -= pi2; anglorig -= pi2;}
+			while(angl < 0)   {angl += pi2; tangl += pi2; anglorig += pi2;}
+			if(Math.abs(tangl - angl) < 0.001)
+			angl = tangl;
+			else
+			jc = cc;
 
-	public boolean click(Coord c) {
-	    anglorig = angl;
-	    dragorig = c;
-	    return(true);
-	}
+			field = field + ((tfield - field) * (1f - (float)Math.pow(500, -dt)));
+			if(Math.abs(tfield - field) < 0.1)
+			field = tfield;
+			else
+			jc = cc;
+		}
 
-	public void drag(Coord c) {
-	    tangl = anglorig + ((float)(c.x - dragorig.x) / 100.0f);
-	}
+		public boolean click(Coord c) {
+			anglorig = angl;
+			dragorig = c;
+			return(true);
+		}
 
-	public void release() {
-	    if(lock && tfield > 100)
-		tangl = (float)(Math.PI * 0.5 * (Math.floor(tangl / (Math.PI * 0.5)) + 0.5));
-	}
+		public void drag(Coord c) {
+			tangl = anglorig + ((float)(c.x - dragorig.x) / 100.0f);
+		}
 
-	private void chfield(float nf) {
-	    tfield = nf;
-	    tfield = Math.max(tfield, 50);
-	    if(tfield > 100)
-		release();
-	}
+		public void release() {
+			if(lock && tfield > 100)
+			tangl = (float)(Math.PI * 0.5 * (Math.floor(tangl / (Math.PI * 0.5)) + 0.5));
+		}
 
-	public boolean wheel(Coord c, int amount) {
-	    chfield(tfield + amount * 10);
-	    return(true);
-	}
+		private void chfield(float nf) {
+			tfield = nf;
+			tfield = Math.max(tfield, 50);
+			if(tfield > 100)
+			release();
+		}
 
-	public boolean keydown(KeyEvent ev) {
-	    if(ev.getKeyCode() == KeyEvent.VK_LEFT) {
-		tangl = (float)(Math.PI * 0.5 * (Math.floor((tangl / (Math.PI * 0.5)) - 0.51) + 0.5));
-		return(true);
-	    } else if(ev.getKeyCode() == KeyEvent.VK_RIGHT) {
-		tangl = (float)(Math.PI * 0.5 * (Math.floor((tangl / (Math.PI * 0.5)) + 0.51) + 0.5));
-		return(true);
-	    } else if(ev.getKeyCode() == KeyEvent.VK_UP) {
-		chfield(tfield - 50);
-		return(true);
-	    } else if(ev.getKeyCode() == KeyEvent.VK_DOWN) {
-		chfield(tfield + 50);
-		return(true);
-	    } else if(ev.getKeyCode() == KeyEvent.VK_HOME) {
-		tangl = angl + (float)Utils.cangle(-(float)Math.PI * 0.25f - angl);
-		chfield((float)(100 * Math.sqrt(2)));
-	    }
-	    return(false);
-	}
+		public boolean wheel(Coord c, int amount) {
+			chfield(tfield + amount * 10);
+			return(true);
+		}
+
+		public boolean keydown(KeyEvent ev) {
+			if(ev.getKeyCode() == KeyEvent.VK_LEFT) {
+			tangl = (float)(Math.PI * 0.5 * (Math.floor((tangl / (Math.PI * 0.5)) - 0.51) + 0.5));
+			return(true);
+			} else if(ev.getKeyCode() == KeyEvent.VK_RIGHT) {
+			tangl = (float)(Math.PI * 0.5 * (Math.floor((tangl / (Math.PI * 0.5)) + 0.51) + 0.5));
+			return(true);
+			} else if(ev.getKeyCode() == KeyEvent.VK_UP) {
+			chfield(tfield - 50);
+			return(true);
+			} else if(ev.getKeyCode() == KeyEvent.VK_DOWN) {
+			chfield(tfield + 50);
+			return(true);
+			} else if(ev.getKeyCode() == KeyEvent.VK_HOME) {
+			tangl = angl + (float)Utils.cangle(-(float)Math.PI * 0.25f - angl);
+			chfield((float)(100 * Math.sqrt(2)));
+			}
+			return(false);
+		}
     }
     static {camtypes.put("ortho", SOrthoCam.class);}
 
