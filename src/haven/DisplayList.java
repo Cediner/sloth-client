@@ -30,21 +30,21 @@ import com.jogamp.opengl.*;
 
 public class DisplayList extends GLObject implements BGL.ID {
     private int id;
-    
+
     public DisplayList(GOut g) {
-	super(g);
-	g.gl.bglCreate(this);
+        super(g);
+        g.gl.bglCreate(this);
     }
 
     public void create(GL2 gl) {
-	id = gl.glGenLists(1);
+        id = gl.glGenLists(1);
     }
-    
+
     protected void delete(BGL gl) {
-	gl.glDeleteLists(this, 1);
+        gl.glDeleteLists(this, 1);
     }
 
     public int glid() {
-	return(id);
+        return (id);
     }
 }

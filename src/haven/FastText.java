@@ -33,51 +33,56 @@ import java.awt.*;
 public class FastText {
     public static final Text.Foundry fnd = new Text.Foundry(Text.sans, 10);
     private static final TextMap textmap;
+
     static {
         final StringBuilder str = new StringBuilder();
-        for(int chr = 0; chr <= 256; chr++) {
-            str.append((char)chr);
-	}
-	textmap = new TextMap("FastText", fnd, Color.WHITE, Color.BLACK, str.toString());
+        for (int chr = 0; chr <= 256; chr++) {
+            str.append((char) chr);
+        }
+        textmap = new TextMap("FastText", fnd, Color.WHITE, Color.BLACK, str.toString());
     }
 
-    public static Coord size(String text) { return textmap.size(text); }
+    public static Coord size(String text) {
+        return textmap.size(text);
+    }
 
-    public static Coord sizes(String text) { return textmap.sizes(text); }
-    
+    public static Coord sizes(String text) {
+        return textmap.sizes(text);
+    }
+
     public static int textw(String text) {
         return textmap.size(text).x;
     }
-    
+
     public static void aprint(GOut g, Coord c, double ax, double ay, String text) {
-	textmap.aprint(g, c, ax, ay, text);
+        textmap.aprint(g, c, ax, ay, text);
     }
-    
+
     public static void print(GOut g, Coord c, String text) {
-	aprint(g, c, 0.0, 0.0, text);
+        aprint(g, c, 0.0, 0.0, text);
     }
-    
+
     public static void aprintf(GOut g, Coord c, double ax, double ay, String fmt, Object... args) {
-	aprint(g, c, ax, ay, String.format(fmt, args));
+        aprint(g, c, ax, ay, String.format(fmt, args));
     }
-    
+
     public static void printf(GOut g, Coord c, String fmt, Object... args) {
-	print(g, c, String.format(fmt, args));
+        print(g, c, String.format(fmt, args));
     }
 
     public static void aprints(GOut g, Coord c, double ax, double ay, String text) {
-	textmap.aprints(g, c, ax, ay, text);
+        textmap.aprints(g, c, ax, ay, text);
     }
 
     public static void prints(GOut g, Coord c, String text) {
-	aprints(g, c, 0.0, 0.0, text);
+        aprints(g, c, 0.0, 0.0, text);
     }
 
     public static void aprintsf(GOut g, Coord c, double ax, double ay, String fmt, Object... args) {
-	aprints(g, c, ax, ay, String.format(fmt, args));
+        aprints(g, c, ax, ay, String.format(fmt, args));
     }
 
     public static void printsf(GOut g, Coord c, String fmt, Object... args) {
-	prints(g, c, String.format(fmt, args));
+        prints(g, c, String.format(fmt, args));
     }
 }

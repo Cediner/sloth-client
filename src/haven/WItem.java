@@ -50,142 +50,156 @@ public class WItem extends Widget implements DTarget {
     private boolean locked = false;
 
     public WItem(GItem item) {
-	super(sqsz);
-	this.item = item;
+        super(sqsz);
+        this.item = item;
     }
 
-    public boolean locked() { return locked; }
-    public void setLock(final boolean val) { locked = val; }
+    public boolean locked() {
+        return locked;
+    }
+
+    public void setLock(final boolean val) {
+        locked = val;
+    }
 
     public void drawmain(GOut g, GSprite spr) {
-	spr.draw(g);
+        spr.draw(g);
     }
 
     public static BufferedImage shorttip(List<ItemInfo> info) {
-	return(ItemInfo.shorttip(info));
+        return (ItemInfo.shorttip(info));
     }
 
     public static BufferedImage longtip(GItem item, List<ItemInfo> info) {
-	BufferedImage img = ItemInfo.longtip(info);
-	Resource.Pagina pg = item.res.get().layer(Resource.pagina);
-	if(pg != null)
-	    img = ItemInfo.catimgs(0, img, RichText.render("\n" + pg.text, 200).img);
-	return(img);
+        BufferedImage img = ItemInfo.longtip(info);
+        Resource.Pagina pg = item.res.get().layer(Resource.pagina);
+        if (pg != null)
+            img = ItemInfo.catimgs(0, img, RichText.render("\n" + pg.text, 200).img);
+        return (img);
     }
 
     public BufferedImage longtip(List<ItemInfo> info) {
-	return(longtip(item, info));
+        return (longtip(item, info));
     }
 
     public class ItemTip implements Indir<Tex> {
-	private final TexI tex;
+        private final TexI tex;
 
-	public ItemTip(BufferedImage img) {
-	    if(img == null)
-		throw(new Loading());
-	    tex = new TexI(img);
-	}
+        public ItemTip(BufferedImage img) {
+            if (img == null)
+                throw (new Loading());
+            tex = new TexI(img);
+        }
 
-	public GItem item() {
-	    return(item);
-	}
+        public GItem item() {
+            return (item);
+        }
 
-	public Tex get() {
-	    return(tex);
-	}
+        public Tex get() {
+            return (tex);
+        }
     }
 
     public class ShortTip extends ItemTip {
-	public ShortTip(List<ItemInfo> info) {super(shorttip(info));}
+        public ShortTip(List<ItemInfo> info) {
+            super(shorttip(info));
+        }
     }
 
     public class LongTip extends ItemTip {
-	public LongTip(List<ItemInfo> info) {super(longtip(info));}
+        public LongTip(List<ItemInfo> info) {
+            super(longtip(info));
+        }
     }
 
     private double hoverstart;
     private ItemTip shorttip = null, longtip = null;
     private List<ItemInfo> ttinfo = null;
+
     public Object tooltip(Coord c, Widget prev) {
-	double now = Utils.rtime();
-	if(prev == this) {
-	} else if(prev instanceof WItem) {
-	    double ps = ((WItem)prev).hoverstart;
-	    if(now - ps < 1.0)
-		hoverstart = now;
-	    else
-		hoverstart = ps;
-	} else {
-	    hoverstart = now;
-	}
-	try {
-	    List<ItemInfo> info = item.info();
-	    if(info.size() < 1)
-		return(null);
-	    if(info != ttinfo) {
-		shorttip = longtip = null;
-		ttinfo = info;
-	    }
-	    if(now - hoverstart < 1.0 && !DefSettings.ALWAYSLONGTIP.get()) {
-		if(shorttip == null)
-		    shorttip = new ShortTip(info);
-		return(shorttip);
-	    } else {
-		if(longtip == null)
-		    longtip = new LongTip(info);
-		return(longtip);
-	    }
-	} catch(Loading e) {
-	    return("...");
-	}
+        double now = Utils.rtime();
+        if (prev == this) {
+        } else if (prev instanceof WItem) {
+            double ps = ((WItem) prev).hoverstart;
+            if (now - ps < 1.0)
+                hoverstart = now;
+            else
+                hoverstart = ps;
+        } else {
+            hoverstart = now;
+        }
+        try {
+            List<ItemInfo> info = item.info();
+            if (info.size() < 1)
+                return (null);
+            if (info != ttinfo) {
+                shorttip = longtip = null;
+                ttinfo = info;
+            }
+            if (now - hoverstart < 1.0 && !DefSettings.ALWAYSLONGTIP.get()) {
+                if (shorttip == null)
+                    shorttip = new ShortTip(info);
+                return (shorttip);
+            } else {
+                if (longtip == null)
+                    longtip = new LongTip(info);
+                return (longtip);
+            }
+        } catch (Loading e) {
+            return ("...");
+        }
     }
 
-    private List<ItemInfo> info() {return(item.info());}
+    private List<ItemInfo> info() {
+        return (item.info());
+    }
+
     public final AttrCache<Color> olcol = new AttrCache<>(this::info, info -> {
-	    Color ret = null;
-	    for(ItemInfo inf : info) {
-		if(inf instanceof GItem.ColorInfo) {
-		    Color c = ((GItem.ColorInfo)inf).olcol();
-		    if(c != null)
-			ret = (ret == null) ? c : Utils.preblend(ret, c);
-		}
-	    }
-	    Color fret = ret;
-	    return(() -> fret);
-	});
+        Color ret = null;
+        for (ItemInfo inf : info) {
+            if (inf instanceof GItem.ColorInfo) {
+                Color c = ((GItem.ColorInfo) inf).olcol();
+                if (c != null)
+                    ret = (ret == null) ? c : Utils.preblend(ret, c);
+            }
+        }
+        Color fret = ret;
+        return (() -> fret);
+    });
     public final AttrCache<GItem.InfoOverlay<?>[]> itemols = new AttrCache<>(this::info, info -> {
-	    ArrayList<GItem.InfoOverlay<?>> buf = new ArrayList<>();
-	    for(ItemInfo inf : info) {
-		if(inf instanceof GItem.OverlayInfo)
-		    buf.add(GItem.InfoOverlay.create((GItem.OverlayInfo<?>)inf));
-	    }
-	    GItem.InfoOverlay<?>[] ret = buf.toArray(new GItem.InfoOverlay<?>[0]);
-	    return(() -> ret);
-	});
+        ArrayList<GItem.InfoOverlay<?>> buf = new ArrayList<>();
+        for (ItemInfo inf : info) {
+            if (inf instanceof GItem.OverlayInfo)
+                buf.add(GItem.InfoOverlay.create((GItem.OverlayInfo<?>) inf));
+        }
+        GItem.InfoOverlay<?>[] ret = buf.toArray(new GItem.InfoOverlay<?>[0]);
+        return (() -> ret);
+    });
     public final AttrCache<Double> itemmeter = new AttrCache<>(this::info, AttrCache.map1(GItem.MeterInfo.class, minf -> minf::meter));
 
     private GSprite lspr = null;
+
     public void tick(double dt) {
-	/* XXX: This is ugly and there should be a better way to
-	 * ensure the resizing happens as it should, but I can't think
-	 * of one yet. */
-	GSprite spr = item.spr();
-	if((spr != null) && (spr != lspr)) {
-	    Coord sz = new Coord(spr.sz());
-	    if((sz.x % sqsz.x) != 0)
-		sz.x = sqsz.x * ((sz.x / sqsz.x) + 1);
-	    if((sz.y % sqsz.y) != 0)
-		sz.y = sqsz.y * ((sz.y / sqsz.y) + 1);
-	    resize(sz);
-	    lspr = spr;
-	}
+        /* XXX: This is ugly and there should be a better way to
+         * ensure the resizing happens as it should, but I can't think
+         * of one yet. */
+        GSprite spr = item.spr();
+        if ((spr != null) && (spr != lspr)) {
+            Coord sz = new Coord(spr.sz());
+            if ((sz.x % sqsz.x) != 0)
+                sz.x = sqsz.x * ((sz.x / sqsz.x) + 1);
+            if ((sz.y % sqsz.y) != 0)
+                sz.y = sqsz.y * ((sz.y / sqsz.y) + 1);
+            resize(sz);
+            lspr = spr;
+        }
     }
 
     private static final Color[] wearclr = new Color[]{
-	    new Color(233, 0, 14),
-	    new Color(218, 128, 87),
-	    new Color(246, 233, 87),
-	    new Color(145, 225, 60)
+            new Color(233, 0, 14),
+            new Color(218, 128, 87),
+            new Color(246, 233, 87),
+            new Color(145, 225, 60)
     };
     private static final Pattern liquid_pat = Pattern.compile("([0-9]+\\.[0-9]+) l of (.+)");
     private static final Pattern weight_pat = Pattern.compile("([0-9]+\\.[0-9]+) kg of (.+)");
@@ -194,132 +208,132 @@ public class WItem extends Widget implements DTarget {
     private static final ItemData.ContainerType[] conttypes = {ItemData.ContainerType.LIQUID, ItemData.ContainerType.WEIGHT, ItemData.ContainerType.SEED};
 
     public void draw(GOut g) {
-	GSprite spr = item.spr();
-	if(spr != null) {
-	    Coord sz = spr.sz();
-	    g.defstate();
-	    if(olcol.get() != null)
-		g.usestate(new ColorMask(olcol.get()));
-	    drawmain(g, spr);
-	    g.defstate();
-	    GItem.InfoOverlay<?>[] ols = itemols.get();
-	    if(ols != null) {
-		for(GItem.InfoOverlay<?> ol : ols)
-		    ol.draw(g);
-	    }
-	    Double meter = (item.meter > 0) ? Double.valueOf(item.meter / 100.0) : itemmeter.get();
-	    if((meter != null) && (meter > 0)) {
-		g.chcolor(255, 255, 255, 64);
-		Coord half = sz.div(2);
-		g.prect(half, half.inv(), half, meter * Math.PI * 2);
-		final int width = FastText.textw((int)(meter*100)+"%");
-		final Coord tsz = new Coord(width, 15);
-		final Coord c = new Coord(0, sz.y - tsz.y);
-		g.chcolor();
-		g.chcolor(new Color(128, 128, 128, 128));
-		g.frect(c, c.add(tsz.x,0), c.add(tsz), c.add(0, tsz.y));
-		g.chcolor();
-		FastText.printf(g, c, "%s%%", (int)(meter*100));
-	    }
+        GSprite spr = item.spr();
+        if (spr != null) {
+            Coord sz = spr.sz();
+            g.defstate();
+            if (olcol.get() != null)
+                g.usestate(new ColorMask(olcol.get()));
+            drawmain(g, spr);
+            g.defstate();
+            GItem.InfoOverlay<?>[] ols = itemols.get();
+            if (ols != null) {
+                for (GItem.InfoOverlay<?> ol : ols)
+                    ol.draw(g);
+            }
+            Double meter = (item.meter > 0) ? Double.valueOf(item.meter / 100.0) : itemmeter.get();
+            if ((meter != null) && (meter > 0)) {
+                g.chcolor(255, 255, 255, 64);
+                Coord half = sz.div(2);
+                g.prect(half, half.inv(), half, meter * Math.PI * 2);
+                final int width = FastText.textw((int) (meter * 100) + "%");
+                final Coord tsz = new Coord(width, 15);
+                final Coord c = new Coord(0, sz.y - tsz.y);
+                g.chcolor();
+                g.chcolor(new Color(128, 128, 128, 128));
+                g.frect(c, c.add(tsz.x, 0), c.add(tsz), c.add(0, tsz.y));
+                g.chcolor();
+                FastText.printf(g, c, "%s%%", (int) (meter * 100));
+            }
 
-	    if(item.quality > 0 && DefSettings.SHOWQUALITY.get()) {
-		final Coord tsz = item.q_tex.sz();
-		final Coord c = new Coord(sz.x - tsz.x, 0);
-		g.chcolor(new Color(128, 128, 128, 128));
-		g.frect(c, c.add(tsz.x,0), c.add(tsz), c.add(0, tsz.y));
-		g.chcolor();
-	        g.image(item.q_tex, c);
-	    }
+            if (item.quality > 0 && DefSettings.SHOWQUALITY.get()) {
+                final Coord tsz = item.q_tex.sz();
+                final Coord c = new Coord(sz.x - tsz.x, 0);
+                g.chcolor(new Color(128, 128, 128, 128));
+                g.frect(c, c.add(tsz.x, 0), c.add(tsz), c.add(0, tsz.y));
+                g.chcolor();
+                g.image(item.q_tex, c);
+            }
 
-	    if(DefSettings.SHOWWEAR.get()) {
-	        item.getinfo(Wear.class).ifPresent(wear -> {
-		    double p = 1 - wear.percent();
-		    int h = (int) (p * (double) sz.y);
-		    g.chcolor(wearclr[p == 1.0 ? 3 : (int) (p / 0.25)]);
-		    g.frect(new Coord(0, sz.y - h), new Coord(3, h));
-		    g.chcolor();
-		});
-	    }
+            if (DefSettings.SHOWWEAR.get()) {
+                item.getinfo(Wear.class).ifPresent(wear -> {
+                    double p = 1 - wear.percent();
+                    int h = (int) (p * (double) sz.y);
+                    g.chcolor(wearclr[p == 1.0 ? 3 : (int) (p / 0.25)]);
+                    g.frect(new Coord(0, sz.y - h), new Coord(3, h));
+                    g.chcolor();
+                });
+            }
 
-	    if(DefSettings.SHOWCMETER.get()) {
-		item.getinfo(ItemInfo.Contents.class).ifPresent(cont ->
-		    item.getinfo(ItemInfo.Name.Name.class, cont.sub).ifPresent(contname ->
-			item.name().ifPresent(name -> {
-			    for(int i = 0; i < contpats.length; ++i) {
-				final Matcher match = contpats[i].matcher(contname.str.text);
-				if(match.find()) {
-				    final double cur = Double.parseDouble(match.group(1));
-				    final double max = ItemData.maxContent(name, conttypes[i]);
-				    if(max > 0) {
-				        double p = (cur / max);
-					int h = (int) (p * (double) sz.y);
-					g.chcolor(Color.BLUE);
-					g.frect(new Coord(0, sz.y - h), new Coord(3, h));
-					g.chcolor();
-				    }
-				    break;
-				}
-			    }
-			})
-		    )
-		);
-	    }
+            if (DefSettings.SHOWCMETER.get()) {
+                item.getinfo(ItemInfo.Contents.class).ifPresent(cont ->
+                        item.getinfo(ItemInfo.Name.Name.class, cont.sub).ifPresent(contname ->
+                                item.name().ifPresent(name -> {
+                                    for (int i = 0; i < contpats.length; ++i) {
+                                        final Matcher match = contpats[i].matcher(contname.str.text);
+                                        if (match.find()) {
+                                            final double cur = Double.parseDouble(match.group(1));
+                                            final double max = ItemData.maxContent(name, conttypes[i]);
+                                            if (max > 0) {
+                                                double p = (cur / max);
+                                                int h = (int) (p * (double) sz.y);
+                                                g.chcolor(Color.BLUE);
+                                                g.frect(new Coord(0, sz.y - h), new Coord(3, h));
+                                                g.chcolor();
+                                            }
+                                            break;
+                                        }
+                                    }
+                                })
+                        )
+                );
+            }
 
-	    if(locked) {
-	        g.image(lockt, Coord.z);
-	    }
-	} else {
-	    g.image(missing.layer(Resource.imgc).tex(), Coord.z, sz);
-	}
+            if (locked) {
+                g.image(lockt, Coord.z);
+            }
+        } else {
+            g.image(missing.layer(Resource.imgc).tex(), Coord.z, sz);
+        }
     }
 
     public boolean mousedown(Coord c, int btn) {
-	if(btn == 1) {
-	    if(!locked) {
-		if (ui.modshift) {
-		    int n = ui.modctrl ? -1 : 1;
-		    item.wdgmsg("transfer", c, n);
-		} else if (ui.modctrl) {
-		    item.wdgmsg("drop", c);
-		} else if (ui.modmeta && parent instanceof Inventory) {
-		    item.name().ifPresent(name -> ((Inventory)parent).dropAllAlike(name, c));
-		} else {
-		    item.wdgmsg("take", c);
-		}
-		return (true);
-	    }
-	} else if(btn == 3) {
-	    if(ui.modctrl) {
-	        locked = !locked;
-	        return true;
-	    } else {
-	        final Optional<String> name = item.name();
-	        if(name.isPresent()) {
-		    if (ui.modmeta && DefSettings.AUTOEQUIP.get() && ItemData.isEquipable(name.get())) {
-		        if(!(parent instanceof Equipory)) {
-			    item.wdgmsg("take", c);
-			    ui.gui.equ.wdgmsg("drop", -1);
-			} else {
-		            item.wdgmsg("transfer", c);
-			}
-		    } else {
-			item.wdgmsg("iact", c, ui.modflags());
-		    }
-		} else {
-		    item.wdgmsg("iact", c, ui.modflags());
-		}
-	    }
-	    return(true);
-	}
-	return(false);
+        if (btn == 1) {
+            if (!locked) {
+                if (ui.modshift) {
+                    int n = ui.modctrl ? -1 : 1;
+                    item.wdgmsg("transfer", c, n);
+                } else if (ui.modctrl) {
+                    item.wdgmsg("drop", c);
+                } else if (ui.modmeta && parent instanceof Inventory) {
+                    item.name().ifPresent(name -> ((Inventory) parent).dropAllAlike(name, c));
+                } else {
+                    item.wdgmsg("take", c);
+                }
+                return (true);
+            }
+        } else if (btn == 3) {
+            if (ui.modctrl) {
+                locked = !locked;
+                return true;
+            } else {
+                final Optional<String> name = item.name();
+                if (name.isPresent()) {
+                    if (ui.modmeta && DefSettings.AUTOEQUIP.get() && ItemData.isEquipable(name.get())) {
+                        if (!(parent instanceof Equipory)) {
+                            item.wdgmsg("take", c);
+                            ui.gui.equ.wdgmsg("drop", -1);
+                        } else {
+                            item.wdgmsg("transfer", c);
+                        }
+                    } else {
+                        item.wdgmsg("iact", c, ui.modflags());
+                    }
+                } else {
+                    item.wdgmsg("iact", c, ui.modflags());
+                }
+            }
+            return (true);
+        }
+        return (false);
     }
 
     public boolean drop(Coord cc, Coord ul) {
-	return(false);
+        return (false);
     }
 
     public boolean iteminteract(Coord cc, Coord ul) {
-	item.wdgmsg("itemact", ui.modflags());
-	return(true);
+        item.wdgmsg("itemact", ui.modflags());
+        return (true);
     }
 }

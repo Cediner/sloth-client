@@ -22,56 +22,56 @@ public class IDPool {
         this.min = fp.int64();
         this.max = fp.int64();
         this.next = fp.int64();
-        for(int i = 0; i < fp.int32(); ++i) {
+        for (int i = 0; i < fp.int32(); ++i) {
             sparse.add(fp.int64());
-	}
+        }
     }
 
     public long next() {
-        if(sparse.isEmpty()) {
-            if(next <= max) {
-		return next++;
-	    } else {
+        if (sparse.isEmpty()) {
+            if (next <= max) {
+                return next++;
+            } else {
                 throw new RuntimeException("Ran out of IDs in IDPool");
-	    }
-	} else {
+            }
+        } else {
             Iterator<Long> itr = sparse.iterator();
             final long id = itr.next();
             itr.remove();
             return id;
-	}
+        }
     }
 
     public void claim(final long id) {
-        if(id == next) {
+        if (id == next) {
             next++;
-	} else if(id > next) {
-            for(long missed = next; missed < id; ++missed) {
+        } else if (id > next) {
+            for (long missed = next; missed < id; ++missed) {
                 sparse.add(missed);
-	    }
+            }
             next = id + 1;
-	} else if(sparse.contains(id)) {
+        } else if (sparse.contains(id)) {
             sparse.remove(id);
-	} else {
-	    throw new RuntimeException("Attempted to claim an ID already claimed");
-	}
+        } else {
+            throw new RuntimeException("Attempted to claim an ID already claimed");
+        }
     }
 
     public void release(final long id) {
-        if(id == next - 1) {
+        if (id == next - 1) {
             next--;
-	} else {
+        } else {
             sparse.add(id);
-	}
+        }
     }
 
     public void save(final Message fp) {
         fp.addint64(min);
-	fp.addint64(max);
-	fp.addint64(next);
-	fp.addint32(sparse.size());
-	for(final Long id : sparse) {
-	    fp.addint64(id);
-	}
+        fp.addint64(max);
+        fp.addint64(next);
+        fp.addint32(sparse.size());
+        for (final Long id : sparse) {
+            fp.addint64(id);
+        }
     }
 }

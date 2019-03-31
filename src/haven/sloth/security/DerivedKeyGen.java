@@ -8,7 +8,7 @@ class DerivedKeyGen {
     private static final int DEFAULT_ITER = 64000;
 
     private PKCS5S2ParametersGenerator gen;
-  
+
     DerivedKeyGen() {
         gen = new PKCS5S2ParametersGenerator(new SHA256Digest());
     }
@@ -17,6 +17,6 @@ class DerivedKeyGen {
      */
     byte[] generateKey(final byte[] key, final byte[] salt, final int keysize) {
         gen.init(key, salt, DEFAULT_ITER);
-        return ((KeyParameter)gen.generateDerivedParameters(keysize)).getKey();
+        return ((KeyParameter) gen.generateDerivedParameters(keysize)).getKey();
     }
 }

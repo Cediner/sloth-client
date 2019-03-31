@@ -38,37 +38,37 @@ public class RootWidget extends ConsoleHost {
     private long last_gk_time;
 
     public KeyBinds kbs = new KeyBinds();
-	
+
     public RootWidget(UI ui, Coord sz) {
-	super(ui, new Coord(0, 0), sz);
-	setfocusctl(true);
-	hasfocus = true;
-	cursor = defcurs.indir();
+        super(ui, new Coord(0, 0), sz);
+        setfocusctl(true);
+        hasfocus = true;
+        cursor = defcurs.indir();
     }
 
     @Override
     protected void added() {
-	super.added();
+        super.added();
     }
 
     public boolean globtype(char key, KeyEvent ev) {
-	if(!super.globtype(key, ev)) {
-	    if(kbs.globtype(ev, ui)) {
-	        return true;
-	    } else if(key != 0 && (last_gk != key || (System.currentTimeMillis() - last_gk_time) >= 500)) {
-		wdgmsg("gk", (int)key);
-		last_gk = key;
-		last_gk_time = System.currentTimeMillis();
-	    }
-	}
-	return(true);
+        if (!super.globtype(key, ev)) {
+            if (kbs.globtype(ev, ui)) {
+                return true;
+            } else if (key != 0 && (last_gk != key || (System.currentTimeMillis() - last_gk_time) >= 500)) {
+                wdgmsg("gk", (int) key);
+                last_gk = key;
+                last_gk_time = System.currentTimeMillis();
+            }
+        }
+        return (true);
     }
 
     public void draw(GOut g) {
-	super.draw(g);
-	drawcmd(g, new Coord(20, sz.y - 20));
+        super.draw(g);
+        drawcmd(g, new Coord(20, sz.y - 20));
     }
-    
+
     public void error(String msg) {
     }
 }

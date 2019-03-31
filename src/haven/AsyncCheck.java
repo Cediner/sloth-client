@@ -37,73 +37,73 @@ public class AsyncCheck<T> {
     private Thread th = null;
 
     public static interface Source<T> {
-	public T get(boolean peek);
+        public T get(boolean peek);
     }
 
     public static interface Sink<T> {
-	public void accept(T item) throws InterruptedException;
+        public void accept(T item) throws InterruptedException;
     }
 
     public AsyncCheck(Object mon, String name, Source<T> check, Sink<T> use) {
-	this.mon = mon;
-	this.check = check;
-	this.use = use;
-	this.name = name;
+        this.mon = mon;
+        this.check = check;
+        this.use = use;
+        this.name = name;
     }
 
     public static <T> Source<T> src(Iterable<T> from) {
-	return(new Source<T>() {
-		public T get(boolean peek) {
-		    Iterator<T> i = from.iterator();
-		    if(!i.hasNext())
-			return(null);
-		    T ret = i.next();
-		    if(!peek)
-			i.remove();
-		    return(ret);
-		}
-	    });
+        return (new Source<T>() {
+            public T get(boolean peek) {
+                Iterator<T> i = from.iterator();
+                if (!i.hasNext())
+                    return (null);
+                T ret = i.next();
+                if (!peek)
+                    i.remove();
+                return (ret);
+            }
+        });
     }
 
     private void checkloop() {
-	try {
-	    while(true) {
-		T item;
-		synchronized(mon) {
-		    double start = Utils.rtime(), now = start;
-		    while(true) {
-			if((item = check.get(false)) != null)
-			    break;
-			if((now - start) >= timeout)
-			    return;
-			mon.wait((long)((timeout - (now - start)) * 1000) + 100);
-			now = Utils.rtime();
-		    }
-		}
-		use.accept(item);
-	    }
-	} catch(InterruptedException e) {
-	} finally {
-	    synchronized(mon) {
-		if(th == Thread.currentThread())
-		    th = null;
-	    }
-	}
-	check();
+        try {
+            while (true) {
+                T item;
+                synchronized (mon) {
+                    double start = Utils.rtime(), now = start;
+                    while (true) {
+                        if ((item = check.get(false)) != null)
+                            break;
+                        if ((now - start) >= timeout)
+                            return;
+                        mon.wait((long) ((timeout - (now - start)) * 1000) + 100);
+                        now = Utils.rtime();
+                    }
+                }
+                use.accept(item);
+            }
+        } catch (InterruptedException e) {
+        } finally {
+            synchronized (mon) {
+                if (th == Thread.currentThread())
+                    th = null;
+            }
+        }
+        check();
     }
 
     public void check() {
-	synchronized(mon) {
-	    if((check.get(true) != null) && (th == null)) {
-		th = new HackThread(this::checkloop, name);
-		th.setDaemon(true);
-		th.start();
-	    }
-	}
+        synchronized (mon) {
+            if ((check.get(true) != null) && (th == null)) {
+                th = new HackThread(this::checkloop, name);
+                th.setDaemon(true);
+                th.start();
+            }
+        }
     }
 
     public AsyncCheck<T> timeout(double timeout) {
-	this.timeout = timeout;
-	return(this);
+        this.timeout = timeout;
+        return (this);
     }
 }

@@ -7,8 +7,8 @@ import haven.Window;
 public class QuestWnd extends Window {
     public QuestWnd() {
         super(Coord.z, "Quest Log", "Quest Log");
-	makeHidable();
-	hide();
+        makeHidable();
+        hide();
     }
 
     @Override
@@ -18,15 +18,15 @@ public class QuestWnd extends Window {
 
     @Override
     public void cdestroy(Widget w) {
-	hide();
-	ui.gui.qqview = null;
+        hide();
+        ui.gui.qqview = null;
         super.cdestroy(w);
     }
 
 
     @Override
     public <T extends Widget> T add(T child) {
-	show();
+        show();
         return super.add(child);
     }
 }

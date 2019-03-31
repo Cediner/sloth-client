@@ -30,24 +30,24 @@ import com.jogamp.opengl.*;
 
 public class GLBuffer extends GLObject implements BGL.ID {
     private int id;
-    
+
     public GLBuffer(GOut g) {
-	super(g);
-	g.gl.bglCreate(this);
+        super(g);
+        g.gl.bglCreate(this);
     }
 
     public void create(GL2 gl) {
-	int[] buf = new int[1];
-	gl.glGenBuffers(1, buf, 0);
-	this.id = buf[0];
+        int[] buf = new int[1];
+        gl.glGenBuffers(1, buf, 0);
+        this.id = buf[0];
     }
-    
+
     protected void delete(BGL gl) {
-	BGL.ID[] buf = {this};
-	gl.glDeleteBuffers(1, buf, 0);
+        BGL.ID[] buf = {this};
+        gl.glDeleteBuffers(1, buf, 0);
     }
 
     public int glid() {
-	return(id);
+        return (id);
     }
 }

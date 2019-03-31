@@ -17,6 +17,7 @@ public class AccountManagement {
     public static class Account {
         public String username;
         public String password;
+
         public Account(final String uname, final String pass) {
             this.username = uname;
             this.password = pass;
@@ -57,10 +58,10 @@ public class AccountManagement {
     public int size() {
         return accounts.size();
     }
-  
+
     public void save() throws Exception {
         final BinaryFile buf = new BinaryFile();
-        for(final Account acc : accounts) {
+        for (final Account acc : accounts) {
             buf.estr(acc.username);
             buf.estr(acc.password);
         }
@@ -87,8 +88,8 @@ public class AccountManagement {
     private void load(final String name) throws Exception {
         final PreparedStatement stmt = Storage.dynamic.prepare("SELECT data FROM account_blob WHERE name = ?");
         stmt.setString(1, name);
-        try(final ResultSet res = stmt.executeQuery()) {
-            if(res.next()) {
+        try (final ResultSet res = stmt.executeQuery()) {
+            if (res.next()) {
                 //Existing account with data, otherwise new account with nothing
                 final byte[] blob = res.getBytes(1);
                 final BinaryFile data = new BinaryFile(Crypto.decrypt(blob, key));

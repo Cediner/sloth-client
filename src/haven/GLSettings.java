@@ -27,6 +27,7 @@
 package haven;
 
 import static haven.sloth.DefSettings.*;
+
 import haven.sloth.IndirSetting;
 
 import java.util.*;
@@ -43,279 +44,297 @@ public class GLSettings implements java.io.Serializable {
     private final List<Setting<?>> settings = new ArrayList<>();
 
     //GLSettings
-    public final IndirSetting<Boolean> PFLIGHTING =  new IndirSetting<>(global, "graphics.lighting-per-fragment", val -> {
+    public final IndirSetting<Boolean> PFLIGHTING = new IndirSetting<>(global, "graphics.lighting-per-fragment", val -> {
         try {
             this.flight.set(val);
             return true;
-	} catch (SettingException se) {
+        } catch (SettingException se) {
             return false;
-	}
+        }
     });     //[Bool] Use per-fragment lighting
-    public final IndirSetting<Boolean> CELSHADING =  new IndirSetting<>(global, "graphics.lighting-cel-shading", val -> {
+    public final IndirSetting<Boolean> CELSHADING = new IndirSetting<>(global, "graphics.lighting-cel-shading", val -> {
         try {
             this.cel.set(val);
             return true;
-	} catch (SettingException se) {
+        } catch (SettingException se) {
             return false;
-	}
+        }
     });      //[Bool] Use cel-shading shader
-    public final IndirSetting<Boolean> SHADOWS =  new IndirSetting<>(global, "graphics.shadows-show", val -> {
+    public final IndirSetting<Boolean> SHADOWS = new IndirSetting<>(global, "graphics.shadows-show", val -> {
         try {
             this.lshadow.set(val);
             return true;
-	} catch (SettingException se) {
+        } catch (SettingException se) {
             return false;
-	}
+        }
     });                 //[Bool] Display shadows
-    public final IndirSetting<Boolean> WATERSURFACE =  new IndirSetting<>(global, "graphics.water-surface-show", val -> {
-	try {
-	    this.wsurf.set(val);
-	    return true;
-	} catch (SettingException se) {
-	    return false;
-	}
+    public final IndirSetting<Boolean> WATERSURFACE = new IndirSetting<>(global, "graphics.water-surface-show", val -> {
+        try {
+            this.wsurf.set(val);
+            return true;
+        } catch (SettingException se) {
+            return false;
+        }
     });      //[Bool] Render water surfaces
-    public final IndirSetting<Boolean> ANTIALIASING =  new IndirSetting<>(global, "graphics.msaa-use", val -> {
-	try {
-	    this.fsaa.set(val);
-	    return true;
-	} catch (SettingException se) {
-	    return false;
-	}
+    public final IndirSetting<Boolean> ANTIALIASING = new IndirSetting<>(global, "graphics.msaa-use", val -> {
+        try {
+            this.fsaa.set(val);
+            return true;
+        } catch (SettingException se) {
+            return false;
+        }
     });                //[Bool] Use Antialiasing
-    public final IndirSetting<String> MESHMODE =  new IndirSetting<>(global, "graphics.meshmode", val -> {
-	try {
-	    this.meshmode.set(val);
-	    return true;
-	} catch (SettingException se) {
-	    return false;
-	}
+    public final IndirSetting<String> MESHMODE = new IndirSetting<>(global, "graphics.meshmode", val -> {
+        try {
+            this.meshmode.set(val);
+            return true;
+        } catch (SettingException se) {
+            return false;
+        }
     });                     //[String] Mesh mode : { VAO, DLIST, MEM }
-    public final IndirSetting<Boolean> INSTANCING =  new IndirSetting<>(global, "graphics.instancing-use", val -> {
-	try {
-	    this.instancing.set(val);
-	    return true;
-	} catch (SettingException se) {
-	    return false;
-	}
+    public final IndirSetting<Boolean> INSTANCING = new IndirSetting<>(global, "graphics.instancing-use", val -> {
+        try {
+            this.instancing.set(val);
+            return true;
+        } catch (SettingException se) {
+            return false;
+        }
     });            //[Bool] Use instancing or not
-    public final IndirSetting<Boolean> OUTLINES =  new IndirSetting<>(global, "graphics.outlines-use", val -> {
-	try {
-	    this.outline.set(val);
-	    return true;
-	} catch (SettingException se) {
-	    return false;
-	}
+    public final IndirSetting<Boolean> OUTLINES = new IndirSetting<>(global, "graphics.outlines-use", val -> {
+        try {
+            this.outline.set(val);
+            return true;
+        } catch (SettingException se) {
+            return false;
+        }
     });                //[Bool] Toggle outlines
-    public final IndirSetting<Integer> ANISOLEVEL =  new IndirSetting<>(global, "graphics.anisotropic-level", val -> {
-	try {
-	    this.anisotex.set(val / 2.0f);
-	    return true;
-	} catch (SettingException se) {
-	    return false;
-	}
+    public final IndirSetting<Integer> ANISOLEVEL = new IndirSetting<>(global, "graphics.anisotropic-level", val -> {
+        try {
+            this.anisotex.set(val / 2.0f);
+            return true;
+        } catch (SettingException se) {
+            return false;
+        }
     });         //[Int] Anisotropic level [0-GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT]
-    public final IndirSetting<Boolean> ALPHACOV =  new IndirSetting<>(global, "graphics.alpha-coverage", val -> {
-	try {
-	    this.alphacov.set(val);
-	    return true;
-	} catch (SettingException se) {
-	    return false;
-	}
+    public final IndirSetting<Boolean> ALPHACOV = new IndirSetting<>(global, "graphics.alpha-coverage", val -> {
+        try {
+            this.alphacov.set(val);
+            return true;
+        } catch (SettingException se) {
+            return false;
+        }
     });              //[Bool] Toggle alpha coverage for multisampling
 
     //TODO: Fix this up. Loftar's settings will initialize before the ensure statements because of how this works. Will break fresh client users
     public GLSettings(GLConfig cfg) {
-	this.cfg = cfg;
-	//GLSettings
-	PFLIGHTING.ensure(true);
-	CELSHADING.ensure(false);
-	SHADOWS.ensure(true);
-	WATERSURFACE.ensure(true);
-	ANTIALIASING.ensure(false);
-	ALPHACOV.ensure(false);
-	MESHMODE.ensure("VAO");
-	INSTANCING.ensure(true);
-	OUTLINES.ensure(true);
-	ANISOLEVEL.ensure(0);
+        this.cfg = cfg;
+        //GLSettings
+        PFLIGHTING.ensure(true);
+        CELSHADING.ensure(false);
+        SHADOWS.ensure(true);
+        WATERSURFACE.ensure(true);
+        ANTIALIASING.ensure(false);
+        ALPHACOV.ensure(false);
+        MESHMODE.ensure("VAO");
+        INSTANCING.ensure(true);
+        OUTLINES.ensure(true);
+        ANISOLEVEL.ensure(0);
     }
 
     private static class SettingException extends RuntimeException {
-	private SettingException(String msg) {
-	    super(msg);
-	}
+        private SettingException(String msg) {
+            super(msg);
+        }
     }
 
     public abstract class Setting<T> implements java.io.Serializable {
-	public final String nm;
-	public T val;
+        public final String nm;
+        public T val;
 
-	private Setting(String nm, T def) {
-	    this.nm = nm.intern();
-	    this.val = def;
-	    settings.add(this);
-	}
+        private Setting(String nm, T def) {
+            this.nm = nm.intern();
+            this.val = def;
+            settings.add(this);
+        }
 
-	public abstract void set(String val);
-	public abstract void validate(T val);
-	public void set(T val) {
-	    validate(val);
-	    this.val = val;
-	}
+        public abstract void set(String val);
+
+        public abstract void validate(T val);
+
+        public void set(T val) {
+            validate(val);
+            this.val = val;
+        }
     }
 
     public abstract class BoolSetting extends Setting<Boolean> {
-	private BoolSetting(String nm, Boolean def) {super(nm, def);}
+        private BoolSetting(String nm, Boolean def) {
+            super(nm, def);
+        }
 
-	public void set(String val) {
-	    boolean bval;
-	    try {
-		bval = Utils.parsebool(val);
-	    } catch(IllegalArgumentException e) {
-		throw(new SettingException("Not a boolean value: " + e));
-	    }
-	    set(bval);
-	}
+        public void set(String val) {
+            boolean bval;
+            try {
+                bval = Utils.parsebool(val);
+            } catch (IllegalArgumentException e) {
+                throw (new SettingException("Not a boolean value: " + e));
+            }
+            set(bval);
+        }
     }
 
     public abstract class EnumSetting<E extends Enum<E>> extends Setting<E> {
-	private final Class<E> real;
+        private final Class<E> real;
 
-	private EnumSetting(String nm, String def, Class<E> real) {
-	    super(nm, null);
-	    this.real = real;
-	    set(def);
-	}
+        private EnumSetting(String nm, String def, Class<E> real) {
+            super(nm, null);
+            this.real = real;
+            set(def);
+        }
 
-	public void set(String val) {
-	    E f = null;
-	    val = val.toUpperCase();
-	    for(E e : EnumSet.allOf(real)) {
-		if(e.name().toUpperCase().startsWith(val)) {
-		    if(f != null)
-			throw(new SettingException("Multiple settings with this abbreviation: " + f.name() + ", " + e.name()));
-		    f = e;
-		}
-	    }
-	    if(f == null)
-		throw(new SettingException("No such setting: " + val));
-	    set(f);
-	}
+        public void set(String val) {
+            E f = null;
+            val = val.toUpperCase();
+            for (E e : EnumSet.allOf(real)) {
+                if (e.name().toUpperCase().startsWith(val)) {
+                    if (f != null)
+                        throw (new SettingException("Multiple settings with this abbreviation: " + f.name() + ", " + e.name()));
+                    f = e;
+                }
+            }
+            if (f == null)
+                throw (new SettingException("No such setting: " + val));
+            set(f);
+        }
     }
 
     public abstract class FloatSetting extends Setting<Float> {
-	private FloatSetting(String nm, Float def) {super(nm, def);}
+        private FloatSetting(String nm, Float def) {
+            super(nm, def);
+        }
 
-	public void set(String val) {
-	    float fval;
-	    try {
-		fval = Float.parseFloat(val);
-	    } catch(NumberFormatException e) {
-		throw(new SettingException("Not a floating-point value: " + val));
-	    }
-	    set(fval);
-	}
+        public void set(String val) {
+            float fval;
+            try {
+                fval = Float.parseFloat(val);
+            } catch (NumberFormatException e) {
+                throw (new SettingException("Not a floating-point value: " + val));
+            }
+            set(fval);
+        }
 
-	public abstract float min();
-	public abstract float max();
+        public abstract float min();
+
+        public abstract float max();
     }
 
     public enum MeshMode {
-	MEM, DLIST, VAO
+        MEM, DLIST, VAO
     }
 
     public final EnumSetting<MeshMode> meshmode = new EnumSetting<MeshMode>("meshmode", MESHMODE.get(), MeshMode.class) {
-	public void validate(MeshMode mode) {
-	}
+        public void validate(MeshMode mode) {
+        }
     };
 
     public final BoolSetting instancing = new BoolSetting("instance", INSTANCING.get()) {
-	    public void validate(Boolean val) {
-		if(val && !(cfg.haveInstancing()))
-		    throw(new SettingException("Video card does not support instancing."));
-	    }
-	};
+        public void validate(Boolean val) {
+            if (val && !(cfg.haveInstancing()))
+                throw (new SettingException("Video card does not support instancing."));
+        }
+    };
 
     public final BoolSetting fsaa = new BoolSetting("fsaa", ANTIALIASING.get()) {
-	    public void validate(Boolean val) {
-		if(val && !cfg.havefsaa())
-		    throw(new SettingException("FSAA is not supported."));
-	    }
-	};
+        public void validate(Boolean val) {
+            if (val && !cfg.havefsaa())
+                throw (new SettingException("FSAA is not supported."));
+        }
+    };
     public final BoolSetting alphacov = new BoolSetting("alphacov", ALPHACOV.get()) {
-	    public void validate(Boolean val) {
-		if(val) {
-		    if(!fsaa.val) throw(new SettingException("Alpha-to-coverage must be used with multisampling."));
-		}
-	    }
-	};
+        public void validate(Boolean val) {
+            if (val) {
+                if (!fsaa.val) throw (new SettingException("Alpha-to-coverage must be used with multisampling."));
+            }
+        }
+    };
 
     public final BoolSetting flight = new BoolSetting("flight", PFLIGHTING.get()) {
-	    public void validate(Boolean val) {}
-	};
+        public void validate(Boolean val) {
+        }
+    };
 
     public final BoolSetting cel = new BoolSetting("cel", CELSHADING.get()) {
-	    public void validate(Boolean val) {
-		if(val) {
-		    if(!flight.val) throw(new SettingException("Cel-shading requires per-fragment lighting."));
-		}
-	    }
-	};
+        public void validate(Boolean val) {
+            if (val) {
+                if (!flight.val) throw (new SettingException("Cel-shading requires per-fragment lighting."));
+            }
+        }
+    };
 
     public final BoolSetting lshadow = new BoolSetting("sdw", SHADOWS.get()) {
-	    public void validate(Boolean val) {
-		if(val) {
-		    if(!flight.val) throw(new SettingException("Shadowed lighting requires per-fragment lighting."));
-		    if(!cfg.havefbo()) throw(new SettingException("Shadowed lighting requires a video card supporting framebuffers."));
-		}
-	    }
-	};
+        public void validate(Boolean val) {
+            if (val) {
+                if (!flight.val) throw (new SettingException("Shadowed lighting requires per-fragment lighting."));
+                if (!cfg.havefbo())
+                    throw (new SettingException("Shadowed lighting requires a video card supporting framebuffers."));
+            }
+        }
+    };
     public final BoolSetting outline = new BoolSetting("outl", OUTLINES.get()) {
-	    public void validate(Boolean val) {
-		if(val) {
-		    if(!cfg.havefbo()) throw(new SettingException("Outline rendering requires a video card supporting framebuffers."));
-		}
-	    }
-	};
+        public void validate(Boolean val) {
+            if (val) {
+                if (!cfg.havefbo())
+                    throw (new SettingException("Outline rendering requires a video card supporting framebuffers."));
+            }
+        }
+    };
 
     public final BoolSetting wsurf = new BoolSetting("wsurf", WATERSURFACE.get()) {
-	    public void validate(Boolean val) {}
-	};
+        public void validate(Boolean val) {
+        }
+    };
 
     public final FloatSetting anisotex = new FloatSetting("aniso", ANISOLEVEL.get() / 2.0f) {
-	    public float min() {return(0);}
-	    public float max() {return(cfg.anisotropy);}
-	    public void validate(Float val) {
-		if(val != 0) {
-		    if(val < 0) throw(new SettingException("Anisostropy factor cannot be negative."));
-		}
-	    }
-	    public void set(Float val) {
-		super.set(val);
-		TexGL.setallparams();
-	    }
-	};
+        public float min() {
+            return (0);
+        }
+
+        public float max() {
+            return (cfg.anisotropy);
+        }
+
+        public void validate(Float val) {
+            if (val != 0) {
+                if (val < 0) throw (new SettingException("Anisostropy factor cannot be negative."));
+            }
+        }
+
+        public void set(Float val) {
+            super.set(val);
+            TexGL.setallparams();
+        }
+    };
 
     public Iterable<Setting<?>> settings() {
-	return(settings);
+        return (settings);
     }
 
     public static GLSettings defconf(GLConfig cfg) {
-	GLSettings gs = new GLSettings(cfg);
+        GLSettings gs = new GLSettings(cfg);
 
-	//Reset the settings
-	//GLSettings
-	gs.PFLIGHTING.set(true);
-	gs.CELSHADING.set(false);
-	gs.SHADOWS.set(true);
-	gs.WATERSURFACE.set(true);
-	gs.ANTIALIASING.set(false);
-	gs.ALPHACOV.set(false);
-	gs.MESHMODE.set("VAO");
-	gs.INSTANCING.set(true);
-	gs.OUTLINES.set(true);
-	gs.ANISOLEVEL.set(0);
+        //Reset the settings
+        //GLSettings
+        gs.PFLIGHTING.set(true);
+        gs.CELSHADING.set(false);
+        gs.SHADOWS.set(true);
+        gs.WATERSURFACE.set(true);
+        gs.ANTIALIASING.set(false);
+        gs.ALPHACOV.set(false);
+        gs.MESHMODE.set("VAO");
+        gs.INSTANCING.set(true);
+        gs.OUTLINES.set(true);
+        gs.ANISOLEVEL.set(0);
 
-	return gs;
+        return gs;
     }
 }

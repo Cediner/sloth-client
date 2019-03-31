@@ -24,6 +24,6 @@ public class ProfWnd extends Window {
 
     @Override
     public void close() {
-	ui.destroy(this);
+        ui.destroy(this);
     }
 }

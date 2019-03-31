@@ -34,9 +34,9 @@ import java.util.function.Consumer;
 public class CheckBox extends Widget {
     //These are quite only for precautions about res classes
     public static final Tex lbox = Theme.tex("chkbox/large", 0),
-	    lmark = Theme.tex("chkbox/large", 1);
+            lmark = Theme.tex("chkbox/large", 1);
     public static final Tex sbox = Theme.tex("chkbox/small", 0),
-	    smark = Theme.tex("chkbox/small", 1);
+            smark = Theme.tex("chkbox/small", 1);
 
     private final String type;
     public boolean a = false;
@@ -45,31 +45,31 @@ public class CheckBox extends Widget {
 
     @RName("chk")
     public static class $_ implements Factory {
-	public Widget create(UI ui, Object[] args) {
-	    CheckBox ret = new CheckBox((String)args[0]);
-	    ret.canactivate = true;
-	    return(ret);
-	}
+        public Widget create(UI ui, Object[] args) {
+            CheckBox ret = new CheckBox((String) args[0]);
+            ret.canactivate = true;
+            return (ret);
+        }
     }
 
     public CheckBox(String lbl, boolean lg, final Consumer<Boolean> onChange) {
-	this.lbl = Text.std.render(lbl, java.awt.Color.WHITE);
-	if(lg) {
-	    type = "chkbox/large";
-	} else {
-	    type = "chkbox/small";
-	}
-	final Coord boxsz = Theme.timg(type, 0).sz;
-	sz = new Coord(boxsz.x + 5 + this.lbl.sz().x, Math.max(boxsz.y, this.lbl.sz().y));
-	this.onChange = onChange;
+        this.lbl = Text.std.render(lbl, java.awt.Color.WHITE);
+        if (lg) {
+            type = "chkbox/large";
+        } else {
+            type = "chkbox/small";
+        }
+        final Coord boxsz = Theme.timg(type, 0).sz;
+        sz = new Coord(boxsz.x + 5 + this.lbl.sz().x, Math.max(boxsz.y, this.lbl.sz().y));
+        this.onChange = onChange;
     }
 
     public CheckBox(String lbl, boolean lg) {
-	this(lbl, lg, null);
+        this(lbl, lg, null);
     }
 
     public CheckBox(String lbl) {
-	this(lbl, false, null);
+        this(lbl, false, null);
     }
 
     public CheckBox(final String lbl, final Consumer<Boolean> onChange, final boolean val) {
@@ -78,38 +78,38 @@ public class CheckBox extends Widget {
     }
 
     public boolean mousedown(Coord c, int button) {
-	if(button != 1)
-	    return(false);
-	set(!a);
-	return(true);
+        if (button != 1)
+            return (false);
+        set(!a);
+        return (true);
     }
 
     public void set(boolean a) {
-	this.a = a;
-	changed(a);
+        this.a = a;
+        changed(a);
     }
 
     public void draw(GOut g) {
-	final int id = a ? 1 : 0;
-	final TextureAtlas.Img chk = Theme.timg(type, id);
-	g.image(chk, new Coord(0, sz.y / 2 - chk.sz.y / 2));
-	//Draw label
-	g.image(lbl.tex(), new Coord(chk.sz.x + 5, sz.y /2 - lbl.sz().y / 2 ));
-	super.draw(g);
+        final int id = a ? 1 : 0;
+        final TextureAtlas.Img chk = Theme.timg(type, id);
+        g.image(chk, new Coord(0, sz.y / 2 - chk.sz.y / 2));
+        //Draw label
+        g.image(lbl.tex(), new Coord(chk.sz.x + 5, sz.y / 2 - lbl.sz().y / 2));
+        super.draw(g);
     }
 
     public void changed(boolean val) {
-	if(canactivate)
-	    wdgmsg("ch", a?1:0);
-	if(onChange != null)
-	    onChange.accept(val);
+        if (canactivate)
+            wdgmsg("ch", a ? 1 : 0);
+        if (onChange != null)
+            onChange.accept(val);
     }
 
     public void uimsg(String msg, Object... args) {
-	if(msg == "ch") {
-	    this.a = ((Integer)args[0]) != 0;
-	} else {
-	    super.uimsg(msg, args);
-	}
+        if (msg == "ch") {
+            this.a = ((Integer) args[0]) != 0;
+        } else {
+            super.uimsg(msg, args);
+        }
     }
 }

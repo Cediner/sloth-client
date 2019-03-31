@@ -23,11 +23,11 @@ public class Path implements Comparable<Path> {
     public Path(final Coord c, final Path parent, final Coord goal) {
         this.c = c;
         this.parent = parent;
-        if(this.parent != null) {
+        if (this.parent != null) {
             this.depth = this.parent.depth + 1;
-	} else {
+        } else {
             this.depth = 0;
-	}
+        }
         this.gval = c.dist(goal);
         this.hval = depth + gval;
     }
@@ -40,25 +40,25 @@ public class Path implements Comparable<Path> {
      * List of all coordinates in our path starting with the first one and ending with our final coordinate
      */
     List<Coord> fullpath() {
-	final List<Coord> paths = new ArrayList<>();
-	Path cur = this.parent;
-	paths.add(c);
+        final List<Coord> paths = new ArrayList<>();
+        Path cur = this.parent;
+        paths.add(c);
 
-	while(cur != null) {
-	    paths.add(0,cur.c);
-	    cur = cur.parent;
-	}
+        while (cur != null) {
+            paths.add(0, cur.c);
+            cur = cur.parent;
+        }
 
-	return paths;
+        return paths;
     }
 
     @Override
     public int compareTo(Path o) {
-	return Double.compare(hval, o.hval);
+        return Double.compare(hval, o.hval);
     }
 
     @Override
     public String toString() {
-	return String.format("%s -> %f", c, gval);
+        return String.format("%s -> %f", c, gval);
     }
 }

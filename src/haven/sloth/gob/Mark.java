@@ -25,14 +25,14 @@ public class Mark extends SkelSprite implements Gob.Overlay.SetupMod {
     }
 
     private GLState getfx() {
-        emi[3] = clr[3] = (float)(1 + Math.sin(2 * Math.PI * time / 3000f));
+        emi[3] = clr[3] = (float) (1 + Math.sin(2 * Math.PI * time / 3000f));
         return new Material.Colors(clr, clr, clr, emi, 128);
     }
 
     public void setLife(final int life) {
-        if(haslife)
+        if (haslife)
             this.life = life;
-        if(life == -1)
+        if (life == -1)
             haslife = false;
     }
 
@@ -44,7 +44,7 @@ public class Mark extends SkelSprite implements Gob.Overlay.SetupMod {
     public boolean tick(int dt) {
         super.tick(dt);
         time += dt;
-        if(haslife) {
+        if (haslife) {
             life -= dt;
             return life <= 0;
         } else {

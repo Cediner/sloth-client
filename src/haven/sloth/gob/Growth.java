@@ -15,9 +15,9 @@ import static haven.Gob.STATIC;
 
 /**
  * Gob Attribute for showing crop stage number if possible
- *
+ * <p>
  * TODO: Think of a way to represent the stage in 3D to avoid static/semistatic mess. When the Gob SDT changes then
- *       we can trigger an update at that point while still being static
+ * we can trigger an update at that point while still being static
  */
 public class Growth extends GAttrib implements Rendered {
     private static final Color stagecolor = new Color(235, 235, 235);
@@ -26,19 +26,19 @@ public class Growth extends GAttrib implements Rendered {
 
     public static void init(final Storage internal) {
         internal.ensure(sql -> {
-	    try (final Statement stmt = sql.createStatement()) {
-		try (final ResultSet res = stmt.executeQuery("SELECT object.name, growth.final_stage FROM object JOIN growth USING (object_id)")) {
-		    while (res.next()) {
-			growth.put(res.getString(1), res.getInt(2));
-		    }
-		}
-	    }
-	});
+            try (final Statement stmt = sql.createStatement()) {
+                try (final ResultSet res = stmt.executeQuery("SELECT object.name, growth.final_stage FROM object JOIN growth USING (object_id)")) {
+                    while (res.next()) {
+                        growth.put(res.getString(1), res.getInt(2));
+                    }
+                }
+            }
+        });
     }
 
     public static boolean isGrowth(final String resname) {
-	return growth.containsKey(resname) || resname.startsWith("gfx/terobjs/trees")
-		|| resname.startsWith("gfx/terobjs/bush");
+        return growth.containsKey(resname) || resname.startsWith("gfx/terobjs/trees")
+                || resname.startsWith("gfx/terobjs/bush");
     }
 
 
@@ -46,32 +46,32 @@ public class Growth extends GAttrib implements Rendered {
     private int stage = -1;
 
     public Growth(Gob g) {
-	super(g);
-	fx = new PView.Draw2D() {
-	    public void draw2d(GOut g) {
-		if(gob.sc != null) {
-		    text.prints(g, gob.sc, Integer.toString(stage));
-		}
-	    }
-	};
+        super(g);
+        fx = new PView.Draw2D() {
+            public void draw2d(GOut g) {
+                if (gob.sc != null) {
+                    text.prints(g, gob.sc, Integer.toString(stage));
+                }
+            }
+        };
     }
 
     public void setup(RenderList rl) {
-        if(stage >= 0 && stage != 268431360 && DefSettings.SHOWCROPSTAGE.get()) {
-	    rl.add(fx, null);
-	}
+        if (stage >= 0 && stage != 268431360 && DefSettings.SHOWCROPSTAGE.get()) {
+            rl.add(fx, null);
+        }
     }
 
     public void tick() {
-	final ResDrawable rd = gob.getattr(ResDrawable.class);
-	if(rd != null) {
-	    stage = rd.sdtnum();
-	}
+        final ResDrawable rd = gob.getattr(ResDrawable.class);
+        if (rd != null) {
+            stage = rd.sdtnum();
+        }
     }
 
     //These can't be static since sc needs to update... RIP fps
     public Object staticp() {
-        if(!DefSettings.SHOWCROPSTAGE.get())
+        if (!DefSettings.SHOWCROPSTAGE.get())
             return STATIC;
         else
             return SEMISTATIC;

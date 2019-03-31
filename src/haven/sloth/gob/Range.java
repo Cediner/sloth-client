@@ -15,28 +15,28 @@ public class Range extends GAttrib implements Rendered {
     private static Map<String, BPRad> rangemap = new HashMap<>();
 
     public static void init(final Storage internal) {
-	internal.ensure(sql -> {
-	    try (final Statement stmt = sql.createStatement()) {
-		try (final ResultSet res = stmt.executeQuery(
-			"SELECT object.name, range.radius " +
-				"FROM object JOIN range USING (object_id)")) {
-		    while (res.next()) {
-			final String name = res.getString(1);
-			final int tiles = res.getInt(2);
-			if (rads.containsKey(tiles)) {
-			    rangemap.put(name, rads.get(tiles));
-			} else {
-			    rads.put(tiles, new BPRad(null, null, (float) (tiles * MCache.tilesz.x)));
-			    rangemap.put(name, rads.get(tiles));
-			}
-		    }
-		}
-	    }
-	});
+        internal.ensure(sql -> {
+            try (final Statement stmt = sql.createStatement()) {
+                try (final ResultSet res = stmt.executeQuery(
+                        "SELECT object.name, range.radius " +
+                                "FROM object JOIN range USING (object_id)")) {
+                    while (res.next()) {
+                        final String name = res.getString(1);
+                        final int tiles = res.getInt(2);
+                        if (rads.containsKey(tiles)) {
+                            rangemap.put(name, rads.get(tiles));
+                        } else {
+                            rads.put(tiles, new BPRad(null, null, (float) (tiles * MCache.tilesz.x)));
+                            rangemap.put(name, rads.get(tiles));
+                        }
+                    }
+                }
+            }
+        });
     }
 
     public static boolean hasRange(final String resname) {
-	return rangemap.containsKey(resname);
+        return rangemap.containsKey(resname);
     }
 
     private final BPRad bp;
@@ -47,9 +47,9 @@ public class Range extends GAttrib implements Rendered {
     }
 
     public void setup(RenderList rl) {
-        if((gob.type == Type.ANIMAL && SHOWANIMALRADIUS.get() && !gob.isDead()) ||
-		(gob.type == Type.FARMING && SHOWFARMRADIUS.get())) {
-	    rl.add(bp, null);
-	}
+        if ((gob.type == Type.ANIMAL && SHOWANIMALRADIUS.get() && !gob.isDead()) ||
+                (gob.type == Type.FARMING && SHOWFARMRADIUS.get())) {
+            rl.add(bp, null);
+        }
     }
 }

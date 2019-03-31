@@ -58,37 +58,37 @@ public class TextEntry extends SIWidget {
 
     @RName("text")
     public static class $_ implements Factory {
-	public Widget create(UI ui, Object[] args) {
-	    if(args[0] instanceof Coord)
-		return(new TextEntry((Coord)args[0], (String)args[1]));
-	    else
-		return(new TextEntry((Integer)args[0], (String)args[1]));
-	}
+        public Widget create(UI ui, Object[] args) {
+            if (args[0] instanceof Coord)
+                return (new TextEntry((Coord) args[0], (String) args[1]));
+            else
+                return (new TextEntry((Integer) args[0], (String) args[1]));
+        }
     }
 
     public void settext(String text) {
-	buf.setline(text);
-	redraw();
+        buf.setline(text);
+        redraw();
     }
 
     public void rsettext(String text) {
-	buf = new LineEdit(this.text = text) {
-		protected void done(String line) {
-		    activate(line);
-		}
-		
-		protected void changed() {
-		    if(!numeric || (line.length() == 0 || numpat.matcher(line).matches())) {
-			redraw();
-			TextEntry.this.text = line;
-			TextEntry.this.changed();
-		    } else {
-		        //deny
-		        line = TextEntry.this.text;
-		    }
-		}
-	    };
-	redraw();
+        buf = new LineEdit(this.text = text) {
+            protected void done(String line) {
+                activate(line);
+            }
+
+            protected void changed() {
+                if (!numeric || (line.length() == 0 || numpat.matcher(line).matches())) {
+                    redraw();
+                    TextEntry.this.text = line;
+                    TextEntry.this.changed();
+                } else {
+                    //deny
+                    line = TextEntry.this.text;
+                }
+            }
+        };
+        redraw();
     }
 
     public void setpw(final boolean val) {
@@ -97,87 +97,93 @@ public class TextEntry extends SIWidget {
     }
 
     public void commit() {
-	dirty = false;
-	redraw();
+        dirty = false;
+        redraw();
     }
 
     public void uimsg(String name, Object... args) {
-	if(name == "settext") {
-	    settext((String)args[0]);
-	} else if(name == "get") {
-	    wdgmsg("text", buf.line);
-	} else if(name == "pw") {
-	    pw = ((Integer)args[0]) != 0;
-	} else if(name == "dshow") {
-	    dshow = ((Integer)args[0]) != 0;
-	} else if(name == "cmt") {
-	    commit();
-	} else {
-	    super.uimsg(name, args);
-	}
+        if (name == "settext") {
+            settext((String) args[0]);
+        } else if (name == "get") {
+            wdgmsg("text", buf.line);
+        } else if (name == "pw") {
+            pw = ((Integer) args[0]) != 0;
+        } else if (name == "dshow") {
+            dshow = ((Integer) args[0]) != 0;
+        } else if (name == "cmt") {
+            commit();
+        } else {
+            super.uimsg(name, args);
+        }
     }
 
     public int numvalue() {
-        if(numeric) {
-            if(text.length() == 0)
+        if (numeric) {
+            if (text.length() == 0)
                 return 0;
-            else if(text.equals("-"))
+            else if (text.equals("-"))
                 return 0;
             else
                 return Integer.parseInt(text);
-	} else {
+        } else {
             return 0;
-	}
+        }
     }
 
     protected String dtext() {
-	if(pw) {
-	    String ret = "";
-	    for(int i = 0; i < buf.line.length(); i++)
-		ret += "\u2022";
-	    return(ret);
-	} else {
-	    return(buf.line);
-	}
+        if (pw) {
+            String ret = "";
+            for (int i = 0; i < buf.line.length(); i++)
+                ret += "\u2022";
+            return (ret);
+        } else {
+            return (buf.line);
+        }
     }
 
     public void draw(BufferedImage img) {
-	Graphics g = img.getGraphics();
-	String dtext = dtext();
-	tcache = fnd.render(dtext, (dshow && dirty)?dirtycol:defcol);
+        Graphics g = img.getGraphics();
+        String dtext = dtext();
+        tcache = fnd.render(dtext, (dshow && dirty) ? dirtycol : defcol);
 
-	g.drawImage(lcap, 0, 0, null);
-	g.drawImage(mext, lcap.getWidth(), 0, sz.x - lcap.getWidth() - rcap.getWidth(), sz.y, null);
-	g.drawImage(rcap, sz.x - rcap.getWidth(), 0, null);
+        g.drawImage(lcap, 0, 0, null);
+        g.drawImage(mext, lcap.getWidth(), 0, sz.x - lcap.getWidth() - rcap.getWidth(), sz.y, null);
+        g.drawImage(rcap, sz.x - rcap.getWidth(), 0, null);
 
-	g.drawImage(tcache.img, toff.x - sx, toff.y, null);
+        g.drawImage(tcache.img, toff.x - sx, toff.y, null);
 
-	g.dispose();
+        g.dispose();
     }
 
     public void draw(GOut g) {
-	g.chcolor(DefSettings.TXBCOL.get());
-	super.draw(g);
-	g.chcolor();
-	if(hasfocus) {
-	    int cx = tcache.advance(buf.point);
-	    int lx = cx - sx + 1;
-	    if(cx < sx) {sx = cx; redraw();}
-	    if(cx > sx + (sz.x - wmarg)) {sx = cx - (sz.x - wmarg); redraw();}
-	    if(((Utils.rtime() - focusstart) % 1.0) < 0.5)
-		g.image(caret, toff.add(coff).add(lx, 0));
-	}
+        g.chcolor(DefSettings.TXBCOL.get());
+        super.draw(g);
+        g.chcolor();
+        if (hasfocus) {
+            int cx = tcache.advance(buf.point);
+            int lx = cx - sx + 1;
+            if (cx < sx) {
+                sx = cx;
+                redraw();
+            }
+            if (cx > sx + (sz.x - wmarg)) {
+                sx = cx - (sz.x - wmarg);
+                redraw();
+            }
+            if (((Utils.rtime() - focusstart) % 1.0) < 0.5)
+                g.image(caret, toff.add(coff).add(lx, 0));
+        }
     }
 
     private final Consumer<String> onChange;
     private final Consumer<String> onActivate;
 
     public TextEntry(final int w, final String deftext, final Consumer<String> onChange, final Consumer<String> onActivate) {
-	super(new Coord(w, mext.getHeight()));
-	this.onChange = onChange;
-	this.onActivate = onActivate;
-	rsettext(deftext);
-	setcanfocus(true);
+        super(new Coord(w, mext.getHeight()));
+        this.onChange = onChange;
+        this.onActivate = onActivate;
+        rsettext(deftext);
+        setcanfocus(true);
     }
 
     public TextEntry(int w, String deftext) {
@@ -186,44 +192,44 @@ public class TextEntry extends SIWidget {
 
     @Deprecated
     public TextEntry(Coord sz, String deftext) {
-	this(sz.x, deftext);
+        this(sz.x, deftext);
     }
 
     protected void changed() {
-	dirty = true;
-	if(onChange != null)
-	    onChange.accept(text);
+        dirty = true;
+        if (onChange != null)
+            onChange.accept(text);
     }
 
     public void activate(String text) {
-	if(canactivate)
-	    wdgmsg("activate", text);
-	if(onActivate != null)
-	    onActivate.accept(text);
+        if (canactivate)
+            wdgmsg("activate", text);
+        if (onActivate != null)
+            onActivate.accept(text);
     }
 
     public boolean type(char c, KeyEvent ev) {
-	return(buf.key(ev));
+        return (buf.key(ev));
     }
 
     public boolean keydown(KeyEvent e) {
-	buf.key(e);
-	return(true);
+        buf.key(e);
+        return (true);
     }
 
     public boolean mousedown(Coord c, int button) {
-	parent.setfocus(this);
-	if(tcache != null) {
-	    buf.point = tcache.charat(c.x + sx);
-	}
-	return(true);
+        parent.setfocus(this);
+        if (tcache != null) {
+            buf.point = tcache.charat(c.x + sx);
+        }
+        return (true);
     }
 
     public void gotfocus() {
-	focusstart = Utils.rtime();
+        focusstart = Utils.rtime();
     }
 
     public void resize(int w) {
-	resize(w, sz.y);
+        resize(w, sz.y);
     }
 }

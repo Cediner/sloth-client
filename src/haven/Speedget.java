@@ -37,116 +37,116 @@ public class Speedget extends MovableWidget {
     public int cur, max;
 
     static {
-	String[] names = {"crawl", "walk", "run", "sprint"};
-	String[] vars = {"dis", "off", "on"};
-	imgs = new Tex[names.length][vars.length];
-	int w = 0;
-	for(int i = 0; i < names.length; i++) {
-	    for(int o = 0; o < vars.length; o++)
-		imgs[i][o] = Resource.loadtex("gfx/hud/meter/rmeter/" + names[i] + "-" + vars[o]);
-	    w += imgs[i][0].sz().x;
-	}
-	tsz = new Coord(w, imgs[0][0].sz().y);
-	tips = new String[names.length];
-	for(int i = 0; i < names.length; i++) {
-	    tips[i] = Resource.local().loadwait("gfx/hud/meter/rmeter/" + names[i] + "-on").layer(Resource.tooltip).t;
-	}
+        String[] names = {"crawl", "walk", "run", "sprint"};
+        String[] vars = {"dis", "off", "on"};
+        imgs = new Tex[names.length][vars.length];
+        int w = 0;
+        for (int i = 0; i < names.length; i++) {
+            for (int o = 0; o < vars.length; o++)
+                imgs[i][o] = Resource.loadtex("gfx/hud/meter/rmeter/" + names[i] + "-" + vars[o]);
+            w += imgs[i][0].sz().x;
+        }
+        tsz = new Coord(w, imgs[0][0].sz().y);
+        tips = new String[names.length];
+        for (int i = 0; i < names.length; i++) {
+            tips[i] = Resource.local().loadwait("gfx/hud/meter/rmeter/" + names[i] + "-on").layer(Resource.tooltip).t;
+        }
     }
 
     @RName("speedget")
     public static class $_ implements Factory {
-	public Widget create(UI ui, Object[] args) {
-	    int cur = (Integer)args[0];
-	    int max = (Integer)args[1];
-	    return(new Speedget(cur, max));
-	}
+        public Widget create(UI ui, Object[] args) {
+            int cur = (Integer) args[0];
+            int max = (Integer) args[1];
+            return (new Speedget(cur, max));
+        }
     }
 
     public Speedget(int cur, int max) {
-	super(tsz, "Speedget");
-	this.cur = cur;
-	this.max = max;
+        super(tsz, "Speedget");
+        this.cur = cur;
+        this.max = max;
     }
 
     @Override
     protected void added() {
-	super.added();
-    	ui.gui.speed = this;
+        super.added();
+        ui.gui.speed = this;
     }
 
     @Override
     protected void removed() {
-	super.removed();
-	ui.gui.speed = null;
+        super.removed();
+        ui.gui.speed = null;
     }
 
     public void draw(GOut g) {
-	int x = 0;
-	for(int i = 0; i < 4; i++) {
-	    Tex t;
-	    if(i == cur)
-		t = imgs[i][2];
-	    else if(i > max)
-		t = imgs[i][0];
-	    else
-		t = imgs[i][1];
-	    g.image(t, new Coord(x, 0));
-	    x += t.sz().x;
-	}
+        int x = 0;
+        for (int i = 0; i < 4; i++) {
+            Tex t;
+            if (i == cur)
+                t = imgs[i][2];
+            else if (i > max)
+                t = imgs[i][0];
+            else
+                t = imgs[i][1];
+            g.image(t, new Coord(x, 0));
+            x += t.sz().x;
+        }
     }
 
     public void uimsg(String msg, Object... args) {
-	if(msg == "cur")
-	    cur = (Integer)args[0];
-	else if(msg == "max")
-	    max = (Integer)args[0];
+        if (msg == "cur")
+            cur = (Integer) args[0];
+        else if (msg == "max")
+            max = (Integer) args[0];
     }
 
     @Override
     protected boolean moveHit(Coord c, int btn) {
-	return btn == 3 && c.isect(Coord.z, sz);
+        return btn == 3 && c.isect(Coord.z, sz);
     }
 
     public void set(int s) {
-	wdgmsg("set", s);
+        wdgmsg("set", s);
     }
 
     public boolean mousedown(Coord c, int button) {
-        if(button == 1) {
-	    int x = 0;
-	    for (int i = 0; i < 4; i++) {
-		x += imgs[i][0].sz().x;
-		if (c.x < x) {
-		    set(i);
-		    break;
-		}
-	    }
-	    return (true);
-	} else {
+        if (button == 1) {
+            int x = 0;
+            for (int i = 0; i < 4; i++) {
+                x += imgs[i][0].sz().x;
+                if (c.x < x) {
+                    set(i);
+                    break;
+                }
+            }
+            return (true);
+        } else {
             return super.mousedown(c, button);
-	}
+        }
     }
 
     public boolean mousewheel(Coord c, int amount) {
-	if(max >= 0)
-	    set((cur + max + 1 + amount) % (max + 1));
-	return(true);
+        if (max >= 0)
+            set((cur + max + 1 + amount) % (max + 1));
+        return (true);
     }
 
     public Object tooltip(Coord c, Widget prev) {
-	if((cur >= 0) && (cur < tips.length))
-	    return(String.format("Selected speed: %s", tips[cur]));
-	return(null);
+        if ((cur >= 0) && (cur < tips.length))
+            return (String.format("Selected speed: %s", tips[cur]));
+        return (null);
     }
 
     public void cyclespeed() {
-	if(max >= 0) {
-	    int n;
-	    if(cur > max)
-		n = max;
-	    else
-		n = (cur + 1) % (max + 1);
-	    set(n);
-	}
+        if (max >= 0) {
+            int n;
+            if (cur > max)
+                n = max;
+            else
+                n = (cur + 1) % (max + 1);
+            set(n);
+        }
     }
 }

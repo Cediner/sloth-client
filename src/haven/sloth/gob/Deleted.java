@@ -11,15 +11,16 @@ import java.util.HashSet;
 
 public class Deleted {
     private static ObservableCollection<String> deleted = new ObservableCollection<>(new HashSet<>());
+
     public static void init() {
         Storage.dynamic.ensure(sql -> {
-            try(final Statement stmt = sql.createStatement()) {
+            try (final Statement stmt = sql.createStatement()) {
                 stmt.executeUpdate("CREATE TABLE IF NOT EXISTS gob_deleted ( name TEXT PRIMARY KEY )");
             }
         });
         Storage.dynamic.ensure(sql -> {
-            try(final Statement stmt = sql.createStatement()) {
-                try(final ResultSet res = stmt.executeQuery("SELECT name FROM gob_deleted")) {
+            try (final Statement stmt = sql.createStatement()) {
+                try (final ResultSet res = stmt.executeQuery("SELECT name FROM gob_deleted")) {
                     while (res.next()) {
                         deleted.add(res.getString(1));
                     }

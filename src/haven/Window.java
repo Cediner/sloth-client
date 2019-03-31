@@ -41,20 +41,21 @@ import static haven.Resource.cdec;
 public class Window extends MovableWidget implements DTarget {
     @Resource.LayerName("windowconfig")
     public static class WindowConfig extends Resource.Layer {
-	final Coord tlc;
-	final Coord brc;
-	final Coord capc;
-	final Coord btnc;
+        final Coord tlc;
+        final Coord brc;
+        final Coord capc;
+        final Coord btnc;
 
-	public WindowConfig(Resource res, Message buf) {
-	    res.super();
-	    tlc = cdec(buf);
-	    brc = cdec(buf);
-	    capc = cdec(buf);
-	    btnc = cdec(buf);
-	}
+        public WindowConfig(Resource res, Message buf) {
+            res.super();
+            tlc = cdec(buf);
+            brc = cdec(buf);
+            capc = cdec(buf);
+            btnc = cdec(buf);
+        }
 
-	public void init() {}
+        public void init() {
+        }
     }
 
     // 0 = bg, 1 = bgl, 2 = bgr
@@ -87,19 +88,30 @@ public class Window extends MovableWidget implements DTarget {
     //caption foundry
     public static final BufferedImage ctex = Resource.loadimg("gfx/hud/fonttex");
     public static final Text.Furnace cf = new Text.Imager(new PUtils.TexFurn(new Text.Foundry(Text.sans, 15).aa(true), ctex)) {
-	    protected BufferedImage proc(Text text) {
-		return(rasterimg(blurmask2(text.img.getRaster(), 1, 1, Color.BLACK)));
-	    }
-	};
+        protected BufferedImage proc(Text text) {
+            return (rasterimg(blurmask2(text.img.getRaster(), 1, 1, Color.BLACK)));
+        }
+    };
     //Basic frame box
     public static final IBox wbox = new IBox(Theme.fullres("frame")) {
-	    final Coord co = new Coord(3, 3), bo = new Coord(2, 2);
+        final Coord co = new Coord(3, 3), bo = new Coord(2, 2);
 
-	    public Coord btloff() {return(super.btloff().sub(bo));}
-	    public Coord ctloff() {return(super.ctloff().sub(co));}
-	    public Coord bisz() {return(super.bisz().sub(bo.mul(2)));}
-	    public Coord cisz() {return(super.cisz().sub(co.mul(2)));}
-	};
+        public Coord btloff() {
+            return (super.btloff().sub(bo));
+        }
+
+        public Coord ctloff() {
+            return (super.ctloff().sub(co));
+        }
+
+        public Coord bisz() {
+            return (super.bisz().sub(bo.mul(2)));
+        }
+
+        public Coord cisz() {
+            return (super.cisz().sub(co.mul(2)));
+        }
+    };
 
     //margin based off large or not
     public final Coord mrgn;
@@ -121,87 +133,87 @@ public class Window extends MovableWidget implements DTarget {
 
     @RName("wnd")
     public static class $_ implements Factory {
-	public Widget create(UI ui, Object[] args) {
-	    Coord sz = (Coord)args[0];
-	    String cap = (args.length > 1)?(String)args[1]:null;
-	    boolean lg = (args.length > 2) && ((Integer)args[2] != 0);
-	    if(cap == null || !cap.equals("Belt")) {
-		return (new Window(sz, cap, lg, Coord.z, Coord.z));
-	    } else {
-		return (new Window(sz, cap, cap, lg, Coord.z, Coord.z));
-	    }
-	}
+        public Widget create(UI ui, Object[] args) {
+            Coord sz = (Coord) args[0];
+            String cap = (args.length > 1) ? (String) args[1] : null;
+            boolean lg = (args.length > 2) && ((Integer) args[2] != 0);
+            if (cap == null || !cap.equals("Belt")) {
+                return (new Window(sz, cap, lg, Coord.z, Coord.z));
+            } else {
+                return (new Window(sz, cap, cap, lg, Coord.z, Coord.z));
+            }
+        }
     }
 
     public Window(Coord sz, String cap, boolean lg, Coord tlo, Coord rbo) {
-	this.mrgn = lg?dlmrgn:dsmrgn;
-	cbtn = add(new IButton(Theme.fullres("buttons/close"), null, this::close));
-	lbtn = null;
-	on = off = null;
-	chcap(cap);
-	resize2(sz);
-	setfocustab(true);
+        this.mrgn = lg ? dlmrgn : dsmrgn;
+        cbtn = add(new IButton(Theme.fullres("buttons/close"), null, this::close));
+        lbtn = null;
+        on = off = null;
+        chcap(cap);
+        resize2(sz);
+        setfocustab(true);
     }
 
     public Window(Coord sz, String cap, final String moveKey, boolean lg, Coord tlo, Coord rbo) {
         super(moveKey);
-	this.mrgn = lg?dlmrgn:dsmrgn;
-	cbtn = add(new IButton(Theme.fullres("buttons/close"), null, this::close));
-	lbtn = add(new IButton(Theme.fullres("buttons/lock"), null, this::toggleLock));
-	on = lbtn.hover;
-	off = lbtn.up;
-	chcap(cap);
-	resize2(sz);
-	setfocustab(true);
+        this.mrgn = lg ? dlmrgn : dsmrgn;
+        cbtn = add(new IButton(Theme.fullres("buttons/close"), null, this::close));
+        lbtn = add(new IButton(Theme.fullres("buttons/lock"), null, this::toggleLock));
+        on = lbtn.hover;
+        off = lbtn.up;
+        chcap(cap);
+        resize2(sz);
+        setfocustab(true);
     }
 
     public Window(Coord sz, String cap, boolean lg) {
-	this(sz, cap, lg, Coord.z, Coord.z);
+        this(sz, cap, lg, Coord.z, Coord.z);
     }
 
     public Window(Coord sz, String cap, final String moveKey, boolean lg) {
-	this(sz, cap, moveKey, lg, Coord.z, Coord.z);
+        this(sz, cap, moveKey, lg, Coord.z, Coord.z);
     }
 
     public Window(Coord sz, String cap) {
-	this(sz, cap, false);
+        this(sz, cap, false);
     }
 
     public Window(final Coord sz, final String cap, final String moveKey) {
-	this(sz, cap, moveKey,false);
+        this(sz, cap, moveKey, false);
     }
 
     protected void added() {
-	parent.setfocus(this);
-	super.added();
-	if(lbtn != null && locked()) {
-	    lbtn.up = on;
-	    lbtn.hover = off;
-	}
+        parent.setfocus(this);
+        super.added();
+        if (lbtn != null && locked()) {
+            lbtn.up = on;
+            lbtn.hover = off;
+        }
     }
 
     public void makeHidable() {
         hbtn = addBtn("buttons/hide", null, this::toggleHide);
-        if(cap != null) {
-	    hidable = HiddenWndData.shouldHide(cap.text);
-	    hidden = false;
-	    if(hidable) {
-		final BufferedImage tmp = hbtn.down;
-		hbtn.down = hbtn.up;
-		hbtn.up = tmp;
-	    }
-	}
+        if (cap != null) {
+            hidable = HiddenWndData.shouldHide(cap.text);
+            hidden = false;
+            if (hidable) {
+                final BufferedImage tmp = hbtn.down;
+                hbtn.down = hbtn.up;
+                hbtn.up = tmp;
+            }
+        }
     }
 
     public void toggleHide() {
-	hidable = !hidable;
-	hidden = false;
-	final BufferedImage tmp = hbtn.down;
-	hbtn.down = hbtn.up;
-	hbtn.up = tmp;
-	if(cap != null) {
-	    HiddenWndData.saveHide(cap.text, hidable);
-	}
+        hidable = !hidable;
+        hidden = false;
+        final BufferedImage tmp = hbtn.down;
+        hbtn.down = hbtn.up;
+        hbtn.up = tmp;
+        if (cap != null) {
+            HiddenWndData.saveHide(cap.text, hidable);
+        }
     }
 
     public IButton addBtn(final String res, final String tt, final Runnable action) {
@@ -212,186 +224,186 @@ public class Window extends MovableWidget implements DTarget {
 
     @Override
     public void toggleLock() {
-        if(locked()) {
-	    lbtn.up = off;
-	    lbtn.hover = on;
-	} else {
-	    lbtn.up = on;
-	    lbtn.hover = off;
-	}
+        if (locked()) {
+            lbtn.up = off;
+            lbtn.hover = on;
+        } else {
+            lbtn.up = on;
+            lbtn.hover = off;
+        }
         super.toggleLock();
     }
 
     public void chcap(String cap) {
-	if(cap == null)
-	    this.cap = null;
-	else
-	    this.cap = cf.render(cap);
+        if (cap == null)
+            this.cap = null;
+        else
+            this.cap = cf.render(cap);
     }
 
     public void cdraw(GOut g) {
     }
 
     protected void drawframe(GOut g) {
-	g.chcolor(DefSettings.WNDCOL.get());
-	//draw background
-	g.rimagev(bgl, ctl, csz.y);
-	g.rimagev(bgr, ctl.add(csz.x-bgr.sz().x, 0), csz.y);
-	g.rimage(bg, ctl.add(bgl.sz().x, 0), csz.sub(bgl.sz().x + bgr.sz().x, 0));
+        g.chcolor(DefSettings.WNDCOL.get());
+        //draw background
+        g.rimagev(bgl, ctl, csz.y);
+        g.rimagev(bgr, ctl.add(csz.x - bgr.sz().x, 0), csz.y);
+        g.rimage(bg, ctl.add(bgl.sz().x, 0), csz.sub(bgl.sz().x + bgr.sz().x, 0));
 
 
         //corners
         g.image(cl, Coord.z);
-        g.image(bl, new Coord(0, sz.y-bl.sz().y));
+        g.image(bl, new Coord(0, sz.y - bl.sz().y));
         g.image(br, sz.sub(br.sz()));
-       	g.image(cr, new Coord(sz.x - cr.sz().x, 0));
+        g.image(cr, new Coord(sz.x - cr.sz().x, 0));
 
-       	//horizontal and vertical tiling of the long parts
-	g.rimagev(lm, new Coord(0, cl.sz().y), sz.y - bl.sz().y - cl.sz().y);
-	g.rimagev(rm, new Coord(sz.x - rm.sz().x, cr.sz().y), sz.y - br.sz().y - cr.sz().y);
-	g.rimageh(bm, new Coord(bl.sz().x, sz.y - bm.sz().y), sz.x - br.sz().x - bl.sz().x);
-	g.rimageh(cm, new Coord(cl.sz().x, 0), sz.x - cl.sz().x - cr.sz().x);
-	g.chcolor();
+        //horizontal and vertical tiling of the long parts
+        g.rimagev(lm, new Coord(0, cl.sz().y), sz.y - bl.sz().y - cl.sz().y);
+        g.rimagev(rm, new Coord(sz.x - rm.sz().x, cr.sz().y), sz.y - br.sz().y - cr.sz().y);
+        g.rimageh(bm, new Coord(bl.sz().x, sz.y - bm.sz().y), sz.x - br.sz().x - bl.sz().x);
+        g.rimageh(cm, new Coord(cl.sz().x, 0), sz.x - cl.sz().x - cr.sz().x);
+        g.chcolor();
 
-	//caption if applies
-	if(cap != null) {
-	    g.image(cap.tex(), cfg.capc);
-	}
+        //caption if applies
+        if (cap != null) {
+            g.image(cap.tex(), cfg.capc);
+        }
     }
 
     public void draw(GOut g) {
-        if(!hidden) {
-	    drawframe(g);
-	}
-	cdraw(g.reclip(atl, asz));
-	super.draw(g);
+        if (!hidden) {
+            drawframe(g);
+        }
+        cdraw(g.reclip(atl, asz));
+        super.draw(g);
     }
 
     public Coord contentsz() {
-	Coord max = new Coord(0, 0);
-	for(Widget wdg = child; wdg != null; wdg = wdg.next) {
-	    if(wdg == cbtn || wdg == lbtn)
-		continue;
-	    if(!wdg.visible)
-		continue;
-	    Coord br = wdg.c.add(wdg.sz);
-	    if(br.x > max.x)
-		max.x = br.x;
-	    if(br.y > max.y)
-		max.y = br.y;
-	}
-	return(max);
+        Coord max = new Coord(0, 0);
+        for (Widget wdg = child; wdg != null; wdg = wdg.next) {
+            if (wdg == cbtn || wdg == lbtn)
+                continue;
+            if (!wdg.visible)
+                continue;
+            Coord br = wdg.c.add(wdg.sz);
+            if (br.x > max.x)
+                max.x = br.x;
+            if (br.y > max.y)
+                max.y = br.y;
+        }
+        return (max);
     }
 
     private void placecbtn() {
-	cbtn.c = new Coord(sz.x - cbtn.sz.x - atl.x - cfg.btnc.x,-atl.y + cfg.btnc.y);
-	final Coord c;
-	if(lbtn != null) {
-	    lbtn.c = cbtn.c.sub(lbtn.sz.x + 5, 0);
-	    c = new Coord(lbtn.c.x - (lbtn.sz.x + 5), lbtn.c.y);
-	} else {
-	    c = new Coord(cbtn.c.x - (cbtn.sz.x + 5), cbtn.c.y);
-	}
-	for(final IButton btn : btns) {
-	    btn.c = c.copy();
-	    c.x -= btn.sz.x + 5;
-	}
+        cbtn.c = new Coord(sz.x - cbtn.sz.x - atl.x - cfg.btnc.x, -atl.y + cfg.btnc.y);
+        final Coord c;
+        if (lbtn != null) {
+            lbtn.c = cbtn.c.sub(lbtn.sz.x + 5, 0);
+            c = new Coord(lbtn.c.x - (lbtn.sz.x + 5), lbtn.c.y);
+        } else {
+            c = new Coord(cbtn.c.x - (cbtn.sz.x + 5), cbtn.c.y);
+        }
+        for (final IButton btn : btns) {
+            btn.c = c.copy();
+            c.x -= btn.sz.x + 5;
+        }
     }
 
     private void resize2(Coord sz) {
-	asz = sz; //usable size for content
-	csz = asz.add(mrgn.mul(2)); //add margin around usable size
-	wsz = csz.add(cfg.tlc).add(cfg.brc); //usable size + margin + frame size
-	//tlo, rbo = top left offset, bottom right offset usually 0 always...
-	//Basically same job as tlc, brc
-	this.sz = wsz;
-	//top left coordinate of inner content area
-	ctl = cfg.tlc;
-	//Top left coordinate of where usable space starts after accounting for margin
-	atl = ctl.add(mrgn);
-	//Where the close button goes
-	cbtn.c = new Coord(sz.x - cfg.btnc.x - cbtn.sz.x, cfg.btnc.y);
-	for(Widget ch = child; ch != null; ch = ch.next)
-	    ch.presize();
-	placecbtn();
+        asz = sz; //usable size for content
+        csz = asz.add(mrgn.mul(2)); //add margin around usable size
+        wsz = csz.add(cfg.tlc).add(cfg.brc); //usable size + margin + frame size
+        //tlo, rbo = top left offset, bottom right offset usually 0 always...
+        //Basically same job as tlc, brc
+        this.sz = wsz;
+        //top left coordinate of inner content area
+        ctl = cfg.tlc;
+        //Top left coordinate of where usable space starts after accounting for margin
+        atl = ctl.add(mrgn);
+        //Where the close button goes
+        cbtn.c = new Coord(sz.x - cfg.btnc.x - cbtn.sz.x, cfg.btnc.y);
+        for (Widget ch = child; ch != null; ch = ch.next)
+            ch.presize();
+        placecbtn();
     }
 
     public void resize(Coord sz) {
-	resize2(sz);
+        resize2(sz);
     }
 
     public void uimsg(String msg, Object... args) {
         switch (msg) {
-	    case "pack":
-		pack();
-		break;
-	    case "dt":
-		dt = (Integer)args[0] != 0;
-		break;
-	    case "cap":
-		String cap = (String)args[0];
-		chcap(cap.equals("")?null:cap);
-		break;
-	    default:
-		super.uimsg(msg, args);
-	        break;
-	}
+            case "pack":
+                pack();
+                break;
+            case "dt":
+                dt = (Integer) args[0] != 0;
+                break;
+            case "cap":
+                String cap = (String) args[0];
+                chcap(cap.equals("") ? null : cap);
+                break;
+            default:
+                super.uimsg(msg, args);
+                break;
+        }
     }
 
     public Coord xlate(Coord c, boolean in) {
-	if(in)
-	    return(c.add(atl));
-	else
-	    return(c.sub(atl));
+        if (in)
+            return (c.add(atl));
+        else
+            return (c.sub(atl));
     }
 
     @Override
     protected boolean moveHit(Coord c, int btn) {
-	Coord cpc = c.sub(cl.sz().x, 0);
-	Coord cprc = c.sub(sz.x - cr.sz().x, 0);
-	//content size
-	return c.isect(ctl, csz) ||
-		//or left caption
-		(c.isect(Coord.z, cl.sz()) && cl.back.getRaster().getSample(c.x, c.y, 3) >= 128) ||
-		//or right caption
-		(c.isect(new Coord(sz.x - cr.sz().x, 0), cr.sz()) &&
-			cr.back.getRaster().getSample(cprc.x % cr.back.getWidth(), cprc.y, 3) >= 128) ||
-		//or mid caption
-		(c.isect(new Coord(cl.sz().x, 0), new Coord(sz.x - cr.sz().x - cl.sz().x, cm.sz().y)) &&
-			(cm.back.getRaster().getSample(cpc.x % cm.back.getWidth(), cpc.y, 3) >= 128));
+        Coord cpc = c.sub(cl.sz().x, 0);
+        Coord cprc = c.sub(sz.x - cr.sz().x, 0);
+        //content size
+        return c.isect(ctl, csz) ||
+                //or left caption
+                (c.isect(Coord.z, cl.sz()) && cl.back.getRaster().getSample(c.x, c.y, 3) >= 128) ||
+                //or right caption
+                (c.isect(new Coord(sz.x - cr.sz().x, 0), cr.sz()) &&
+                        cr.back.getRaster().getSample(cprc.x % cr.back.getWidth(), cprc.y, 3) >= 128) ||
+                //or mid caption
+                (c.isect(new Coord(cl.sz().x, 0), new Coord(sz.x - cr.sz().x - cl.sz().x, cm.sz().y)) &&
+                        (cm.back.getRaster().getSample(cpc.x % cm.back.getWidth(), cpc.y, 3) >= 128));
     }
 
     public boolean mousedown(Coord c, int button) {
-	if(super.mousedown(c, button)) {
-	    parent.setfocus(this);
-	    raise();
-	    return(true);
-	}
-	return(false);
+        if (super.mousedown(c, button)) {
+            parent.setfocus(this);
+            raise();
+            return (true);
+        }
+        return (false);
     }
 
     public boolean mouseup(Coord c, int button) {
-	super.mouseup(c, button);
-	return(true);
+        super.mouseup(c, button);
+        return (true);
     }
 
     public void mousemove(Coord c) {
-	if (hidable) {
-	    if (c.isect(Coord.z, sz) || moving()) {
-		hidden = false;
-		cbtn.visible = true;
-		if (lbtn != null)
-		    lbtn.visible = true;
-		btns.forEach(btn -> btn.visible = true);
-	    } else {
-		hidden = true;
-		cbtn.visible = false;
-		if (lbtn != null)
-		    lbtn.visible = false;
-		btns.forEach(btn -> btn.visible = false);
-	    }
-	}
-	super.mousemove(c);
+        if (hidable) {
+            if (c.isect(Coord.z, sz) || moving()) {
+                hidden = false;
+                cbtn.visible = true;
+                if (lbtn != null)
+                    lbtn.visible = true;
+                btns.forEach(btn -> btn.visible = true);
+            } else {
+                hidden = true;
+                cbtn.visible = false;
+                if (lbtn != null)
+                    lbtn.visible = false;
+                btns.forEach(btn -> btn.visible = false);
+            }
+        }
+        super.mousemove(c);
     }
 
     public void close() {
@@ -399,40 +411,40 @@ public class Window extends MovableWidget implements DTarget {
     }
 
     public void wdgmsg(Widget sender, String msg, Object... args) {
-	if(sender == cbtn) {
-	    close();
-	} else {
-	    super.wdgmsg(sender, msg, args);
-	}
+        if (sender == cbtn) {
+            close();
+        } else {
+            super.wdgmsg(sender, msg, args);
+        }
     }
 
     public boolean type(char key, java.awt.event.KeyEvent ev) {
-	if(super.type(key, ev))
-	    return(true);
-	if(key == 27) {
-	    wdgmsg("close");
-	    return(true);
-	}
-	return(false);
+        if (super.type(key, ev))
+            return (true);
+        if (key == 27) {
+            wdgmsg("close");
+            return (true);
+        }
+        return (false);
     }
 
     public boolean drop(Coord cc, Coord ul) {
-	if(dt) {
-	    wdgmsg("drop", cc);
-	    return(true);
-	}
-	return(false);
+        if (dt) {
+            wdgmsg("drop", cc);
+            return (true);
+        }
+        return (false);
     }
 
     public boolean iteminteract(Coord cc, Coord ul) {
-	return(false);
+        return (false);
     }
 
     public Object tooltip(Coord c, Widget prev) {
-	Object ret = super.tooltip(c, prev);
-	if(ret != null)
-	    return(ret);
-	else
-	    return("");
+        Object ret = super.tooltip(c, prev);
+        if (ret != null)
+            return (ret);
+        else
+            return ("");
     }
 }

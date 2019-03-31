@@ -29,6 +29,7 @@ package haven;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.*;
+
 import haven.ItemInfo.AttrCache;
 import haven.sloth.Theme;
 
@@ -56,53 +57,62 @@ public class Buff extends Widget implements ItemInfo.ResOwner {
 
     @RName("buff")
     public static class $_ implements Factory {
-	public Widget create(UI ui, Object[] args) {
-	    Indir<Resource> res = ui.sess.getres((Integer)args[0]);
-	    return(new Buff(res));
-	}
+        public Widget create(UI ui, Object[] args) {
+            Indir<Resource> res = ui.sess.getres((Integer) args[0]);
+            return (new Buff(res));
+        }
     }
 
     public Buff(Indir<Resource> res) {
-	super(cframe.sz());
-	this.res = res;
+        super(cframe.sz());
+        this.res = res;
     }
 
     public Resource resource() {
-	return(res.get());
+        return (res.get());
     }
+
     private static final OwnerContext.ClassResolver<Buff> ctxr = new OwnerContext.ClassResolver<Buff>()
-	.add(Glob.class, wdg -> wdg.ui.sess.glob)
-	.add(Session.class, wdg -> wdg.ui.sess);
-    public <T> T context(Class<T> cl) {return(ctxr.context(cl, this));}
+            .add(Glob.class, wdg -> wdg.ui.sess.glob)
+            .add(Session.class, wdg -> wdg.ui.sess);
+
+    public <T> T context(Class<T> cl) {
+        return (ctxr.context(cl, this));
+    }
 
     public List<ItemInfo> info() {
-	if(info == null)
-	    info = ItemInfo.buildinfo(this, rawinfo);
-	return(info);
+        if (info == null)
+            info = ItemInfo.buildinfo(this, rawinfo);
+        return (info);
     }
 
     private Tex nmeter() {
-	if(ntext == null)
-	    ntext = new TexI(Utils.outline2(nfnd.render(Integer.toString(nmeter), Color.WHITE).img, Color.BLACK));
-	return(ntext);
+        if (ntext == null)
+            ntext = new TexI(Utils.outline2(nfnd.render(Integer.toString(nmeter), Color.WHITE).img, Color.BLACK));
+        return (ntext);
     }
 
     public interface AMeterInfo {
-	public double ameter();
+        public double ameter();
     }
 
     public static abstract class AMeterTip extends ItemInfo.Tip implements AMeterInfo {
-	public AMeterTip(Owner owner) {
-	    super(owner);
-	}
+        public AMeterTip(Owner owner) {
+            super(owner);
+        }
 
-	public void layout(Layout l) {
-	    int n = (int)Math.floor(ameter() * 100);
-	    l.cmp.add(Text.render(" (" + n + "%)").img, new Coord(l.cmp.sz.x, 0));
-	}
+        public void layout(Layout l) {
+            int n = (int) Math.floor(ameter() * 100);
+            l.cmp.add(Text.render(" (" + n + "%)").img, new Coord(l.cmp.sz.x, 0));
+        }
 
-	public int order() {return(10);}
-	public Tip shortvar() {return(this);}
+        public int order() {
+            return (10);
+        }
+
+        public Tip shortvar() {
+            return (this);
+        }
     }
 
     private final AttrCache<Double> ameteri = new AttrCache<>(this::info, AttrCache.map1(AMeterInfo.class, minf -> minf::ameter));
@@ -115,129 +125,131 @@ public class Buff extends Widget implements ItemInfo.ResOwner {
      * Fight buffs also use the cframe always
      */
     void fightdraw(final GOut g) {
-	final Coord sz = scframe.sz();
-	g.chcolor(255, 255, 255, a);
-	Double ameter = (this.ameter >= 0) ? (this.ameter / 100.0) : ameteri.get();
-	if(ameter != null) {
-	    g.image(scframe, Coord.z);
-	    g.chcolor(0, 0, 0, a);
-	    g.frect(sameteroff, sametersz);
-	    g.chcolor(255, 255, 255, a);
-	    g.frect(sameteroff, new Coord((int)Math.floor(ameter * sametersz.x), sametersz.y));
-	}
+        final Coord sz = scframe.sz();
+        g.chcolor(255, 255, 255, a);
+        Double ameter = (this.ameter >= 0) ? (this.ameter / 100.0) : ameteri.get();
+        if (ameter != null) {
+            g.image(scframe, Coord.z);
+            g.chcolor(0, 0, 0, a);
+            g.frect(sameteroff, sametersz);
+            g.chcolor(255, 255, 255, a);
+            g.frect(sameteroff, new Coord((int) Math.floor(ameter * sametersz.x), sametersz.y));
+        }
 
-	try {
-	    Tex img = res.get().layer(Resource.imgc).tex();
-	    g.image(img, imgoff, new Coord(22, 21));
-	} catch (Loading l) {
-	    //do nothing
-	}
+        try {
+            Tex img = res.get().layer(Resource.imgc).tex();
+            g.image(img, imgoff, new Coord(22, 21));
+        } catch (Loading l) {
+            //do nothing
+        }
 
-	if(ameter != null) {
-	    final int width = FastText.textw(this.ameter+"");
-	    final Coord c = new Coord(sz.x/2-width/2, sz.y/2 - 5);
-	    final Coord tc = c.sub(0, 3);
-	    final Coord tsz = new Coord(width, 10);
-	    g.chcolor(new Color(64, 64, 64, 215));
-	    g.frect(c, c.add(tsz.x,0), c.add(tsz), c.add(0, tsz.y));
-	    g.chcolor();
-	    FastText.printf(g, tc, "%d", this.ameter);
-	}
+        if (ameter != null) {
+            final int width = FastText.textw(this.ameter + "");
+            final Coord c = new Coord(sz.x / 2 - width / 2, sz.y / 2 - 5);
+            final Coord tc = c.sub(0, 3);
+            final Coord tsz = new Coord(width, 10);
+            g.chcolor(new Color(64, 64, 64, 215));
+            g.frect(c, c.add(tsz.x, 0), c.add(tsz), c.add(0, tsz.y));
+            g.chcolor();
+            FastText.printf(g, tc, "%d", this.ameter);
+        }
     }
 
     public void draw(GOut g) {
-	g.chcolor(255, 255, 255, a);
-	Double ameter = (this.ameter >= 0) ? (this.ameter / 100.0) : ameteri.get();
-	if(ameter != null) {
-	    g.image(cframe, Coord.z);
-	    g.chcolor(0, 0, 0, a);
-	    g.frect(ameteroff, ametersz);
-	    g.chcolor(255, 255, 255, a);
-	    g.frect(ameteroff, new Coord((int)Math.floor(ameter * ametersz.x), ametersz.y));
-	} else {
-	    g.image(frame, Coord.z);
-	}
-	try {
-	    Tex img = res.get().layer(Resource.imgc).tex();
-	    g.image(img, imgoff);
-	    Tex nmeter = (this.nmeter >= 0) ? nmeter() : nmeteri.get();
-	    if(nmeter != null)
-		g.aimage(nmeter, imgoff.add(img.sz()).sub(1, 1), 1, 1);
-	    Double cmeter;
-	    if(this.cmeter >= 0) {
-		double m = this.cmeter;
-		if(cmrem >= 0) {
-		    double ot = cmrem;
-		    double pt = Utils.rtime() - gettime;
-		    m *= (ot - pt) / ot;
-		}
-		cmeter = m;
-	    } else {
-		cmeter = cmeteri.get();
-	    }
-	    if(cmeter != null) {
-		double m = Utils.clip(cmeter, 0.0, 1.0);
-		g.chcolor(255, 255, 255, a / 2);
-		Coord ccc = img.sz().div(2);
-		g.prect(imgoff.add(ccc), ccc.inv(), img.sz().sub(ccc), Math.PI * 2 * m);
-		g.chcolor(255, 255, 255, a);
-	    }
-	} catch(Loading e) {}
-	if(this.ameter >= 0) {
-	    final int width = FastText.textw(this.ameter+"");
-	    final Coord c = new Coord(sz.x/2-width/2, sz.y/2 - 5);
-	    final Coord tsz = new Coord(width, 10);
-	    g.chcolor(new Color(64, 64, 64, 215));
-	    g.frect(c, c.add(tsz.x,0), c.add(tsz), c.add(0, tsz.y));
-	    g.chcolor();
-	    FastText.aprintf(g, sz.div(2), 0.5, 0.5, "%d", this.ameter);
-	}
+        g.chcolor(255, 255, 255, a);
+        Double ameter = (this.ameter >= 0) ? (this.ameter / 100.0) : ameteri.get();
+        if (ameter != null) {
+            g.image(cframe, Coord.z);
+            g.chcolor(0, 0, 0, a);
+            g.frect(ameteroff, ametersz);
+            g.chcolor(255, 255, 255, a);
+            g.frect(ameteroff, new Coord((int) Math.floor(ameter * ametersz.x), ametersz.y));
+        } else {
+            g.image(frame, Coord.z);
+        }
+        try {
+            Tex img = res.get().layer(Resource.imgc).tex();
+            g.image(img, imgoff);
+            Tex nmeter = (this.nmeter >= 0) ? nmeter() : nmeteri.get();
+            if (nmeter != null)
+                g.aimage(nmeter, imgoff.add(img.sz()).sub(1, 1), 1, 1);
+            Double cmeter;
+            if (this.cmeter >= 0) {
+                double m = this.cmeter;
+                if (cmrem >= 0) {
+                    double ot = cmrem;
+                    double pt = Utils.rtime() - gettime;
+                    m *= (ot - pt) / ot;
+                }
+                cmeter = m;
+            } else {
+                cmeter = cmeteri.get();
+            }
+            if (cmeter != null) {
+                double m = Utils.clip(cmeter, 0.0, 1.0);
+                g.chcolor(255, 255, 255, a / 2);
+                Coord ccc = img.sz().div(2);
+                g.prect(imgoff.add(ccc), ccc.inv(), img.sz().sub(ccc), Math.PI * 2 * m);
+                g.chcolor(255, 255, 255, a);
+            }
+        } catch (Loading e) {
+        }
+        if (this.ameter >= 0) {
+            final int width = FastText.textw(this.ameter + "");
+            final Coord c = new Coord(sz.x / 2 - width / 2, sz.y / 2 - 5);
+            final Coord tsz = new Coord(width, 10);
+            g.chcolor(new Color(64, 64, 64, 215));
+            g.frect(c, c.add(tsz.x, 0), c.add(tsz), c.add(0, tsz.y));
+            g.chcolor();
+            FastText.aprintf(g, sz.div(2), 0.5, 0.5, "%d", this.ameter);
+        }
     }
 
     private BufferedImage shorttip() {
-	if(rawinfo != null)
-	    return(ItemInfo.shorttip(info()));
-	if(tt != null)
-	    return(Text.render(tt).img);
-	String ret = res.get().layer(Resource.tooltip).t;
-	if(ameter >= 0)
-	    ret = ret + " (" + ameter + "%)";
-	return(Text.render(ret).img);
+        if (rawinfo != null)
+            return (ItemInfo.shorttip(info()));
+        if (tt != null)
+            return (Text.render(tt).img);
+        String ret = res.get().layer(Resource.tooltip).t;
+        if (ameter >= 0)
+            ret = ret + " (" + ameter + "%)";
+        return (Text.render(ret).img);
     }
 
     private BufferedImage longtip() {
-	BufferedImage img;
-	if(rawinfo != null)
-	    img = ItemInfo.longtip(info());
-	else
-	    img = shorttip();
-	Resource.Pagina pag = res.get().layer(Resource.pagina);
-	if(pag != null)
-	    img = ItemInfo.catimgs(0, img, RichText.render("\n" + pag.text, 200).img);
-	return(img);
+        BufferedImage img;
+        if (rawinfo != null)
+            img = ItemInfo.longtip(info());
+        else
+            img = shorttip();
+        Resource.Pagina pag = res.get().layer(Resource.pagina);
+        if (pag != null)
+            img = ItemInfo.catimgs(0, img, RichText.render("\n" + pag.text, 200).img);
+        return (img);
     }
 
     private double hoverstart;
     private Tex shorttip, longtip;
     private List<ItemInfo> ttinfo = null;
+
     public Object tooltip(Coord c, Widget prev) {
-	double now = Utils.rtime();
-	if(prev != this)
-	    hoverstart = now;
-	try {
-	    List<ItemInfo> info = info();
-	    if(now - hoverstart < 1.0) {
-		if(shorttip == null)
-		    shorttip = new TexI(shorttip());
-		return(shorttip);
-	    } else {
-		if(longtip == null)
-		    longtip = new TexI(longtip());
-		return(longtip);
-	    }
-	} catch(Loading e) {
-	    return("...");
-	}
+        double now = Utils.rtime();
+        if (prev != this)
+            hoverstart = now;
+        try {
+            List<ItemInfo> info = info();
+            if (now - hoverstart < 1.0) {
+                if (shorttip == null)
+                    shorttip = new TexI(shorttip());
+                return (shorttip);
+            } else {
+                if (longtip == null)
+                    longtip = new TexI(longtip());
+                return (longtip);
+            }
+        } catch (Loading e) {
+            return ("...");
+        }
     }
 
     public int ameter() {
@@ -246,80 +258,80 @@ public class Buff extends Widget implements ItemInfo.ResOwner {
 
     public Optional<Resource> res() {
         try {
-            if(res != null) {
-		return Optional.of(res.get());
-	    } else {
+            if (res != null) {
+                return Optional.of(res.get());
+            } else {
                 return Optional.empty();
-	    }
-	} catch (Loading e) {
+            }
+        } catch (Loading e) {
             return Optional.empty();
-	}
+        }
     }
 
     public void reqdestroy() {
-	anims.clear();
-	final Coord o = this.c;
-	dest = true;
-	new NormAnim(0.5) {
-	    public void ntick(double a) {
-		Buff.this.a = 255 - (int)(255 * a);
-		Buff.this.c = o.add(0, (int)(a * a * cframe.sz().y));
-		if(a == 1.0)
-		    destroy();
-	    }
-	};
+        anims.clear();
+        final Coord o = this.c;
+        dest = true;
+        new NormAnim(0.5) {
+            public void ntick(double a) {
+                Buff.this.a = 255 - (int) (255 * a);
+                Buff.this.c = o.add(0, (int) (a * a * cframe.sz().y));
+                if (a == 1.0)
+                    destroy();
+            }
+        };
     }
 
     public void move(Coord c, double off) {
-	if(dest)
-	    return;
-	double ival = 0.8;
-	double foff = off * (1.0 - 0.8);
-	final Coord o = this.c;
-	final Coord d = c.sub(o);
-	new NormAnim(0.5) {
-	    public void ntick(double a) {
-		a = Utils.clip((a - foff) * (1.0 / ival), 0, 1);
-		Buff.this.c = o.add(d.mul(Utils.smoothstep(a)));
-	    }
-	};
+        if (dest)
+            return;
+        double ival = 0.8;
+        double foff = off * (1.0 - 0.8);
+        final Coord o = this.c;
+        final Coord d = c.sub(o);
+        new NormAnim(0.5) {
+            public void ntick(double a) {
+                a = Utils.clip((a - foff) * (1.0 / ival), 0, 1);
+                Buff.this.c = o.add(d.mul(Utils.smoothstep(a)));
+            }
+        };
     }
 
     public void move(Coord c) {
-	move(c, 0);
+        move(c, 0);
     }
 
     public void uimsg(String msg, Object... args) {
-	if(msg == "ch") {
-	    this.res = ui.sess.getres((Integer)args[0]);
-	} else if(msg == "tt") {
-	    info = null;
-	    rawinfo = new ItemInfo.Raw(args);
-	} else if(msg == "tip") {
-	    String tt = (String)args[0];
-	    this.tt = tt.equals("") ? null : tt;
-	    shorttip = longtip = null;
-	} else if(msg == "am") {
-	    this.ameter = (Integer)args[0];
-	    shorttip = longtip = null;
-	} else if(msg == "nm") {
-	    this.nmeter = (Integer)args[0];
-	    ntext = null;
-	} else if(msg == "cm") {
-	    this.cmeter = ((Number)args[0]).doubleValue() / 100.0;
-	    this.cmrem = (args.length > 1) ? (((Number)args[1]).doubleValue() * 0.06) : -1;
-	    gettime = Utils.rtime();
-	} else {
-	    super.uimsg(msg, args);
-	}
+        if (msg == "ch") {
+            this.res = ui.sess.getres((Integer) args[0]);
+        } else if (msg == "tt") {
+            info = null;
+            rawinfo = new ItemInfo.Raw(args);
+        } else if (msg == "tip") {
+            String tt = (String) args[0];
+            this.tt = tt.equals("") ? null : tt;
+            shorttip = longtip = null;
+        } else if (msg == "am") {
+            this.ameter = (Integer) args[0];
+            shorttip = longtip = null;
+        } else if (msg == "nm") {
+            this.nmeter = (Integer) args[0];
+            ntext = null;
+        } else if (msg == "cm") {
+            this.cmeter = ((Number) args[0]).doubleValue() / 100.0;
+            this.cmrem = (args.length > 1) ? (((Number) args[1]).doubleValue() * 0.06) : -1;
+            gettime = Utils.rtime();
+        } else {
+            super.uimsg(msg, args);
+        }
     }
 
     public boolean mousedown(Coord c, int btn) {
-        if(!(btn == 3 && ui.modmeta)) {
-	    wdgmsg("cl", c.sub(imgoff), btn, ui.modflags());
-	    return (true);
-	} else {
+        if (!(btn == 3 && ui.modmeta)) {
+            wdgmsg("cl", c.sub(imgoff), btn, ui.modflags());
+            return (true);
+        } else {
             return false;
-	}
+        }
     }
 }

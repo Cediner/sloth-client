@@ -23,25 +23,25 @@ public class Cards {
 
     //Restorations
     public static final Restoration arteva = new Restoration("Artful Evasion", false, 40, 0, 0.2, 0.2, 0.2, 0.2,
-	    (mip, eip) -> eip >= 1);
+            (mip, eip) -> eip >= 1);
     public static final Restoration fdodge = new Restoration("Feigned Dodge", false, 35, 0, 0.0, 0.15, 0.0, 0.0);
     public static final Restoration flex = new Restoration("Flex", false, 30, 0, 0.1, 0.0, 0.0, 0.1, 0.0, 0.0, 0.0, 0.15, UA, 1,
-	    (mip, eip) -> true);
+            (mip, eip) -> true);
     public static final Restoration jump = new Restoration("Jump", false, 25, 0, 0.0, 0.0, 0.2, 0.0);
     public static final Restoration qdodge = new Restoration("Quick Dodge", false, 25, 0, 0.0, 0.2, 0.0, 0.0);
     public static final Restoration regaincomp = new Restoration("Regain Composure", false, 25, 0, 0.0, 0.2, 0.2, 0.0);
     public static final Restoration sidestep = new Restoration("Sidestep", false, 25, 0, 0.0, 0.0, 0.0, 0.2);
     public static final Restoration watchitsmoves = new Restoration("Watch Its Moves", false, 45, 0, 0.0, 0.0, 0.0, 0.3,
-	    (mip, eip) -> eip >= 1);
+            (mip, eip) -> eip >= 1);
     //technically there's more to yieldground but who cares
     public static final Restoration yieldground = new Restoration("Yield Ground", false, 30, 0, 0.3, 0.3, 0.0, 0.0);
     public static final Restoration zigzag = new Restoration("Zig-Zag Ruse", false, 50, 0, 0.5, 0.0, 0.5, 0.0,
-	    (mip, eip) -> eip >= 2);
+            (mip, eip) -> eip >= 2);
 
     //Moves
 
     //Attacks
-    public static final Attack jugular = new Attack("Go for the Jugular", false, 45, UA, 4, 40,0.3, 1.0, false, 1.0, 0.1, 0.15, 0.0, 0.0, GREEN, RED);
+    public static final Attack jugular = new Attack("Go for the Jugular", false, 45, UA, 4, 40, 0.3, 1.0, false, 1.0, 0.1, 0.15, 0.0, 0.0, GREEN, RED);
     public static final Attack hmaker = new Attack("Haymaker", false, 50, UA, 0, 20, 0.15, 1.0, false, 1.0, 0.0, 0.0, 0.15, 0.0, YELLOW);
     public static final Attack kick = new Attack("Kick", false, 45, UA, 1, 25, 0.15, 1.0, false, 1.0, 0.0, 0.0, 0.2, 0.0, YELLOW);
     public static final Attack kito = new Attack("Knock Its Teeth Out", false, 35, UA, 1, 30, 0.25, 1.0, false, 1.0, 0.2, 0.0, 0.0, 0.0, RED);
@@ -64,44 +64,45 @@ public class Cards {
     public static final Attack sideswipe = new Attack("Sideswipe", false, 25, MC, 0, 0, 0.75, false, 1.0, 0.0, 0.0, 0.075, 0.0, YELLOW);
 
     public static final Map<String, Card> lookup = new HashMap<>();
+
     static {
         lookup.put(bloodlust.name, bloodlust);
-	lookup.put(chinup.name, chinup);
-	lookup.put(combatmed.name, combatmed);
-	lookup.put(dog.name, dog);
-	lookup.put(oakstance.name, oakstance);
-	lookup.put(parry.name, parry);
-	lookup.put(shieldup.name, shieldup);
-	lookup.put(toarms.name, toarms);
-	lookup.put(arteva.name, arteva);
-	lookup.put(fdodge.name, fdodge);
-	lookup.put(flex.name, flex);
-	lookup.put(jump.name, jump);
-	lookup.put(qdodge.name, qdodge);
-	lookup.put(regaincomp.name, regaincomp);
-	lookup.put(sidestep.name, sidestep);
-	lookup.put(watchitsmoves.name, watchitsmoves);
-	lookup.put(yieldground.name, yieldground);
-	lookup.put(zigzag.name, zigzag);
-	lookup.put(chop.name, chop);
-	lookup.put(cleave.name, cleave);
-	lookup.put(fcircle.name, fcircle);
-	lookup.put(jugular.name, jugular);
-	lookup.put(hmaker.name, hmaker);
-	lookup.put(kick.name, kick);
-	lookup.put(kito.name, kito);
-	lookup.put(lhook.name, lhook);
-	lookup.put(lblow.name, lblow);
-	lookup.put(punch.name, punch);
-	lookup.put(punchaoe.name, punchaoe);
-	lookup.put(qbarrage.name, qbarrage);
-	lookup.put(ravensbite.name, ravensbite);
-	lookup.put(ripapart.name, ripapart);
-	lookup.put(sideswipe.name, sideswipe);
-	lookup.put(stealthunder.name, stealthunder);
-	lookup.put(sting.name, sting);
-	lookup.put(storm.name, storm);
-	lookup.put(takedown.name, takedown);
-	lookup.put(uppercut.name, uppercut);
+        lookup.put(chinup.name, chinup);
+        lookup.put(combatmed.name, combatmed);
+        lookup.put(dog.name, dog);
+        lookup.put(oakstance.name, oakstance);
+        lookup.put(parry.name, parry);
+        lookup.put(shieldup.name, shieldup);
+        lookup.put(toarms.name, toarms);
+        lookup.put(arteva.name, arteva);
+        lookup.put(fdodge.name, fdodge);
+        lookup.put(flex.name, flex);
+        lookup.put(jump.name, jump);
+        lookup.put(qdodge.name, qdodge);
+        lookup.put(regaincomp.name, regaincomp);
+        lookup.put(sidestep.name, sidestep);
+        lookup.put(watchitsmoves.name, watchitsmoves);
+        lookup.put(yieldground.name, yieldground);
+        lookup.put(zigzag.name, zigzag);
+        lookup.put(chop.name, chop);
+        lookup.put(cleave.name, cleave);
+        lookup.put(fcircle.name, fcircle);
+        lookup.put(jugular.name, jugular);
+        lookup.put(hmaker.name, hmaker);
+        lookup.put(kick.name, kick);
+        lookup.put(kito.name, kito);
+        lookup.put(lhook.name, lhook);
+        lookup.put(lblow.name, lblow);
+        lookup.put(punch.name, punch);
+        lookup.put(punchaoe.name, punchaoe);
+        lookup.put(qbarrage.name, qbarrage);
+        lookup.put(ravensbite.name, ravensbite);
+        lookup.put(ripapart.name, ripapart);
+        lookup.put(sideswipe.name, sideswipe);
+        lookup.put(stealthunder.name, stealthunder);
+        lookup.put(sting.name, sting);
+        lookup.put(storm.name, storm);
+        lookup.put(takedown.name, takedown);
+        lookup.put(uppercut.name, uppercut);
     }
 }

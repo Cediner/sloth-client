@@ -44,7 +44,7 @@ public class Button extends SIWidget {
     public static final int hs = ul.getHeight(), hl = um.getHeight();
     public static final Resource click = Loading.waitfor(Resource.local().load("sfx/hud/btn"));
     public static final Resource.Audio lbtdown = Loading.waitfor(Resource.local().load("sfx/hud/lbtn")).layer(Resource.audio, "down");
-    public static final Resource.Audio lbtup   = Loading.waitfor(Resource.local().load("sfx/hud/lbtn")).layer(Resource.audio, "up");
+    public static final Resource.Audio lbtup = Loading.waitfor(Resource.local().load("sfx/hud/lbtn")).layer(Resource.audio, "up");
     public boolean lg;
     public Text text;
     public BufferedImage cont;
@@ -53,162 +53,163 @@ public class Button extends SIWidget {
     static Text.Furnace nf = new PUtils.BlurFurn(new PUtils.TexFurn(tf, Window.ctex), 1, 1, new Color(80, 40, 0));
     private boolean a = false;
     private UI.Grab d = null;
-	
+
     @RName("btn")
     public static class $Btn implements Factory {
-	public Widget create(UI ui, Object[] args) {
-	    if(args.length > 2)
-		return(new Button((Integer)args[0], (String)args[1], ((Integer)args[2]) != 0));
-	    else
-		return(new Button((Integer)args[0], (String)args[1]));
-	}
+        public Widget create(UI ui, Object[] args) {
+            if (args.length > 2)
+                return (new Button((Integer) args[0], (String) args[1], ((Integer) args[2]) != 0));
+            else
+                return (new Button((Integer) args[0], (String) args[1]));
+        }
     }
+
     @RName("ltbtn")
     public static class $LTBtn implements Factory {
-	public Widget create(UI ui, Object[] args) {
-	    return(wrapped((Integer)args[0], (String)args[1]));
-	}
+        public Widget create(UI ui, Object[] args) {
+            return (wrapped((Integer) args[0], (String) args[1]));
+        }
     }
-	
+
     public static Button wrapped(int w, String text) {
-	Button ret = new Button(w, tf.renderwrap(text, w - 10));
-	return(ret);
+        Button ret = new Button(w, tf.renderwrap(text, w - 10));
+        return (ret);
     }
-        
+
     private static boolean largep(int w) {
-	return(w >= (ul.getWidth() + um.getWidth() + ur.getWidth()));
+        return (w >= (ul.getWidth() + um.getWidth() + ur.getWidth()));
     }
 
     private Button(int w, boolean lg) {
-	super(new Coord(w, lg?hl:hs));
-	this.lg = lg;
+        super(new Coord(w, lg ? hl : hs));
+        this.lg = lg;
     }
 
     public Button(int w, String text, boolean lg, Runnable action) {
-	this(w, lg);
-	this.text = nf.render(text);
-	this.cont = this.text.img;
-	this.action = action;
+        this(w, lg);
+        this.text = nf.render(text);
+        this.cont = this.text.img;
+        this.action = action;
     }
 
     public Button(int w, String text, boolean lg) {
-	this(w, text, lg, null);
-	this.action = () -> wdgmsg("activate");
+        this(w, text, lg, null);
+        this.action = () -> wdgmsg("activate");
     }
 
     public Button(int w, String text, Runnable action) {
-	this(w, text, largep(w), action);
+        this(w, text, largep(w), action);
     }
 
     public Button(int w, String text) {
-	this(w, text, largep(w));
+        this(w, text, largep(w));
     }
 
     public Button(int w, Text text) {
-	this(w, largep(w));
-	this.text = text;
-	this.cont = text.img;
+        this(w, largep(w));
+        this.text = text;
+        this.cont = text.img;
     }
-	
+
     public Button(int w, BufferedImage cont) {
-	this(w, largep(w));
-	this.cont = cont;
+        this(w, largep(w));
+        this.cont = cont;
     }
-	
+
     public void draw(BufferedImage img) {
-	Graphics g = img.getGraphics();
+        Graphics g = img.getGraphics();
 
-	if(a) {
-	    //down
-	    g.drawImage(dl, 0, 0, null);
-	    g.drawImage(dm, dl.getWidth(), 0, sz.x - dr.getWidth() - dl.getWidth(), sz.y, null);
-	    g.drawImage(dr, sz.x - dr.getWidth(), 0, null);
-	} else {
-	    //up
-	    g.drawImage(ul, 0, 0, null);
-	    g.drawImage(um, ul.getWidth(), 0, sz.x - ur.getWidth() - ul.getWidth(), sz.y, null);
-	    g.drawImage(ur, sz.x - ur.getWidth(), 0, null);
-	}
+        if (a) {
+            //down
+            g.drawImage(dl, 0, 0, null);
+            g.drawImage(dm, dl.getWidth(), 0, sz.x - dr.getWidth() - dl.getWidth(), sz.y, null);
+            g.drawImage(dr, sz.x - dr.getWidth(), 0, null);
+        } else {
+            //up
+            g.drawImage(ul, 0, 0, null);
+            g.drawImage(um, ul.getWidth(), 0, sz.x - ur.getWidth() - ul.getWidth(), sz.y, null);
+            g.drawImage(ur, sz.x - ur.getWidth(), 0, null);
+        }
 
-	Coord tc = sz.sub(Utils.imgsz(cont)).div(2);
-	g.drawImage(cont, tc.x, tc.y, null);
+        Coord tc = sz.sub(Utils.imgsz(cont)).div(2);
+        g.drawImage(cont, tc.x, tc.y, null);
 
-	g.dispose();
+        g.dispose();
     }
 
     @Override
     public void draw(GOut g) {
-	g.chcolor(DefSettings.BTNCOL.get());
-	super.draw(g);
-	g.chcolor();
+        g.chcolor(DefSettings.BTNCOL.get());
+        super.draw(g);
+        g.chcolor();
     }
 
     public void change(String text, Color col) {
-	this.text = tf.render(text, col);
-	this.cont = this.text.img;
-	redraw();
+        this.text = tf.render(text, col);
+        this.cont = this.text.img;
+        redraw();
     }
-    
+
     public void change(String text) {
-	change(text, Color.YELLOW);
+        change(text, Color.YELLOW);
     }
 
     public void click() {
-	if(action != null)
-	    action.run();
+        if (action != null)
+            action.run();
     }
-    
+
     public void uimsg(String msg, Object... args) {
-	if(msg == "ch") {
-	    if(args.length > 1)
-		change((String)args[0], (Color)args[1]);
-	    else
-		change((String)args[0]);
-	} else {
-	    super.uimsg(msg, args);
-	}
+        if (msg == "ch") {
+            if (args.length > 1)
+                change((String) args[0], (Color) args[1]);
+            else
+                change((String) args[0]);
+        } else {
+            super.uimsg(msg, args);
+        }
     }
-    
+
     public void mousemove(Coord c) {
-	if(d != null) {
-	    boolean a = c.isect(Coord.z, sz);
-	    if(a != this.a) {
-		this.a = a;
-		redraw();
-	    }
-	}
+        if (d != null) {
+            boolean a = c.isect(Coord.z, sz);
+            if (a != this.a) {
+                this.a = a;
+                redraw();
+            }
+        }
     }
 
     protected void depress() {
-	Audio.play(click);
+        Audio.play(click);
     }
 
     protected void unpress() {
-	Audio.play(click);
+        Audio.play(click);
     }
 
     public boolean mousedown(Coord c, int button) {
-	if(button != 1)
-	    return(false);
-	a = true;
-	d = ui.grabmouse(this);
-	depress();
-	redraw();
-	return(true);
+        if (button != 1)
+            return (false);
+        a = true;
+        d = ui.grabmouse(this);
+        depress();
+        redraw();
+        return (true);
     }
-	
+
     public boolean mouseup(Coord c, int button) {
-	if((d != null) && button == 1) {
-	    d.remove();
-	    d = null;
-	    a = false;
-	    redraw();
-	    if(c.isect(new Coord(0, 0), sz)) {
-		unpress();
-		click();
-	    }
-	    return(true);
-	}
-	return(false);
+        if ((d != null) && button == 1) {
+            d.remove();
+            d = null;
+            a = false;
+            redraw();
+            if (c.isect(new Coord(0, 0), sz)) {
+                unpress();
+                click();
+            }
+            return (true);
+        }
+        return (false);
     }
 }

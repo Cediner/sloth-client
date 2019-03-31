@@ -16,7 +16,7 @@ public class ScriptManager extends Window implements ObservableMapListener<Long,
             int y = 0;
             add(new Label(script.toString()));
             y += adda(new Button(100, "Stop", script::interrupt),
-		    new Coord(300, 0), 0.0, 1.0).sz.y + 5;
+                    new Coord(300, 0), 0.0, 1.0).sz.y + 5;
             add(new IndirLabel(() -> String.format("Time: %.2f", script.time())), new Coord(0, y));
         }
     }
@@ -27,45 +27,45 @@ public class ScriptManager extends Window implements ObservableMapListener<Long,
     public ScriptManager() {
         super(Coord.z, "Script Manager", "Script Manager");
         scripts = add(new LinearGrouping("Scripts", 5),
-		new Coord(0, add(new Label("Running Scripts:")).sz.y + 5));
+                new Coord(0, add(new Label("Running Scripts:")).sz.y + 5));
         pack();
-	Context.listenTo(this);
+        Context.listenTo(this);
     }
 
     @Override
     public void close() {
-	hide();
+        hide();
     }
 
     @Override
     protected void removed() {
-	Context.stopListeningTo(this);
+        Context.stopListeningTo(this);
     }
 
     @Override
     public void init(Map<Long, Script> base) {
-        for(final Script script : base.values()) {
+        for (final Script script : base.values()) {
             final ScriptWdg wdg = new ScriptWdg(script);
             scriptmap.put(script.getId(), wdg);
-	    scripts.add(wdg);
-	    scripts.pack();
-	    pack();
-	}
+            scripts.add(wdg);
+            scripts.pack();
+            pack();
+        }
     }
 
     @Override
     public void put(Long sid, Script script) {
-	final ScriptWdg wdg = new ScriptWdg(script);
-	scriptmap.put(script.getId(), wdg);
-	scripts.add(wdg);
-	scripts.pack();
-	pack();
+        final ScriptWdg wdg = new ScriptWdg(script);
+        scriptmap.put(script.getId(), wdg);
+        scripts.add(wdg);
+        scripts.pack();
+        pack();
     }
 
     @Override
     public void remove(Long sid) {
         ui.destroy(scriptmap.remove(sid));
-	scripts.pack();
-	pack();
+        scripts.pack();
+        pack();
     }
 }

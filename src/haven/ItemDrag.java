@@ -34,96 +34,96 @@ import haven.sloth.DefSettings;
  */
 public class ItemDrag extends WItem {
     public Coord doff;
-    
+
     public ItemDrag(Coord dc, GItem item) {
-	super(item);
-	this.doff = dc;
+        super(item);
+        this.doff = dc;
     }
 
     protected void added() {
-	this.c = parent.ui.mc.add(doff.inv());
-	ui.grabmouse(this);
+        this.c = parent.ui.mc.add(doff.inv());
+        ui.grabmouse(this);
     }
-    
+
     public void drawmain(GOut g, GSprite spr) {
-	g.chcolor(255, 255, 255, 128);
-	super.drawmain(g, spr);
-	g.chcolor();
+        g.chcolor(255, 255, 255, 128);
+        super.drawmain(g, spr);
+        g.chcolor();
     }
 
     public void tick(double dt) {
-	super.tick(dt);
-	if(parent.child != this)
-	    raise();
+        super.tick(dt);
+        if (parent.child != this)
+            raise();
     }
 
     public boolean dropon(Widget w, Coord c) {
-	if(w instanceof DTarget) {
-	    if(DefSettings.WATERDROPITEMCTRL.get()) {
-		if (w instanceof MapView) {
-		    final Gob pl = ui.sess.glob.oc.getgob(ui.gui.map.plgob);
-		    if (pl != null) {
-			if (ui.sess.glob.map.tiler(ui.sess.glob.map.gettile_safe(new Coord2d(pl.getc()).floor(MCache.tilesz))) instanceof WaterTile && !ui.modctrl) {
-			    return false;
-			}
-		    }
-		}
-	    }
+        if (w instanceof DTarget) {
+            if (DefSettings.WATERDROPITEMCTRL.get()) {
+                if (w instanceof MapView) {
+                    final Gob pl = ui.sess.glob.oc.getgob(ui.gui.map.plgob);
+                    if (pl != null) {
+                        if (ui.sess.glob.map.tiler(ui.sess.glob.map.gettile_safe(new Coord2d(pl.getc()).floor(MCache.tilesz))) instanceof WaterTile && !ui.modctrl) {
+                            return false;
+                        }
+                    }
+                }
+            }
 
-	    if(((DTarget)w).drop(c, c.add(doff.inv())))
-		return(true);
-	}
-	for(Widget wdg = w.lchild; wdg != null; wdg = wdg.prev) {
-	    if((wdg == this) || !wdg.visible)
-		continue;
-	    Coord cc = w.xlate(wdg.c, true);
-	    if(c.isect(cc, wdg.sz)) {
-		if(dropon(wdg, c.add(cc.inv())))
-		    return(true);
-	    }
-	}
-	return(false);
+            if (((DTarget) w).drop(c, c.add(doff.inv())))
+                return (true);
+        }
+        for (Widget wdg = w.lchild; wdg != null; wdg = wdg.prev) {
+            if ((wdg == this) || !wdg.visible)
+                continue;
+            Coord cc = w.xlate(wdg.c, true);
+            if (c.isect(cc, wdg.sz)) {
+                if (dropon(wdg, c.add(cc.inv())))
+                    return (true);
+            }
+        }
+        return (false);
     }
-	
+
     public boolean interact(Widget w, Coord c) {
-	if(w instanceof DTarget) {
-	    if(((DTarget)w).iteminteract(c, c.add(doff.inv())))
-		return(true);
-	}
-	for(Widget wdg = w.lchild; wdg != null; wdg = wdg.prev) {
-	    if((wdg == this) || !wdg.visible)
-		continue;
-	    Coord cc = w.xlate(wdg.c, true);
-	    if(c.isect(cc, wdg.sz)) {
-		if(interact(wdg, c.add(cc.inv())))
-		    return(true);
-	    }
-	}
-	return(false);
+        if (w instanceof DTarget) {
+            if (((DTarget) w).iteminteract(c, c.add(doff.inv())))
+                return (true);
+        }
+        for (Widget wdg = w.lchild; wdg != null; wdg = wdg.prev) {
+            if ((wdg == this) || !wdg.visible)
+                continue;
+            Coord cc = w.xlate(wdg.c, true);
+            if (c.isect(cc, wdg.sz)) {
+                if (interact(wdg, c.add(cc.inv())))
+                    return (true);
+            }
+        }
+        return (false);
     }
-	
+
     public boolean mousedown(Coord c, int button) {
-        if(button == 3 && ui.modctrl) {
+        if (button == 3 && ui.modctrl) {
             setLock(!locked());
             return true;
-	}
+        }
 
-	if(!locked()) {
-	    if (button == 1) {
-		dropon(parent, c.add(this.c));
-		return (true);
-	    } else if (button == 3) {
-		interact(parent, c.add(this.c));
-		return (true);
-	    }
-	} else if(button == 3 && ui.modmeta) {
-	    item.wdgmsg("iact", c, 0);
-	    return true;
-	}
-	return(false);
+        if (!locked()) {
+            if (button == 1) {
+                dropon(parent, c.add(this.c));
+                return (true);
+            } else if (button == 3) {
+                interact(parent, c.add(this.c));
+                return (true);
+            }
+        } else if (button == 3 && ui.modmeta) {
+            item.wdgmsg("iact", c, 0);
+            return true;
+        }
+        return (false);
     }
 
     public void mousemove(Coord c) {
-	this.c = this.c.add(c.add(doff.inv()));
+        this.c = this.c.add(c.add(doff.inv()));
     }
 }

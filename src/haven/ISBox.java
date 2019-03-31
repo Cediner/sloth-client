@@ -43,30 +43,30 @@ public class ISBox extends Widget implements DTarget {
         lf = new Text.Foundry(Text.sans, 22, java.awt.Color.WHITE);
         lf.aa = true;
     }
-    
+
     @RName("isbox")
     public static class $_ implements Factory {
-	public Widget create(UI ui, Object[] args) {
-	    Indir<Resource> res;
-	    if(args[0] instanceof String)
-		res = Resource.remote().load((String)args[0]);
-	    else
-		res = ui.sess.getres((Integer)args[0]);
-	    return(new ISBox(res, (Integer)args[1], (Integer)args[2], (Integer)args[3]));
-	}
+        public Widget create(UI ui, Object[] args) {
+            Indir<Resource> res;
+            if (args[0] instanceof String)
+                res = Resource.remote().load((String) args[0]);
+            else
+                res = ui.sess.getres((Integer) args[0]);
+            return (new ISBox(res, (Integer) args[1], (Integer) args[2], (Integer) args[3]));
+        }
     }
-    
+
     private void setlabel(int rem, int av, int bi) {
         cur = rem;
         total = av;
-        if(amt != null)
+        if (amt != null)
             amt.setMax(total);
-	if(bi < 0)
-	    label = lf.renderf("%d/%d", rem, av);
-	else
-	    label = lf.renderf("%d/%d/%d", rem, av, bi);
+        if (bi < 0)
+            label = lf.renderf("%d/%d", rem, av);
+        else
+            label = lf.renderf("%d/%d/%d", rem, av, bi);
     }
-    
+
     public ISBox(Indir<Resource> res, int rem, int av, int bi) {
         super(bg.sz());
         this.res = res;
@@ -75,112 +75,113 @@ public class ISBox extends Widget implements DTarget {
 
     @Override
     protected void added() {
-	if(parent instanceof Window && ((Window)parent).cap.text.equals("Stockpile")) {
-	    final Button add = add(new Button(50, "Add All", () -> addsome(total)), new Coord(bg.sz().x+5, 0));
-	    add(new Button(50, "Take All", () -> takesome(total)), new Coord(bg.sz().x+5, add.sz.y+1));
-	    amt = add(new NumberEntry(bg.sz().x-55, 0, 0, total), new Coord(0, bg.sz().y+5));
-	    amt.canactivate = true;
-	    setfocus(amt);
-	    add(new Button(50, "Take", () -> takesome(amt.value())),
-		    new Coord(amt.sz.x+5, amt.c.y));
-	    add(new Button(50, "Add", () -> addsome(amt.value())),
-		    new Coord(bg.sz().x+5, amt.c.y));
-	    pack();
-	    parent.pack();
-	}
+        if (parent instanceof Window && ((Window) parent).cap.text.equals("Stockpile")) {
+            final Button add = add(new Button(50, "Add All", () -> addsome(total)), new Coord(bg.sz().x + 5, 0));
+            add(new Button(50, "Take All", () -> takesome(total)), new Coord(bg.sz().x + 5, add.sz.y + 1));
+            amt = add(new NumberEntry(bg.sz().x - 55, 0, 0, total), new Coord(0, bg.sz().y + 5));
+            amt.canactivate = true;
+            setfocus(amt);
+            add(new Button(50, "Take", () -> takesome(amt.value())),
+                    new Coord(amt.sz.x + 5, amt.c.y));
+            add(new Button(50, "Add", () -> addsome(amt.value())),
+                    new Coord(bg.sz().x + 5, amt.c.y));
+            pack();
+            parent.pack();
+        }
     }
 
     public void draw(GOut g) {
         g.image(bg, Coord.z);
-	try {
+        try {
             Tex t = res.get().layer(Resource.imgc).tex();
             Coord dc = new Coord(6, (bg.sz().y / 2) - (t.sz().y / 2));
             g.image(t, dc);
-        } catch(Loading e) {}
+        } catch (Loading e) {
+        }
         g.image(label.tex(), new Coord(40, (bg.sz().y / 2) - (label.tex().sz().y / 2)));
-	super.draw(g);
+        super.draw(g);
     }
-    
+
     public Object tooltip(Coord c, Widget prev) {
-        if(c.isect(Coord.z, bg.sz())) {
-	    try {
-		if (res.get().layer(Resource.tooltip) != null)
-		    return (res.get().layer(Resource.tooltip).t);
-		else
-		    return null;
-	    } catch (Loading e) {
-	        return null;
-	    }
-	} else {
+        if (c.isect(Coord.z, bg.sz())) {
+            try {
+                if (res.get().layer(Resource.tooltip) != null)
+                    return (res.get().layer(Resource.tooltip).t);
+                else
+                    return null;
+            } catch (Loading e) {
+                return null;
+            }
+        } else {
             return super.tooltip(c, prev);
-	}
+        }
     }
 
     private void takeall() {
-        for(int i = 0; i < total; ++i) {
+        for (int i = 0; i < total; ++i) {
             wdgmsg("xfer2", -1, 1);
-	}
+        }
     }
 
     private void addall() {
-	for(int i = 0; i < total; ++i) {
-	    wdgmsg("xfer2", 1, 1);
-	}
+        for (int i = 0; i < total; ++i) {
+            wdgmsg("xfer2", 1, 1);
+        }
     }
 
     private void takesome(final int amt) {
-	for(int i = 0; i < amt; ++i) {
-	    wdgmsg("xfer2", -1, 1);
-	}
+        for (int i = 0; i < amt; ++i) {
+            wdgmsg("xfer2", -1, 1);
+        }
     }
 
     private void addsome(final int amt) {
-	for(int i = 0; i < amt; ++i) {
-	    wdgmsg("xfer2", 1, 1);
-	}
+        for (int i = 0; i < amt; ++i) {
+            wdgmsg("xfer2", 1, 1);
+        }
     }
-    
+
     public boolean mousedown(Coord c, int button) {
-        if(c.isect(Coord.z, bg.sz())) {
-	    if (button == 1) {
-		if (ui.modshift)
-		    wdgmsg("xfer");
-		else
-		    wdgmsg("click");
-		return (true);
-	    } else {
-	        return false;
-	    }
-	} else {
+        if (c.isect(Coord.z, bg.sz())) {
+            if (button == 1) {
+                if (ui.modshift)
+                    wdgmsg("xfer");
+                else
+                    wdgmsg("click");
+                return (true);
+            } else {
+                return false;
+            }
+        } else {
             return super.mousedown(c, button);
-	}
+        }
     }
-    
+
     public boolean mousewheel(Coord c, int amount) {
-        if(c.isect(Coord.z, bg.sz())) {
-	    if (amount < 0)
-		wdgmsg("xfer2", -1, ui.modflags());
-	    if (amount > 0)
-		wdgmsg("xfer2", 1, ui.modflags());
-	    return (true);
-	} else {
+        if (c.isect(Coord.z, bg.sz())) {
+            if (amount < 0)
+                wdgmsg("xfer2", -1, ui.modflags());
+            if (amount > 0)
+                wdgmsg("xfer2", 1, ui.modflags());
+            return (true);
+        } else {
             return super.mousewheel(c, amount);
-	}
+        }
     }
-    
+
     public boolean drop(Coord cc, Coord ul) {
         wdgmsg("drop");
-        return(true);
+        return (true);
     }
-    
+
     public boolean iteminteract(Coord cc, Coord ul) {
         wdgmsg("iact");
-        return(true);
+        return (true);
     }
-    
+
     public void uimsg(String msg, Object... args) {
-        if(msg == "chnum") {
-            setlabel((Integer)args[0], (Integer)args[1], (Integer)args[2]);
+        if (msg == "chnum") {
+            setlabel((Integer) args[0], (Integer) args[1], (Integer) args[2]);
         } else {
             super.uimsg(msg, args);
         }

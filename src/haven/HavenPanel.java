@@ -32,6 +32,7 @@ import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.awt.event.*;
 import java.util.*;
+
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.*;
 import haven.sloth.DefSettings;
@@ -61,601 +62,621 @@ public class HavenPanel extends GLCanvas implements Runnable, Console.Directory 
     private GLConfig glconf = null;
     private final boolean gldebug = false;
     private static final Cursor emptycurs = Toolkit.getDefaultToolkit().createCustomCursor(TexI.mkbuf(new Coord(1, 1)), new java.awt.Point(), "");
-    
+
     private static GLCapabilities stdcaps() {
-	GLProfile prof = GLProfile.getDefault();
-	GLCapabilities cap = new GLCapabilities(prof);
-	cap.setDoubleBuffered(true);
-	cap.setAlphaBits(8);
-	cap.setRedBits(8);
-	cap.setGreenBits(8);
-	cap.setBlueBits(8);
-	cap.setStencilBits(8);
-	cap.setSampleBuffers(true);
-	cap.setNumSamples(4);
-	return(cap);
+        GLProfile prof = GLProfile.getDefault();
+        GLCapabilities cap = new GLCapabilities(prof);
+        cap.setDoubleBuffered(true);
+        cap.setAlphaBits(8);
+        cap.setRedBits(8);
+        cap.setGreenBits(8);
+        cap.setBlueBits(8);
+        cap.setStencilBits(8);
+        cap.setSampleBuffers(true);
+        cap.setNumSamples(4);
+        return (cap);
     }
 
     public HavenPanel(int w, int h) {
-	super(stdcaps());
-	if(gldebug)
-	    setContextCreationFlags(getContextCreationFlags() | GLContext.CTX_OPTION_DEBUG);
-	setSize(this.w = w, this.h = h);
-	newui(null);
-	initgl();
-	if(Toolkit.getDefaultToolkit().getMaximumCursorColors() >= 256)
-	    cursmode = "awt";
+        super(stdcaps());
+        if (gldebug)
+            setContextCreationFlags(getContextCreationFlags() | GLContext.CTX_OPTION_DEBUG);
+        setSize(this.w = w, this.h = h);
+        newui(null);
+        initgl();
+        if (Toolkit.getDefaultToolkit().getMaximumCursorColors() >= 256)
+            cursmode = "awt";
     }
-    
+
     private void initgl() {
-	final Thread caller = Thread.currentThread();
-	final haven.error.ErrorHandler h = haven.error.ErrorHandler.find();
-	addGLEventListener(new GLEventListener() {
-		Debug.DumpGL dump = null;
-		public void display(GLAutoDrawable d) {
-		    GL2 gl = d.getGL().getGL2();
-		    if(inited)
-			redraw(gl);
-		}
-			
-		public void init(GLAutoDrawable d) {
-		    try {
-			GL gl = d.getGL();
-			if(h != null) {
-			    h.lsetprop("gl.vendor", gl.glGetString(gl.GL_VENDOR));
-			    h.lsetprop("gl.version", gl.glGetString(gl.GL_VERSION));
-			    h.lsetprop("gl.renderer", gl.glGetString(gl.GL_RENDERER));
-			    h.lsetprop("gl.exts", Arrays.asList(gl.glGetString(gl.GL_EXTENSIONS).split(" ")));
-			    h.lsetprop("gl.caps", d.getChosenGLCapabilities().toString());
-			    h.lsetprop("gl.conf", glconf);
-			}
-			glconf = GLConfig.fromgl(gl, d.getContext(), getChosenGLCapabilities());
-			if(gldebug)
-				d.getContext().addGLDebugListener((event) -> System.err.println(event));
+        final Thread caller = Thread.currentThread();
+        final haven.error.ErrorHandler h = haven.error.ErrorHandler.find();
+        addGLEventListener(new GLEventListener() {
+            Debug.DumpGL dump = null;
+
+            public void display(GLAutoDrawable d) {
+                GL2 gl = d.getGL().getGL2();
+                if (inited)
+                    redraw(gl);
+            }
+
+            public void init(GLAutoDrawable d) {
+                try {
+                    GL gl = d.getGL();
+                    if (h != null) {
+                        h.lsetprop("gl.vendor", gl.glGetString(gl.GL_VENDOR));
+                        h.lsetprop("gl.version", gl.glGetString(gl.GL_VERSION));
+                        h.lsetprop("gl.renderer", gl.glGetString(gl.GL_RENDERER));
+                        h.lsetprop("gl.exts", Arrays.asList(gl.glGetString(gl.GL_EXTENSIONS).split(" ")));
+                        h.lsetprop("gl.caps", d.getChosenGLCapabilities().toString());
+                        h.lsetprop("gl.conf", glconf);
+                    }
+                    glconf = GLConfig.fromgl(gl, d.getContext(), getChosenGLCapabilities());
+                    if (gldebug)
+                        d.getContext().addGLDebugListener((event) -> System.err.println(event));
 
 			/* if(gldebug) {
 			    if(!d.getContext().isGLDebugMessageEnabled())
 				System.err.println("GL debugging not actually enabled");
 			    ((GL2)gl).glDebugMessageControl(GL.GL_DONT_CARE, GL.GL_DONT_CARE, GL.GL_DONT_CARE, 0, null, true);
 			} */
-			ui.cons.add(glconf);
-			gstate = new GLState() {
-				public void apply(GOut g) {
-				    BGL gl = g.gl;
-				    gl.glColor3f(1, 1, 1);
-				    gl.glPointSize(4);
-				    gl.joglSetSwapInterval(1);
-				    gl.glEnable(GL.GL_BLEND);
-				    //gl.glEnable(GL.GL_LINE_SMOOTH);
-				    gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
-				    if(g.gc.glmajver >= 2)
-					gl.glBlendEquationSeparate(GL.GL_FUNC_ADD, GL2.GL_MAX);
-				    if(g.gc.havefsaa()) {
-					/* Apparently, having sample
-					 * buffers in the config enables
-					 * multisampling by default on
-					 * some systems. */
-					g.gl.glDisable(GL.GL_MULTISAMPLE);
-				    }
-				    GOut.checkerr(gl);
-				}
-				public void unapply(GOut g) {
-				}
-				public void prep(Buffer buf) {
-				    buf.put(global, this);
-				}
-			    };
-		    } catch(RuntimeException e) {
-			uncaught = e;
-			throw(e);
-		    }
-		}
+                    ui.cons.add(glconf);
+                    gstate = new GLState() {
+                        public void apply(GOut g) {
+                            BGL gl = g.gl;
+                            gl.glColor3f(1, 1, 1);
+                            gl.glPointSize(4);
+                            gl.joglSetSwapInterval(1);
+                            gl.glEnable(GL.GL_BLEND);
+                            //gl.glEnable(GL.GL_LINE_SMOOTH);
+                            gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+                            if (g.gc.glmajver >= 2)
+                                gl.glBlendEquationSeparate(GL.GL_FUNC_ADD, GL2.GL_MAX);
+                            if (g.gc.havefsaa()) {
+                                /* Apparently, having sample
+                                 * buffers in the config enables
+                                 * multisampling by default on
+                                 * some systems. */
+                                g.gl.glDisable(GL.GL_MULTISAMPLE);
+                            }
+                            GOut.checkerr(gl);
+                        }
 
-		public void reshape(GLAutoDrawable d, final int x, final int y, final int w, final int h) {
-		    ostate = OrthoState.fixed(new Coord(w, h));
-		    rtstate = new GLState() {
-			    public void apply(GOut g) {
-				g.st.proj = Projection.makeortho(new Matrix4f(), 0, w, 0, h, -1, 1);
-			    }
-			    public void unapply(GOut g) {
-			    }
-			    public void prep(Buffer buf) {
-				buf.put(proj2d, this);
-			    }
-			};
-		    HavenPanel.this.w = w;
-		    HavenPanel.this.h = h;
-		}
-		
-		public void displayChanged(GLAutoDrawable d, boolean cp1, boolean cp2) {}
+                        public void unapply(GOut g) {
+                        }
 
-		public void dispose(GLAutoDrawable d) {}
-	    });
+                        public void prep(Buffer buf) {
+                            buf.put(global, this);
+                        }
+                    };
+                } catch (RuntimeException e) {
+                    uncaught = e;
+                    throw (e);
+                }
+            }
+
+            public void reshape(GLAutoDrawable d, final int x, final int y, final int w, final int h) {
+                ostate = OrthoState.fixed(new Coord(w, h));
+                rtstate = new GLState() {
+                    public void apply(GOut g) {
+                        g.st.proj = Projection.makeortho(new Matrix4f(), 0, w, 0, h, -1, 1);
+                    }
+
+                    public void unapply(GOut g) {
+                    }
+
+                    public void prep(Buffer buf) {
+                        buf.put(proj2d, this);
+                    }
+                };
+                HavenPanel.this.w = w;
+                HavenPanel.this.h = h;
+            }
+
+            public void displayChanged(GLAutoDrawable d, boolean cp1, boolean cp2) {
+            }
+
+            public void dispose(GLAutoDrawable d) {
+            }
+        });
     }
 
     public static abstract class OrthoState extends GLState {
-	protected abstract Coord sz();
+        protected abstract Coord sz();
 
-	public void apply(GOut g) {
-	    Coord sz = sz();
-	    g.st.proj = Projection.makeortho(new Matrix4f(), 0, sz.x, sz.y, 0, -1, 1);
-	}
+        public void apply(GOut g) {
+            Coord sz = sz();
+            g.st.proj = Projection.makeortho(new Matrix4f(), 0, sz.x, sz.y, 0, -1, 1);
+        }
 
-	public void unapply(GOut g) {
-	}
+        public void unapply(GOut g) {
+        }
 
-	public void prep(Buffer buf) {
-	    buf.put(proj2d, this);
-	}
+        public void prep(Buffer buf) {
+            buf.put(proj2d, this);
+        }
 
-	public static OrthoState fixed(final Coord sz) {
-	    return(new OrthoState() {
-		    protected Coord sz() {return(sz);}
-		});
-	}
+        public static OrthoState fixed(final Coord sz) {
+            return (new OrthoState() {
+                protected Coord sz() {
+                    return (sz);
+                }
+            });
+        }
     }
-	
+
     public void init() {
-	setFocusTraversalKeysEnabled(false);
-	newui(null);
-	addKeyListener(new KeyAdapter() {
-		public void keyTyped(KeyEvent e) {
-		    synchronized(events) {
-			events.add(e);
-			events.notifyAll();
-		    }
-		}
+        setFocusTraversalKeysEnabled(false);
+        newui(null);
+        addKeyListener(new KeyAdapter() {
+            public void keyTyped(KeyEvent e) {
+                synchronized (events) {
+                    events.add(e);
+                    events.notifyAll();
+                }
+            }
 
-		public void keyPressed(KeyEvent e) {
-		    synchronized(events) {
-			events.add(e);
-			events.notifyAll();
-		    }
-		}
-		public void keyReleased(KeyEvent e) {
-		    synchronized(events) {
-			events.add(e);
-			events.notifyAll();
-		    }
-		}
-	    });
-	addMouseListener(new MouseAdapter() {
-		public void mousePressed(MouseEvent e) {
-		    synchronized(events) {
-			events.add(e);
-			events.notifyAll();
-		    }
-		}
+            public void keyPressed(KeyEvent e) {
+                synchronized (events) {
+                    events.add(e);
+                    events.notifyAll();
+                }
+            }
 
-		public void mouseReleased(MouseEvent e) {
-		    synchronized(events) {
-			events.add(e);
-			events.notifyAll();
-		    }
-		}
-	    });
-	addMouseMotionListener(new MouseMotionListener() {
-		public void mouseDragged(MouseEvent e) {
-		    synchronized(events) {
-			mousemv = e;
-		    }
-		}
+            public void keyReleased(KeyEvent e) {
+                synchronized (events) {
+                    events.add(e);
+                    events.notifyAll();
+                }
+            }
+        });
+        addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
+                synchronized (events) {
+                    events.add(e);
+                    events.notifyAll();
+                }
+            }
 
-		public void mouseMoved(MouseEvent e) {
-		    synchronized(events) {
-			mousemv = e;
-		    }
-		}
-	    });
-	addMouseWheelListener(new MouseWheelListener() {
-		public void mouseWheelMoved(MouseWheelEvent e) {
-		    synchronized(events) {
-			events.add(e);
-			events.notifyAll();
-		    }
-		}
-	    });
-	inited = true;
+            public void mouseReleased(MouseEvent e) {
+                synchronized (events) {
+                    events.add(e);
+                    events.notifyAll();
+                }
+            }
+        });
+        addMouseMotionListener(new MouseMotionListener() {
+            public void mouseDragged(MouseEvent e) {
+                synchronized (events) {
+                    mousemv = e;
+                }
+            }
+
+            public void mouseMoved(MouseEvent e) {
+                synchronized (events) {
+                    mousemv = e;
+                }
+            }
+        });
+        addMouseWheelListener(new MouseWheelListener() {
+            public void mouseWheelMoved(MouseWheelEvent e) {
+                synchronized (events) {
+                    events.add(e);
+                    events.notifyAll();
+                }
+            }
+        });
+        inited = true;
     }
-	
+
     UI newui(Session sess) {
-	if(ui != null)
-	    ui.destroy();
-	ui = new UI(new Coord(w, h), sess);
-	ui.root.guprof = uprof;
-	ui.root.grprof = rprof;
-	ui.root.ggprof = gprof;
-	if(getParent() instanceof Console.Directory)
-	    ui.cons.add((Console.Directory)getParent());
-	ui.cons.add(this);
-	if(glconf != null)
-	    ui.cons.add(glconf);
-	return(ui);
+        if (ui != null)
+            ui.destroy();
+        ui = new UI(new Coord(w, h), sess);
+        ui.root.guprof = uprof;
+        ui.root.grprof = rprof;
+        ui.root.ggprof = gprof;
+        if (getParent() instanceof Console.Directory)
+            ui.cons.add((Console.Directory) getParent());
+        ui.cons.add(this);
+        if (glconf != null)
+            ui.cons.add(glconf);
+        return (ui);
     }
-    
+
     private static Cursor makeawtcurs(BufferedImage img, Coord hs) {
-	java.awt.Dimension cd = Toolkit.getDefaultToolkit().getBestCursorSize(img.getWidth(), img.getHeight());
-	BufferedImage buf = TexI.mkbuf(new Coord((int)cd.getWidth(), (int)cd.getHeight()));
-	java.awt.Graphics g = buf.getGraphics();
-	g.drawImage(img, 0, 0, null);
-	g.dispose();
-	return(Toolkit.getDefaultToolkit().createCustomCursor(buf, new java.awt.Point(hs.x, hs.y), ""));
+        java.awt.Dimension cd = Toolkit.getDefaultToolkit().getBestCursorSize(img.getWidth(), img.getHeight());
+        BufferedImage buf = TexI.mkbuf(new Coord((int) cd.getWidth(), (int) cd.getHeight()));
+        java.awt.Graphics g = buf.getGraphics();
+        g.drawImage(img, 0, 0, null);
+        g.dispose();
+        return (Toolkit.getDefaultToolkit().createCustomCursor(buf, new java.awt.Point(hs.x, hs.y), ""));
     }
-    
+
     void rootdraw(GLState.Applier state, UI ui, BGL gl) {
-	GLState.Buffer ibuf = new GLState.Buffer(state.cfg);
-	gstate.prep(ibuf);
-	ostate.prep(ibuf);
-	GOut g = new GOut(gl, state.cgl, state.cfg, state, ibuf, new Coord(w, h));
-	g.gl.glEnable(GL2.GL_DEBUG_OUTPUT);
+        GLState.Buffer ibuf = new GLState.Buffer(state.cfg);
+        gstate.prep(ibuf);
+        ostate.prep(ibuf);
+        GOut g = new GOut(gl, state.cgl, state.cfg, state, ibuf, new Coord(w, h));
+        g.gl.glEnable(GL2.GL_DEBUG_OUTPUT);
 
-	state.set(ibuf);
+        state.set(ibuf);
 
-	g.state(ostate);
-	g.apply();
-	gl.glClearColor(0, 0, 0, 1);
-	gl.glClear(GL.GL_COLOR_BUFFER_BIT);
-	synchronized(ui) {
-	    ui.draw(g);
-	}
+        g.state(ostate);
+        g.apply();
+        gl.glClearColor(0, 0, 0, 1);
+        gl.glClear(GL.GL_COLOR_BUFFER_BIT);
+        synchronized (ui) {
+            ui.draw(g);
+        }
 
-	if(DefSettings.DEBUG.get()) {
-	    int y = h - 165;
-	    FastText.aprintf(g, new Coord(10, y -= 15), 0, 1, "FPS: %d (%d%%, %d%% idle)", fps, (int)(uidle * 100.0), (int)(ridle * 100.0));
-	    Runtime rt = Runtime.getRuntime();
-	    long free = rt.freeMemory(), total = rt.totalMemory();
-	    FastText.aprintf(g, new Coord(10, y -= 15), 0, 1, "Mem: %,011d/%,011d/%,011d/%,011d", free, total - free, total, rt.maxMemory());
-	    FastText.aprintf(g, new Coord(10, y -= 15), 0, 1, "Tex-current: %d", TexGL.num());
-	    FastText.aprintf(g, new Coord(10, y -= 15), 0, 1, "GL progs: %d", g.st.numprogs());
-	    FastText.aprintf(g, new Coord(10, y -= 15), 0, 1, "Stats slots: %d", GLState.Slot.num());
-	    GameUI gi = ui.root.findchild(GameUI.class);
-	    if((gi != null) && (gi.map != null)) {
-		try {
-		    FastText.aprintf(g, new Coord(10, y -= 15), 0, 1, "Mapview: %s", gi.map);
-		} catch(Loading e) {}
-		if(gi.map.rls != null)
-		    FastText.aprintf(g, new Coord(10, y -= 15), 0, 1, "Rendered: %,d+%,d(%,d), cached %,d/%,d+%,d(%,d)", gi.map.rls.drawn, gi.map.rls.instanced, gi.map.rls.instancified, gi.map.rls.cacheroots, gi.map.rls.cached, gi.map.rls.cacheinst, gi.map.rls.cacheinstn);
-	    }
-	    if(Resource.remote().qdepth() > 0)
-		FastText.aprintf(g, new Coord(10, y -= 15), 0, 1, "RQ depth: %d (%d)", Resource.remote().qdepth(), Resource.remote().numloaded());
-	}
+        if (DefSettings.DEBUG.get()) {
+            int y = h - 165;
+            FastText.aprintf(g, new Coord(10, y -= 15), 0, 1, "FPS: %d (%d%%, %d%% idle)", fps, (int) (uidle * 100.0), (int) (ridle * 100.0));
+            Runtime rt = Runtime.getRuntime();
+            long free = rt.freeMemory(), total = rt.totalMemory();
+            FastText.aprintf(g, new Coord(10, y -= 15), 0, 1, "Mem: %,011d/%,011d/%,011d/%,011d", free, total - free, total, rt.maxMemory());
+            FastText.aprintf(g, new Coord(10, y -= 15), 0, 1, "Tex-current: %d", TexGL.num());
+            FastText.aprintf(g, new Coord(10, y -= 15), 0, 1, "GL progs: %d", g.st.numprogs());
+            FastText.aprintf(g, new Coord(10, y -= 15), 0, 1, "Stats slots: %d", GLState.Slot.num());
+            GameUI gi = ui.root.findchild(GameUI.class);
+            if ((gi != null) && (gi.map != null)) {
+                try {
+                    FastText.aprintf(g, new Coord(10, y -= 15), 0, 1, "Mapview: %s", gi.map);
+                } catch (Loading e) {
+                }
+                if (gi.map.rls != null)
+                    FastText.aprintf(g, new Coord(10, y -= 15), 0, 1, "Rendered: %,d+%,d(%,d), cached %,d/%,d+%,d(%,d)", gi.map.rls.drawn, gi.map.rls.instanced, gi.map.rls.instancified, gi.map.rls.cacheroots, gi.map.rls.cached, gi.map.rls.cacheinst, gi.map.rls.cacheinstn);
+            }
+            if (Resource.remote().qdepth() > 0)
+                FastText.aprintf(g, new Coord(10, y -= 15), 0, 1, "RQ depth: %d (%d)", Resource.remote().qdepth(), Resource.remote().numloaded());
+        }
 
-	//Update session stats
-	if(ui.sess != null) {
-	    if ((System.currentTimeMillis() - last_sess_upd) >= 1000) {
-		sent = ui.sess.sent - ssent;
-		recv = ui.sess.recv - srecv;
-		ssent = ui.sess.sent;
-		srecv = ui.sess.recv;
-		last_sess_upd = System.currentTimeMillis();
-	    }
+        //Update session stats
+        if (ui.sess != null) {
+            if ((System.currentTimeMillis() - last_sess_upd) >= 1000) {
+                sent = ui.sess.sent - ssent;
+                recv = ui.sess.recv - srecv;
+                ssent = ui.sess.sent;
+                srecv = ui.sess.recv;
+                last_sess_upd = System.currentTimeMillis();
+            }
 
-	    if (DefSettings.SHOWFPS.get()) {
-		FastText.aprintf(g, new Coord(w, 0), 1, 0, "FPS: %d (%d%%, %d%% idle)", fps, (int) (uidle * 100.0), (int) (ridle * 100.0));
-		FastText.aprintf(g, new Coord(w, 15), 1, 0, "S: %d | R: %d", sent, recv);
-	    }
-	}
+            if (DefSettings.SHOWFPS.get()) {
+                FastText.aprintf(g, new Coord(w, 0), 1, 0, "FPS: %d (%d%%, %d%% idle)", fps, (int) (uidle * 100.0), (int) (ridle * 100.0));
+                FastText.aprintf(g, new Coord(w, 15), 1, 0, "S: %d | R: %d", sent, recv);
+            }
+        }
 
-	Object tooltip;
+        Object tooltip;
         try {
-	    synchronized(ui) {
-		tooltip = ui.root.tooltip(mousepos, ui.root);
-	    }
-	} catch(Loading e) {
-	    tooltip = "...";
-	}
-	Tex tt = null;
-	if(tooltip != null) {
-	    if(tooltip instanceof Text) {
-		tt = ((Text)tooltip).tex();
-	    } else if(tooltip instanceof Tex) {
-		tt = (Tex)tooltip;
-	    } else if(tooltip instanceof Indir<?>) {
-		Indir<?> t = (Indir<?>)tooltip;
-		Object o = t.get();
-		if(o instanceof Tex)
-		    tt = (Tex)o;
-	    } else if(tooltip instanceof String) {
-		if(((String)tooltip).length() > 0)
-		    tt = (Text.render((String)tooltip)).tex();
-	    }
-	}
-	if(tt != null) {
-	    Coord sz = tt.sz();
-	    Coord pos = mousepos.add(sz.inv());
-	    if(pos.x < 0)
-		pos.x = 0;
-	    if(pos.y < 0)
-		pos.y = 0;
-	    g.chcolor(244, 247, 21, 192);
-	    g.rect(pos.add(-3, -3), sz.add(6, 6));
-	    g.chcolor(35, 35, 35, 192);
-	    g.frect(pos.add(-2, -2), sz.add(4, 4));
-	    g.chcolor();
-	    g.image(tt, pos);
-	}
-	ui.lasttip = tooltip;
-	Resource curs = ui.root.getcurs(mousepos);
-	if(cursmode == "awt") {
-	    if(curs != lastcursor) {
-		try {
-		    if(curs == null)
-			setCursor(null);
-		    else
-			setCursor(makeawtcurs(curs.layer(Resource.imgc).img, curs.layer(Resource.negc).cc));
-		} catch(Exception e) {
-		    cursmode = "tex";
-		}
-	    }
-	} else if(cursmode == "tex") {
-	    if(curs == null) {
-		if(lastcursor != null)
-		    setCursor(null);
-	    } else {
-		if(lastcursor == null)
-		    setCursor(emptycurs);
-		Coord dc = mousepos.add(curs.layer(Resource.negc).cc.inv());
-		g.image(curs.layer(Resource.imgc), dc);
-	    }
-	}
-	lastcursor = curs;
-	state.clean();
-	GLObject.disposeall(state.cgl, gl);
+            synchronized (ui) {
+                tooltip = ui.root.tooltip(mousepos, ui.root);
+            }
+        } catch (Loading e) {
+            tooltip = "...";
+        }
+        Tex tt = null;
+        if (tooltip != null) {
+            if (tooltip instanceof Text) {
+                tt = ((Text) tooltip).tex();
+            } else if (tooltip instanceof Tex) {
+                tt = (Tex) tooltip;
+            } else if (tooltip instanceof Indir<?>) {
+                Indir<?> t = (Indir<?>) tooltip;
+                Object o = t.get();
+                if (o instanceof Tex)
+                    tt = (Tex) o;
+            } else if (tooltip instanceof String) {
+                if (((String) tooltip).length() > 0)
+                    tt = (Text.render((String) tooltip)).tex();
+            }
+        }
+        if (tt != null) {
+            Coord sz = tt.sz();
+            Coord pos = mousepos.add(sz.inv());
+            if (pos.x < 0)
+                pos.x = 0;
+            if (pos.y < 0)
+                pos.y = 0;
+            g.chcolor(244, 247, 21, 192);
+            g.rect(pos.add(-3, -3), sz.add(6, 6));
+            g.chcolor(35, 35, 35, 192);
+            g.frect(pos.add(-2, -2), sz.add(4, 4));
+            g.chcolor();
+            g.image(tt, pos);
+        }
+        ui.lasttip = tooltip;
+        Resource curs = ui.root.getcurs(mousepos);
+        if (cursmode == "awt") {
+            if (curs != lastcursor) {
+                try {
+                    if (curs == null)
+                        setCursor(null);
+                    else
+                        setCursor(makeawtcurs(curs.layer(Resource.imgc).img, curs.layer(Resource.negc).cc));
+                } catch (Exception e) {
+                    cursmode = "tex";
+                }
+            }
+        } else if (cursmode == "tex") {
+            if (curs == null) {
+                if (lastcursor != null)
+                    setCursor(null);
+            } else {
+                if (lastcursor == null)
+                    setCursor(emptycurs);
+                Coord dc = mousepos.add(curs.layer(Resource.negc).cc.inv());
+                g.image(curs.layer(Resource.imgc), dc);
+            }
+        }
+        lastcursor = curs;
+        state.clean();
+        GLObject.disposeall(state.cgl, gl);
 	/*if(gldebug)
 	    gl.bglGetDebugMessageLog(msg -> System.err.println(msg)); */
     }
 
     private static class Frame {
-	BufferBGL buf; CurrentGL on;
-	CPUProfile.Frame pf; long doneat;
-	Frame(BufferBGL buf, CurrentGL on) {this.buf = buf; this.on = on;}
+        BufferBGL buf;
+        CurrentGL on;
+        CPUProfile.Frame pf;
+        long doneat;
+
+        Frame(BufferBGL buf, CurrentGL on) {
+            this.buf = buf;
+            this.on = on;
+        }
     }
 
     private Frame[] curdraw = {null};
+
     void redraw(GL2 gl) {
-	if(uncaught != null)
-	    throw(new RuntimeException("Exception occurred during init but was somehow discarded", uncaught));
-	if((state == null) || (state.cgl.gl != gl))
-	    state = new GLState.Applier(new CurrentGL(gl, glconf));
+        if (uncaught != null)
+            throw (new RuntimeException("Exception occurred during init but was somehow discarded", uncaught));
+        if ((state == null) || (state.cgl.gl != gl))
+            state = new GLState.Applier(new CurrentGL(gl, glconf));
 
-	Frame f;
-	synchronized(curdraw) {
-	    f = curdraw[0];
-	    curdraw[0] = null;
-	}
-	if((f != null) && (f.on.gl == gl)) {
-	    GPUProfile.Frame curgf = null;
-	    if(Config.profilegpu)
-		curgf = gprof.new Frame((GL3)gl);
-	    if(f.pf != null)
-		f.pf.tick("awt");
-	    f.buf.run(gl);
-	    GOut.checkerr(gl);
-	    if(f.pf != null)
-		f.pf.tick("gl");
-	    if(curgf != null) {
-		curgf.tick("draw");
-		curgf.fin();
-	    }
+        Frame f;
+        synchronized (curdraw) {
+            f = curdraw[0];
+            curdraw[0] = null;
+        }
+        if ((f != null) && (f.on.gl == gl)) {
+            GPUProfile.Frame curgf = null;
+            if (Config.profilegpu)
+                curgf = gprof.new Frame((GL3) gl);
+            if (f.pf != null)
+                f.pf.tick("awt");
+            f.buf.run(gl);
+            GOut.checkerr(gl);
+            if (f.pf != null)
+                f.pf.tick("gl");
+            if (curgf != null) {
+                curgf.tick("draw");
+                curgf.fin();
+            }
 
-	    DefSettings.checkForDirty();
-	    f.doneat = System.currentTimeMillis();
-	}
+            DefSettings.checkForDirty();
+            f.doneat = System.currentTimeMillis();
+        }
     }
-	
+
     void dispatch() {
-	synchronized(events) {
-	    if(mousemv != null) {
-		mousepos = new Coord(mousemv.getX(), mousemv.getY());
-		ui.mousemove(mousemv, mousepos);
-		mousemv = null;
-	    }
-	    InputEvent e = null;
-	    while((e = events.poll()) != null) {
-		if(e instanceof MouseEvent) {
-		    MouseEvent me = (MouseEvent)e;
-		    if(me.getID() == MouseEvent.MOUSE_PRESSED) {
-			ui.mousedown(me, new Coord(me.getX(), me.getY()), me.getButton());
-		    } else if(me.getID() == MouseEvent.MOUSE_RELEASED) {
-			ui.mouseup(me, new Coord(me.getX(), me.getY()), me.getButton());
-		    } else if(me instanceof MouseWheelEvent) {
-			ui.mousewheel(me, new Coord(me.getX(), me.getY()), ((MouseWheelEvent)me).getWheelRotation());
-		    }
-		} else if(e instanceof KeyEvent) {
-		    KeyEvent ke = (KeyEvent)e;
-		    if(ke.getID() == KeyEvent.KEY_PRESSED) {
-			ui.keydown(ke);
-		    } else if(ke.getID() == KeyEvent.KEY_RELEASED) {
-			ui.keyup(ke);
-		    } else if(ke.getID() == KeyEvent.KEY_TYPED) {
-			ui.type(ke);
-		    }
-		}
-		ui.lastevent = Utils.rtime();
-	    }
-	}
+        synchronized (events) {
+            if (mousemv != null) {
+                mousepos = new Coord(mousemv.getX(), mousemv.getY());
+                ui.mousemove(mousemv, mousepos);
+                mousemv = null;
+            }
+            InputEvent e = null;
+            while ((e = events.poll()) != null) {
+                if (e instanceof MouseEvent) {
+                    MouseEvent me = (MouseEvent) e;
+                    if (me.getID() == MouseEvent.MOUSE_PRESSED) {
+                        ui.mousedown(me, new Coord(me.getX(), me.getY()), me.getButton());
+                    } else if (me.getID() == MouseEvent.MOUSE_RELEASED) {
+                        ui.mouseup(me, new Coord(me.getX(), me.getY()), me.getButton());
+                    } else if (me instanceof MouseWheelEvent) {
+                        ui.mousewheel(me, new Coord(me.getX(), me.getY()), ((MouseWheelEvent) me).getWheelRotation());
+                    }
+                } else if (e instanceof KeyEvent) {
+                    KeyEvent ke = (KeyEvent) e;
+                    if (ke.getID() == KeyEvent.KEY_PRESSED) {
+                        ui.keydown(ke);
+                    } else if (ke.getID() == KeyEvent.KEY_RELEASED) {
+                        ui.keyup(ke);
+                    } else if (ke.getID() == KeyEvent.KEY_TYPED) {
+                        ui.type(ke);
+                    }
+                }
+                ui.lastevent = Utils.rtime();
+            }
+        }
     }
-	
+
     private Frame bufdraw = null;
     private final Runnable drawfun = new Runnable() {
-	    private void uglyjoglhack() throws InterruptedException {
-		try {
-		    display();
-		} catch(RuntimeException e) {
-		    InterruptedException ie = Utils.hascause(e, InterruptedException.class);
-		    if(ie != null)
-			throw(ie);
-		    else
-			throw(e);
-		}
-	    }
+        private void uglyjoglhack() throws InterruptedException {
+            try {
+                display();
+            } catch (RuntimeException e) {
+                InterruptedException ie = Utils.hascause(e, InterruptedException.class);
+                if (ie != null)
+                    throw (ie);
+                else
+                    throw (e);
+            }
+        }
 
-	    public void run() {
-		try {
-		    uglyjoglhack();
-		    if(state == null)
-			throw(new RuntimeException("State applier is still null after redraw"));
-		    synchronized(drawfun) {
-			drawfun.notifyAll();
-		    }
-		    while(true) {
-			long then = System.currentTimeMillis();
-			int waited = 0;
-			Frame current;
-			synchronized(drawfun) {
-			    while((current = bufdraw) == null)
-				drawfun.wait();
-			    bufdraw = null;
-			    drawfun.notifyAll();
-			    waited += System.currentTimeMillis() - then;
-			}
-			CPUProfile.Frame curf = null;
-			if(Config.profile)
-			    current.pf = curf = rprof.new Frame();
-			synchronized(curdraw) {
-			    curdraw[0] = current;
-			}
-			uglyjoglhack();
-			if(curf != null) {
-			    curf.tick("aux");
-			    curf.fin();
-			}
-			long now = System.currentTimeMillis();
-			waited += now - current.doneat;
-			ridle = (ridle * 0.95) + (((double)waited / ((double)(now - then))) * 0.05);
-			current = null; /* Just for the GC. */
-		    }
-		} catch(InterruptedException e) {
-		    return;
-		}
-	    }
-	};
+        public void run() {
+            try {
+                uglyjoglhack();
+                if (state == null)
+                    throw (new RuntimeException("State applier is still null after redraw"));
+                synchronized (drawfun) {
+                    drawfun.notifyAll();
+                }
+                while (true) {
+                    long then = System.currentTimeMillis();
+                    int waited = 0;
+                    Frame current;
+                    synchronized (drawfun) {
+                        while ((current = bufdraw) == null)
+                            drawfun.wait();
+                        bufdraw = null;
+                        drawfun.notifyAll();
+                        waited += System.currentTimeMillis() - then;
+                    }
+                    CPUProfile.Frame curf = null;
+                    if (Config.profile)
+                        current.pf = curf = rprof.new Frame();
+                    synchronized (curdraw) {
+                        curdraw[0] = current;
+                    }
+                    uglyjoglhack();
+                    if (curf != null) {
+                        curf.tick("aux");
+                        curf.fin();
+                    }
+                    long now = System.currentTimeMillis();
+                    waited += now - current.doneat;
+                    ridle = (ridle * 0.95) + (((double) waited / ((double) (now - then))) * 0.05);
+                    current = null; /* Just for the GC. */
+                }
+            } catch (InterruptedException e) {
+                return;
+            }
+        }
+    };
 
     public void run() {
-	try {
-	    Thread drawthread = new HackThread(drawfun, "Render thread");
-	    drawthread.start();
-	    synchronized(drawfun) {
-		while(state == null)
-		    drawfun.wait();
-	    }
-	    try {
-		long now, then;
-		long frames[] = new long[128];
-		int framep = 0, waited[] = new int[128];
-		while(true) {
-		    if(!DefSettings.PAUSED.get()) {
-			int fwaited = 0;
-			Debug.cycle();
-			UI ui = this.ui;
-			then = System.currentTimeMillis();
-			CPUProfile.Frame curf = null;
-			if (Config.profile)
-			    curf = uprof.new Frame();
-			synchronized (ui) {
-			    if (ui.sess != null)
-				ui.sess.glob.ctick();
-			    dispatch();
-			    ui.tick();
-			    if ((ui.root.sz.x != w) || (ui.root.sz.y != h))
-				ui.root.resize(new Coord(w, h));
-			}
-			if (curf != null)
-			    curf.tick("dsp");
+        try {
+            Thread drawthread = new HackThread(drawfun, "Render thread");
+            drawthread.start();
+            synchronized (drawfun) {
+                while (state == null)
+                    drawfun.wait();
+            }
+            try {
+                long now, then;
+                long frames[] = new long[128];
+                int framep = 0, waited[] = new int[128];
+                while (true) {
+                    if (!DefSettings.PAUSED.get()) {
+                        int fwaited = 0;
+                        Debug.cycle();
+                        UI ui = this.ui;
+                        then = System.currentTimeMillis();
+                        CPUProfile.Frame curf = null;
+                        if (Config.profile)
+                            curf = uprof.new Frame();
+                        synchronized (ui) {
+                            if (ui.sess != null)
+                                ui.sess.glob.ctick();
+                            dispatch();
+                            ui.tick();
+                            if ((ui.root.sz.x != w) || (ui.root.sz.y != h))
+                                ui.root.resize(new Coord(w, h));
+                        }
+                        if (curf != null)
+                            curf.tick("dsp");
 
-			BufferBGL buf = new BufferBGL();
-			GLState.Applier state = this.state;
-			rootdraw(state, ui, buf);
-			if (curf != null)
-			    curf.tick("draw");
-			synchronized (drawfun) {
-			    now = System.currentTimeMillis();
-			    while (bufdraw != null)
-				drawfun.wait();
-			    bufdraw = new Frame(buf, state.cgl);
-			    drawfun.notifyAll();
-			    fwaited += System.currentTimeMillis() - now;
-			}
+                        BufferBGL buf = new BufferBGL();
+                        GLState.Applier state = this.state;
+                        rootdraw(state, ui, buf);
+                        if (curf != null)
+                            curf.tick("draw");
+                        synchronized (drawfun) {
+                            now = System.currentTimeMillis();
+                            while (bufdraw != null)
+                                drawfun.wait();
+                            bufdraw = new Frame(buf, state.cgl);
+                            drawfun.notifyAll();
+                            fwaited += System.currentTimeMillis() - now;
+                        }
 
-			ui.audio.cycle();
-			if (curf != null)
-			    curf.tick("aux");
+                        ui.audio.cycle();
+                        if (curf != null)
+                            curf.tick("aux");
 
-			now = System.currentTimeMillis();
-			long fd = bgmode ? this.bgfd : this.fd;
-			if (now - then < fd) {
-			    synchronized (events) {
-				events.wait(fd - (now - then));
-			    }
-			    fwaited += System.currentTimeMillis() - now;
-			}
+                        now = System.currentTimeMillis();
+                        long fd = bgmode ? this.bgfd : this.fd;
+                        if (now - then < fd) {
+                            synchronized (events) {
+                                events.wait(fd - (now - then));
+                            }
+                            fwaited += System.currentTimeMillis() - now;
+                        }
 
-			frames[framep] = now;
-			waited[framep] = fwaited;
-			for (int i = 0, ckf = framep, twait = 0; i < frames.length; i++) {
-			    ckf = (ckf - 1 + frames.length) % frames.length;
-			    twait += waited[ckf];
-			    if (now - frames[ckf] > 1000) {
-				fps = i;
-				uidle = ((double) twait) / ((double) (now - frames[ckf]));
-				break;
-			    }
-			}
-			framep = (framep + 1) % frames.length;
+                        frames[framep] = now;
+                        waited[framep] = fwaited;
+                        for (int i = 0, ckf = framep, twait = 0; i < frames.length; i++) {
+                            ckf = (ckf - 1 + frames.length) % frames.length;
+                            twait += waited[ckf];
+                            if (now - frames[ckf] > 1000) {
+                                fps = i;
+                                uidle = ((double) twait) / ((double) (now - frames[ckf]));
+                                break;
+                            }
+                        }
+                        framep = (framep + 1) % frames.length;
 
-			if (curf != null)
-			    curf.tick("wait");
-			if (curf != null)
-			    curf.fin();
-			if (Thread.interrupted())
-			    throw (new InterruptedException());
-		    } else {
-		        //Things that must run each frame, even when paused
-			Debug.cycle();
-			synchronized(ui) {
-			    if(ui.sess != null)
-				ui.sess.glob.ctick();
-			    dispatch();
-			    ui.tick();
-			    if((ui.root.sz.x != w) || (ui.root.sz.y != h))
-				ui.root.resize(new Coord(w, h));
-			}
-			ui.audio.cycle();
-			//This is for scripts doing queued movements
-			//TODO: Fix this once scripting is added back in
-			// if(haven.Context.map != null)
-			//    haven.Context.map.try_move();
-			Thread.sleep(100);
-		    }
-		}
-	    } finally {
-		drawthread.interrupt();
-		drawthread.join();
-	    }
-	} catch(InterruptedException e) {
-	} finally {
-	    ui.destroy();
-	}
+                        if (curf != null)
+                            curf.tick("wait");
+                        if (curf != null)
+                            curf.fin();
+                        if (Thread.interrupted())
+                            throw (new InterruptedException());
+                    } else {
+                        //Things that must run each frame, even when paused
+                        Debug.cycle();
+                        synchronized (ui) {
+                            if (ui.sess != null)
+                                ui.sess.glob.ctick();
+                            dispatch();
+                            ui.tick();
+                            if ((ui.root.sz.x != w) || (ui.root.sz.y != h))
+                                ui.root.resize(new Coord(w, h));
+                        }
+                        ui.audio.cycle();
+                        //This is for scripts doing queued movements
+                        //TODO: Fix this once scripting is added back in
+                        // if(haven.Context.map != null)
+                        //    haven.Context.map.try_move();
+                        Thread.sleep(100);
+                    }
+                }
+            } finally {
+                drawthread.interrupt();
+                drawthread.join();
+            }
+        } catch (InterruptedException e) {
+        } finally {
+            ui.destroy();
+        }
     }
-	
+
     public GraphicsConfiguration getconf() {
-	return(getGraphicsConfiguration());
+        return (getGraphicsConfiguration());
     }
 
     private Map<String, Console.Command> cmdmap = new TreeMap<String, Console.Command>();
+
     {
-	cmdmap.put("hz", new Console.Command() {
-		public void run(Console cons, String[] args) {
-		    fd = 1000 / Integer.parseInt(args[1]);
-		}
-	    });
-	cmdmap.put("bghz", new Console.Command() {
-		public void run(Console cons, String[] args) {
-		    bgfd = 1000 / Integer.parseInt(args[1]);
-		}
-	    });
+        cmdmap.put("hz", new Console.Command() {
+            public void run(Console cons, String[] args) {
+                fd = 1000 / Integer.parseInt(args[1]);
+            }
+        });
+        cmdmap.put("bghz", new Console.Command() {
+            public void run(Console cons, String[] args) {
+                bgfd = 1000 / Integer.parseInt(args[1]);
+            }
+        });
     }
+
     public Map<String, Console.Command> findcmds() {
-	return(cmdmap);
+        return (cmdmap);
     }
 }

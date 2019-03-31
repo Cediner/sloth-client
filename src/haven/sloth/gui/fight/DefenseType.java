@@ -7,6 +7,7 @@ public enum DefenseType {
     RED, GREEN, BLUE, YELLOW;
 
     public static Map<String, DefenseType> lookup = new HashMap<>();
+
     static {
         lookup.put("paginae/atk/cornered", RED);
         lookup.put("paginae/atk/dizzy", BLUE);

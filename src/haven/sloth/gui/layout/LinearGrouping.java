@@ -8,16 +8,16 @@ public class LinearGrouping extends Grouping {
 
     public LinearGrouping(final String cap, final int spacer) {
         super(cap);
-    	this.spacer = spacer;
+        this.spacer = spacer;
     }
 
     @Override
     public void pack() {
         int y = 0;
-        for(Widget wdg = child; wdg != null; wdg = wdg.next) {
-	    wdg.c = new Coord(wdg.c.x, y);
-	    y += wdg.sz.y + spacer;
-	}
+        for (Widget wdg = child; wdg != null; wdg = wdg.next) {
+            wdg.c = new Coord(wdg.c.x, y);
+            y += wdg.sz.y + spacer;
+        }
         super.pack();
     }
 }

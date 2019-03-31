@@ -5,6 +5,7 @@ import java.util.Map;
 
 public class Weapons {
     public static final Map<String, Integer> lookup = new HashMap<>();
+
     static {
         lookup.put("Battleaxe of the Twelfth Bay", 150);
         lookup.put("Bronze Sword", 90);

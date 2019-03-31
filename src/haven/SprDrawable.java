@@ -28,25 +28,25 @@ package haven;
 
 public class SprDrawable extends Drawable {
     final Sprite spr;
-	
+
     public SprDrawable(Gob gob, Sprite spr) {
-	super(gob);
-	this.spr = spr;
+        super(gob);
+        this.spr = spr;
     }
-	
+
     public void setup(RenderList rl) {
-	rl.add(spr, null);
+        rl.add(spr, null);
     }
-	
+
     public void ctick(int dt) {
-	spr.tick(dt);
+        spr.tick(dt);
     }
-    
+
     public Resource getres() {
-	return(null);
+        return (null);
     }
 
     public Object staticp() {
-	return(spr.staticp());
+        return (spr.staticp());
     }
 }
