@@ -36,6 +36,7 @@ import haven.sloth.io.MarkerData;
 import haven.sloth.script.pathfinding.Hitbox;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
@@ -262,7 +263,7 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
         }
     };
     private List<Overlay> dols = new ArrayList<>();
-    private List<GAttrib> dattrs = new ArrayList<>();
+    private List<Pair<GAttrib, Consumer<Gob>>> dattrs = new ArrayList<>();
 
     private final Collection<ResAttr.Cell<?>> rdata = new LinkedList<ResAttr.Cell<?>>();
     private final Collection<ResAttr.Load> lrdata = new LinkedList<ResAttr.Load>();
@@ -326,7 +327,7 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
                     final Hitbox hitbox = Hitbox.hbfor(this, true);
                     if (hitbox != null) {
                         hitboxmesh = HitboxMesh.makehb(hitbox.size(), hitbox.offset());
-                        hitboxcoords = glob.gobhitmap.add(this);
+                        updateHitmap();
                     }
                 });
             } else {
@@ -340,6 +341,21 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 
     public boolean isDiscovered() {
         return discovered;
+    }
+
+    public void updateHitmap() {
+        synchronized (glob.gobhitmap) {
+            if (hitboxcoords != null) {
+                glob.gobhitmap.rem(this, hitboxcoords);
+                hitboxcoords = null;
+            }
+            //don't want objects being held to be on the hitmap
+            final UI ui = glob.ui.get();
+            if(getattr(HeldBy.class) == null &&
+                    (getattr(Holding.class) == null || ui == null || getattr(Holding.class).held.id != ui.gui.map.plgob)) {
+                hitboxcoords = glob.gobhitmap.add(this);
+            }
+        }
     }
 
     public void mark(final int life) {
@@ -363,9 +379,11 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 
         for (GAttrib a : attr.values())
             a.ctick(dt);
-        final Iterator<GAttrib> ditr = dattrs.iterator();
+        final Iterator<Pair<GAttrib, Consumer<Gob>>> ditr = dattrs.iterator();
         while (ditr.hasNext()) {
-            setattr(ditr.next());
+            final Pair<GAttrib, Consumer<Gob>> pair = ditr.next();
+            setattr(pair.a);
+            pair.b.accept(this);
             ditr.remove();
         }
 
@@ -548,8 +566,11 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
     }
 
     public void dispose() {
-        synchronized (glob.gobhitmap) {
-            glob.gobhitmap.rem(this, hitboxcoords);
+        if(hitboxcoords != null) {
+            synchronized (glob.gobhitmap) {
+                glob.gobhitmap.rem(this, hitboxcoords);
+                hitboxcoords = null;
+            }
         }
         for (GAttrib a : attr.values())
             a.dispose();
@@ -562,10 +583,7 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
     public void updsdt() {
         resname().ifPresent(name -> {
             if (name.endsWith("gate") || name.endsWith("/pow")) {
-                synchronized (glob.gobhitmap) {
-                    glob.gobhitmap.rem(this, hitboxcoords);
-                    hitboxcoords = glob.gobhitmap.add(this);
-                }
+                updateHitmap();
             }
         });
     }
@@ -575,12 +593,19 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
         if (m != null)
             m.move(c);
         synchronized (glob.gobhitmap) {
-            if (discovered)
+            if (hitboxcoords != null) {
                 glob.gobhitmap.rem(this, hitboxcoords);
+                hitboxcoords = null;
+            }
             this.rc = c;
             this.a = a;
-            if (discovered)
-                hitboxcoords = glob.gobhitmap.add(this);
+            final UI ui = glob.ui.get();
+            if(discovered) {
+                if (getattr(HeldBy.class) == null &&
+                        (getattr(Holding.class) == null || ui == null || getattr(Holding.class).held.id != ui.gui.map.plgob)) {
+                    hitboxcoords = glob.gobhitmap.add(this);
+                }
+            }
         }
     }
 
@@ -613,8 +638,8 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
         attr.put(ac, a);
     }
 
-    public void delayedsetattr(GAttrib a) {
-        dattrs.add(a);
+    public void delayedsetattr(GAttrib a, Consumer<Gob> cb) {
+        dattrs.add(new Pair<GAttrib, Consumer<Gob>>(a, cb));
     }
 
     public <C extends GAttrib> C getattr(Class<C> c) {

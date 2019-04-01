@@ -3,14 +3,20 @@ package haven.sloth.script.pathfinding;
 import com.google.common.flogger.FluentLogger;
 import haven.*;
 import haven.glsl.Array;
+import haven.sloth.DefSettings;
 import haven.sloth.gob.HeldBy;
+import haven.sloth.gob.Type;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.*;
+import java.util.List;
 
 public class Pathfinder {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
-    protected static final Coord[][] dirs = new Coord[1][8];
-    protected static Hitbox plhb;
+    static final Coord[][] dirs = new Coord[1][8];
+    static Hitbox plhb;
 
     static {
         plhb = Hitbox.hbfor("gfx/borka/body");
@@ -66,7 +72,7 @@ public class Pathfinder {
     private boolean areWeBoating() {
         final Gob me = ui.sess.glob.oc.getgob(ui.gui.map.plgob);
         if (me != null) {
-            return me.getattr(HeldBy.class) != null;
+            return me.getattr(HeldBy.class) != null && me.getattr(HeldBy.class).holder.type == Type.WATERVEHICLE;
         } else {
             return false;
         }
@@ -184,6 +190,75 @@ public class Pathfinder {
     }
 
 
+    private void debugl(List<Coord> lines) {
+        if(lines.size() > 0) {
+            //find our boundaries
+            Coord tl = new Coord(lines.get(0));
+            Coord br = new Coord(tl);
+            for (final Coord c : lines) {
+                if (c.x < tl.x)
+                    tl.x = c.x;
+                else if (c.x > br.x)
+                    br.x = c.x;
+
+                if (c.y < tl.y)
+                    tl.y = c.y;
+                else if (c.y > br.y)
+                    br.y = c.y;
+            }
+            final BufferedImage buf = new BufferedImage(br.x - tl.x + 1, br.y - tl.y + 1, BufferedImage.TYPE_INT_RGB);
+
+            for(final Coord c : lines) {
+                final Coord offset = c.sub(tl);
+                buf.setRGB(offset.x, offset.y, Color.WHITE.getRGB());
+            }
+
+            try {
+                javax.imageio.ImageIO.write(buf, "png", new File("beforereduce.png"));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void debug(List<Move> moves) {
+        if(moves.size() > 0) {
+            //find our boundaries
+            Coord tl = new Coord(moves.get(0).dest().floor());
+            Coord br = new Coord(tl);
+            for (final Move m : moves) {
+                final Coord c = m.dest().floor();
+                if (c.x < tl.x)
+                    tl.x = c.x;
+                else if (c.x > br.x)
+                    br.x = c.x;
+
+                if (c.y < tl.y)
+                    tl.y = c.y;
+                else if (c.y > br.y)
+                    br.y = c.y;
+            }
+            final BufferedImage buf = new BufferedImage(br.x - tl.x + 1, br.y - tl.y + 1, BufferedImage.TYPE_INT_RGB);
+            final Graphics g = buf.createGraphics();
+            g.setColor(Color.GREEN);
+
+            for (int i = 0; i < moves.size(); ++i) {
+                final Coord offset = moves.get(i).dest().floor().sub(tl);
+                if(i + 1 < moves.size()) {
+                    final Coord off2 = moves.get(i+1).dest().floor().sub(tl);
+                    g.drawLine(offset.x, offset.y, off2.x, off2.y);
+                }
+                buf.setRGB(offset.x, offset.y, Color.WHITE.getRGB());
+            }
+
+            try {
+                javax.imageio.ImageIO.write(buf, "png", new File("postreduce.png"));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     /**
      * Reduce the nodes we have into lines the end points will be our clicks
      * to walk the path
@@ -193,34 +268,81 @@ public class Pathfinder {
      * In a way this tries to improve our result since it operates with the assumption that our List<Coord>
      * may not be as optimal as we think or not optimal in the sense of how many clicks we have to do
      * more clicks -> Slowdown -> bad and we'd rather have long straight lines rather than many short
+     *
+     * In the end we'll have
+     *
+     * Start -> X, X -> Y, Y -> Z, ..., U -> Goal
+     *
+     * Our pathfinder guarantees that X -> X+1 is SAFE, but not X -> X+n where n >= 2
      */
     final ArrayList<Move> advreduce(List<Coord> lines) {
         if (lines != null) {
+            if(DefSettings.DEBUG.get())
+                debugl(lines);
             final ArrayList<Move> blines = new ArrayList<>(lines.size());
-            Coord cur, next;
-            Coord best = null;
-            int i, j, besti = 0;
-            for (i = 0; i < lines.size(); ++i) {
-                cur = lines.get(i);
-                for (j = i + 1; j < lines.size(); ++j) {
-                    next = lines.get(j);
-                    if (walk(cur, next)) {
-                        best = next;
-                        besti = j;
+            for (int i = 0; i < lines.size() - 1; ++i) {
+                //Find the best line that goes from cur -> X
+                //Best is judged based on how far along our points we can go before we hit something
+                final Coord start = lines.get(i);
+                int best = i + 1; //we know i+1 is safe
+                for (int j = i + 2; j < lines.size(); ++j) {
+                    if (walk(start, lines.get(j))) {
+                        best = j;
                     }
                 }
-                if (best != null) {
-                    blines.add(new Move(new Coord2d(best)));
-                    i = besti;
-                    best = null;
-                } else {
-                    blines.add(new Move(new Coord2d(cur)));
-                }
+
+                //Our line is now start -> best
+                blines.add(new Move(new Coord2d(lines.get(best))));
+                //The next line should start from `best`
+                i = best-1;
             }
+            if(DefSettings.DEBUG.get())
+                debug(blines);
             return blines;
         } else {
             return null;
         }
     }
 
+    /**
+     * Simple reduction of our points into lines
+     * @param points List of points
+     * @return A list of movement commands
+     */
+    final ArrayList<Move> simplereduce(List<Coord> points) {
+        if(points != null) {
+            if(DefSettings.DEBUG.get())
+                debugl(points);
+            final ArrayList<Move> moves = new ArrayList<>(points.size());
+            Coord start, end;
+            double slope;
+            int i, j;
+            for (i = 0; i < points.size()-1; ++i) {
+                start = points.get(i);
+                end = points.get(i+1);
+                slope = (double)(end.y - start.y)/(double)(end.x - start.x);
+                //Keep going until our vector changes directions
+                for(j = i + 2; j < points.size(); ++j) {
+                    final Coord nend = points.get(j);
+                    if(slope == ((double)(nend.y - start.y)/(double)(nend.x - start.x))) {
+                        end = nend;
+                    } else
+                        break;
+                }
+                i = j - 2; // The next line starts where we ended, i++ will make this j-1 which is end
+                moves.add(new Move(new Coord2d(end)));
+            }
+
+            //Make sure we didn't not account for our ending point
+            if(!moves.get(moves.size()-1).dest().equals(new Coord2d(points.get(points.size()-1)))) {
+                moves.add(new Move(new Coord2d(points.get(points.size()-1))));
+            }
+
+            if(DefSettings.DEBUG.get())
+                debug(moves);
+            return moves;
+        } else {
+            return null;
+        }
+    }
 }
