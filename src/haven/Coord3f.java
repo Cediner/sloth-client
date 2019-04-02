@@ -135,6 +135,10 @@ public class Coord3f {
         return ((float) Math.sqrt((x * x) + (y * y) + (z * z)));
     }
 
+    public Coord round() {
+        return new Coord(Math.round(x), Math.round(y));
+    }
+
     public Coord3f norm() {
         float a = abs();
         if (a == 0.0)

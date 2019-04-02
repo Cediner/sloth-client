@@ -15,8 +15,8 @@ import java.util.List;
 
 public class Pathfinder {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
-    static final Coord[][] dirs = new Coord[1][8];
-    static Hitbox plhb;
+    static final Coord[][] dirs = new Coord[1][4];
+    private static Hitbox plhb;
 
     static {
         plhb = Hitbox.hbfor("gfx/borka/body");
@@ -26,10 +26,6 @@ public class Pathfinder {
         dirs[0][1] = new Coord(-1, 0);
         dirs[0][2] = new Coord(0, 1);
         dirs[0][3] = new Coord(0, -1);
-        dirs[0][4] = new Coord(1, 1);
-        dirs[0][5] = new Coord(1, -1);
-        dirs[0][6] = new Coord(-1, -1);
-        dirs[0][7] = new Coord(-1, 1);
     }
 
     @FunctionalInterface
@@ -206,7 +202,7 @@ public class Pathfinder {
                 else if (c.y > br.y)
                     br.y = c.y;
             }
-            final BufferedImage buf = new BufferedImage(br.x - tl.x + 1, br.y - tl.y + 1, BufferedImage.TYPE_INT_RGB);
+            final BufferedImage buf = ui.sess.glob.gobhitmap.debug2(tl, br);
 
             for(final Coord c : lines) {
                 final Coord offset = c.sub(tl);
@@ -238,7 +234,7 @@ public class Pathfinder {
                 else if (c.y > br.y)
                     br.y = c.y;
             }
-            final BufferedImage buf = new BufferedImage(br.x - tl.x + 1, br.y - tl.y + 1, BufferedImage.TYPE_INT_RGB);
+            final BufferedImage buf = ui.sess.glob.gobhitmap.debug2(tl, br);
             final Graphics g = buf.createGraphics();
             g.setColor(Color.GREEN);
 

@@ -1,10 +1,8 @@
 TODO
     - fix some of the color changes not updating -> ex: hidden, path cols.. they aren't indir
-    - Add back in remaining study time to tooltip
     - Pathfinding
         - continuous updating for long distance clicks.
             - If it founds out it needs to update its path it can do adjust as needed based off new path
-        - Choice to change between NBA* and A*? A* can infinite loop, is it worth being an option?
     - Fix GLSettings
     - Move away from GL 1.x calls for UI
     - Marker list, can't scroll out of range of current selected item
