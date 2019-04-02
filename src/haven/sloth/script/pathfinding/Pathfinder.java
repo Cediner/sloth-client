@@ -22,6 +22,9 @@ public class Pathfinder {
         plhb = Hitbox.hbfor("gfx/borka/body");
 
         //perfect
+        //XXX: this could be improved by allowing diagonal movement
+        //but then you have to account for diagonal playerhitbox when making those
+        //moves and it's simpler to ignore it and compensate later on
         dirs[0][0] = new Coord(1, 0);
         dirs[0][1] = new Coord(-1, 0);
         dirs[0][2] = new Coord(0, 1);
@@ -256,11 +259,10 @@ public class Pathfinder {
     }
 
     /**
+     * This is to make up for the fake that we aren't doing diagonal pathfinding
+     * it's an estimation of what is the best path that works for us in hafen
      * Reduce the nodes we have into lines the end points will be our clicks
      * to walk the path
-     * <p>
-     * TODO: this could be improved by trying farthest away first rather than closest. Even binary search
-     * <p>
      * In a way this tries to improve our result since it operates with the assumption that our List<Coord>
      * may not be as optimal as we think or not optimal in the sense of how many clicks we have to do
      * more clicks -> Slowdown -> bad and we'd rather have long straight lines rather than many short
@@ -281,9 +283,17 @@ public class Pathfinder {
                 //Best is judged based on how far along our points we can go before we hit something
                 final Coord start = lines.get(i);
                 int best = i + 1; //we know i+1 is safe
-                for (int j = i + 2; j < lines.size(); ++j) {
-                    if (walk(start, lines.get(j))) {
-                        best = j;
+
+                //Binary search between i -> lines.size()
+                int lower = best;
+                int upper = lines.size()-1;
+                while(lower <= upper) {
+                    final int half = ((lower + upper) / 2);
+                    if(walk(start, lines.get(half))) {
+                        lower = half + 1;
+                        best = half;
+                    } else {
+                        upper = half - 1;
                     }
                 }
 
@@ -295,48 +305,6 @@ public class Pathfinder {
             if(DefSettings.DEBUG.get())
                 debug(blines);
             return blines;
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * Simple reduction of our points into lines
-     * @param points List of points
-     * @return A list of movement commands
-     */
-    final ArrayList<Move> simplereduce(List<Coord> points) {
-        if(points != null) {
-            if(DefSettings.DEBUG.get())
-                debugl(points);
-            final ArrayList<Move> moves = new ArrayList<>(points.size());
-            Coord start, end;
-            double slope;
-            int i, j;
-            for (i = 0; i < points.size()-1; ++i) {
-                start = points.get(i);
-                end = points.get(i+1);
-                slope = (double)(end.y - start.y)/(double)(end.x - start.x);
-                //Keep going until our vector changes directions
-                for(j = i + 2; j < points.size(); ++j) {
-                    final Coord nend = points.get(j);
-                    if(slope == ((double)(nend.y - start.y)/(double)(nend.x - start.x))) {
-                        end = nend;
-                    } else
-                        break;
-                }
-                i = j - 2; // The next line starts where we ended, i++ will make this j-1 which is end
-                moves.add(new Move(new Coord2d(end)));
-            }
-
-            //Make sure we didn't not account for our ending point
-            if(!moves.get(moves.size()-1).dest().equals(new Coord2d(points.get(points.size()-1)))) {
-                moves.add(new Move(new Coord2d(points.get(points.size()-1))));
-            }
-
-            if(DefSettings.DEBUG.get())
-                debug(moves);
-            return moves;
         } else {
             return null;
         }
