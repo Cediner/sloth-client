@@ -92,4 +92,13 @@
       nil))
 
 
-(export '(check-stam-and-drink drink-water refill-water-from-hand refill-water-from-inventory))
+(defun check-for-starving (&optional (starve-at 2000))
+  (if (< (energy) starve-at)
+      (progn
+        (misc-log "Logging out in order to not starve the character...")
+        (goto-character-screen)
+        t)
+      nil))
+
+(export '(check-stam-and-drink drink-water refill-water-from-hand refill-water-from-inventory
+          check-for-starving))

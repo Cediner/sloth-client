@@ -33,7 +33,7 @@
 (java-func +coord2d+ coord2d-eq "equals" +object+)
 
 (defmacro coord3f (x y)
-  `(jnew +coord2d+ ,x ,y))
+  `(jnew +coord3f+ ,x ,y))
 (java-field coord3f-x "x")
 (java-field coord3f-y "y")
 (java-field coord3f-z "z")

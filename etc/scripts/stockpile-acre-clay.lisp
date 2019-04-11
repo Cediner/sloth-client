@@ -23,17 +23,20 @@
     (msg-clear-messages)
     bbox))
 
+(defun get-next-item-on-ground ()
+  (gob-get-closest-by-filter
+   (lambda (gob)
+     (and (string= "gfx/terobjs/items/clay-acre" (gob-name gob))
+          (mv-find-path-to-gob gob)))))
+
 (defun pickup-acre-clay (original-position)
   (loop
-     for gob = (gob-get-closest-by-filter
-                (lambda (gob)
-                  (and (string= "gfx/terobjs/items/clay-acre" (gob-name gob))
-                       (mv-find-path-to-gob gob))))
+     for gob = (get-next-item-on-ground) 
      until (or (held-item) (null gob))
      do (let ((id (gob-id gob)))
           (mv-smart-move-to-gob gob)
-          (mv-click-gob gob +right-button+ +mf-none+)
-          (wait-until (lambda () (null (oc-get-gob id))) :timeout 1000)))
+          (mv-click-gob gob +right-button+ +mf-shift+)
+          (wait-for-movement)))
   (when (held-item)
     (item-drop (held-item)))
   (mv-smart-move original-position))
@@ -62,7 +65,9 @@
                      (< best-max (coord2d-dist (coord-to-coord2d tile) my-tile))))
         (setf best-tile tile)
         (setf best-max (coord2d-dist (coord-to-coord2d tile) my-tile))))
-    (coord-to-coord2d best-tile)))
+    (if best-tile
+        (coord-to-coord2d best-tile)
+        nil)))
 
 (defun make-stockpile (itm stockpile-c)
   (item-take itm)
@@ -80,9 +85,10 @@
                      (< (gob-sdt gob) 31))))))
     (unless (and gob (store-acre-clay-in-stockpile itm gob))
       (let ((stockpile-c (get-next-good-tile-for-stockpile tiles)))
-        (make-stockpile itm stockpile-c)
-        (mv-move-to original-position)
-        (wait-for-movement)))))
+        (when stockpile-c
+          (make-stockpile itm stockpile-c)
+          (mv-move-to original-position)
+          (wait-for-movement))))))
 
 (script
  (let ((bbox (get-bbox)))

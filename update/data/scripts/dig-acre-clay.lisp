@@ -59,12 +59,19 @@
           (setf best-c c)
           (setf best-min (reduce #'min around)))))
     best-c))
+
+(defun check-clay-on-ground ()
+  (loop
+     while (> (length (gob-get-all-by-name "gfx/terobjs/items/clay-acre"))
+              (* 8 10))
+     do (sleep 0.1)))
         
 (defun dig-tile (c)
   (let ((start-z (mc-get-z c)))
     (check-stam-and-drink)
     (when (held-item)
       (item-drop (held-item)))
+    (check-clay-on-ground)
     (menu-use "paginae/act/dig")
     (sleep 0.5)
     (mv-smart-move (coord-to-coord2d c))
@@ -87,7 +94,10 @@
     (loop
        for next = (get-next-diggable-tile coords)
        while next
-       do (dig-tile next))))
+       do (progn
+            (when (check-for-starving)
+              (return-from dig-area))
+            (dig-tile next)))))
 
 (script
  (let ((box (get-bbox)))
