@@ -1,23 +1,12 @@
 package haven.sloth.script;
 
 import com.google.common.flogger.FluentLogger;
-import com.sun.jmx.remote.internal.ArrayQueue;
 import haven.UI;
 import haven.Widget;
 import org.armedbear.lisp.Interpreter;
 import org.armedbear.lisp.Load;
-import org.armedbear.lisp.scripting.AbclScriptEngine;
 
-import javax.script.CompiledScript;
-import javax.script.ScriptEngineManager;
-import java.awt.*;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Queue;
 
 @SuppressWarnings("unused")
@@ -71,8 +60,6 @@ public class Script extends Thread {
     private final Queue<Message> msgs = new LinkedList<>();
     private boolean listening;
 
-
-    private BufferedWriter log;
     private boolean intp;
 
     Script(final String script, final long id, final SessionDetails session) {
@@ -84,7 +71,6 @@ public class Script extends Thread {
 
         this.listening = false;
         this.intp = false;
-        this.log = null;
     }
 
 
@@ -115,7 +101,7 @@ public class Script extends Thread {
         }
     }
 
-    public void newmsg(final Widget sender, final String msg, final Object... args) {
+    void newmsg(final Widget sender, final String msg, final Object... args) {
         if(listening) {
             synchronized (msgs) {
                 msgs.offer(new Message(sender, msg, args));
@@ -147,48 +133,9 @@ public class Script extends Thread {
         return intp;
     }
 
-    private void createLog() throws Exception {
-        if ((new File("data/scripts/logs/")).mkdirs()) {
-            log = new BufferedWriter(new FileWriter(String.format("data/scripts/logs/%s-%d-%d.log", script, sid, start)));
-        }
-    }
-
-    /* Chat/Logs*********************************************************************************/
-    public void chat(final String chat, final String msg) {
-        final UI ui = session.getUI();
-        if(ui != null) {
-            switch (chat) {
-                case "Area Chat":
-                    break;
-                case "Village":
-                    break;
-                case "Party":
-                    break;
-                case "Bot-Chat":
-                    ui.gui.botlog.uimsg("msg", msg, Color.RED, 1);
-                    break;
-                case "System":
-                    ui.gui.msg(msg);
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
-
+    /* Logs*********************************************************************************/
     public void log(final String msg) {
-        try {
-            if (log != null) {
-                log.write(msg + "\r\n");
-                log.flush();
-            } else {
-                createLog();
-                log.write(msg + "\r\n");
-                log.flush();
-            }
-        } catch (Exception e) {
-            //ignore
-        }
+        logger.atInfo().log("Script [%s] [sid %d] [start %d] %s", script, sid, start, msg);
     }
     /* *****************************************************************************************/
 
@@ -213,10 +160,7 @@ public class Script extends Thread {
                 } else {
                     ui.gui.msg("Script died -> scripts/" + script + " [" + sid + "]");
                     try {
-                        if (log == null) {
-                            createLog();
-                        }
-                        t.printStackTrace(new PrintWriter(log));
+                        logger.atSevere().withCause(t).log("Script died [%s] [sid %d] [start %d]", script, sid, start);
                     } catch (Exception e) {
                         //Ignore
                     }
@@ -225,13 +169,6 @@ public class Script extends Thread {
             }
         }
 
-        try {
-            if (log != null) {
-                log.close();
-            }
-        } catch (Exception e) {
-            //Ignore
-        }
         Context.remove(sid);
     }
 }
