@@ -35,8 +35,10 @@ import com.google.common.flogger.FluentLogger;
 import haven.Resource.AButton;
 import haven.sloth.DefSettings;
 import haven.sloth.gui.MovableWidget;
+import haven.sloth.script.Context;
 import haven.sloth.util.ObservableCollection;
 
+import java.io.File;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -78,11 +80,11 @@ public class MenuGrid extends MovableWidget {
         }
 
         public String name() {
-            return (res.layer(Resource.action).name);
+            return (pag.act().name);
         }
 
         public char hotkey() {
-            return (res.layer(Resource.action).hk);
+            return (pag.act().hk);
         }
 
         public void use() {
@@ -113,7 +115,7 @@ public class MenuGrid extends MovableWidget {
         }
 
         public BufferedImage rendertt(boolean withpg) {
-            Resource.AButton ad = res.layer(Resource.action);
+            Resource.AButton ad = pag.act();
             Resource.Pagina pg = res.layer(Resource.pagina);
             String tt = ad.name;
             int pos = tt.toUpperCase().indexOf(Character.toUpperCase(ad.hk));
@@ -234,9 +236,25 @@ public class MenuGrid extends MovableWidget {
     public static class SpecialPagina extends Pagina {
         public final String key;
 
-        public SpecialPagina(MenuGrid scm, String key, Indir<Resource> res, final Consumer<Pagina> onUse) {
+        private SpecialPagina(MenuGrid scm, String key, Indir<Resource> res, final Consumer<Pagina> onUse) {
             super(scm, res, onUse);
             this.key = key;
+        }
+    }
+
+    public static class ScriptPagina extends SpecialPagina {
+        private final AButton act;
+
+        private ScriptPagina(MenuGrid scm, Indir<Resource> res, String script) {
+            super(scm, String.format("script::%s", script), res,
+                    (pag) -> Context.launch(script, pag.scm.ui.sess.details));
+            final Resource tmp = new Resource(Resource.local(),  String.format("script::%s", script), 1);
+            this.act = tmp.new AButton(Resource.local().load("custom/paginae/default/scripts"), script);
+        }
+
+        @Override
+        public AButton act() {
+            return act;
         }
     }
 
@@ -245,6 +263,7 @@ public class MenuGrid extends MovableWidget {
 
         //Window toggles
         paginae.add(paginafor(Resource.local().load("custom/paginae/default/management")));
+        paginae.add(paginafor(Resource.local().load("custom/paginae/default/scripts")));
         //Custom windows
         addSpecial(new SpecialPagina(this, "management::alerted",
                 Resource.local().load("custom/paginae/default/wnd/alerted"),
@@ -295,6 +314,17 @@ public class MenuGrid extends MovableWidget {
         addSpecial(new SpecialPagina(this, "management::scripts",
                 Resource.local().load("custom/paginae/default/wnd/scripts"),
                 (pag) -> ui.gui.toggleScripts()));
+        //Scripts
+        final File dir = new File("data/scripts/");
+        if (dir.exists()) {
+            final File[] files = dir.listFiles((fdir, name) -> name.endsWith(".lisp") && !name.startsWith("_config"));
+            if (files != null) {
+                for (final File f : files) {
+                    addSpecial(new ScriptPagina(this, Resource.local().load("custom/paginae/default/script"),
+                            f.getName().substring(0, f.getName().lastIndexOf(".lisp"))));
+                }
+            }
+        }
     }
 
     @Override
@@ -533,6 +563,11 @@ public class MenuGrid extends MovableWidget {
         } else {
             super.mousemove(c);
         }
+    }
+
+    public void use(final String rname) {
+        final Resource res = Resource.remote().loadwait(rname);
+        wdgmsg("act", (Object[]) res.layer(Resource.action).ad);
     }
 
     public void use(PagButton r, boolean reset) {

@@ -250,6 +250,14 @@ public class OCache implements Iterable<Gob> {
         local.remove(gob);
     }
 
+    /**
+     * For the Scripting API
+     */
+    @SuppressWarnings("unused")
+    public synchronized Gob[] getallgobs() {
+        return objs.values().toArray(new Gob[0]);
+    }
+
     public synchronized Gob getgob(long id) {
         return (objs.get(id));
     }

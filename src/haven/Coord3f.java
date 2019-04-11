@@ -153,6 +153,16 @@ public class Coord3f {
         return ((float) Math.sqrt((dx * dx) + (dy * dy) + (dz * dz)));
     }
 
+    /**
+     * For scripting API
+     */
+    @SuppressWarnings("unused")
+    public float dist2d(Coord3f o) {
+        float dx = o.x - x;
+        float dy = o.y - y;
+        return ((float) Math.sqrt((dx * dx) + (dy * dy)));
+    }
+
     public float xyangle(Coord3f o) {
         Coord3f c = o.sub(this);
         if (c.x == 0) {

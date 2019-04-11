@@ -75,6 +75,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     private ChatWnd chatwnd;
     public ChatUI chat; //Chat Widget
     public ChatUI.Channel syslog;
+    public ChatUI.Channel botlog;
     public Window hidden, deleted, alerted, highlighted;
     public double prog = -1;
     private boolean afk = false;
@@ -145,6 +146,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
         questwnd = add(new QuestWnd(), new Coord(0, sz.y - 200));
         chatwnd = add(new ChatWnd(chat = new ChatUI(600, 150)), new Coord(20, sz.y - 200));
         syslog = chat.add(new ChatUI.Log("System"));
+        botlog = chat.add(new ChatUI.BotChat());
         hidden = add(new HiddenManager());
         hidden.hide();
         deleted = add(new DeletedManager());
@@ -348,10 +350,12 @@ public class GameUI extends ConsoleHost implements Console.Directory {
         if ((hand.isEmpty() && (vhand != null)) || ((vhand != null) && !hand.contains(vhand.item))) {
             ui.destroy(vhand);
             vhand = null;
+            ui.sess.details.removeHeldItem();
         }
         if (!hand.isEmpty() && (vhand == null)) {
             DraggedItem fi = hand.iterator().next();
             vhand = add(new ItemDrag(fi.dc, fi.item));
+            ui.sess.details.attachHeldItem(vhand.item);
         }
     }
 
@@ -462,7 +466,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
             menu = (MenuGrid) add(child, new Coord(sz.x - child.sz.x, sz.y - child.sz.y));
 
             //Define belts here once map has its gob id
-            final BeltData data = new BeltData(Context.accname + "::" + Context.charname);
+            final BeltData data = new BeltData(ui.sess.username + "::" + ui.gui.chrid);
             fbelt = add(new BeltWnd("fk", data, KeyEvent.VK_F1, KeyEvent.VK_F10, 5, 50), new Coord(0, 50));
             npbelt = add(new BeltWnd("np", data, KeyEvent.VK_NUMPAD0, KeyEvent.VK_NUMPAD9, 4, 100), new Coord(0, 100));
             nbelt = add(new BeltWnd("n", data, KeyEvent.VK_0, KeyEvent.VK_9, 5, 0), new Coord(0, 150));
@@ -660,7 +664,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
                     nbelt.update(slot);
                 else if (slot <= 99)
                     fbelt.update(slot);
-                else
+                else if (slot <= 140)
                     npbelt.update(slot);
             }
             break;

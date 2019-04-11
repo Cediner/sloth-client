@@ -15,9 +15,9 @@ public class ScriptManager extends Window implements ObservableMapListener<Long,
         private ScriptWdg(final Script script) {
             int y = 0;
             add(new Label(script.toString()));
-            y += adda(new Button(100, "Stop", script::interrupt),
-                    new Coord(300, 0), 0.0, 1.0).sz.y + 5;
+            y += add(new Button(100, "Stop", script::interrupt), new Coord(195, y)).sz.y + 5;
             add(new IndirLabel(() -> String.format("Time: %.2f", script.time())), new Coord(0, y));
+            pack();
         }
     }
 
@@ -26,8 +26,9 @@ public class ScriptManager extends Window implements ObservableMapListener<Long,
 
     public ScriptManager() {
         super(Coord.z, "Script Manager", "Script Manager");
-        scripts = add(new LinearGrouping("Scripts", 5),
-                new Coord(0, add(new Label("Running Scripts:")).sz.y + 5));
+        Coord c = new Coord(0, 0);
+        c.y += add(new Button(300, "Reload Config", Script::reloadConfig)).sz.y + 5;
+        scripts = add(new LinearGrouping("Running Scripts", 5), c.copy());
         pack();
         Context.listenTo(this);
     }
@@ -56,7 +57,7 @@ public class ScriptManager extends Window implements ObservableMapListener<Long,
     @Override
     public void put(Long sid, Script script) {
         final ScriptWdg wdg = new ScriptWdg(script);
-        scriptmap.put(script.getId(), wdg);
+        scriptmap.put(sid, wdg);
         scripts.add(wdg);
         scripts.pack();
         pack();

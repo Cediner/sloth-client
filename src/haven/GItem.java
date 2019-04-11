@@ -26,9 +26,15 @@
 
 package haven;
 
+import haven.resutil.FoodInfo;
+import haven.sloth.gui.item.ContentData;
+import haven.sloth.io.ItemData;
+
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owner {
     @RName("item")
@@ -116,6 +122,7 @@ public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owne
     private List<ItemInfo> info = Collections.emptyList();
     public int quality;
     public Tex q_tex;
+    private WItem witem = null;
 
 
     public GItem(Indir<Resource> res, Message sdt) {
@@ -159,6 +166,18 @@ public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owne
     @Deprecated
     public Glob glob() {
         return (ui.sess.glob);
+    }
+
+    /**
+     * Just for scripting
+     */
+    @SuppressWarnings("unused")
+    public WItem witem() {
+        return witem;
+    }
+
+    public void setWItem(final WItem item) {
+        this.witem = item;
     }
 
     public GSprite spr() {
@@ -218,6 +237,48 @@ public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owne
             return Optional.empty();
         }
     }
+
+    /*******************************************************************************
+     * For Scripting API only
+     */
+    @SuppressWarnings("unused")
+    public String rnm() {
+        return name().orElse("");
+    }
+
+    private static final Pattern liquid_pat = Pattern.compile("([0-9]+\\.[0-9]+) l of (.+)");
+    private static final Pattern weight_pat = Pattern.compile("([0-9]+\\.[0-9]+) kg of (.+)");
+    private static final Pattern seed_pat = Pattern.compile("([0-9]+) seeds of (.+)");
+    private static final Pattern[] contpats = {liquid_pat, weight_pat, seed_pat};
+    private static final ItemData.ContainerType[] conttypes = {ItemData.ContainerType.LIQUID, ItemData.ContainerType.WEIGHT, ItemData.ContainerType.SEED};
+
+
+    public ContentData hasContents() {
+        final Optional<ItemInfo.Contents> cont = getinfo(ItemInfo.Contents.class);
+        if(cont.isPresent()) {
+            final Optional<ItemInfo.Name.Name> contname = getinfo(ItemInfo.Name.Name.class, cont.get().sub);
+            if(contname.isPresent()) {
+                final Optional<String> name = name();
+                if (name.isPresent()) {
+                    for (int i = 0; i < contpats.length; ++i) {
+                        final Matcher match = contpats[i].matcher(contname.get().str.text);
+                        if (match.find()) {
+                            return new ContentData(conttypes[i], match.group(2),
+                                    Double.parseDouble(match.group(1)),
+                                    ItemData.maxContent(name.get(), conttypes[i]));
+                        }
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public boolean isFood() {
+        return getinfo(FoodInfo.class).isPresent();
+    }
+    /******************************************************************************/
 
     public Resource resource() {
         return (res.get());

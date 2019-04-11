@@ -385,7 +385,7 @@ public class MapMesh implements Rendered, Disposable {
             final float si = (float) Math.sin(a), co = (float) Math.cos(a);
             this.cc = cc;
             final MeshBuf buf = new MeshBuf();
-            final float cz = (float) map.getcz(cc);
+            final float cz = !DefSettings.FLATWORLD.get() ? (float) map.getcz(cc) : 0;
             final Coord ult, brt;
             {
                 Coord tult = null, tbrt = null;

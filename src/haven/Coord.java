@@ -154,6 +154,10 @@ public class Coord implements Comparable<Coord>, java.io.Serializable {
         return ((x >= c.x) && (y >= c.y) && (x < c.x + s.x) && (y < c.y + s.y));
     }
 
+    public int area() {
+        return x * y;
+    }
+
     public boolean eisect(Coord c, Coord s) {
         return ((x >= c.x) && (y >= c.y) && (x <= c.x + s.x) && (y <= c.y + s.y));
     }

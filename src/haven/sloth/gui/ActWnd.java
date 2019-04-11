@@ -157,6 +157,6 @@ public class ActWnd extends Window implements ObservableListener<MenuGrid.Pagina
                 //Ignore
             }
         }
-        return pagina.res.get().layer(Resource.action).name.toLowerCase().contains(entry.text.toLowerCase());
+        return pagina.act().name.toLowerCase().contains(entry.text.toLowerCase());
     }
 }

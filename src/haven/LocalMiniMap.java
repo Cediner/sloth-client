@@ -253,7 +253,7 @@ public class LocalMiniMap extends Widget {
             //Not in the same segment anymore, clear mcache
             mcache.clear();
             data.newSegment(acenter);
-            session = "data/maps/" + Context.accname + "-" + Context.charname + "-" + System.currentTimeMillis() + "/";
+            session = "data/maps/" + ui.sess.username + "-" + ui.gui.chrid + "-" + System.currentTimeMillis() + "/";
             center = acenter;
             if (!(new java.io.File(session)).mkdirs()) {
                 logger.atSevere().log("Failed to make session directory " + session);

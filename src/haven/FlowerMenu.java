@@ -229,6 +229,7 @@ public class FlowerMenu extends Widget {
         organize(opts);
     }
 
+
     public boolean mousedown(Coord c, int button) {
         if (!anims.isEmpty())
             return (true);
@@ -254,7 +255,13 @@ public class FlowerMenu extends Widget {
         }
     }
 
+    @Override
+    protected void removed() {
+        ui.sess.details.removeFlowermenu();
+    }
+
     public void binded() {
+        ui.sess.details.attachFlowermenu(this);
         int jack = ui.modflags();
 
         if (DefSettings.QUICKMENU.get() && jack < opts.length && opts.length <= 2) {

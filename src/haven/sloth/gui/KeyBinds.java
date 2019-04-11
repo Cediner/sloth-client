@@ -286,6 +286,38 @@ public class KeyBinds {
                 return false;
             }
         }));
+        add(new KeyBind("Move West", new IndirSetting<>(DefSettings.global, "keybind.move-left"), "Left", ui -> {
+            if(ui.gui != null && ui.gui.map != null) {
+                ui.gui.map.relMove(new Coord2d(-1000, 0));
+                return true;
+            } else {
+                return false;
+            }
+        }));
+        add(new KeyBind("Move North", new IndirSetting<>(DefSettings.global, "keybind.move-up"), "Up", ui -> {
+            if(ui.gui != null && ui.gui.map != null) {
+                ui.gui.map.relMove(new Coord2d(0, -1000));
+                return true;
+            } else {
+                return false;
+            }
+        }));
+        add(new KeyBind("Move South", new IndirSetting<>(DefSettings.global, "keybind.move-down"), "Down", ui -> {
+            if(ui.gui != null && ui.gui.map != null) {
+                ui.gui.map.relMove(new Coord2d(0, 1000));
+                return true;
+            } else {
+                return false;
+            }
+        }));
+        add(new KeyBind("Move East", new IndirSetting<>(DefSettings.global, "keybind.move-right"), "Right", ui -> {
+            if(ui.gui != null && ui.gui.map != null) {
+                ui.gui.map.relMove(new Coord2d(1000, 0));
+                return true;
+            } else {
+                return false;
+            }
+        }));
 
         //Fight moves binding
         for (final KeyBind kb : Fightsess.keys) {

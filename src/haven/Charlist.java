@@ -77,8 +77,19 @@ public class Charlist extends Widget {
         resize(new Coord(bg.sz().x, sad.c.y + sad.sz.y));
     }
 
+    @Override
+    protected void removed() {
+        super.removed();
+        ui.sess.details.removeCharlist();
+    }
+
     protected void added() {
         parent.setfocus(this);
+    }
+
+    @Override
+    protected void binded() {
+        ui.sess.details.attachCharlist(this);
     }
 
     public void scroll(int amount) {
@@ -131,7 +142,6 @@ public class Charlist extends Widget {
                 for (Char c : chars) {
                     if (sender == c.plb) {
                         wdgmsg("play", c.name);
-                        Context.charname = c.name;
                     }
                 }
             }

@@ -1,3 +1,24 @@
+4/11/19
+    - Scripting is now a thing, first few bots are the usual auto-drink, an eat-all-food in inventory, a acre-clay digger
+    and its partner stockpile acre clay bot.
+        - All scripts typically will check for stamina and auto drink on their own. One difference over the old scripts
+        is that these will now also refill waterskins/flasks buckets from nearby barrels of water if needed
+    - Bot chat channel is back, if there's a prompt or event it has to wait on the user it'll be in here
+    - Tooltips for custom menu icons on your hotbars will now display properly
+    - Updated omni's sounds to the latest
+
+4/9/19
+    - Can now use pathfinding by ctrl+shift+alt clicking a tile or object. I'll improve it overtime for the few
+    minor things that could use updating
+    - `Show FPS` will now show your velocity
+
+4/7/19
+    - Ard fixes scent bug with flatworld
+    - Softcaps calculated with Longs rather than integers..
+
+4/3/19
+    - Added in Keybinds to move straight north, south, east, west with arrow keys
+
 4/2/19
     - Hitboxes should be more accurate. Pathfinding should be a bit faster and more accurate.
 

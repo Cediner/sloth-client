@@ -26,6 +26,8 @@
 
 package haven;
 
+import haven.sloth.script.SessionDetails;
+
 import java.net.*;
 import java.util.*;
 import java.io.*;
@@ -64,11 +66,14 @@ public class Session implements Resource.Resolver {
     Map<Integer, PMessage> waiting = new TreeMap<Integer, PMessage>();
     LinkedList<RMessage> pending = new LinkedList<RMessage>();
     Map<Long, ObjAck> objacks = new TreeMap<Long, ObjAck>();
-    String username;
     byte[] cookie;
     final Map<Integer, CachedRes> rescache = new TreeMap<Integer, CachedRes>();
     public final Glob glob;
     public byte[] sesskey;
+
+    //Additional Session details for scripts
+    public final SessionDetails details;
+    public final String username;
 
     //Monitoring
     long sent = 0, recv = 0;
@@ -607,6 +612,7 @@ public class Session implements Resource.Resolver {
 
     public Session(SocketAddress server, String username, byte[] cookie, Object... args) {
         this.server = server;
+        this.details = new SessionDetails(this);
         this.username = username;
         this.cookie = cookie;
         this.args = args;

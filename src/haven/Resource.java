@@ -155,7 +155,7 @@ public class Resource implements Serializable {
         }
     }
 
-    private Resource(Pool pool, String name, int ver) {
+    public Resource(Pool pool, String name, int ver) {
         this.pool = pool;
         this.name = name;
         this.ver = ver;
@@ -1024,14 +1024,14 @@ public class Resource implements Serializable {
         public AButton(Named parent, String name) {
             this.name = name;
             this.parent = parent;
-            ad = null;
+            ad = new String[0];
             hk = '\0';
         }
 
         public AButton(Named parent, String name, char h) {
             this.name = name;
             this.parent = parent;
-            ad = null;
+            ad = new String[0];
             hk = h;
         }
 

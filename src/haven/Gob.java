@@ -70,6 +70,17 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
             this.spr = spr;
         }
 
+        public String name() {
+            try {
+                if(res != null)
+                    return res.get().name;
+                else
+                    return "";
+            } catch (Loading l) {
+                return "";
+            }
+        }
+
         public static interface CDel {
             public void delete();
         }
@@ -235,9 +246,11 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
         }
 
         public void prep(Buffer buf) {
-            for (Overlay ol : ols) {
-                if (ol.spr instanceof Overlay.SetupMod) {
-                    ((Overlay.SetupMod) ol.spr).setupgob(buf);
+            synchronized (ols) {
+                for (Overlay ol : ols) {
+                    if (ol.spr instanceof Overlay.SetupMod) {
+                        ((Overlay.SetupMod) ol.spr).setupgob(buf);
+                    }
                 }
             }
         }
@@ -254,7 +267,7 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
     public final Glob glob;
     Map<Class<? extends GAttrib>, GAttrib> attr = new HashMap<Class<? extends GAttrib>, GAttrib>();
     private final Set<haven.sloth.gob.Rendered> renderedattrs = new HashSet<>();
-    public Collection<Overlay> ols = new LinkedList<Overlay>() {
+    public final Collection<Overlay> ols = new LinkedList<Overlay>() {
         public boolean add(Overlay item) {
             /* XXX: Remove me once local code is changed to use addol(). */
             if (glob.oc.getgob(id) != null)
@@ -268,6 +281,7 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
     private final Collection<ResAttr.Cell<?>> rdata = new LinkedList<ResAttr.Cell<?>>();
     private final Collection<ResAttr.Load> lrdata = new LinkedList<ResAttr.Load>();
     private HitboxMesh hitboxmesh;
+    private boolean pathfinding_blackout = false;
     private List<Coord> hitboxcoords;
 
     private boolean discovered = false;
@@ -352,10 +366,16 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
             //don't want objects being held to be on the hitmap
             final UI ui = glob.ui.get();
             if(getattr(HeldBy.class) == null &&
-                    (getattr(Holding.class) == null || ui == null || getattr(Holding.class).held.id != ui.gui.map.plgob)) {
+                    (getattr(Holding.class) == null || ui == null || getattr(Holding.class).held.id != ui.gui.map.plgob) &&
+                    !pathfinding_blackout) {
                 hitboxcoords = glob.gobhitmap.add(this);
             }
         }
+    }
+
+    public void updatePathfindingBlackout(final boolean val) {
+        this.pathfinding_blackout = val;
+        updateHitmap();
     }
 
     public void mark(final int life) {
@@ -387,26 +407,28 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
             ditr.remove();
         }
 
-        for (Iterator<Overlay> i = ols.iterator(); i.hasNext(); ) {
-            Overlay ol = i.next();
-            if (ol.spr == null) {
-                try {
-                    ol.spr = Sprite.create(this, ol.res.get(), ol.sdt.clone());
-                } catch (Loading e) {
+        synchronized (ols) {
+            for (Iterator<Overlay> i = ols.iterator(); i.hasNext(); ) {
+                Overlay ol = i.next();
+                if (ol.spr == null) {
+                    try {
+                        ol.spr = Sprite.create(this, ol.res.get(), ol.sdt.clone());
+                    } catch (Loading e) {
+                    }
+                } else {
+                    boolean done = ol.spr.tick(dt);
+                    if ((!ol.delign || (ol.spr instanceof Overlay.CDel)) && done)
+                        i.remove();
                 }
-            } else {
-                boolean done = ol.spr.tick(dt);
-                if ((!ol.delign || (ol.spr instanceof Overlay.CDel)) && done)
-                    i.remove();
             }
+            for (Iterator<Overlay> i = dols.iterator(); i.hasNext(); ) {
+                Overlay ol = i.next();
+                ols.add(ol);
+                i.remove();
+            }
+            if (virtual && ols.isEmpty())
+                glob.oc.remove(id);
         }
-        for (Iterator<Overlay> i = dols.iterator(); i.hasNext(); ) {
-            Overlay ol = i.next();
-            ols.add(ol);
-            i.remove();
-        }
-        if (virtual && ols.isEmpty())
-            glob.oc.remove(id);
     }
 
     public String details() {
@@ -529,7 +551,9 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 
     /* Intended for local code. Server changes are handled via OCache. */
     public void addol(Overlay ol) {
-        ols.add(ol);
+        synchronized (ols) {
+            ols.add(ol);
+        }
     }
 
     public void addol(Sprite ol) {
@@ -548,13 +572,15 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
     }
 
     public Overlay findol(int id) {
-        for (Overlay ol : ols) {
-            if (ol.id == id)
-                return (ol);
-        }
-        for (Overlay ol : dols) {
-            if (ol.id == id)
-                return ol;
+        synchronized (ols) {
+            for (Overlay ol : ols) {
+                if (ol.id == id)
+                    return (ol);
+            }
+            for (Overlay ol : dols) {
+                if (ol.id == id)
+                    return ol;
+            }
         }
         return (null);
     }
@@ -588,6 +614,10 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
         });
     }
 
+    public boolean moving() {
+        return getattr(Moving.class) != null;
+    }
+
     public void move(Coord2d c, double a) {
         Moving m = getattr(Moving.class);
         if (m != null)
@@ -602,7 +632,8 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
             final UI ui = glob.ui.get();
             if(discovered) {
                 if (getattr(HeldBy.class) == null &&
-                        (getattr(Holding.class) == null || ui == null || getattr(Holding.class).held.id != ui.gui.map.plgob)) {
+                        (getattr(Holding.class) == null || ui == null || getattr(Holding.class).held.id != ui.gui.map.plgob) &&
+                        !pathfinding_blackout) {
                     hitboxcoords = glob.gobhitmap.add(this);
                 }
             }
@@ -745,6 +776,15 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
         }
     }
 
+    /**
+     * For scripting API only
+     */
+    public Overlay[] overlays() {
+        synchronized (ols) {
+            return ols.toArray(new Overlay[0]);
+        }
+    }
+
     public int sdt() {
         ResDrawable dw = getattr(ResDrawable.class);
         if (dw != null)
@@ -760,12 +800,14 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 
         final Hidden hid = getattr(Hidden.class);
         if (hid == null) {
-            for (Overlay ol : ols)
-                rl.add(ol, null);
+            synchronized (ols) {
+                for (Overlay ol : ols)
+                    rl.add(ol, null);
 
-            for (Overlay ol : ols) {
-                if (ol.spr instanceof Overlay.SetupMod)
-                    ((Overlay.SetupMod) ol.spr).setupmain(rl);
+                for (Overlay ol : ols) {
+                    if (ol.spr instanceof Overlay.SetupMod)
+                        ((Overlay.SetupMod) ol.spr).setupmain(rl);
+                }
             }
 
             GobHealth hlt = getattr(GobHealth.class);
@@ -828,15 +870,17 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
                     break;
                 }
             }
-            for (Overlay ol : ols) {
-                Object os = ol.staticp();
-                if (os == Rendered.CONSTANS) {
-                } else if (os instanceof Static) {
-                } else if (os == SemiStatic.class) {
-                    rs = Math.max(rs, 1);
-                } else {
-                    rs = 2;
-                    break;
+            synchronized (ols) {
+                for (Overlay ol : ols) {
+                    Object os = ol.staticp();
+                    if (os == Rendered.CONSTANS) {
+                    } else if (os instanceof Static) {
+                    } else if (os == SemiStatic.class) {
+                        rs = Math.max(rs, 1);
+                    } else {
+                        rs = 2;
+                        break;
+                    }
                 }
             }
             if (getattr(KinInfo.class) != null) {
@@ -870,6 +914,10 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 
     public Optional<String> resname() {
         return res().map((res) -> res.name);
+    }
+
+    public String name() {
+        return resname().orElse("");
     }
 
     public Optional<Resource> res() {

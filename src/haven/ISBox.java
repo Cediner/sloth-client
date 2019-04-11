@@ -88,6 +88,14 @@ public class ISBox extends Widget implements DTarget {
             pack();
             parent.pack();
         }
+
+        ui.sess.details.attachISBox(this);
+    }
+
+    @Override
+    protected void removed() {
+        super.removed();
+        ui.sess.details.removeISBox(this);
     }
 
     public void draw(GOut g) {
@@ -117,25 +125,36 @@ public class ISBox extends Widget implements DTarget {
         }
     }
 
-    private void takeall() {
+    public String materialName() {
+        try {
+            if(res.get().layer(Resource.tooltip) != null)
+                return res.get().layer(Resource.tooltip).t;
+            else
+                return "";
+        } catch (Loading e) {
+            return "";
+        }
+    }
+
+    public void takeall() {
         for (int i = 0; i < total; ++i) {
             wdgmsg("xfer2", -1, 1);
         }
     }
 
-    private void addall() {
+    public void addall() {
         for (int i = 0; i < total; ++i) {
             wdgmsg("xfer2", 1, 1);
         }
     }
 
-    private void takesome(final int amt) {
+    public void takesome(final int amt) {
         for (int i = 0; i < amt; ++i) {
             wdgmsg("xfer2", -1, 1);
         }
     }
 
-    private void addsome(final int amt) {
+    public void addsome(final int amt) {
         for (int i = 0; i < amt; ++i) {
             wdgmsg("xfer2", 1, 1);
         }

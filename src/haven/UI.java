@@ -156,6 +156,9 @@ public class UI {
         }
     }
 
+    //ids go sequential, 2^16 limit judging by parent != 65535...
+    //At 65535 wrap back around? Can we break the game by hitting that limit.............
+    public int next_predicted_id = 2;
     public void newwidget(int id, String type, int parent, Object[] pargs, Object... cargs) throws InterruptedException {
         Widget.Factory f = Widget.gettype2(type);
         synchronized (this) {
@@ -169,6 +172,7 @@ public class UI {
             }
             bind(wdg, id);
         }
+        next_predicted_id = id + 1;
         logger.atFine().log("New Widget [id %s] [parent %d] [type %s] [args %s]", id, parent, type, Arrays.toString(cargs));
     }
 
@@ -252,6 +256,14 @@ public class UI {
                 destroy(wdg);
             }
         }
+    }
+
+    /**
+     * For scripting only
+     */
+    public void wdgmsg(final int id, final String msg, Object... args) {
+        if(rcvr != null)
+            rcvr.rcvmsg(id, msg, args);
     }
 
     public void wdgmsg(Widget sender, String msg, Object... args) {
@@ -409,5 +421,6 @@ public class UI {
 
     public void destroy() {
         audio.clear();
+        removeid(root);
     }
 }

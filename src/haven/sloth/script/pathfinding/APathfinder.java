@@ -142,9 +142,9 @@ public class APathfinder extends Pathfinder {
         return null;
     }
 
-    public ArrayList<Move> path(final Coord start, final Coord goal, final boolean allowbest) {
+    public ArrayList<Move> path(final Coord start, final Coord goal) {
         if (!DefSettings.DEBUG.get()) {
-            return advreduce(findpath(start, goal, allowbest, 0));
+            return advreduce(findpath(start, goal, true, 0));
         } else {
             debugpath(start, goal, 0);
             return null;

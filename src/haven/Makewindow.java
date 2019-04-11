@@ -271,7 +271,7 @@ public class Makewindow extends Widget {
             popt = opt;
         }
 
-        final List<Integer> mods = new ArrayList<>();
+        final List<Long> mods = new ArrayList<>();
         if (qmod != null) {
             g.image(qmodl.tex(), new Coord(0, qmy + 4));
             c = new Coord(xoff, qmy);
@@ -284,14 +284,14 @@ public class Makewindow extends Widget {
                         for (CharWnd.SAttr attr : ui.gui.chrwdg.skill) {
                             if (name.equals(attr.attr.nm)) {
                                 FastText.printf(g, c.add(0, t.sz().y + 2), "%d", attr.attr.comp);
-                                mods.add(attr.attr.comp);
+                                mods.add((long)attr.attr.comp);
                                 break;
                             }
                         }
                         for (CharWnd.Attr attr : ui.gui.chrwdg.base) {
                             if (name.equals(attr.attr.nm)) {
                                 FastText.printf(g, c.add(0, t.sz().y + 2), "%d", attr.attr.comp);
-                                mods.add(attr.attr.comp);
+                                mods.add((long)attr.attr.comp);
                                 break;
                             }
                         }

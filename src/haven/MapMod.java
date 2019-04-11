@@ -26,6 +26,8 @@
 
 package haven;
 
+import haven.sloth.script.Context;
+
 public class MapMod extends Window implements MapView.Grabber {
     public final static String fmt = "Selected: %d" + (char) (0xD7) + "%d";
     MapView mv;
@@ -58,6 +60,8 @@ public class MapMod extends Window implements MapView.Grabber {
             btn = add(new Button(40, "Change"), asz.add(-50, -30));
             tilenm = add(new TextEntry(50, ""), new Coord(0, 40));
             tilenm.canactivate = true;
+        } else {
+            btn = add(new Button(100, "Select Area"), cbox.c.add(0, cbox.sz.y));
         }
         this.fake = fake;
     }
@@ -152,6 +156,10 @@ public class MapMod extends Window implements MapView.Grabber {
         if (sender == btn) {
             if ((c1 != null) && (c2 != null) && !fake)
                 wdgmsg("mod", c1, c2);
+            else if(fake) {
+                Context.dispatchmsg(this, "bot-select", sc, ec);
+                ui.destroy(this);
+            }
             return;
         }
         if (sender == cbox) {

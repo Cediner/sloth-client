@@ -27,6 +27,7 @@
 package haven;
 
 import haven.sloth.gob.Mark;
+import haven.sloth.script.Context;
 
 import java.util.*;
 import java.awt.Color;
@@ -62,6 +63,12 @@ public class ChatUI extends Widget {
     private final LinkedList<Notification> notifs = new LinkedList<Notification>();
     private UI.Grab qgrab;
 
+    public Channel area;
+    public Channel party;
+    public Channel village;
+    public Channel realm;
+    private final List<Channel> privchats = new ArrayList<>();
+
     public ChatUI(int w, int h) {
         super(new Coord(w, h));
         chansel = add(new Selector(new Coord(selw, sz.y - marg.y)), marg);
@@ -73,6 +80,24 @@ public class ChatUI extends Widget {
 
     protected void added() {
         resize(this.sz);
+    }
+
+    public void addPrivChat(final Channel chan) {
+        synchronized (privchats) {
+            privchats.add(chan);
+        }
+    }
+
+    public void remPrivChat(final Channel chan) {
+        synchronized (privchats) {
+            privchats.remove(chan);
+        }
+    }
+
+    public Channel[] privchats() {
+        synchronized (privchats) {
+            return privchats.toArray(new Channel[0]);
+        }
     }
 
     public static class ChatAttribute extends Attribute {
@@ -663,7 +688,7 @@ public class ChatUI extends Widget {
         }
 
         public void uimsg(String msg, Object... args) {
-            if ((msg == "msg") || (msg == "log")) {
+            if ((msg.equals("msg")) || (msg.equals("log"))) {
                 String line = (String) args[0];
                 Color col = null;
                 if (args.length > 1) col = (Color) args[1];
@@ -680,6 +705,18 @@ public class ChatUI extends Widget {
 
         public String name() {
             return (name);
+        }
+    }
+
+    public static class BotChat extends SimpleChat {
+        public BotChat() {
+            super(false, "Bot");
+        }
+
+        @Override
+        public void send(String text) {
+            Context.dispatchmsg(this, "msg", text);
+            uimsg("msg", text);
         }
     }
 
@@ -737,6 +774,18 @@ public class ChatUI extends Widget {
             this.urgency = urgency;
         }
 
+        @Override
+        protected void added() {
+            super.added();
+            if(name.equals("Area Chat")) {
+                ui.gui.chat.area = this;
+            } else if(name.endsWith("(P)") && urgency == 0) {
+                ui.gui.chat.realm = this;
+            } else {
+                ui.gui.chat.village = this;
+            }
+        }
+
         private float colseq = 0;
 
         private Color nextcol() {
@@ -759,6 +808,10 @@ public class ChatUI extends Widget {
                 if (from == null) {
                     append(new MyMessage(line, iw()));
                 } else {
+                    BuddyWnd.Buddy b = getparent(GameUI.class).buddies.find(from);
+                    String nm = (b == null) ? "???" : (b.name);
+                    Context.dispatchmsg(this, "msg", nm, line);
+
                     Message cmsg = new NamedMessage(from, line, fromcolor(from), iw());
                     append(cmsg);
                     if (urgency > 0)
@@ -777,6 +830,12 @@ public class ChatUI extends Widget {
     public static class PartyChat extends MultiChat {
         public PartyChat() {
             super(false, "Party", 2);
+        }
+
+        @Override
+        protected void added() {
+            super.added();
+            ui.gui.chat.party = this;
         }
 
         public void uimsg(String msg, Object... args) {
@@ -823,6 +882,10 @@ public class ChatUI extends Widget {
                 if (from == null) {
                     append(new MyMessage(line, iw()));
                 } else {
+                    BuddyWnd.Buddy b = getparent(GameUI.class).buddies.find(from);
+                    String nm = (b == null) ? "???" : (b.name);
+                    Context.dispatchmsg(this, "msg", nm, line);
+
                     Message cmsg = new NamedMessage(from, line, Utils.blendcol(col, Color.WHITE, 0.5), iw());
                     append(cmsg);
                     if (urgency > 0)
@@ -859,6 +922,7 @@ public class ChatUI extends Widget {
                 String t = (String) args[0];
                 String line = (String) args[1];
                 if (t.equals("in")) {
+                    Context.dispatchmsg(this, "msg", line);
                     Message cmsg = new InMessage(line, iw());
                     append(cmsg);
                     notify(cmsg, 3);

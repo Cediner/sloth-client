@@ -75,9 +75,14 @@ public class Speedget extends MovableWidget {
     }
 
     @Override
+    protected void binded() {
+        ui.sess.details.attachSpeedget(this);
+    }
+
+    @Override
     protected void removed() {
-        super.removed();
         ui.gui.speed = null;
+        ui.sess.details.removeSpeedget();
     }
 
     public void draw(GOut g) {

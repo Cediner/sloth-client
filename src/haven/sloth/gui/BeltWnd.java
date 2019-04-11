@@ -32,7 +32,7 @@ public class BeltWnd extends MovableWidget {
         private boolean dragging = false;
         private UI.Grab dm = null;
         //tooltip
-        private BufferedImage tt;
+        private Tex tt;
 
         private BeltBtn(final IndirSetting<String> key) {
             super(Inventory.invsq.sz());
@@ -107,7 +107,7 @@ public class BeltWnd extends MovableWidget {
                 //cached tt
                 return tt;
             } else if (pag != null && pag.act() != null) {
-                tt = pag.button().rendertt(true);
+                tt = new TexI(pag.button().rendertt(true));
                 return tt;
             }
             return null; //no tt

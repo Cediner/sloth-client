@@ -13,7 +13,7 @@ import java.io.File;
 import java.util.*;
 import java.util.List;
 
-public class Pathfinder {
+public abstract class Pathfinder {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     static final Coord[][] dirs = new Coord[1][4];
     private static Hitbox plhb;
@@ -51,6 +51,8 @@ public class Pathfinder {
         hitfun = areWeBoating() ? this::hitOnBoat : this::hitOnLand;
         heuristic = this::manhattanDistance;
     }
+
+    public abstract List<Move> path(final Coord start, final Coord goal);
 
     //D and D2 can scale based off terrain/speed we can run, future something to look at maybe.
     private static final double D = 1;
@@ -140,7 +142,7 @@ public class Pathfinder {
     /**
      * Walks a path between two points to see if we'll hit anything
      */
-    final protected boolean walk(final Coord start, final Coord end) {
+    final public boolean walk(final Coord start, final Coord end) {
         if (end.x - start.x != 0) {
             final double slope = (double) (end.y - start.y) / (double) (end.x - start.x);
             final double b = -(slope * start.x) + start.y;

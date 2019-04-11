@@ -45,6 +45,7 @@ import haven.sloth.DefSettings;
 import haven.sloth.gob.*;
 import haven.sloth.gui.SoundSelector;
 import haven.sloth.io.HighlightData;
+import haven.sloth.script.Context;
 import haven.sloth.script.pathfinding.Move;
 import haven.sloth.script.pathfinding.NBAPathfinder;
 
@@ -75,7 +76,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
     //Queued movement
     private Coord2d movingto;
     private Coord2d lastrc;
-    private double mspeed;
+    private double mspeed, totaldist = 0, mspeedavg, totaldt = 0;
     private long lastMove = System.currentTimeMillis();
     private Queue<Coord2d> movequeue = new ArrayDeque<>();
 
@@ -1584,25 +1585,47 @@ public class MapView extends PView implements DTarget, Console.Directory {
         }
     }
 
+
+    private void updateSpeed(final double dt) {
+        final Gob pl = ui.sess.glob.oc.getgob(plgob);
+        if (pl != null) {
+            final Coord2d plc = new Coord2d(pl.getc());
+            if (lastrc != null) {
+                totaldist += plc.dist(lastrc);
+                totaldt += dt;
+                if(totaldt >= 1) {
+                    mspeedavg = totaldist/totaldt;
+                    totaldt = 0;
+                    totaldist = 0;
+                }
+                mspeed = plc.dist(lastrc) / dt;
+            } else {
+                mspeedavg = 0;
+                totaldist = 0;
+                totaldt = 0;
+                mspeed = 0;
+            }
+            lastrc = plc;
+        }
+    }
+
+    public double speed() {
+        return mspeedavg;
+    }
+
     /**
      * 1) If you made it to your destination within a reasonable limit
      * a) Exactly on target destination
      * b) Not moving anymore and within 5 units of it
      * c) Predictive model said it was okay
      */
-    private boolean triggermove(final double dt) {
+    private boolean triggermove() {
         final Gob pl = ui.sess.glob.oc.getgob(plgob);
         if (pl != null) {
             if (movingto != null && pl.getattr(Moving.class) != null) {
                 final Coord2d plc = new Coord2d(pl.getc());
-                if (lastrc != null) {
-                    mspeed = plc.dist(lastrc) / dt;
-                } else {
-                    mspeed = 0;
-                }
                 final double left = plc.dist(movingto) / mspeed;
                 //Only predictive models can trigger here
-                lastrc = plc;
                 return movingto.dist(pl.rc) <= 5 || left == 0;
             } else if (movingto == null || movingto.dist(pl.rc) <= 5) {
                 return true;
@@ -1616,6 +1639,14 @@ public class MapView extends PView implements DTarget, Console.Directory {
         }
     }
 
+    /**
+     * For Scripting API
+     */
+    @SuppressWarnings("unused")
+    public boolean hasmoves() {
+        return movequeue.size() > 0 || movingto != null;
+    }
+
     private void clearmovequeue() {
         movequeue.clear();
         movingto = null;
@@ -1626,9 +1657,55 @@ public class MapView extends PView implements DTarget, Console.Directory {
         movequeue.add(c);
     }
 
+    public boolean los(final Coord2d c) {
+        final NBAPathfinder finder = new NBAPathfinder(ui);
+        return finder.walk(new Coord(ui.sess.glob.oc.getgob(plgob).getc()), c.floor());
+    }
+
+    public void los(final Gob g) {
+
+    }
+
+    public Move[] findpath(final Coord2d c) {
+        final NBAPathfinder finder = new NBAPathfinder(ui);
+        final List<Move> moves = finder.path(new Coord(ui.sess.glob.oc.getgob(plgob).getc()), c.floor());
+        return moves != null ? moves.toArray(new Move[0]) : null;
+    }
+
+    public Move[] findpath(final Gob g) {
+        g.updatePathfindingBlackout(true);
+        final Move[] moves = findpath(new Coord2d(g.getc()));
+        g.updatePathfindingBlackout(false);
+        return moves;
+    }
+
+    public void pathto(final Coord2d c) {
+        final Move[] moves = findpath(c);
+        if(moves != null) {
+            clearmovequeue();
+            for(final Move m : moves) {
+                queuemove(m.dest());
+            }
+        }
+    }
+
+    public void pathto(final Gob g) {
+        g.updatePathfindingBlackout(true);
+        pathto(new Coord2d(g.getc()));
+        g.updatePathfindingBlackout(false);
+    }
+
     public void moveto(final Coord2d c) {
         clearmovequeue();
         wdgmsg("click", new Coord(1, 1), c.floor(posres), 1, 0);
+    }
+
+    public void relMove(final Coord2d c) {
+        final Gob g = ui.sess.glob.oc.getgob(plgob);
+        if(g != null) {
+            final Coord gc = new Coord2d(g.getc()).add(c).floor(posres);
+            wdgmsg("click", new Coord(1, 1), gc, 1, 0);
+        }
     }
 
     public Coord2d movingto() {
@@ -1651,9 +1728,10 @@ public class MapView extends PView implements DTarget, Console.Directory {
         } catch (Loading e) {
             camload = e;
         }
+        updateSpeed(dt);
         if (placing != null)
             placing.ctick((int) (dt * 1000));
-        if (movequeue.size() > 0 && (System.currentTimeMillis() - lastMove > 500) && triggermove(dt)) {
+        if (movequeue.size() > 0 && (System.currentTimeMillis() - lastMove > 500) && triggermove()) {
             movingto = movequeue.poll();
             ui.gui.pointer.update(movingto);
             wdgmsg("click", new Coord(1, 1), movingto.floor(posres), 1, 0);
@@ -1759,6 +1837,10 @@ public class MapView extends PView implements DTarget, Console.Directory {
         }
         olflash = 0;
         olftimer = 0;
+    }
+
+    public Plob placing() {
+        return placing;
     }
 
     public void uimsg(String msg, Object... args) {
@@ -1913,6 +1995,12 @@ public class MapView extends PView implements DTarget, Console.Directory {
         public Object[] clickargs(ClickInfo inf);
     }
 
+    //[ 0, id, rc.floor(posres), 0 ,-1 ]
+    //  ^-- Contains overlay     ^   ^
+    //                           |   |- FastMesh Res ID
+    //                           |
+    //                           +-- Overlay id
+
     public static Object[] gobclickargs(ClickInfo inf) {
         if (inf == null)
             return (new Object[0]);
@@ -2062,16 +2150,10 @@ public class MapView extends PView implements DTarget, Console.Directory {
                         }
                         break;
                         case 1: {
-                            if (DEBUG.get())
-                                glob.gobhitmap.debug();
-                            final NBAPathfinder finder = new NBAPathfinder(ui);
-                            final List<Move> moves = finder.path(new Coord(ui.sess.glob.oc.getgob(plgob).getc()), mc.floor());
-                            if (moves != null) {
-                                clearmovequeue();
-                                for (Move m : moves) {
-                                    queuemove(m.dest());
-                                }
-                            }
+                            //if (DEBUG.get())
+                            //    glob.gobhitmap.debug();
+                            //pathto(mc);
+                            Context.launch("eat-all-food", ui.sess.details);
                         }
                         break;
                     }
@@ -2091,7 +2173,15 @@ public class MapView extends PView implements DTarget, Console.Directory {
             } else {
                 final Object[] gobargs = gobclickargs(inf);
                 Object[] args = {pc, mc.floor(posres), clickb, ui.modflags()};
-                if (clickb == 1 && ui.modmeta) {
+                if( (clickb == 1 || clickb == 3) && ui.modctrl && ui.modmeta && ui.modshift) {
+                    if(gobargs.length > 0) {
+                        final Gob g = ui.sess.glob.oc.getgob((int)gobargs[1]);
+                        if(g != null)
+                            pathto(g);
+                    } else {
+                        pathto(mc);
+                    }
+                } else if (clickb == 1 && ui.modmeta) {
                     //Queued movement
                     movequeue.add(mc);
                 } else {

@@ -1,5 +1,6 @@
 package haven.sloth.util;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -37,6 +38,10 @@ public class ObservableMap<K, V> {
     public void addListener(final ObservableMapListener<K, V> listener) {
         listeners.add(listener);
         listener.init(base);
+    }
+
+    public Collection<V> values() {
+        return base.values();
     }
 
     public void removeListener(final ObservableMapListener<K, V> listener) {

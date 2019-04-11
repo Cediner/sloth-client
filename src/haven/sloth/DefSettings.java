@@ -7,6 +7,7 @@ import haven.sloth.io.HighlightData;
 import haven.sloth.io.ItemData;
 import haven.sloth.io.MapData;
 import haven.sloth.io.Storage;
+import haven.sloth.script.Script;
 
 import java.awt.*;
 import java.io.File;
@@ -290,6 +291,7 @@ public class DefSettings {
         SHOWGRID.ensure(false);
 
         //Piggy backing off this to init some other important settings
+        Script.reloadConfig();
         final Optional<Storage> optint = Storage.create("jdbc:sqlite:data/static.sqlite");
         if (optint.isPresent()) {
             Movable.init(optint.get());

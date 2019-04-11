@@ -30,8 +30,13 @@ import haven.sloth.gui.MovableWidget;
 
 import java.awt.Color;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class IMeter extends MovableWidget {
+    private static final Pattern hppat = Pattern.compile("Health: ([0-9]+)/([0-9]+)/([0-9]+)");
+    private static final Pattern stampat = Pattern.compile("Stamina: ([0-9]+)");
+    private static final Pattern energypat = Pattern.compile("Energy: ([0-9]+)");
     static Coord off = new Coord(22, 7);
     static Coord fsz = new Coord(101, 24);
     static Coord msz = new Coord(75, 10);
@@ -42,8 +47,7 @@ public class IMeter extends MovableWidget {
     public static class $_ implements Factory {
         public Widget create(UI ui, Object[] args) {
             Indir<Resource> bg = ui.sess.getres((Integer) args[0]);
-            List<Meter> meters = new LinkedList<Meter>();
-            StringBuilder name = new StringBuilder();
+            List<Meter> meters = new LinkedList<>();
             for (int i = 1; i < args.length; i += 2) {
                 meters.add(new Meter((Color) args[i], (Integer) args[i + 1]));
             }
@@ -51,7 +55,7 @@ public class IMeter extends MovableWidget {
         }
     }
 
-    public IMeter(Indir<Resource> bg, List<Meter> meters, final String name) {
+    private IMeter(Indir<Resource> bg, List<Meter> meters, final String name) {
         super(fsz, name);
         this.bg = bg;
         this.meters = meters;
@@ -87,17 +91,37 @@ public class IMeter extends MovableWidget {
             g.chcolor();
             g.image(bg, Coord.z);
         } catch (Loading l) {
+            //Ignore
         }
     }
 
     public void uimsg(String msg, Object... args) {
-        if (msg == "set") {
-            List<Meter> meters = new LinkedList<Meter>();
+        if (msg.equals("set")) {
+            List<Meter> meters = new LinkedList<>();
             for (int i = 0; i < args.length; i += 2)
                 meters.add(new Meter((Color) args[i], (Integer) args[i + 1]));
             this.meters = meters;
         } else {
             super.uimsg(msg, args);
+            if(msg.equals("tip")) {
+                final String tt = (String)args[0];
+                Matcher matcher = hppat.matcher(tt);
+                if(matcher.find()) {
+                    ui.sess.details.shp = Integer.parseInt(matcher.group(1));
+                    ui.sess.details.hhp = Integer.parseInt(matcher.group(2));
+                    ui.sess.details.mhp = Integer.parseInt(matcher.group(3));
+                } else {
+                    matcher = stampat.matcher(tt);
+                    if(matcher.find()) {
+                        ui.sess.details.stam = Integer.parseInt(matcher.group(1));
+                    } else {
+                        matcher = energypat.matcher(tt);
+                        if(matcher.find()) {
+                            ui.sess.details.energy = Integer.parseInt(matcher.group(1));
+                        }
+                    }
+                }
+            }
         }
     }
 }

@@ -52,6 +52,7 @@ public class WItem extends Widget implements DTarget {
     public WItem(GItem item) {
         super(sqsz);
         this.item = item;
+        this.item.setWItem(this);
     }
 
     public boolean locked() {
@@ -193,6 +194,10 @@ public class WItem extends Widget implements DTarget {
             resize(sz);
             lspr = spr;
         }
+    }
+
+    public int size() {
+        return sz.div(sqsz).area();
     }
 
     private static final Color[] wearclr = new Color[]{
