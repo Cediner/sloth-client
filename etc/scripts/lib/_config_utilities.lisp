@@ -100,5 +100,37 @@
         t)
       nil))
 
+(defun get-bbox (msg)
+  (msg-listen)
+  (chat-send-message (bot-chat) msg)
+  (bbox-trigger)
+  (let ((bbox nil))
+    (loop
+       until bbox
+       do (progn
+            (sleep 1)
+           (when (msg-has-message)
+             (let ((msg (msg-poll-message)))
+               (when (string= "bot-select" (msg-subject msg))
+                 (setf bbox (bbox-make (aref (msg-args msg) 0)
+                                       (aref (msg-args msg) 1))))))))
+    (msg-stop-listening)
+    (msg-clear-messages)
+    bbox))
+
+(defun check-for-movement (gob &key (wait-for 5))
+  (let ((start-c (gob-rc gob)))
+    (sleep wait-for)
+    (if (coord2d-eq (gob-rc gob) start-c)
+        nil
+        t)))
+
+(defun backoff-randomly ()
+  (mv-move-to-rel (coord2d (+ (random 11) 3)
+                           (+ (random 11) 3))))
+
 (export '(check-stam-and-drink drink-water refill-water-from-hand refill-water-from-inventory
-          check-for-starving))
+          check-for-starving
+          check-for-movement
+          backoff-randomly
+          get-bbox))

@@ -99,4 +99,4 @@
     coords))
              
 
-(export '(bbox-trigger bbox-make bbox-ec bbox-within bbox-gobs bbox-tiles bbox-coords bbox-dots))
+(export '(bbox-trigger bbox-make bbox-ul bbox-sz bbox-ec bbox-within bbox-gobs bbox-tiles bbox-coords bbox-dots))

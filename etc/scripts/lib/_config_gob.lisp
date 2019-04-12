@@ -22,6 +22,7 @@
 ;;cavein_dust
 (java-field gob-id "id")
 (java-field gob-rc "rc")
+(java-field gob-type "type")
 
 ;;type -> Gob Types
 (defmacro is-gob-a (gob type)
@@ -85,7 +86,7 @@
   `(gob-get-closest-by-filter (lambda (gob) (string= ,name (gob-name gob)))))
 
 (export '(+plant+ +human+ +animal+ +tamed-animal+ +small-animal+ +water-vehicle+ +vehicle+
-          gob-c gob-name gob-overlays gob-sdt is-gob-dead
+          gob-c gob-name gob-type gob-overlays gob-sdt is-gob-dead
           gob-id gob-rc
           is-gob-a my-gob
           is-gob-moving

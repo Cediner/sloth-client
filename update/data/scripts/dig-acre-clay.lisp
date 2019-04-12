@@ -9,24 +9,6 @@
 (defconstant +max-diff+ 9)
 (defconstant +clay+ 167)
 
-(defun get-bbox ()
-  (msg-listen)
-  (chat-send-message (bot-chat) "Select area to dig")
-  (bbox-trigger)
-  (let ((bbox nil))
-    (loop
-       until bbox
-       do (progn
-            (sleep 1)
-           (when (msg-has-message)
-             (let ((msg (msg-poll-message)))
-               (when (string= "bot-select" (msg-subject msg))
-                 (setf bbox (bbox-make (aref (msg-args msg) 0)
-                                       (aref (msg-args msg) 1))))))))
-    (msg-stop-listening)
-    (msg-clear-messages)
-    bbox))
-
 (defconstant +coords+ (list (coord (* (east) +tilesz+) 0)
                             (coord (* (west) +tilesz+) 0)
                             (coord 0 (* (north) +tilesz+))
@@ -100,5 +82,5 @@
             (dig-tile next)))))
 
 (script
- (let ((box (get-bbox)))
+ (let ((box (get-bbox "Select an area to dig")))
    (dig-area box)))

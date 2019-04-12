@@ -6,6 +6,9 @@
     - Bot chat channel is back, if there's a prompt or event it has to wait on the user it'll be in here
     - Tooltips for custom menu icons on your hotbars will now display properly
     - Updated omni's sounds to the latest
+    - Bulk farming bot (farm-area), stockpile bot to go with it for flax fibres, the quick-action bot is back, probably
+    needs improvements but it should do most of what it did in old hafen. script just for drinking water from any inventory
+    as well (drink-water); other improvements to the clay diggers
 
 4/9/19
     - Can now use pathfinding by ctrl+shift+alt clicking a tile or object. I'll improve it overtime for the few

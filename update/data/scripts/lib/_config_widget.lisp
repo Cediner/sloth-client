@@ -15,6 +15,7 @@
 
 (java-field widget-parent "parent")
 (java-field widget-c "c")
+(java-func +widget+ widget-id "wdgid")
 (java-func +widget+ widget-add "add" +widget+ +coord+)
 
 (java-field ui-next-id-1 "next_predicted_id")
@@ -25,5 +26,5 @@
   (ui-force-wdgmsg-1 (ui) id msg (jnew-array-from-list "java.lang.Object" args)))
 
 (export '(wdgmsg
-          widget-add widget-c widget-parent
+          widget-add widget-c widget-id widget-parent
           ui-next-id ui-force-wdgmsg))

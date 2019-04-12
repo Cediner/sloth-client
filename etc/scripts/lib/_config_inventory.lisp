@@ -31,10 +31,13 @@
   `(- (inventory-size ,inv) (inventory-used-slots ,inv)))
 
 (defmacro inventory-full (inv)
-  `(zerop (- (invetory-size ,inv) (invetory-used-slots ,inv))))
+  `(zerop (- (inventory-size ,inv) (inventory-used-slots ,inv))))
 
 (defmacro inventory-place-item (inv position)
   `(wdgmsg ,inv "drop" ,position))
+
+(defmacro inventory-transfer-items (inv-from inv-to amount)
+  `(wdgmsg "invxf" ,inv-from (widget-id ,inv-to) ,amount))
 
 (defun inventory-get-item-by-name (inv name)
   (doarr (itm (inventory-items inv))
@@ -85,6 +88,7 @@
           inventory-count inventory inventories
           inventory-name inventory-items inventory-size inventory-used-slots inventory-can-drop-at inventory-item-at
           inventory-free-slots inventory-full inventory-place-item
+          inventory-transfer-items
           inventory-get-item-by-name inventory-get-items-by-name inventory-get-items-by-filter
           inventory-drop-all-items-by-name inventory-drop-all-items-alike
           inventories-drop-all-items-by-name inventories-drop-all-items-alike inventories-get-items-by-filter))
