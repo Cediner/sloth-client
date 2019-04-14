@@ -1,10 +1,17 @@
 package haven.sloth.script;
 
 import com.google.common.flogger.FluentLogger;
+import haven.Coord;
 import haven.UI;
 import haven.Widget;
+import haven.sloth.io.GridData;
 import org.armedbear.lisp.Interpreter;
 import org.armedbear.lisp.Load;
+import org.javacord.api.DiscordApi;
+import org.javacord.api.DiscordApiBuilder;
+import org.javacord.api.entity.Mentionable;
+import org.javacord.api.entity.channel.Channel;
+import org.javacord.api.entity.message.MessageBuilder;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -73,6 +80,17 @@ public class Script extends Thread {
         this.intp = false;
     }
 
+    /* Discord **********************************************************************************/
+    public void sendDiscordMessage(final String token, final String channel, final String msg) {
+        DiscordApi api = new DiscordApiBuilder().setToken(token).login().join();
+        api.getTextChannelsByName(channel).forEach(chan -> chan.sendMessage(msg));
+        api.disconnect();
+    }
+
+    public Coord resolvePosition(final long gridid) {
+        return GridData.resolve(gridid);
+    }
+    /* ******************************************************************************************/
 
     /* Messaging system *************************************************************************/
     public void listen() {

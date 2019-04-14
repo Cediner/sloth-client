@@ -37,7 +37,7 @@
   `(wdgmsg ,inv "drop" ,position))
 
 (defmacro inventory-transfer-items (inv-from inv-to amount)
-  `(wdgmsg "invxf" ,inv-from (widget-id ,inv-to) ,amount))
+  `(wdgmsg ,inv-from "invxf" (widget-id ,inv-to) ,amount))
 
 (defun inventory-get-item-by-name (inv name)
   (doarr (itm (inventory-items inv))

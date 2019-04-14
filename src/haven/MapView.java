@@ -2062,7 +2062,10 @@ public class MapView extends PView implements DTarget, Console.Directory {
                                 }
                             }
                             break;
-                        case 1: //Highlight for yourself
+                        case 1: //Mark for script
+                            Context.dispatchmsg(MapView.this, "click-gob", g);
+                            break;
+                        case 2: //Highlight for yourself
                             if (!HighlightData.isHighlighted(name)) {
                                 HighlightData.add(name);
                                 ui.sess.glob.oc.highlightGobs(name);
@@ -2071,7 +2074,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
                                 ui.sess.glob.oc.unhighlightGobs(name);
                             }
                             break;
-                        case 2: //Toggle hide
+                        case 3: //Toggle hide
                             if (Hidden.isHidden(name)) {
                                 Hidden.remove(name);
                                 ui.sess.glob.oc.unhideAll(name);
@@ -2080,23 +2083,24 @@ public class MapView extends PView implements DTarget, Console.Directory {
                                 ui.sess.glob.oc.hideAll(name);
                             }
                             break;
-                        case 3: //Toggle Sound
+                        case 4: //Toggle Sound
                             if (Alerted.shouldAlert(name)) {
                                 Alerted.remove(name);
                             } else {
                                 ui.gui.add(new SoundSelector(name), ui.mc);
                             }
                             break;
-                        case 4: //Delete all gobs like this one
+                        case 5: //Delete all gobs like this one
                             Deleted.add(name);
                             ui.sess.glob.oc.removeAll(name);
                             break;
-                        case 5: //Delete this specific gob
+                        case 6: //Delete this specific gob
                             g.dispose();
                             ui.sess.glob.oc.remove(g.id);
                             break;
                     }
                 }, "Mark for party",
+                        "Mark for script",
                         !HighlightData.isHighlighted(name) ? "Highlight" : "Remove Highlight",
                         Hidden.isHidden(name) ? "Unhide" : "Hide",
                         Alerted.shouldAlert(name) ? "Remove Sound" : "Add Sound",
@@ -2109,56 +2113,27 @@ public class MapView extends PView implements DTarget, Console.Directory {
 
         private void showSpecialMenu(final Coord2d mc) {
             final FlowerMenu modmenu = new FlowerMenu((selection) -> {
-                if (selection >= 2 && selection <= 4) {
-                    final Gob g = ui.sess.glob.oc.getgob(next--, 0);
-                    ui.sess.glob.oc.move(g, mc, Math.toRadians(130));
-                    ui.sess.glob.oc.composite(g, Resource.remote().load("gfx/kritter/fox/fox"));
-                    final List<ResData> data = new ArrayList<>();
-                    data.add(new ResData(Resource.remote().load("gfx/kritter/fox/fox"), Message.nil));
-                    final List<Composited.MD> mds = new ArrayList<>();
-                    mds.add(new Composited.MD(Resource.remote().load("gfx/kritter/fox/fox"), data));
-                    ui.sess.glob.oc.cmpmod(g, mds);
-                    final List<ResData> pose = new ArrayList<>();
-                    switch (selection) {
-                        case 1:
-                            pose.add(new ResData(Resource.remote().load("gfx/kritter/fox/knock"), Message.nil));
-                            break;
-                        case 2:
-                            pose.add(new ResData(Resource.remote().load("gfx/kritter/fox/knock"), Message.nil));
-                            break;
-                        case 3:
-                            pose.add(new ResData(Resource.remote().load("gfx/kritter/fox/knock"), Message.nil));
-                            break;
-                    }
-                    ui.sess.glob.oc.cmppose(g, 11, pose, null, false, 0);
-                } else {
-                    switch (selection) {
-                        case 0: { //Mark for party
-                            //Translate to Grid + Gird Offset
-                            final Coord tc = mc.floor(tilesz);
-                            final Coord2d tcd = mc.div(tilesz);
+                switch (selection) {
+                    case 0: { //Mark for party
+                        //Translate to Grid + Gird Offset
+                        final Coord tc = mc.floor(tilesz);
+                        final Coord2d tcd = mc.div(tilesz);
 
-                            ui.sess.glob.map.getgridto(tc).ifPresent(grid -> {
-                                final Coord2d offset = tcd.sub(new Coord2d(grid.ul));
-                                for (Widget wdg = ui.gui.chat.lchild; wdg != null; wdg = wdg.prev) {
-                                    if (wdg instanceof ChatUI.PartyChat) {
-                                        final ChatUI.PartyChat chat = (ChatUI.PartyChat) wdg;
-                                        chat.send(String.format(Mark.CHAT_TILE_FMT, grid.id, offset.x, offset.y));
-                                    }
+                        ui.sess.glob.map.getgridto(tc).ifPresent(grid -> {
+                            final Coord2d offset = tcd.sub(new Coord2d(grid.ul));
+                            for (Widget wdg = ui.gui.chat.lchild; wdg != null; wdg = wdg.prev) {
+                                if (wdg instanceof ChatUI.PartyChat) {
+                                    final ChatUI.PartyChat chat = (ChatUI.PartyChat) wdg;
+                                    chat.send(String.format(Mark.CHAT_TILE_FMT, grid.id, offset.x, offset.y));
                                 }
-                            });
-                        }
-                        break;
-                        case 1: {
-                            //if (DEBUG.get())
-                            //    glob.gobhitmap.debug();
-                            //pathto(mc);
-                            Context.launch("eat-all-food", ui.sess.details);
-                        }
-                        break;
-                    }
+                            }
+                        });
+                    } break;
+                    case 1: {
+                        Context.dispatchmsg(MapView.this, "click-tile", mc);
+                    } break;
                 }
-            }, "Mark for party", "Test", "Add Whale (KO'd)", "Add Whale (Dead)", "Add Whale (Swimming)");
+            }, "Mark for party", "Mark for script");
             ui.gui.add(modmenu, ui.mc);
         }
 

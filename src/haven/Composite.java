@@ -45,6 +45,7 @@ public class Composite extends Drawable {
     private WrapMode tpmode;
     public int pseq;
     public List<MD> nmod;
+    public List<MD> lastnmod;
     private List<ED> nequ;
     public List<ED> lastnequ;
 
@@ -93,6 +94,7 @@ public class Composite extends Drawable {
         retainequ = false;
         if (nmod != null) {
             comp.chmod(nmod);
+            lastnmod = nmod;
             nmod = null;
         }
         if (nequ != null) {

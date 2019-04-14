@@ -488,9 +488,13 @@ public class OCache implements Iterable<Gob> {
     }
 
     public synchronized void cmpmod(Gob g, List<Composited.MD> mod) {
-        Composite cmp = (Composite) g.getattr(Drawable.class);
-        cmp.chmod(mod);
-        changed(g);
+        if(g != null) {
+            Composite cmp = (Composite) g.getattr(Drawable.class);
+            if(cmp != null) {
+                cmp.chmod(mod);
+                changed(g);
+            }
+        }
     }
 
     public void cmpmod(Gob gob, Message msg) {

@@ -1,171 +1,205 @@
 <?xml version="1.0" ?>
 
 <project name="hafen" default="deftgt">
-  <target name="build-env">
-    <mkdir dir="build" />
-    <mkdir dir="build/classes" />
-    <mkdir dir="build/data"/>
-    <copy todir="build/data/">
-      <fileset dir="etc/data/" includes="**"/>
-    </copy>
-    <copy todir="build/data/res/">
-      <fileset dir="etc/res/built/" includes="**"/>
-    </copy>
-    <copy todir="build/data/scripts/">
-      <fileset dir="etc/scripts/" includes="**"/>
-    </copy>
-    <available property="has-res-jar" file="build/hafen-res.jar" />
-    <available property="has-buildinfo" file="build/classes/buildinfo" />
-    <available property="unpacked-lib" file="build/classes-lib" />
-  </target>
-  
-  <target name="buildinfo" depends="build-env" unless="has-buildinfo">
-    <exec executable="git" outputproperty="gitrev" failifexecutionfails="false">
-      <arg line="rev-parse HEAD" />
-    </exec>
-    <echo file="build/classes/buildinfo">
-      git-rev = ${gitrev}
-    </echo>
-  </target>
+    <target name="build-env">
+        <mkdir dir="build"/>
+        <mkdir dir="build/classes"/>
+        <mkdir dir="build/data"/>
+        <copy todir="build/data/">
+            <fileset dir="etc/data/" includes="**"/>
+        </copy>
+        <copy todir="build/data/res/">
+            <fileset dir="etc/res/built/" includes="**"/>
+        </copy>
+        <copy todir="build/data/scripts/">
+            <fileset dir="etc/scripts/" includes="**"/>
+        </copy>
+        <available property="has-res-jar" file="build/hafen-res.jar"/>
+        <available property="has-buildinfo" file="build/classes/buildinfo"/>
+        <available property="unpacked-lib" file="build/classes-lib"/>
+    </target>
 
-  <target name="hafen-client" depends="build-env">
-    <javac srcdir="src" destdir="build/classes" debug="on"
-	   source="1.8" target="1.8" includeantruntime="no">
-      <classpath>
-	<pathelement path="lib/jogl-all.jar" />
-	<pathelement path="lib/gluegen-rt.jar" />
-	<pathelement path="lib/jnlp.jar" />
-	<pathelement path="lib/jglob.jar" />
-        <pathelement path="lib/flogger-0.3.1.jar" />
-        <pathelement path="lib/bcprov-jdk15on-160.jar"/>
-        <pathelement path="lib/abcl.jar"/>
-        <pathelement path="lib/abcl-contrib.jar"/>
-      </classpath>
-      <compilerarg value="-Xlint:unchecked" />
-      <compilerarg value="-Xlint:-options" />
-    </javac>
-    <copy todir="build/classes">
-      <fileset dir="src" excludes="**/*.java" />
-    </copy>
-    <copy todir="build/classes/haven" file="etc/ressrv.crt" />
-    <copy todir="build/classes/haven" file="etc/authsrv.crt" />
-    <copy todir="build/classes/haven" file="etc/res-preload" />
-    <copy todir="build/classes/haven" file="etc/res-bgload" />
-    <copy todir="build/classes/haven" file="etc/icon.png" />
-  </target>
-  
-  <target name="appletview" depends="build-env">
-    <copy file="etc/applet.html" todir="build" />
-  </target>
+    <target name="buildinfo" depends="build-env" unless="has-buildinfo">
+        <exec executable="git" outputproperty="gitrev" failifexecutionfails="false">
+            <arg line="rev-parse HEAD"/>
+        </exec>
+        <echo file="build/classes/buildinfo">
+            git-rev = ${gitrev}
+        </echo>
+    </target>
 
-  <target name="lib-classes" depends="build-env" unless="unpacked-lib">
-    <mkdir dir="build/classes-lib" />
-    <unjar src="lib/jglob.jar" dest="build/classes-lib">
-      <patternset excludes="META-INF/**" />
-    </unjar>
-  </target>
+    <target name="hafen-client" depends="build-env">
+        <javac srcdir="src" destdir="build/classes" debug="on"
+               source="1.8" target="1.8" includeantruntime="no">
+            <classpath>
+                <pathelement path="lib/jogl-all.jar"/>
+                <pathelement path="lib/gluegen-rt.jar"/>
+                <pathelement path="lib/jnlp.jar"/>
+                <pathelement path="lib/jglob.jar"/>
+                <pathelement path="lib/flogger-0.3.1.jar"/>
+                <pathelement path="lib/bcprov-jdk15on-160.jar"/>
+                <pathelement path="lib/abcl.jar"/>
+                <pathelement path="lib/abcl-contrib.jar"/>
 
-  <target name="jar" depends="hafen-client,buildinfo,lib-classes">
-    <jar destfile="build/hafen.jar" update="true">
-      <fileset dir="build/classes" />
-      <fileset dir="build/classes-lib" />
-      <manifest>
-	<attribute name="Main-Class" value="haven.MainFrame" />
-	<attribute name="Class-Path" value="jogl-all.jar gluegen-rt.jar builtin-res.jar hafen-res.jar flogger-0.3.1.jar flogger-system-backend-0.3.1.jar sqlite-jdbc-3.26.0.jar bcprov-jdk15on-160.jar abcl.jar abcl-contrib.jar" />
-      </manifest>
-    </jar>
-    <chmod file="build/hafen.jar" perm="a+x" />
-  </target>
-  
-  <target name="res-jar" depends="build-env" unless="has-res-jar">
-    <get src="http://www.havenandhearth.com/java/builtin-res.jar" dest="lib/builtin-res.jar"
-	 usetimestamp="true" />
-    <get src="http://www.havenandhearth.com/java/hafen-res.jar" dest="lib/hafen-res.jar"
-	 usetimestamp="true" />
-    <available property="lib-res-jar" file="lib/hafen-res.jar" />
-    <fail unless="lib-res-jar" message="hafen-res.jar not available" />
-    <available property="lib-builtin-jar" file="lib/builtin-res.jar" />
-    <fail unless="lib-builtin-jar" message="builtin-res.jar not available" />
-  </target>
-  
-  <target name="jars" depends="build-env, jar, res-jar">
-    <copy todir="build">
-      <fileset dir="lib">
-	<include name="jogl-all.jar" />
-	<include name="gluegen-rt.jar" />
-	<include name="hafen-res.jar" />
-	<include name="builtin-res.jar" />
-        <include name="flogger-0.3.1.jar" />
-        <include name="flogger-system-backend-0.3.1.jar" />
-        <include name="sqlite-jdbc-3.26.0.jar"/>
-        <include name="bcprov-jdk15on-160.jar"/>
-        <include name="abcl.jar"/>
-        <include name="abcl-contrib.jar"/>
-      </fileset>
-      <fileset dir="lib/jogl-natives" />
-    </copy>
-  </target>
+                <pathelement path="lib/jackson-annotations-2.9.0.jar"/>
+                <pathelement path="lib/jackson-core-2.9.3.jar"/>
+                <pathelement path="lib/jackson-databind-2.9.3.jar"/>
+                <pathelement path="lib/log4j-api-2.11.0.jar"/>
+                <pathelement path="lib/logging-interceptor-3.9.1.jar"/>
+                <pathelement path="lib/nv-websocket-client-2.6.jar"/>
+                <pathelement path="lib/okhttp-3.9.1.jar"/>
+                <pathelement path="lib/okio-1.13.0.jar"/>
+                <pathelement path="lib/javacord-api-3.0.4.jar"/>
+                <pathelement path="lib/javacord-core-3.0.4.jar"/>
+            </classpath>
+            <compilerarg value="-Xlint:unchecked"/>
+            <compilerarg value="-Xlint:-options"/>
+        </javac>
+        <copy todir="build/classes">
+            <fileset dir="src" excludes="**/*.java"/>
+        </copy>
+        <copy todir="build/classes/haven" file="etc/ressrv.crt"/>
+        <copy todir="build/classes/haven" file="etc/authsrv.crt"/>
+        <copy todir="build/classes/haven" file="etc/res-preload"/>
+        <copy todir="build/classes/haven" file="etc/res-bgload"/>
+        <copy todir="build/classes/haven" file="etc/icon.png"/>
+    </target>
 
-  <target name="build-custom-res">
-    <delete dir="etc/res/built/" includes="**"/>
-    <exec executable="etc/res/hafen-layer-util.exe">
-      <arg value="ENCODE"/>
-      <arg value="etc/res/unbuilt/"/>
-      <arg value="etc/res/built/"/>
-      <arg value="etc/res/layers/hafen"/>
-    </exec>
-  </target>
+    <target name="appletview" depends="build-env">
+        <copy file="etc/applet.html" todir="build"/>
+    </target>
 
-  <target name="prep-update">
-    <copy todir="update">
-      <fileset dir="lib">
-        <include name="jogl-all.jar" />
-        <include name="gluegen-rt.jar" />
-        <include name="hafen-res.jar" />
-        <include name="builtin-res.jar" />
-        <include name="flogger-0.3.1.jar" />
-        <include name="flogger-system-backend-0.3.1.jar" />
-        <include name="sqlite-jdbc-3.26.0.jar"/>
-        <include name="bcprov-jdk15on-160.jar"/>
-        <include name="abcl.jar"/>
-        <include name="abcl-contrib.jar"/>
-      </fileset>
-      <fileset dir="lib/jogl-natives" />
-      <fileset dir="build">
-        <include name="hafen.jar"/>
-        <include name="logging.properties"/>
-      </fileset>
-    </copy>
-    <copy todir="update/data">
-      <fileset dir="etc/data/" includes="**"/>
-    </copy>
-    <copy todir="update/data/res">
-      <fileset dir="etc/res/built/" includes="**"/>
-    </copy>
-    <copy todir="update/data/scripts">
-      <fileset dir="etc/scripts/" includes="**"/>
-    </copy>
-  </target>
+    <target name="lib-classes" depends="build-env" unless="unpacked-lib">
+        <mkdir dir="build/classes-lib"/>
+        <unjar src="lib/jglob.jar" dest="build/classes-lib">
+            <patternset excludes="META-INF/**"/>
+        </unjar>
+    </target>
 
-  <target name="update" depends="prep-update">
-    <exec executable="git" outputproperty="gitrev" failifexecutionfails="false">
-      <arg line="rev-parse HEAD" />
-    </exec>
-    <java jar="update/hafen-updater.jar" fork="true">
-      <arg value="hash"/>
-      <arg value="update/"/>
-      <arg value="${gitrev}"/>
-    </java>
-    <move file="ver" todir="update"/>
-  </target>
-  
-  <target name="deftgt" depends="jars, appletview" />
+    <target name="jar" depends="hafen-client,buildinfo,lib-classes">
+        <jar destfile="build/hafen.jar" update="true">
+            <fileset dir="build/classes"/>
+            <fileset dir="build/classes-lib"/>
+            <manifest>
+                <attribute name="Main-Class" value="haven.MainFrame"/>
+                <attribute name="Class-Path"
+                           value="jogl-all.jar gluegen-rt.jar builtin-res.jar hafen-res.jar flogger-0.3.1.jar flogger-system-backend-0.3.1.jar sqlite-jdbc-3.26.0.jar bcprov-jdk15on-160.jar abcl.jar abcl-contrib.jar jackson-annotations-2.9.0.jar jackson-core-2.9.3.jar jackson-databind-2.9.3.jar log4j-api-2.11.0.jar logging-interceptor-3.9.1.jar nv-websocket-client-2.6.jar okhttp-3.9.1.jar okio-1.13.0.jar javacord-api-3.0.4.jar javacord-core-3.0.4.jar"/>
+            </manifest>
+        </jar>
+        <chmod file="build/hafen.jar" perm="a+x"/>
+    </target>
 
-  <target name="run" depends="jars">
-    <java jar="build/hafen.jar" fork="true" />
-  </target>
-  
-  <target name="clean">
+    <target name="res-jar" depends="build-env" unless="has-res-jar">
+        <get src="http://www.havenandhearth.com/java/builtin-res.jar" dest="lib/builtin-res.jar"
+             usetimestamp="true"/>
+        <get src="http://www.havenandhearth.com/java/hafen-res.jar" dest="lib/hafen-res.jar"
+             usetimestamp="true"/>
+        <available property="lib-res-jar" file="lib/hafen-res.jar"/>
+        <fail unless="lib-res-jar" message="hafen-res.jar not available"/>
+        <available property="lib-builtin-jar" file="lib/builtin-res.jar"/>
+        <fail unless="lib-builtin-jar" message="builtin-res.jar not available"/>
+    </target>
 
-  </target>
+    <target name="jars" depends="build-env, jar, res-jar">
+        <copy todir="build">
+            <fileset dir="lib">
+                <include name="jogl-all.jar"/>
+                <include name="gluegen-rt.jar"/>
+                <include name="hafen-res.jar"/>
+                <include name="builtin-res.jar"/>
+                <include name="flogger-0.3.1.jar"/>
+                <include name="flogger-system-backend-0.3.1.jar"/>
+                <include name="sqlite-jdbc-3.26.0.jar"/>
+                <include name="bcprov-jdk15on-160.jar"/>
+                <include name="abcl.jar"/>
+                <include name="abcl-contrib.jar"/>
+
+                <include name="jackson-annotations-2.9.0.jar"/>
+                <include name="jackson-core-2.9.3.jar"/>
+                <include name="jackson-databind-2.9.3.jar"/>
+                <include name="log4j-api-2.11.0.jar"/>
+                <include name="logging-interceptor-3.9.1.jar"/>
+                <include name="nv-websocket-client-2.6.jar"/>
+                <include name="okhttp-3.9.1.jar"/>
+                <include name="okio-1.13.0.jar"/>
+                <include name="javacord-api-3.0.4.jar"/>
+                <include name="javacord-core-3.0.4.jar"/>
+            </fileset>
+            <fileset dir="lib/jogl-natives"/>
+        </copy>
+    </target>
+
+    <target name="build-custom-res">
+        <delete dir="etc/res/built/" includes="**"/>
+        <exec executable="etc/res/hafen-layer-util.exe">
+            <arg value="ENCODE"/>
+            <arg value="etc/res/unbuilt/"/>
+            <arg value="etc/res/built/"/>
+            <arg value="etc/res/layers/hafen"/>
+        </exec>
+    </target>
+
+    <target name="prep-update">
+        <copy todir="update">
+            <fileset dir="lib">
+                <include name="jogl-all.jar"/>
+                <include name="gluegen-rt.jar"/>
+                <include name="hafen-res.jar"/>
+                <include name="builtin-res.jar"/>
+                <include name="flogger-0.3.1.jar"/>
+                <include name="flogger-system-backend-0.3.1.jar"/>
+                <include name="sqlite-jdbc-3.26.0.jar"/>
+                <include name="bcprov-jdk15on-160.jar"/>
+                <include name="abcl.jar"/>
+                <include name="abcl-contrib.jar"/>
+
+                <include name="jackson-annotations-2.9.0.jar"/>
+                <include name="jackson-core-2.9.3.jar"/>
+                <include name="jackson-databind-2.9.3.jar"/>
+                <include name="log4j-api-2.11.0.jar"/>
+                <include name="logging-interceptor-3.9.1.jar"/>
+                <include name="nv-websocket-client-2.6.jar"/>
+                <include name="okhttp-3.9.1.jar"/>
+                <include name="okio-1.13.0.jar"/>
+                <include name="javacord-api-3.0.4.jar"/>
+                <include name="javacord-core-3.0.4.jar"/>
+            </fileset>
+            <fileset dir="lib/jogl-natives"/>
+            <fileset dir="build">
+                <include name="hafen.jar"/>
+                <include name="logging.properties"/>
+            </fileset>
+        </copy>
+        <copy todir="update/data">
+            <fileset dir="etc/data/" includes="**"/>
+        </copy>
+        <copy todir="update/data/res">
+            <fileset dir="etc/res/built/" includes="**"/>
+        </copy>
+        <copy todir="update/data/scripts">
+            <fileset dir="etc/scripts/" includes="**"/>
+        </copy>
+    </target>
+
+    <target name="update" depends="prep-update">
+        <exec executable="git" outputproperty="gitrev" failifexecutionfails="false">
+            <arg line="rev-parse HEAD"/>
+        </exec>
+        <java jar="update/hafen-updater.jar" fork="true">
+            <arg value="hash"/>
+            <arg value="update/"/>
+            <arg value="${gitrev}"/>
+        </java>
+        <move file="ver" todir="update"/>
+    </target>
+
+    <target name="deftgt" depends="jars, appletview"/>
+
+    <target name="run" depends="jars">
+        <java jar="build/hafen.jar" fork="true"/>
+    </target>
+
+    <target name="clean">
+
+    </target>
 </project>

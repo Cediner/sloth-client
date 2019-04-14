@@ -69,6 +69,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (load "data/scripts/lib/_config_core.lisp")
 (load "data/scripts/lib/_config_script.lisp")
+(load "data/scripts/lib/_config_discord.lisp")
 (load "data/scripts/lib/_config_logging_and_chat.lisp")
 (load "data/scripts/lib/_config_widget.lisp")
 (load "data/scripts/lib/_config_coords.lisp")

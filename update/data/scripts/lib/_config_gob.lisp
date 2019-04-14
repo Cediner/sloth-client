@@ -18,7 +18,11 @@
 (java-func +gob+ gob-overlays "overlays")
 ;;friendly
 (java-func +gob+ is-gob-dead "isDead")
+(java-func +gob+ is-gob-friendly "isFriendly")
 (java-func +gob+ is-gob-moving-1 "moving")
+;;human-specific functions
+(java-func +gob+ gob-kinname "kinname")
+(java-func +gob+ gob-equipment "equipment")
 ;;cavein_dust
 (java-field gob-id "id")
 (java-field gob-rc "rc")
@@ -87,13 +91,14 @@
 
 (export '(+plant+ +human+ +animal+ +tamed-animal+ +small-animal+ +water-vehicle+ +vehicle+
           gob-c gob-name gob-type gob-overlays gob-sdt is-gob-dead
+          gob-kinname gob-equipment
           gob-id gob-rc
           is-gob-a my-gob
-          is-gob-moving
+          is-gob-moving is-gob-friendly
           wait-for-movement
           wait-for-movement-to-start
           wait-for-movement-to-finish
-          gob-get-by-name gob-get-all-by-name
+          gob-get-by-name gob-get-all-by-name gob-get-all-by-filter
           gob-get-closest-by-filter gob-get-closest-by-name))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

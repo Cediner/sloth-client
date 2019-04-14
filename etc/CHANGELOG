@@ -1,3 +1,9 @@
+4/13/19
+    - Scout script is born
+    - Added in Mark for script to the alt+ right click menu for scripts that need such input
+    - destroy-objs script is back and more legacy fun
+    - Few other fixes throughout
+
 4/11/19
     - Scripting is now a thing, first few bots are the usual auto-drink, an eat-all-food in inventory, a acre-clay digger
     and its partner stockpile acre clay bot.

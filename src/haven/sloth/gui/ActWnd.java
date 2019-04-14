@@ -100,7 +100,7 @@ public class ActWnd extends Window implements ObservableListener<MenuGrid.Pagina
     private void refilter() {
         list.clear();
         for (MenuGrid.Pagina p : all) {
-            if (p.res.get().layer(Resource.action).name.toLowerCase().contains(entry.text.toLowerCase()))
+            if (p.act().name.toLowerCase().contains(entry.text.toLowerCase()))
                 list.add(p);
         }
         list.sort(new ItemComparator());

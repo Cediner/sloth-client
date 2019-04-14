@@ -109,11 +109,11 @@
        until bbox
        do (progn
             (sleep 1)
-           (when (msg-has-message)
-             (let ((msg (msg-poll-message)))
-               (when (string= "bot-select" (msg-subject msg))
-                 (setf bbox (bbox-make (aref (msg-args msg) 0)
-                                       (aref (msg-args msg) 1))))))))
+            (when (msg-has-message)
+              (let ((msg (msg-poll-message)))
+                (when (string= "bot-select" (msg-subject msg))
+                  (setf bbox (bbox-make (aref (msg-args msg) 0)
+                                        (aref (msg-args msg) 1))))))))
     (msg-stop-listening)
     (msg-clear-messages)
     bbox))
@@ -129,8 +129,28 @@
   (mv-move-to-rel (coord2d (+ (random 11) 3)
                            (+ (random 11) 3))))
 
+(defun prompt-for-input (prompt)
+  (msg-listen)
+  (chat-send-message (bot-chat) prompt)
+  (let ((ret nil))
+    (loop
+       until ret 
+       do (progn
+            (loop
+               while (and (msg-has-message) (null ret))
+               do (when (msg-has-message)
+                    (let ((msg (msg-poll-message)))
+                      (when (and (string= "msg" (msg-subject msg))
+                                 (jeq (bot-chat) (msg-sender msg)))
+                        (setf ret (aref (msg-args msg) 0))))))
+            (sleep 1)))
+    (msg-stop-listening)
+    (msg-clear-messages)
+    ret))
+
 (export '(check-stam-and-drink drink-water refill-water-from-hand refill-water-from-inventory
           check-for-starving
           check-for-movement
           backoff-randomly
+          prompt-for-input
           get-bbox))

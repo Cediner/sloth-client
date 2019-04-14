@@ -15,5 +15,7 @@
     <orderEntry type="library" name="sqlite-jdbc-3.26.0" level="project" />
     <orderEntry type="library" name="bcprov-jdk15on-160" level="project" />
     <orderEntry type="library" name="abcl" level="project" />
+    <orderEntry type="library" name="org.javacord:javacord-api:3.0.4" level="project" />
+    <orderEntry type="library" name="org.javacord:javacord-core:3.0.4" level="project" />
   </component>
 </module>

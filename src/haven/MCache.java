@@ -528,6 +528,17 @@ public class MCache {
         return (getgrido(tc.div(cmaps)));
     }
 
+    public long getgridid(Coord2d mc) {
+        final Optional<Grid> grid = getgridto(mc.floor(tilesz));
+        return grid.map((g) -> g.id).orElse(-1L);
+    }
+
+    public Coord gettileoffset(Coord2d mc) {
+        final Coord tc = mc.floor(tilesz);
+        final Optional<Grid> grid = getgridto(tc);
+        return grid.map(g -> tc.sub(g.ul)).orElse(new Coord(0,0));
+    }
+
     public int gettile_safe(Coord tc) {
         final Optional<Grid> grid = getgridto(tc);
         if (grid.isPresent()) {

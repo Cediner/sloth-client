@@ -84,6 +84,7 @@
     `(defun ,lisp-func-name ,argv
        (checkintp)
        (jstatic ,java-func-name ,class ,@argv))))
+       
 
 (defun print-excp (exp)
   (let ((msg (jcall "getMessage" exp)))
@@ -103,7 +104,13 @@
      (error (msg)
        (format t "~A~%" msg))))
 
-(export '(svar ivar forever while wait-until doarr checkintp java-sfield java-field java-func java-sfunc print-excp script))
+(defun listify (arr)
+  (let ((ret ()))
+    (doarr (itm arr)
+      (push itm ret))
+    ret))
+
+(export '(svar ivar forever while wait-until doarr checkintp java-sfield java-field java-func java-sfunc print-excp script listify))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; Optional - Java builtin

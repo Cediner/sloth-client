@@ -490,6 +490,15 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
         }
     }
 
+    public boolean isFriendly() {
+        final KinInfo kin = getattr(KinInfo.class);
+        if(kin != null) {
+            return DefSettings.BADKIN.get() != kin.group || kin.isVillager();
+        } else {
+            return false;
+        }
+    }
+
     public boolean isDead() {
         Drawable d = getattr(Drawable.class);
         if (d instanceof Composite) {
@@ -521,8 +530,8 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
                     sb.append(eq.at);
                 }
 
-            if (comp.nmod != null)
-                for (Composited.MD md : comp.nmod) {
+            if (comp.lastnmod != null)
+                for (Composited.MD md : comp.lastnmod) {
                     sb.append("\nMod: ");
                     sb.append(rnm(md.mod));
                     for (ResData rd : md.tex) {
@@ -629,12 +638,14 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
             }
             this.rc = c;
             this.a = a;
-            final UI ui = glob.ui.get();
-            if(discovered) {
-                if (getattr(HeldBy.class) == null &&
-                        (getattr(Holding.class) == null || ui == null || getattr(Holding.class).held.id != ui.gui.map.plgob) &&
-                        !pathfinding_blackout) {
-                    hitboxcoords = glob.gobhitmap.add(this);
+            if (glob.ui != null) {
+                final UI ui = glob.ui.get();
+                if (discovered) {
+                    if (getattr(HeldBy.class) == null &&
+                            (getattr(Holding.class) == null || ui == null || getattr(Holding.class).held.id != ui.gui.map.plgob) &&
+                            !pathfinding_blackout) {
+                        hitboxcoords = glob.gobhitmap.add(this);
+                    }
                 }
             }
         }
@@ -782,6 +793,46 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
     public Overlay[] overlays() {
         synchronized (ols) {
             return ols.toArray(new Overlay[0]);
+        }
+    }
+
+    /**
+     * For scripting API only
+     */
+    public String kinname() {
+        if(getattr(KinInfo.class) != null) {
+            return getattr(KinInfo.class).name;
+        } else {
+            return "???";
+        }
+    }
+
+    /**
+     * For scripting API only
+     */
+    public String[] equipment() {
+        if(type == Type.HUMAN) {
+            Drawable d = getattr(Drawable.class);
+            if (d instanceof Composite) {
+                Composite comp = (Composite) d;
+
+                final List<String> equs = new ArrayList<>();
+                if (comp.lastnequ != null)
+                    for (Composited.ED eq : comp.lastnequ) {
+                        equs.add(rnm(eq.res.res));
+                    }
+                if (comp.lastnmod != null)
+                    for (Composited.MD md : comp.lastnmod) {
+                        for (ResData rd : md.tex) {
+                            equs.add(rnm(rd.res));
+                        }
+                    }
+                return equs.toArray(new String[0]);
+            } else {
+                return null;
+            }
+        } else {
+            return null;
         }
     }
 

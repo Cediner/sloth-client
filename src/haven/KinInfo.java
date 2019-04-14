@@ -52,6 +52,10 @@ public class KinInfo extends GAttrib {
         rnm = null;
     }
 
+    public boolean isVillager() {
+        return (type & 2) != 0;
+    }
+
     public Tex rendered() {
         if (rnm == null) {
             boolean hv = (type & 2) != 0;
