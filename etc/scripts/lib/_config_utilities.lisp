@@ -127,7 +127,8 @@
 
 (defun backoff-randomly ()
   (mv-move-to-rel (coord2d (+ (random 11) 3)
-                           (+ (random 11) 3))))
+                           (+ (random 11) 3)))
+  (wait-for-movement :gob (my-gob)))
 
 (defun prompt-for-input (prompt)
   (msg-listen)

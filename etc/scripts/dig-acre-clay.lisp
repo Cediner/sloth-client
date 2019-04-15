@@ -31,15 +31,15 @@
 
 (defun get-next-diggable-tile (coords)
   (let ((best-c nil)
-        (best-min 1000))
+        (best-val 0))
     (dolist (c coords)
       (let* ((my-z (mc-get-z c))
              (around (is-tile-diggable c)))
         (when (and around
                    (or (null best-c)
-                       (< (reduce #'min around) best-min)))
+                       (> my-z best-val)))
           (setf best-c c)
-          (setf best-min (reduce #'min around)))))
+          (setf best-val my-z))))
     best-c))
 
 (defun check-clay-on-ground ()
@@ -49,27 +49,31 @@
      do (sleep 0.1)))
         
 (defun dig-tile (c)
-  (let ((start-z (mc-get-z c)))
+  (let ((start-z (mc-get-z c))
+        (c2d (coord-to-coord2d c)))
     (check-stam-and-drink)
     (when (held-item)
       (item-drop (held-item)))
     (check-clay-on-ground)
+    (loop
+       until (coord2d-eq (gob-rc (my-gob)) c2d)
+       do (progn
+            (backoff-randomly)
+            (mv-smart-move c2d)))
     (menu-use "paginae/act/dig")
     (sleep 0.5)
-    (mv-smart-move (coord-to-coord2d c))
-    (wait-for-movement)
     (loop
        while (is-tile-diggable c)
        do (progn
             (inventories-drop-all-items-by-name "Acre Clay")
             (check-stam-and-drink)
             (when (= (progress) -1.0)
-              (mv-move-to (coord-to-coord2d c))
+              (mv-move-to c2d)
               (wait-for-movement))
             (sleep 0.5)))
     (inventories-drop-all-items-by-name "Acre Clay")
-    (mv-click (coord-to-coord2d c) +right-button+ +mf-none+)
-    (mv-move-to (coord-to-coord2d c))))
+    (mv-click c2d +right-button+ +mf-none+)
+    (mv-move-to c2d)))
 
 (defun dig-area (bb)
   (let ((coords (bbox-dots bb)))
