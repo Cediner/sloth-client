@@ -74,6 +74,21 @@
 (defmacro gob-get-all-by-name (name)
   `(gob-get-all-by-filter (lambda (gob) (string= ,name (gob-name gob)))))
 
+(defun gob-get-closest-by-filter-and-path (filter-fun)
+  (let ((gobs (gob-get-all-by-filter filter-fun))
+        (best nil)
+        (bestdist 0)
+        (mc (gob-rc (my-gob))))
+    (dolist (gob gobs)
+      (let* ((path (mv-find-path-to-gob gob))
+             (dist (if path (mv-path-distance path) 99999999)))
+        (when (and path
+                   (or (null best)
+                       (< dist bestdist)))
+          (setf best gob)
+          (setf bestdist dist))))
+      best))
+
 (defun gob-get-closest-by-filter (filter-fun)
   (let ((gobs (gob-get-all-by-filter filter-fun))
         (best nil)
@@ -85,6 +100,9 @@
         (setf best gob)
         (setf bestdist (coord2d-dist (gob-rc gob) mc))))
     best))
+
+(defmacro gob-get-closest-by-name-and-path (name)
+  `(gob-get-closest-by-filter-and-path (lambda (gob) (string= ,name (gob-name gob)))))
 
 (defmacro gob-get-closest-by-name (name)
   `(gob-get-closest-by-filter (lambda (gob) (string= ,name (gob-name gob)))))
@@ -99,6 +117,8 @@
           wait-for-movement-to-start
           wait-for-movement-to-finish
           gob-get-by-name gob-get-all-by-name gob-get-all-by-filter
+          gob-get-closest-by-filter-and-path
+          gob-get-closest-by-name-and-path
           gob-get-closest-by-filter gob-get-closest-by-name))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

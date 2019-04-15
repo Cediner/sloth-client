@@ -15,7 +15,8 @@
                                         (not (jeq gob last-chair)))
                                     (or (null cur-chair)
                                         (not (jeq gob cur-chair)))
-                                    (search "chair" (gob-name gob)))))))
+                                    (or (search "chair" (gob-name gob))
+                                        (search "bench" (gob-name gob))))))))
             (mv-click-gob next-chair +right-button+ +mf-none+)
             (loop
                until (coord2d-eq (gob-rc next-chair) (gob-rc (my-gob))))

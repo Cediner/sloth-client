@@ -91,6 +91,14 @@
 (java-func +move+ move-apply "apply" +mapview+)
 (java-func +move+ move-destination "dest")
 
+(defun mv-path-distance (moves)
+  (reduce #'+ (loop
+                 for i from 0 to (1- (length moves))
+                 collect (coord2d-dist (if (> i 0)
+                                           (move-destination (aref moves (1- i)))
+                                           (gob-rc (my-gob)))
+                                       (move-destination (aref moves i))))))
+
 (defun mv-walk-path (moves)
   (doarr (move moves)
     (move-apply move (mv))
@@ -127,5 +135,5 @@
       (mv-path-to-gob gob)))
 
 (export '(move move-apply move-destination
-          mv-walk-path mv-reverse-path
+          mv-walk-path mv-reverse-path mv-path-distance
           mv-path-to mv-path-to-gob mv-smart-move mv-smart-move-to-gob))
