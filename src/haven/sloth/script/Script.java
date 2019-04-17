@@ -69,6 +69,8 @@ public class Script extends Thread {
 
     private boolean intp;
 
+    private DiscordApi discord;
+
     Script(final String script, final long id, final SessionDetails session) {
         super(script + " @ " + id);
         this.script = script;
@@ -81,10 +83,20 @@ public class Script extends Thread {
     }
 
     /* Discord **********************************************************************************/
-    public void sendDiscordMessage(final String token, final String channel, final String msg) {
-        DiscordApi api = new DiscordApiBuilder().setToken(token).login().join();
-        api.getTextChannelsByName(channel).forEach(chan -> chan.sendMessage(msg));
-        api.disconnect();
+    public void startDiscord(final String token) {
+        discord = new DiscordApiBuilder().setToken(token).login().join();
+    }
+
+    public void sendDiscordMessage(final String channel, final String msg) {
+        discord.getTextChannelsByName(channel).forEach(chan -> chan.sendMessage(msg));
+        discord.disconnect();
+    }
+
+    public void endDiscord() {
+        if(discord != null) {
+            discord.disconnect();
+            discord = null;
+        }
     }
 
     public Coord resolvePosition(final long gridid) {
@@ -187,6 +199,7 @@ public class Script extends Thread {
             }
         }
 
+        endDiscord();
         Context.remove(sid);
     }
 }

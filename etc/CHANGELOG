@@ -1,3 +1,7 @@
+4/16/19
+    - Fixed black screen bug with Grid lines once you go into negatives
+    - Changed parts of discord api
+
 4/14/19
     - Minor changes to dig clay script, destroy
     - fixed issue with sketchpad crashing

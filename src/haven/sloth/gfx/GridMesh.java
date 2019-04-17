@@ -77,7 +77,7 @@ public class GridMesh extends FastMesh {
                 me = mapToScreen(c, ul, mc);
                 mez = !DefSettings.FLATWORLD.get() ? me.z : 0;
                 pa.put(me.x).put(me.y).put(mez + zoff);
-                z = ((int) me.z + 128) % 256;
+                z = Math.floorMod((int)me.z, 256);
                 cl.put(colors[z][0]).put(colors[z][1]).put(colors[z][2]).put(0.5f);
             }
         }

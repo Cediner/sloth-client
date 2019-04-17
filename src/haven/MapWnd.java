@@ -325,25 +325,27 @@ public class MapWnd extends Window {
          * XXX: does it need an icon?
          */
         private void drawmovement(GOut g, final Location ploc) {
-            final Coord pc = new Coord2d(mv.getcc()).floor(tilesz);
-            final Coord2d movingto = mv.movingto();
-            final Iterator<Coord2d> queue = mv.movequeue();
-            Coord last;
-            if (movingto != null) {
-                //Make the line first
-                g.chcolor(DefSettings.MMPATHCOL.get());
-                final Coord cloc = xlate(ploc);
-                last = xlate(new Location(ploc.seg, ploc.tc.add(movingto.floor(tilesz).sub(pc))));
-                if (last != null && cloc != null) {
-                    g.dottedline(cloc, last, 2);
-                    if (queue.hasNext()) {
-                        while (queue.hasNext()) {
-                            final Coord next = xlate(new Location(ploc.seg, ploc.tc.add(queue.next().floor(tilesz).sub(pc))));
-                            if (next != null) {
-                                g.dottedline(last, next, 2);
-                                last = next;
-                            } else {
-                                break;
+            synchronized (mv.movequeue) {
+                final Coord pc = new Coord2d(mv.getcc()).floor(tilesz);
+                final Coord2d movingto = mv.movingto();
+                final Iterator<Coord2d> queue = mv.movequeue();
+                Coord last;
+                if (movingto != null) {
+                    //Make the line first
+                    g.chcolor(DefSettings.MMPATHCOL.get());
+                    final Coord cloc = xlate(ploc);
+                    last = xlate(new Location(ploc.seg, ploc.tc.add(movingto.floor(tilesz).sub(pc))));
+                    if (last != null && cloc != null) {
+                        g.dottedline(cloc, last, 2);
+                        if (queue.hasNext()) {
+                            while (queue.hasNext()) {
+                                final Coord next = xlate(new Location(ploc.seg, ploc.tc.add(queue.next().floor(tilesz).sub(pc))));
+                                if (next != null) {
+                                    g.dottedline(last, next, 2);
+                                    last = next;
+                                } else {
+                                    break;
+                                }
                             }
                         }
                     }

@@ -78,7 +78,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
     private Coord2d lastrc;
     private double mspeed, totaldist = 0, mspeedavg, totaldt = 0;
     private long lastMove = System.currentTimeMillis();
-    private Queue<Coord2d> movequeue = new ArrayDeque<>();
+    public final Queue<Coord2d> movequeue = new ArrayDeque<>();
 
     public interface Delayed {
         public void run(GOut g);
@@ -1647,14 +1647,18 @@ public class MapView extends PView implements DTarget, Console.Directory {
         return movequeue.size() > 0 || movingto != null;
     }
 
-    private void clearmovequeue() {
-        movequeue.clear();
-        movingto = null;
-        ui.gui.pointer.update(null);
+    public void clearmovequeue() {
+        synchronized (movequeue) {
+            movequeue.clear();
+            movingto = null;
+            ui.gui.pointer.update(null);
+        }
     }
 
     public void queuemove(final Coord2d c) {
-        movequeue.add(c);
+        synchronized (movequeue) {
+            movequeue.add(c);
+        }
     }
 
     public boolean los(final Coord2d c) {
@@ -1731,11 +1735,13 @@ public class MapView extends PView implements DTarget, Console.Directory {
         updateSpeed(dt);
         if (placing != null)
             placing.ctick((int) (dt * 1000));
-        if (movequeue.size() > 0 && (System.currentTimeMillis() - lastMove > 500) && triggermove()) {
-            movingto = movequeue.poll();
-            ui.gui.pointer.update(movingto);
-            wdgmsg("click", new Coord(1, 1), movingto.floor(posres), 1, 0);
-            lastMove = System.currentTimeMillis();
+        synchronized (movequeue) {
+            if (movequeue.size() > 0 && (System.currentTimeMillis() - lastMove > 500) && triggermove()) {
+                movingto = movequeue.poll();
+                ui.gui.pointer.update(movingto);
+                wdgmsg("click", new Coord(1, 1), movingto.floor(posres), 1, 0);
+                lastMove = System.currentTimeMillis();
+            }
         }
     }
 
