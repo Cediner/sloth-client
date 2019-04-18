@@ -31,7 +31,7 @@
 
 (defun wait-until (getter &key (refresh 100) timeout )
   (let ((st (/ refresh 1000))
-        (start (get-internal-real-time)))
+        (start (get-time)))
     (loop
        for ret = (funcall getter)
        when ret return ret

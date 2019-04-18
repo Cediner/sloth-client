@@ -149,9 +149,26 @@
     (msg-clear-messages)
     ret))
 
+(defun prompt-for-selected-gob (prompt)
+  (msg-listen)
+  (chat-send-message (bot-chat) prompt)
+  (let ((gob nil))
+    (loop
+       until gob
+       do (progn
+            (sleep 1)
+            (loop
+               while (and (msg-has-message) (null gob))
+               do (let ((msg (msg-poll-message)))
+                    (when (string= "click-gob" (msg-subject msg))
+                      (setf gob (aref (msg-args msg) 0)))))))
+    (msg-stop-listening)
+    (msg-clear-messages)
+    gob))
+
 (export '(check-stam-and-drink drink-water refill-water-from-hand refill-water-from-inventory
           check-for-starving
           check-for-movement
           backoff-randomly
-          prompt-for-input
+          prompt-for-input prompt-for-selected-gob
           get-bbox))

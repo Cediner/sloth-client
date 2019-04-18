@@ -29,6 +29,7 @@
 (java-func +coord2d+ coord2d-mul "mul" +coord2d+)
 (java-func +coord2d+ coord2d-dist "dist" +coord2d+)
 (java-func +coord2d+ coord2d-floor "floor" +coord2d+)
+(java-func +coord2d+ coord2d-angle "angle" +coord2d+)
 (java-func +coord2d+ coord2d-string "toString")
 (java-func +coord2d+ coord2d-eq "equals" +object+)
 
@@ -51,7 +52,7 @@
           fakec
 
           coord2d coord2d-x coord2d-y
-          coord2d-add coord2d-sub coord2d-div coord2d-mul coord2d-dist coord2d-string coord2d-floor coord2d-eq
+          coord2d-add coord2d-sub coord2d-div coord2d-mul coord2d-dist coord2d-string coord2d-floor coord2d-angle coord2d-eq
 
           coord3f coord3f-x coord3f-y coord3f-z
           coord3f-add coord3f-sub coord3f-div coord3f-mul coord3f-dist coord3f-string coord3f-eq))

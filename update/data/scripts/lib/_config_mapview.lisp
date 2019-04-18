@@ -13,8 +13,16 @@
 (java-func +mapview+ mv-placing-gob-1 "placing")
 ;;(java-func +mapview+ mv-path-to-1 "pathto" +coord2d+)
 ;;(java-func +mapview+ mv-path-to-gob-1 "pathto" +gob+)
+(java-func +mapview+ mv-clear-moves-1 "clearmovequeue")
+(java-func +mapview+ mv-queue-move-1 "queuemove" +coord2d+) 
 (java-func +mapview+ mv-los-1 "los" +coord2d+)
 (java-func +mapview+ mv-los-gob-1 "los" +gob+)
+
+(defmacro mv-clear-moves ()
+  `(mv-clear-moves-1 (mv)))
+
+(defmacro mv-queue-move (c)
+  `(mv-queue-move-1 (mv) ,c))
 
 (defmacro mv-move-to (mc)
   `(mv-move-to-1 (mv) ,mc))
@@ -78,6 +86,7 @@
   
 (export '(mv-move-to mv-move-to-rel mv-los mv-los-gob
           mv-find-path mv-find-path-to-gob
+          mv-clear-moves mv-queue-move
           mv-click-gob mv-interact-held-item-with-gob mv-interact-held-item-with-tile
           mv-click mv-select-area mv-drop
           mv-placing-gob mv-place-gob wait-for-placing-gob wait-for-placing-gob-to-be-gone))
@@ -129,9 +138,7 @@
 
 (defun mv-smart-move-to-gob (gob)
   (if (mv-los-gob gob)
-      (progn
-        (mv-move-to-gob gob)
-        (wait-for-movement :gob (my-gob)))
+      (mv-move-to-gob gob)
       (mv-path-to-gob gob)))
 
 (export '(move move-apply move-destination

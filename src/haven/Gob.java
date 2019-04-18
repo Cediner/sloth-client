@@ -307,7 +307,7 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
     private void discovered(final String name) {
         //Don't try to discover anything until we know who the plgob is.
         final UI ui = glob.ui.get();
-        if (ui != null && ui.gui != null && ui.gui.map != null && ui.gui.map.plgob != -1) {
+        if (ui != null && ui.gui != null && ui.gui.map != null && ui.gui.map.rlplgob != -1) {
             //Before we do anything make sure we care about this
             if (!Deleted.isDeleted(name)) {
                 //Gobs we care about
@@ -315,7 +315,7 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
                 type = Type.getType(name);
 
                 //Check for any special attributes we should attach
-                Alerted.checkAlert(name, this);
+                Alerted.checkAlert(name, ui.gui.map.rlplgob, this);
                 if (Growth.isGrowth(name)) {
                     setattr(new Growth(this));
                 }
@@ -815,19 +815,20 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
             Drawable d = getattr(Drawable.class);
             if (d instanceof Composite) {
                 Composite comp = (Composite) d;
-
-                final List<String> equs = new ArrayList<>();
-                if (comp.lastnequ != null)
+                if(comp.lastnmod != null && comp.lastnequ != null) {
+                    final List<String> equs = new ArrayList<>();
                     for (Composited.ED eq : comp.lastnequ) {
                         equs.add(rnm(eq.res.res));
                     }
-                if (comp.lastnmod != null)
                     for (Composited.MD md : comp.lastnmod) {
                         for (ResData rd : md.tex) {
                             equs.add(rnm(rd.res));
                         }
                     }
-                return equs.toArray(new String[0]);
+                    return equs.toArray(new String[0]);
+                } else {
+                    return null;
+                }
             } else {
                 return null;
             }

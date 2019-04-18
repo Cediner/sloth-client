@@ -89,7 +89,6 @@ public class Script extends Thread {
 
     public void sendDiscordMessage(final String channel, final String msg) {
         discord.getTextChannelsByName(channel).forEach(chan -> chan.sendMessage(msg));
-        discord.disconnect();
     }
 
     public void endDiscord() {

@@ -83,11 +83,11 @@ public class Alerted {
         sfxmap.removeListener(listener);
     }
 
-    public static void checkAlert(final String name, final Gob g) {
+    public static void checkAlert(final String name, final long plgob, final Gob g) {
         if (sfxmap.containsKey(name)) {
             if (!name.equals("gfx/borka/body")) {
                 Audio.play(sfxmap.get(name));
-            } else if (MapView.plgobid != -1 && g.id != MapView.plgobid) {
+            } else if (plgob != -1 && g.id != plgob) {
                 //For bodies only play on unknown or RED
                 final KinInfo kin = g.getattr(KinInfo.class);
                 if (kin == null || kin.group == DefSettings.BADKIN.get()) {

@@ -33,6 +33,19 @@
 (java-func +script+ script-resolve-grid "resolvePosition" +long+)
 (with-script-define resolve-grid script-resolve-grid grid-id)
 
+(defun get-real-location-coord (c)
+  (let* ((grid-id (mc-get-grid-id c))
+         (offset (mc-get-tile-offset c))
+         (offset-x (/ (coord-x offset) 100.0))
+         (offset-y (/ (coord-y offset) 100.0)))
+    (if (/= grid-id -1)
+        (let ((location (resolve-grid grid-id)))
+          (if location
+              (coord2d (+ offset-x (coord-x location))
+                       (+ offset-y (coord-y location)))
+              nil))
+        nil)))
+
 (defun get-real-location-on-map (c)
   (let* ((grid-id (mc-get-grid-id c))
          (offset (mc-get-tile-offset c))
@@ -47,4 +60,4 @@
               "Unknown"))
         "Unknown")))
 
-(export '(resolve-grid get-real-location-on-map))
+(export '(resolve-grid get-real-location-coord get-real-location-on-map))

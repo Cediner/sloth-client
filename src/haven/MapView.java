@@ -50,9 +50,9 @@ import haven.sloth.script.pathfinding.Move;
 import haven.sloth.script.pathfinding.NBAPathfinder;
 
 public class MapView extends PView implements DTarget, Console.Directory {
-    public static long plgobid;
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     public static boolean clickdb = false;
+    public long rlplgob = -1;
     public long plgob = -1;
     public Coord2d cc;
     private final Glob glob;
@@ -578,10 +578,9 @@ public class MapView extends PView implements DTarget, Console.Directory {
         this.glob = glob;
         this.cc = cc;
         this.plgob = plgob;
-        plgobid = plgob;
         this.gobs = new Gobs();
         setcanfocus(true);
-
+        rlplgob = plgob;
         if (SHOWPCLAIM.get()) {
             enol(0, 1);
         }
@@ -1875,9 +1874,10 @@ public class MapView extends PView implements DTarget, Console.Directory {
         } else if (msg == "plob") {
             if (args[0] == null)
                 plgob = -1;
-            else
+            else {
                 plgob = (Integer) args[0];
-            plgobid = plgob;
+                rlplgob = plgob;
+            }
         } else if (msg == "flashol") {
             unflashol();
             olflash = (Integer) args[0];
