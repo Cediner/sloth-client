@@ -39,6 +39,7 @@ import java.util.*;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.image.WritableRaster;
+import java.util.function.Consumer;
 
 import static haven.Inventory.invsq;
 
@@ -89,6 +90,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public MapPointer pointer;
     public Speedget speed;
     private ScriptManager scripts;
+    public final List<DowseWnd> dowsewnds = new ArrayList<>();
 
     @RName("gameui")
     public static class $_ implements Factory {
@@ -746,6 +748,18 @@ public class GameUI extends ConsoleHost implements Console.Directory {
             return true;
         } else {
             return super.mousewheel(c, amount);
+        }
+    }
+
+    public void makeDowseWnd(final Coord2d startc, final double a1, final double a2, final Consumer<Color> changeCol, final Runnable onClose) {
+        synchronized (dowsewnds) {
+            dowsewnds.add(add(new DowseWnd(startc, a1, a2, changeCol, onClose)));
+        }
+    }
+
+    public void remDowseWnd(final DowseWnd wnd) {
+        synchronized (dowsewnds) {
+            dowsewnds.removeIf(wdg -> wdg == wnd);
         }
     }
 

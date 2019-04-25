@@ -21,6 +21,7 @@ public class Hitbox {
         //misc
         hitboxes.put("gfx/terobjs/consobj", new Hitbox(new Coord(-4, -4), new Coord(8, 8)));
         hitboxes.put("gfx/terobjs/skeleton", new Hitbox(new Coord(-4, -4), new Coord(8, 8)));
+        hitboxes.put("gfx/terobjs/smelter", new Hitbox(new Coord(-12, -12), new Coord(25, 33)));
         hitboxes.put("gfx/terobjs/clue", NOHIT);
         hitboxes.put("gfx/terobjs/boostspeed", NOHIT);
         hitboxes.put("gfx/kritter/jellyfish/jellyfish", NOHIT);
@@ -99,29 +100,33 @@ public class Hitbox {
 
 
     private static Hitbox loadHitboxFromRes(final Resource res) {
-        final Resource.Neg neg = res.layer(Resource.negc);
-        if (neg != null) {
-            Coord hsz = new Coord(Math.abs(neg.bc.x) + Math.abs(neg.bs.x) + 1,
-                    Math.abs(neg.bc.y) + Math.abs(neg.bs.y) + 1);
-            Coord hoff = neg.bc;
-            final Hitbox hb = new Hitbox(hoff, hsz, true, false);
-            hitboxes.put(res.name, hb);
-            return hb;
-        } else {
-            for (RenderLink.Res link : res.layers(RenderLink.Res.class)) {
-                final Optional<Resource> meshres = link.mesh();
-                if (meshres.isPresent()) {
-                    final Resource.Neg meshneg = meshres.get().layer(Resource.negc);
-                    if (meshneg != null) {
-                        Coord hsz = new Coord(Math.abs(meshneg.bc.x) + Math.abs(meshneg.bs.x) + 1,
-                                Math.abs(meshneg.bc.y) + Math.abs(meshneg.bs.y) + 1);
-                        Coord hoff = meshneg.bc;
-                        final Hitbox hb = new Hitbox(hoff, hsz, true, false);
-                        hitboxes.put(res.name, hb);
-                        return hb;
+        if(!hitboxes.get(res.name).isPresent()) {
+            final Resource.Neg neg = res.layer(Resource.negc);
+            if (neg != null) {
+                Coord hsz = new Coord(Math.abs(neg.bc.x) + Math.abs(neg.bs.x) + 1,
+                        Math.abs(neg.bc.y) + Math.abs(neg.bs.y) + 1);
+                Coord hoff = neg.bc;
+                final Hitbox hb = new Hitbox(hoff, hsz, true, false);
+                hitboxes.put(res.name, hb);
+                return hb;
+            } else {
+                for (RenderLink.Res link : res.layers(RenderLink.Res.class)) {
+                    final Optional<Resource> meshres = link.mesh();
+                    if (meshres.isPresent()) {
+                        final Resource.Neg meshneg = meshres.get().layer(Resource.negc);
+                        if (meshneg != null) {
+                            Coord hsz = new Coord(Math.abs(meshneg.bc.x) + Math.abs(meshneg.bs.x) + 1,
+                                    Math.abs(meshneg.bc.y) + Math.abs(meshneg.bs.y) + 1);
+                            Coord hoff = meshneg.bc;
+                            final Hitbox hb = new Hitbox(hoff, hsz, true, false);
+                            hitboxes.put(res.name, hb);
+                            return hb;
+                        }
                     }
                 }
+                return null;
             }
+        } else {
             return null;
         }
     }

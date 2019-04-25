@@ -1,3 +1,7 @@
+4/25/19
+    - Fixed smelter hitboxes and bug with hitboxes that were customized
+    - Added tracking angles to the map to try it out
+
 4/16/19
     - Fixed black screen bug with Grid lines once you go into negatives
     - Changed parts of discord api
