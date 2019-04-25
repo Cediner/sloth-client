@@ -4,7 +4,7 @@
 ;;;; MapView API
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defconstant +mapview+ "haven.MapView")
-(java-field mv-plgob "plgob")
+(java-field mv-plgob "rlplgob")
 (java-func +mapview+ mv-has-moves "hasmoves")
 (java-func +mapview+ mv-find-path-1 "findpath" +coord2d+)
 (java-func +mapview+ mv-find-path-to-gob-1 "findpath" +gob+)

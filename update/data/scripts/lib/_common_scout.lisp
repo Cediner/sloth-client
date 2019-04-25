@@ -31,7 +31,7 @@
                              (not (jeq gob (my-gob)))))))))
     (loop
        for target in targets
-       do (let ((name (if (jeq (gob-type target) +human+) (gob-kinname target) "knarr"))
+       do (let ((name (if (jeq (gob-type target) +human+) (gob-kinname target) (gob-name target)))
                 (extra (if (jeq (gob-type target) +human+)
                            (let ((equs (gob-equipment target)))
                              (apply #'concatenate 'string
