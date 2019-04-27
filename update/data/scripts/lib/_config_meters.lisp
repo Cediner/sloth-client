@@ -35,3 +35,17 @@
   `(speed-set-1 (speed) ,speed))
 
 (export '(speed speed-cur speed-max speed-set))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; VMeters
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defconstant +vmeter+ "haven.VMeter")
+(java-func +session+ session-vmeters "getVMeters")
+(with-session-define vmeters-1 session-vmeters)
+(defmacro vmeters ()
+  `(listify (vmeters-1)))
+(java-func +vmeter+ vmeter-amount "amount")
+(java-func +vmeter+ vmeter-owner "owner")
+
+(export '(vmeters
+          vmeter-amount vmeter-owner))

@@ -1,3 +1,11 @@
+4/27/19
+    - Add API for Buddy/Kin calls and VMeters (ie: fuel-level, etc) calls
+
+4/26/19
+    - When item on mouse is locked it won't show its tooltip anymore, allowing you to see the tooltips of other things
+    - Fixed memory leak with hotbar keybinds and switching characters repeatedly.
+    - Updated grid colors so that mines aren't colored black..
+
 4/25/19
     - Fixed smelter hitboxes and bug with hitboxes that were customized
     - Added tracking angles to the map to try it out

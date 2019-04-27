@@ -62,12 +62,41 @@ public class VMeter extends Widget {
         this.cl = cl;
     }
 
+    @Override
+    protected void added() {
+        super.added();
+        ui.sess.details.attachVMeter(this);
+    }
+
+    @Override
+    protected void removed() {
+        ui.sess.details.removeVMeter(this);
+        super.removed();
+    }
+
+    public int amount() {
+        return amount;
+    }
+
+    public String owner() {
+        if(parent instanceof Window) {
+            return ((Window) parent).cap.text;
+        } else {
+            return "";
+        }
+    }
+
     public void draw(GOut g) {
         g.image(bg, Coord.z);
         g.chcolor(cl);
         int h = (sz.y - 6);
         h = (h * amount) / 100;
         g.image(fg, new Coord(0, 0), new Coord(0, sz.y - 3 - h), sz.add(0, h));
+    }
+
+    @Override
+    public Object tooltip(Coord c, Widget prev) {
+        return String.format("%d", amount);
     }
 
     public void uimsg(String msg, Object... args) {

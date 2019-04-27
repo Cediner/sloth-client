@@ -86,5 +86,6 @@
 (load "data/scripts/lib/_config_progress.lisp")
 (load "data/scripts/lib/_config_flowermenu.lisp")
 (load "data/scripts/lib/_config_isbox.lisp")
+(load "data/scripts/lib/_config_kin.lisp")
 (load "data/scripts/lib/_config_bbox.lisp")
 (load "data/scripts/lib/_config_utilities.lisp")

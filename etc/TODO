@@ -1,4 +1,7 @@
 TODO
+    - Mining -> Instead of the support "circle" could instead just add a new overlay level (green) to show safe tiles
+      When a support is discovered it can add its "good" tiles to the map overlay
+      When mining out a tile that doesn't produce dust -> add "good" tiles to the map overlay in the 3x3 around it
     - Pause prevents MapView.setup() -> prevents very important things from happening in weird situations -> Leaks gobs for example
     - Customize icons for scripts like Ape
     - fix some of the color changes not updating -> ex: hidden, path cols.. they aren't indir

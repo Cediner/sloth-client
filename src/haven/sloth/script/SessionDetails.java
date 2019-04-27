@@ -1,6 +1,7 @@
 package haven.sloth.script;
 
 import haven.*;
+import org.bouncycastle.crypto.engines.VMPCEngine;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -47,6 +48,9 @@ public class SessionDetails {
     //For every stockpile
     private final List<WeakReference<ISBox>> stockpiles = new ArrayList<>();
 
+    //For every VMeter
+    private final List<WeakReference<VMeter>> vmeters = new ArrayList<>();
+
     public SessionDetails(final Session sess) {
         this.session = new WeakReference<>(sess);
         shp = hhp = mhp = stam = energy = 0;
@@ -73,6 +77,39 @@ public class SessionDetails {
     public String chrname() {
         final UI ui = getUI();
         return ui != null ? ui.gui.chrid : null;
+    }
+
+
+    /*****************************************************************************************
+     *  VMeters
+     *****************************************************************************************/
+    public void attachVMeter(final VMeter vmeter) {
+        synchronized (vmeters) {
+            vmeters.add(new WeakReference<>(vmeter));
+        }
+    }
+
+    public void removeVMeter(final VMeter vmeter) {
+        synchronized (vmeters) {
+            vmeters.removeIf((vm) -> vm.get() == null || vm.get() == vmeter);
+        }
+    }
+
+    public VMeter[] getVMeters() {
+        final List<VMeter> ret = new ArrayList<>();
+        synchronized (vmeters) {
+            Iterator<WeakReference<VMeter>> itr = vmeters.iterator();
+            while(itr.hasNext()) {
+                final VMeter meter = itr.next().get();
+                if(meter != null) {
+                    ret.add(meter);
+                } else {
+                    //remove broken/gc'd vmeters
+                    itr.remove();
+                }
+            }
+        }
+        return ret.toArray(new VMeter[0]);
     }
 
     /*****************************************************************************************
