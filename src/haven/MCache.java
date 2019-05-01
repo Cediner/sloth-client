@@ -26,6 +26,7 @@
 
 package haven;
 
+import haven.sloth.DefSettings;
 import haven.sloth.gfx.GridMesh;
 import haven.sloth.script.pathfinding.Tile;
 
@@ -115,10 +116,10 @@ public class MCache {
         public int seq = -1;
         public String mnm;
         private int olseq = -1;
-        private final Cut cuts[];
+        public final Cut cuts[];
         private Collection<Gob>[] fo = null;
 
-        private class Cut {
+        public class Cut {
             //Basic visible textured mapmesh
             MapMesh mesh;
             Defer.Future<MapMesh> dmesh;
@@ -128,6 +129,22 @@ public class MCache {
             Defer.Future<FastMesh> dgrid;
 
             Rendered[] ols;
+
+            public MapMesh getMesh() {
+                if (dmesh != null) {
+                    if (dmesh.done() || (mesh == null)) {
+                        MapMesh old = mesh;
+                        dmesh.geto().ifPresent(nmesh -> {
+                            mesh = nmesh;
+                            dmesh = null;
+                            ols = null;
+                            if (old != null)
+                                old.dispose();
+                        });
+                    }
+                }
+                return mesh;
+            }
         }
 
         private class Flavobj extends Gob {
@@ -207,7 +224,7 @@ public class MCache {
             return (fo[cc.x + (cc.y * cutn.x)]);
         }
 
-        private Cut geticut(Coord cc) {
+        public Cut geticut(Coord cc) {
             return (cuts[cc.x + (cc.y * cutn.x)]);
         }
 
@@ -747,23 +764,25 @@ public class MCache {
     }
 
     public void trim(Coord ul, Coord lr) {
-        synchronized (grids) {
-            synchronized (req) {
-                for (Iterator<Map.Entry<Coord, Grid>> i = grids.entrySet().iterator(); i.hasNext(); ) {
-                    Map.Entry<Coord, Grid> e = i.next();
-                    Coord gc = e.getKey();
-                    Grid g = e.getValue();
-                    if ((gc.x < ul.x) || (gc.y < ul.y) || (gc.x > lr.x) || (gc.y > lr.y)) {
-                        g.dispose();
-                        i.remove();
+        if(!DefSettings.KEEPGRIDS.get()) {
+            synchronized (grids) {
+                synchronized (req) {
+                    for (Iterator<Map.Entry<Coord, Grid>> i = grids.entrySet().iterator(); i.hasNext(); ) {
+                        Map.Entry<Coord, Grid> e = i.next();
+                        Coord gc = e.getKey();
+                        Grid g = e.getValue();
+                        if ((gc.x < ul.x) || (gc.y < ul.y) || (gc.x > lr.x) || (gc.y > lr.y)) {
+                            g.dispose();
+                            i.remove();
+                        }
                     }
+                    for (Iterator<Coord> i = req.keySet().iterator(); i.hasNext(); ) {
+                        Coord gc = i.next();
+                        if ((gc.x < ul.x) || (gc.y < ul.y) || (gc.x > lr.x) || (gc.y > lr.y))
+                            i.remove();
+                    }
+                    cached = null;
                 }
-                for (Iterator<Coord> i = req.keySet().iterator(); i.hasNext(); ) {
-                    Coord gc = i.next();
-                    if ((gc.x < ul.x) || (gc.y < ul.y) || (gc.x > lr.x) || (gc.y > lr.y))
-                        i.remove();
-                }
-                cached = null;
             }
         }
     }

@@ -310,6 +310,10 @@ public class Avaview extends PView {
                 for (Composited.MD md : cmod) {
                     base.append("\nMod: ");
                     base.append(rnm(md.mod));
+                    for (ResData rd : md.tex) {
+                        base.append("\n  Tex: ");
+                        base.append(rnm(rd.res));
+                    }
                 }
 
             return RichText.render(base.toString(), 300);

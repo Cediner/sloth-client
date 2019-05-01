@@ -58,15 +58,21 @@ public class Fightsess extends Widget {
     private Fightview fv;
 
     public static class Action {
+        public final int id;
         public final Indir<Resource> res;
         public Card card;
         public int cards;
         public double cs, ct;
         private boolean discovered;
 
-        public Action(Indir<Resource> res) {
+        public Action(Indir<Resource> res, final int id) {
             this.res = res;
             this.discovered = false;
+            this.id = id;
+        }
+
+        public boolean isDiscovered() {
+            return discovered;
         }
 
         void tick(final UI ui) {
@@ -457,7 +463,7 @@ public class Fightsess extends Widget {
             int n = (Integer) args[0];
             if (args.length > 1) {
                 Indir<Resource> res = ui.sess.getres((Integer) args[1]);
-                actions[n] = new Action(res);
+                actions[n] = new Action(res, n);
             } else {
                 actions[n] = null;
             }

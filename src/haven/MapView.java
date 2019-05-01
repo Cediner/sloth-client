@@ -26,6 +26,7 @@
 
 package haven;
 
+import static haven.MCache.cutn;
 import static haven.MCache.tilesz;
 import static haven.OCache.posres;
 import static haven.sloth.DefSettings.*;
@@ -123,7 +124,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
         public void resized() {
             float field = 0.5f;
             float aspect = ((float) sz.y) / ((float) sz.x);
-            proj.update(Projection.makefrustum(new Matrix4f(), -field, field, -aspect * field, aspect * field, 1, 5000));
+            proj.update(Projection.makefrustum(new Matrix4f(), -field, field, -aspect * field, aspect * field, 1, 50000));
         }
 
         public void prep(Buffer buf) {
@@ -650,35 +651,53 @@ public class MapView extends PView implements DTarget, Console.Directory {
         }
 
         public boolean setup(RenderList rl) {
-            Coord cc = MapView.this.cc.floor(tilesz).div(MCache.cutsz);
-            Coord o = new Coord();
-            if (SKIPLOADING.get()) {
-                for (o.y = -view; o.y <= view; o.y++) {
-                    for (o.x = -view; o.x <= view; o.x++) {
-                        Coord2d pc = cc.add(o).mul(MCache.cutsz).mul(tilesz);
-                        try {
+            if(view < 5) {
+                Coord cc = MapView.this.cc.floor(tilesz).div(MCache.cutsz);
+                Coord o = new Coord();
+                if (SKIPLOADING.get()) {
+                    for (o.y = -view; o.y <= view; o.y++) {
+                        for (o.x = -view; o.x <= view; o.x++) {
+                            Coord2d pc = cc.add(o).mul(MCache.cutsz).mul(tilesz);
+                            try {
+                                MapMesh cut = glob.map.getcut(cc.add(o));
+                                if (cut != null) {
+                                    rl.add(cut, Location.xlate(new Coord3f((float) pc.x, -(float) pc.y, 0)));
+                                }
+                            } catch (Exception e) {
+                            }
+                        }
+                    }
+                } else {
+                    for (o.y = -view; o.y <= view; o.y++) {
+                        for (o.x = -view; o.x <= view; o.x++) {
+                            Coord2d pc = cc.add(o).mul(MCache.cutsz).mul(tilesz);
                             MapMesh cut = glob.map.getcut(cc.add(o));
                             if (cut != null) {
                                 rl.add(cut, Location.xlate(new Coord3f((float) pc.x, -(float) pc.y, 0)));
                             }
-                        } catch (Exception e) {
                         }
                     }
+                }
+                if (!(rl.state().get(PView.ctx) instanceof ClickContext)
+                        && SHOWFLAVOBJS.get()) {
+                    rl.add(flavobjs, null);
                 }
             } else {
-                for (o.y = -view; o.y <= view; o.y++) {
-                    for (o.x = -view; o.x <= view; o.x++) {
-                        Coord2d pc = cc.add(o).mul(MCache.cutsz).mul(tilesz);
-                        MapMesh cut = glob.map.getcut(cc.add(o));
-                        if (cut != null) {
-                            rl.add(cut, Location.xlate(new Coord3f((float) pc.x, -(float) pc.y, 0)));
+                synchronized (glob.map.grids) {
+                    for(final MCache.Grid grid : glob.map.grids.values()) {
+                        final Coord cc = new Coord(0, 0);
+                        for(cc.x = 0; cc.x < cutn.x; cc.x++) {
+                            for(cc.y = 0; cc.y < cutn.y; cc.y++) {
+                                final Coord2d pc = grid.ul.add(cc.mul(MCache.cutsz)).mul(tilesz);
+                                final MCache.Grid.Cut cut = grid.geticut(cc);
+                                final MapMesh mesh = cut.getMesh();
+                                if(mesh != null) {
+                                    rl.add(mesh, Location.xlate(new Coord3f((float) pc.x, -(float)pc.y, 0)));
+                                }
+                            }
                         }
                     }
                 }
-            }
-            if (!(rl.state().get(PView.ctx) instanceof ClickContext)
-                    && SHOWFLAVOBJS.get()) {
-                rl.add(flavobjs, null);
             }
             return (false);
         }

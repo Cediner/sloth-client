@@ -26,6 +26,7 @@
 
 package haven;
 
+import haven.sloth.DefSettings;
 import haven.sloth.gob.Growth;
 import haven.sloth.gob.HeldBy;
 import haven.sloth.gob.Hidden;
@@ -199,7 +200,7 @@ public class OCache implements Iterable<Gob> {
     }
 
     public synchronized void remove(long id, int frame) {
-        if (objs.containsKey(id)) {
+        if (objs.containsKey(id) && !DefSettings.KEEPGOBS.get()) {
             if (!deleted.containsKey(id) || deleted.get(id) < frame) {
                 Gob old = objs.remove(id);
                 deleted.put(id, frame);

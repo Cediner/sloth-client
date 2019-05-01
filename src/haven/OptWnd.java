@@ -168,6 +168,8 @@ public class OptWnd extends Window {
                             ui.gui.map.view = val;
                         }
                     }));
+                    view.add(new IndirCheckBox("Never delete grids", KEEPGRIDS));
+                    view.add(new IndirCheckBox("Never delete gobs", KEEPGOBS));
                     view.add(new IndirCheckBox("Render water surface", cf.WATERSURFACE));
                     view.pack();
                 }

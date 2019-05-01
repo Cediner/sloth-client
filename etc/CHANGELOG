@@ -1,3 +1,9 @@
+5/1/19
+    - Enhanced the Avatar tooltip to match the current Gob one
+
+4/30/19
+    - Added in options to never delete grids or gobs and made Map View distance 5 render everything it has
+
 4/27/19
     - Add API for Buddy/Kin calls and VMeters (ie: fuel-level, etc) calls
 

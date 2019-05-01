@@ -192,6 +192,23 @@ public class Defer extends ThreadGroup {
             return (get(5));
         }
 
+        public Optional<T> geto() {
+            synchronized (this) {
+                boostprio(5);
+                switch (state) {
+                    case "done":
+                        if (exc != null)
+                            return Optional.empty();
+                        return Optional.ofNullable(val);
+                    case "resched":
+                        defer(this);
+                        state = "";
+                        break;
+                }
+                return Optional.empty();
+            }
+        }
+
         public boolean done(int prio) {
             synchronized (this) {
                 boostprio(prio);
