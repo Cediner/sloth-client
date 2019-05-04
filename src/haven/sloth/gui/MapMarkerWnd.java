@@ -2,7 +2,9 @@ package haven.sloth.gui;
 
 import haven.*;
 import haven.Button;
+import haven.Label;
 import haven.Window;
+import haven.sloth.io.MarkerData;
 
 import java.awt.*;
 import java.util.*;
@@ -11,11 +13,12 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class MapMarkerWnd extends Window {
-    private final static List<String> types = Arrays.asList("Placed", "Natural", "Custom", "Linked");
+    private final static List<String> types = Arrays.asList("Placed", "Natural", "Custom", "Linked", "Realm");
     private final static Predicate<MapFile.Marker> pmarkers = (m -> m instanceof MapFile.PMarker);
     private final static Predicate<MapFile.Marker> smarkers = (m -> m instanceof MapFile.SMarker);
     private final static Predicate<MapFile.Marker> slmarkers = (m -> m instanceof MapFile.SlothMarker && !(m instanceof MapFile.LinkedMarker));
     private final static Predicate<MapFile.Marker> lmarkers = (m -> m instanceof MapFile.LinkedMarker);
+    private final static Predicate<MapFile.Marker> kmarkers = (m -> m instanceof MapFile.RealmMarker);
     private final static Comparator<MapFile.Marker> namecmp = Comparator.comparing(MapFile.Marker::name);
     private Predicate<MapFile.Marker> mflt;
     private List<MapFile.Marker> markers = Collections.emptyList();
@@ -23,7 +26,7 @@ public class MapMarkerWnd extends Window {
     private Comparator<MapFile.Marker> mcmp = namecmp;
     private final MapWnd map;
     public final MarkerList list;
-    private TextEntry namesel;
+    private TextEntry namesel, realmedit;
     private BuddyWnd.GroupSelector colsel;
     private Button mremove;
     private Dropbox<String> typesel;
@@ -73,6 +76,10 @@ public class MapMarkerWnd extends Window {
                         break;
                     case "Linked":
                         mflt = lmarkers;
+                        markerseq = -1;
+                        break;
+                    case "Realm":
+                        mflt = kmarkers;
                         markerseq = -1;
                         break;
                 }
@@ -141,11 +148,14 @@ public class MapMarkerWnd extends Window {
                 g.chcolor(((MapFile.SlothMarker) mark).color);
             else
                 g.chcolor();
-            if (!(mark instanceof MapFile.LinkedMarker))
+            if (!(mark instanceof MapFile.LinkedMarker || mark instanceof MapFile.RealmMarker))
                 g.aimage(names.apply(mark.nm).tex(), new Coord(5, itemh / 2), 0, 0.5);
-            else
+            else if(mark instanceof MapFile.LinkedMarker)
                 g.aimage(names.apply(String.format("[%d ⟶ %d] %s", ((MapFile.LinkedMarker) mark).id, ((MapFile.LinkedMarker) mark).lid, mark.nm)).tex(),
                         new Coord(5, itemh / 2), 0, 0.5);
+            else
+                g.aimage(names.apply(String.format("[%s] %s", ((MapFile.RealmMarker) mark).realm, mark.nm)).tex(),
+                        new Coord(5, itemh / 2), 0 , 0.5);
         }
 
         public void change(MapFile.Marker mark) {
@@ -154,6 +164,7 @@ public class MapMarkerWnd extends Window {
                 map.view.center(new MapFileWidget.SpecLocator(mark.seg, mark.tc));
         }
 
+        //TODO: Clean this all up
         public void change2(MapFile.Marker mark) {
             this.sel = mark;
 
@@ -163,14 +174,18 @@ public class MapMarkerWnd extends Window {
                 if (colsel != null) {
                     ui.destroy(colsel);
                     colsel = null;
-                    if (mremove != null) {
-                        ui.destroy(mremove);
-                        mremove = null;
-                    }
-                    if (linker != null) {
-                        ui.destroy(linker);
-                        linker = null;
-                    }
+                }
+                if (linker != null) {
+                    ui.destroy(linker);
+                    linker = null;
+                }
+                if (mremove != null) {
+                    ui.destroy(mremove);
+                    mremove = null;
+                }
+                if(realmedit != null) {
+                    ui.destroy(realmedit);
+                    realmedit = null;
                 }
                 MapMarkerWnd.this.pack();
             }
@@ -187,6 +202,10 @@ public class MapMarkerWnd extends Window {
                 } else if (mark instanceof MapFile.LinkedMarker) {
                     typesel.sel = types.get(3);
                     mflt = lmarkers;
+                    markerseq = -1;
+                } else if(mark instanceof MapFile.RealmMarker) {
+                    typesel.sel = types.get(4);
+                    mflt = kmarkers;
                     markerseq = -1;
                 } else {
                     typesel.sel = types.get(2);
@@ -287,7 +306,46 @@ public class MapMarkerWnd extends Window {
                                 FastText.aprintf(g, new Coord(5, itemh / 2), 0.0, 0.5, "[%d] %s", ((MapFile.LinkedMarker) item).id, item.nm);
                             }
                         }, colsel.c.add(0, colsel.sz.y + 10));
+                    } else {
+                        mremove = MapMarkerWnd.this.add(new Button(200, "Remove", false) {
+                            public void click() {
+                                map.view.file.remove(mark);
+                                change2(null);
+                            }
+                        }, colsel.c.add(0, colsel.sz.y + 10));
                     }
+                } else if (mark instanceof MapFile.RealmMarker) {
+                    MapFile.RealmMarker pm = (MapFile.RealmMarker) mark;
+                    colsel = MapMarkerWnd.this.add(new BuddyWnd.GroupSelector(0) {
+                        public void changed(int group) {
+                            this.group = group;
+                            MarkerData.setRealmColor(pm.realm, group);
+                        }
+                    }, namesel.c.add(0, namesel.sz.y + 10));
+                    if ((colsel.group = Utils.index(BuddyWnd.gc, MarkerData.getRealmColor(pm.realm))) < 0)
+                        colsel.group = 0;
+                    realmedit = MapMarkerWnd.this.add(new TextEntry(200, "") {
+                        {
+                            dshow = true;
+                        }
+
+                        public void activate(String text) {
+                            ((MapFile.RealmMarker) mark).realm = text;
+                            colsel.group = MarkerData.getRealmColorID(text);
+                            map.view.file.update(mark);
+                            commit();
+                            change2(null);
+                        }
+                    }, colsel.c.add(0, colsel.sz.y + 10));
+                    realmedit.settext(pm.realm);
+                    realmedit.buf.point = mark.nm.length();
+                    realmedit.commit();
+                    mremove = MapMarkerWnd.this.add(new Button(200, "Remove", false) {
+                        public void click() {
+                            map.view.file.remove(mark);
+                            change2(null);
+                        }
+                    }, realmedit.c.add(0, realmedit.sz.y + 10));
                 }
                 MapMarkerWnd.this.pack();
             }

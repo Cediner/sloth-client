@@ -94,8 +94,6 @@ public class DefSettings {
     public static final IndirSetting<Boolean> ALWAYSLONGTIP = new IndirSetting<>(global, "gameplay.always-show-longtip");    //[Bool] Toggle only longtips on item tooltips
     public static final IndirSetting<Boolean> SHOWFPS = new IndirSetting<>(global, "gameplay.show-fps");                     //[Bool] Toggle FPS counter
     public static final IndirSetting<Boolean> SHOWHOVERTOOLTIPS = new IndirSetting<>(global, "gameplay.show-hover-tooltip");  //[Bool] Toggle hover tooltips
-    public static final IndirSetting<Boolean> SHOWMMMARKERS = new IndirSetting<>(global, "gameplay.show-minimap-markers");    //[Bool] Toggle minimap icons
-    public static final IndirSetting<Boolean> SMALLMMMARKERS = new IndirSetting<>(global, "gameplay.small-minimap-markers");  //[Bool] Toggle SMALL minimap icons
     public static final IndirSetting<Boolean> AUTOTRACK = new IndirSetting<>(global, "gameplay.auto-turn-on-tracking");       //[Bool] Toggle turning on tracking on login
     public static final IndirSetting<Boolean> AUTOCRIME = new IndirSetting<>(global, "gameplay.auto-turn-on-crime");          //[Bool] Toggle turning on criminal acts on login
     public static final IndirSetting<Boolean> SHOWHALO = new IndirSetting<>(global, "gameplay.show-gob-halo");                //[Bool] Toggle halo on human gobs
@@ -126,6 +124,17 @@ public class DefSettings {
 
     public static final IndirSetting<Boolean> KEEPGOBS = new IndirSetting<>(global, "graphics.dont-delete-gobs");            //[Bool] Don't delete gobs
     public static final IndirSetting<Boolean> KEEPGRIDS = new IndirSetting<>(global, "graphics.dont-delete-grids");          //[Bool] Don't delete map grids
+
+    //Minimap
+    public static final IndirSetting<Boolean> SHOWMMGOBS = new IndirSetting<>(global, "gameplay.show-minimap-gobs");    //[Bool] Toggle minimap gobs
+    public static final IndirSetting<Boolean> SHOWMMMARKERS = new IndirSetting<>(global, "gameplay.show-minimap-markers");    //[Bool] Toggle minimap icons
+    public static final IndirSetting<Boolean> SMALLMMMARKERS = new IndirSetting<>(global, "gameplay.small-minimap-markers");  //[Bool] Toggle SMALL minimap icons
+    public static final IndirSetting<Boolean> SHOWPMARKERS = new IndirSetting<>(global, "gameplay.show-placed-markers");      //[Bool] Toggle Placed markers
+    public static final IndirSetting<Boolean> SHOWNMARKERS = new IndirSetting<>(global, "gameplay.show-natural-markers");      //[Bool] Toggle Natural markers
+    public static final IndirSetting<Boolean> SHOWCMARKERS = new IndirSetting<>(global, "gameplay.show-custom-markers");      //[Bool] Toggle Custom markers
+    public static final IndirSetting<Boolean> SHOWLMARKERS = new IndirSetting<>(global, "gameplay.show-linked-markers");      //[Bool] Toggle Linked markers
+    public static final IndirSetting<Boolean> SHOWKMARKERS = new IndirSetting<>(global, "gameplay.show-kingdom-markers");      //[Bool] Toggle Kingdom markers
+    public static final IndirSetting<Boolean> SHOWKMARKERRAD = new IndirSetting<>(global, "gameplay.show-kingdom-marker-radius");      //[Bool] Toggle Kingdom markers radius
 
     //Debug
     public static final IndirSetting<Boolean> DEBUG = new IndirSetting<>(global, "system.debug");
@@ -253,8 +262,15 @@ public class DefSettings {
         NBELTLOCK.ensure(false);
         NPBELTLOCK.ensure(false);
         //Minimap
+        SHOWMMGOBS.ensure(true);
         MMSHOWGRID.ensure(false);
         MMSHOWVIEW.ensure(false);
+        SHOWPMARKERS.ensure(true);
+        SHOWNMARKERS.ensure(true);
+        SHOWLMARKERS.ensure(true);
+        SHOWKMARKERS.ensure(true);
+        SHOWCMARKERS.ensure(true);
+        SHOWKMARKERRAD.ensure(false);
         //Cameras
         CAMERA.ensure("sortho");
         FREECAMREXAXIS.ensure(false);

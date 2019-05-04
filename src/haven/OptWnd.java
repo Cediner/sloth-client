@@ -334,6 +334,7 @@ public class OptWnd extends Window {
 
         { //Gameplay settings
             final Coord c = new Coord(0, 0);
+            final Grouping gpsettings = new GridGrouping("Gameplay Settings", spacer, 600);
             final Grouping flowermenu = new LinearGrouping("FlowerMenu", spacer);
             final Grouping crops = new LinearGrouping("Crops/Flavor Objs", spacer);
             final Grouping gobs = new LinearGrouping("Gobs", spacer);
@@ -381,8 +382,15 @@ public class OptWnd extends Window {
                 animals.pack();
             }
             { //minimap
+                minimap.add(new IndirCheckBox("Show Gobs on Minimap", SHOWMMGOBS));
                 minimap.add(new IndirCheckBox("Show Minimap icons", SHOWMMMARKERS));
                 minimap.add(new IndirCheckBox("Make Minimap icons small", SMALLMMMARKERS));
+                minimap.add(new IndirCheckBox("Show placed icons", SHOWPMARKERS));
+                minimap.add(new IndirCheckBox("Show natural icons", SHOWNMARKERS));
+                minimap.add(new IndirCheckBox("Show custom icons", SHOWCMARKERS));
+                minimap.add(new IndirCheckBox("Show linked icons", SHOWLMARKERS));
+                minimap.add(new IndirCheckBox("Show kingdom icons", SHOWKMARKERS));
+                minimap.add(new IndirCheckBox("Show kingdom icon radius", SHOWKMARKERRAD));
                 minimap.pack();
             }
             { //misc
@@ -404,13 +412,16 @@ public class OptWnd extends Window {
                 pathfinding.pack();
             }
 
-            c.y += gameplay.add(flowermenu, c.copy()).sz.y;
-            c.y += gameplay.add(crops, c.copy()).sz.y;
-            c.y += gameplay.add(gobs, c.copy()).sz.y;
-            c.y += gameplay.add(animals, c.copy()).sz.y;
-            c.y += gameplay.add(minimap, c.copy()).sz.y;
-            c.y += gameplay.add(misc, c.copy()).sz.y;
-            c.y += gameplay.add(pathfinding, c.copy()).sz.y;
+            gpsettings.add(flowermenu);
+            gpsettings.add(crops);
+            gpsettings.add(gobs);
+            gpsettings.add(animals);
+            gpsettings.add(minimap);
+            gpsettings.add(misc);
+            gpsettings.add(pathfinding);
+            gpsettings.pack();
+
+            c.y += gameplay.add(gpsettings, c.copy()).sz.y + spacer;
             gameplay.add(new PButton(200, "Back", 27, main), c.copy());
             gameplay.pack();
         }

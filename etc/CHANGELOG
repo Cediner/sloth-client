@@ -1,3 +1,12 @@
+5/4/19
+    - Added in Kingdom markers to the map, these are just for cairns for now and display their radius if desired
+      Kingdom markers also allow you to name the realm they are for. Realm's can be assigned colors that are
+      used for all markers of that realm. Changing the color is just like changing a marker color. You just
+      need to select a cairn from the realm first that you want to change the color for. By default cairns are
+      marked as ??? and assigned red
+    - There are no options in Options window -> Gameplay for toggling off and on markers and specific categories
+      of markers along with the radius of kingdom markers
+
 5/1/19
     - Enhanced the Avatar tooltip to match the current Gob one
 

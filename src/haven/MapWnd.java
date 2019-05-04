@@ -265,42 +265,44 @@ public class MapWnd extends Window {
          * Draw gob icons relative to the players location
          */
         private void drawicons(GOut g, final Location ploc, final Set<Long> ignore) {
-            final Coord pc = new Coord2d(mv.getcc()).floor(tilesz);
-            synchronized (ui.sess.glob.oc) {
-                for (Gob gob : ui.sess.glob.oc) {
-                    if (!ignore.contains(gob.id)) {
-                        if (gob.type == Type.HUMAN && gob.id != ui.gui.map.plgob) {
-                            final Coord mc = new Coord2d(gob.getc()).floor(tilesz);
-                            try {
-                                final Coord gc = xlate(new Location(ploc.seg, ploc.tc.add(mc.sub(pc))));
-                                if (gc != null) {
-                                    final KinInfo kin = gob.getattr(KinInfo.class);
-                                    if (kin != null) {
-                                        g.chcolor(BuddyWnd.gc[kin.group]);
-                                        g.image(friend, gc.sub(friend.sz().div(2)));
-                                        g.chcolor();
-                                    } else {
-                                        g.image(unknown, gc.sub(unknown.sz().div(2)));
-                                    }
-                                }
-                            } catch (Loading l) {
-                                //fail silently
-                            }
-                        } else {
-                            try {
-                                GobIcon icon = gob.getattr(GobIcon.class);
-                                if (icon != null) {
-                                    final Coord mc = new Coord2d(gob.getc()).floor(tilesz);
+            if(DefSettings.SHOWMMGOBS.get()) {
+                final Coord pc = new Coord2d(mv.getcc()).floor(tilesz);
+                synchronized (ui.sess.glob.oc) {
+                    for (Gob gob : ui.sess.glob.oc) {
+                        if (!ignore.contains(gob.id)) {
+                            if (gob.type == Type.HUMAN && gob.id != ui.gui.map.plgob) {
+                                final Coord mc = new Coord2d(gob.getc()).floor(tilesz);
+                                try {
                                     final Coord gc = xlate(new Location(ploc.seg, ploc.tc.add(mc.sub(pc))));
                                     if (gc != null) {
-                                        icon.tex().ifPresent(tex -> {
-                                            final Coord sz = tex.sz();
-                                            g.image(tex, gc.sub(sz.div(2)), sz);
-                                        });
+                                        final KinInfo kin = gob.getattr(KinInfo.class);
+                                        if (kin != null) {
+                                            g.chcolor(BuddyWnd.gc[kin.group]);
+                                            g.image(friend, gc.sub(friend.sz().div(2)));
+                                            g.chcolor();
+                                        } else {
+                                            g.image(unknown, gc.sub(unknown.sz().div(2)));
+                                        }
                                     }
+                                } catch (Loading l) {
+                                    //fail silently
                                 }
-                            } catch (Loading l) {
-                                //fail silently
+                            } else {
+                                try {
+                                    GobIcon icon = gob.getattr(GobIcon.class);
+                                    if (icon != null) {
+                                        final Coord mc = new Coord2d(gob.getc()).floor(tilesz);
+                                        final Coord gc = xlate(new Location(ploc.seg, ploc.tc.add(mc.sub(pc))));
+                                        if (gc != null) {
+                                            icon.tex().ifPresent(tex -> {
+                                                final Coord sz = tex.sz();
+                                                g.image(tex, gc.sub(sz.div(2)), sz);
+                                            });
+                                        }
+                                    }
+                                } catch (Loading l) {
+                                    //fail silently
+                                }
                             }
                         }
                     }
@@ -527,9 +529,9 @@ public class MapWnd extends Window {
     }
 
     void markobj(MarkerData.Marker marker, Coord2d mc) {
-        if (marker instanceof MarkerData.LinkedMarker)
+        if (marker instanceof MarkerData.LinkedMarker) {
             markobj((MarkerData.LinkedMarker) marker, mc);
-        else {
+        } else {
             synchronized (deferred) {
                 deferred.add(() -> {
                     final Coord tc = mc.floor(tilesz);
@@ -543,12 +545,24 @@ public class MapWnd extends Window {
                         Coord sc = tc.add(info.sc.sub(obg.gc).mul(cmaps));
                         //Check for duplicate
                         for (final Marker mark : view.file.markers) {
-                            if (mark instanceof MapFile.SlothMarker && mark.seg == info.seg && sc.equals(mark.tc))
+                            if (marker.type == MarkerData.Type.SLOTH && mark instanceof MapFile.SlothMarker &&
+                                    mark.seg == info.seg && sc.equals(mark.tc))
+                                return; //Duplicate
+                            else if(marker.type == MarkerData.Type.REALM &&mark instanceof MapFile.RealmMarker &&
+                                    mark.seg == info.seg && sc.equals(mark.tc))
                                 return; //Duplicate
                         }
 
-                        final Marker mark = new MapFile.SlothMarker(info.seg, sc, marker.defname,
-                                Color.WHITE, new Resource.Spec(Resource.remote(), marker.res));
+                        final Marker mark;
+                        if(marker.type == MarkerData.Type.SLOTH) {
+                            mark = new MapFile.SlothMarker(info.seg, sc, marker.defname,
+                                    Color.WHITE, new Resource.Spec(Resource.remote(), marker.res));
+                        } else {
+                            mark = new MapFile.RealmMarker(info.seg, sc, marker.defname,
+                                    new Resource.Spec(Resource.remote(), marker.res),
+                                    "???");
+                            //TODO: Auto name realm based off buff
+                        }
                         view.file.add(mark);
                     } finally {
                         view.file.lock.writeLock().unlock();

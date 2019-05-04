@@ -622,13 +622,26 @@ public class MapView extends PView implements DTarget, Console.Directory {
             if (loading || !Utils.eq(cc, this.cc) || (mseq != this.mseq)) {
                 loading = false;
                 Collection<Gob> fol = new ArrayList<Gob>();
-                Coord o = new Coord();
-                for (o.y = -view; o.y <= view; o.y++) {
-                    for (o.x = -view; o.x <= view; o.x++) {
-                        try {
-                            fol.addAll(glob.map.getfo(cc.add(o)));
-                        } catch (Loading e) {
-                            loading = true;
+                if(view < 5) {
+                    Coord o = new Coord();
+                    for (o.y = -view; o.y <= view; o.y++) {
+                        for (o.x = -view; o.x <= view; o.x++) {
+                            try {
+                                fol.addAll(glob.map.getfo(cc.add(o)));
+                            } catch (Loading e) {
+                                loading = true;
+                            }
+                        }
+                    }
+                } else {
+                    synchronized (glob.map.grids) {
+                        for(final MCache.Grid grid : glob.map.grids.values()) {
+                            final Coord cutc = new Coord(0, 0);
+                            for(cutc.x = 0; cutc.x < cutn.x; cutc.x++) {
+                                for(cutc.y = 0; cutc.y < cutn.y; cutc.y++) {
+                                    fol.addAll(grid.getfo(cutc));
+                                }
+                            }
                         }
                     }
                 }
@@ -697,6 +710,10 @@ public class MapView extends PView implements DTarget, Console.Directory {
                             }
                         }
                     }
+                }
+                if (!(rl.state().get(PView.ctx) instanceof ClickContext)
+                        && SHOWFLAVOBJS.get()) {
+                    rl.add(flavobjs, null);
                 }
             }
             return (false);

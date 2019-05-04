@@ -51,6 +51,9 @@ public class SessionDetails {
     //For every VMeter
     private final List<WeakReference<VMeter>> vmeters = new ArrayList<>();
 
+    //For every pointer
+    private final List<WeakReference<PointerData>> pointers = new ArrayList<>();
+
     public SessionDetails(final Session sess) {
         this.session = new WeakReference<>(sess);
         shp = hhp = mhp = stam = energy = 0;
@@ -79,6 +82,36 @@ public class SessionDetails {
         return ui != null ? ui.gui.chrid : null;
     }
 
+    /*****************************************************************************************
+     *  Pointers
+     *****************************************************************************************/
+    public void attachPointer(final PointerData pointer) {
+        synchronized (pointers) {
+            pointers.add(new WeakReference<>(pointer));
+        }
+    }
+
+    public void removePointer(final PointerData pointer) {
+        synchronized (pointers) {
+            pointers.removeIf(ptr -> ptr.get() == null || ptr.get() == pointer);
+        }
+    }
+
+    public PointerData[] getPointers() {
+        final List<PointerData> ret = new ArrayList<>();
+        synchronized (pointers) {
+            Iterator<WeakReference<PointerData>> itr = pointers.iterator();
+            while(itr.hasNext()) {
+                final PointerData ptr = itr.next().get();
+                if(ptr != null) {
+                    ret.add(ptr);
+                } else {
+                    itr.remove();
+                }
+            }
+        }
+        return ret.toArray(new PointerData[0]);
+    }
 
     /*****************************************************************************************
      *  VMeters

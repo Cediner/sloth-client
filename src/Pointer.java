@@ -1,6 +1,9 @@
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import haven.*;
+import haven.sloth.script.PointerData;
+
+import java.util.Arrays;
 
 import static haven.OCache.posres;
 
@@ -11,6 +14,7 @@ public class Pointer extends Widget {
     public Coord2d tc;
     public Coord lc;
     public long gobid = -1L;
+    private PointerData data = new PointerData("Unknown", Coord2d.z);
 
     public Pointer(Indir<Resource> res) {
         super(Coord.z);
@@ -29,6 +33,13 @@ public class Pointer extends Widget {
     protected void added() {
         presize();
         super.added();
+        ui.sess.details.attachPointer(data);
+    }
+
+    @Override
+    protected void removed() {
+        super.removed();
+        ui.sess.details.removePointer(data);
     }
 
     private int signum(int paramInt) {
@@ -165,6 +176,7 @@ public class Pointer extends Widget {
                     this.tc = null;
                 } else {
                     this.tc = ((Coord) args[0]).mul(posres);
+                    data.updatec(this.tc);
                 }
                 if (args[1] == null) {
                     this.gobid = -1L;
@@ -179,6 +191,9 @@ public class Pointer extends Widget {
                 break;
             default:
                 super.uimsg(msg, args);
+                if(msg.equals("tip") && args[0] instanceof String) {
+                    data.updateName((String)args[0]);
+                }
         }
     }
 

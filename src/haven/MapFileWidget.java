@@ -37,6 +37,7 @@ import haven.MapFile.Marker;
 import haven.MapFile.PMarker;
 import haven.MapFile.SMarker;
 import haven.sloth.DefSettings;
+import haven.sloth.io.MarkerData;
 
 import static haven.MCache.cmaps;
 
@@ -190,6 +191,10 @@ public class MapFileWidget extends Widget {
         }
     }
 
+    private enum Type {
+        NATURAL, PLACED, CUSTOM, LINKED, KINGDOM
+    }
+
     public static class DisplayMarker {
         public static final Resource.Image flagbg, flagfg;
         public static final Coord flagcc;
@@ -198,6 +203,7 @@ public class MapFileWidget extends Widget {
         private Area hit;
         private Resource.Image img;
         private Coord cc;
+        private final Type type;
 
         static {
             Resource flag = Resource.local().loadwait("gfx/hud/mmap/flag");
@@ -208,65 +214,113 @@ public class MapFileWidget extends Widget {
 
         public DisplayMarker(Marker marker) {
             this.m = marker;
-            this.tip = Text.render(m.nm);
+            if(!(marker instanceof MapFile.RealmMarker)) {
+                this.tip = Text.render(m.nm);
+            } else {
+                this.tip = Text.render(String.format("[%s] %s", ((MapFile.RealmMarker) marker).realm, marker.nm));
+            }
             if (marker instanceof PMarker)
                 this.hit = Area.sized(flagcc.inv(), flagbg.sz);
+
+            if(marker instanceof MapFile.RealmMarker)
+                type = Type.KINGDOM;
+            else if(marker instanceof MapFile.LinkedMarker)
+                type = Type.LINKED;
+            else if(marker instanceof MapFile.SlothMarker)
+                type = Type.CUSTOM;
+            else if(marker instanceof MapFile.PMarker)
+                type = Type.PLACED;
+            else
+                type = Type.NATURAL;
         }
 
         private Area hit() {
-            if (!(m instanceof MapFile.SlothMarker)) {
-                return hit;
-            } else if (img != null) {
-                final Coord sz = DefSettings.SMALLMMMARKERS.get() ? img.tex().sz().div(2) : img.tex().sz();
-                return Area.sized(sz.div(2).inv(), sz);
+            if((type == Type.PLACED && DefSettings.SHOWPMARKERS.get()) ||
+                (type == Type.KINGDOM && DefSettings.SHOWKMARKERS.get()) ||
+                (type == Type.LINKED && DefSettings.SHOWLMARKERS.get()) ||
+                (type == Type.CUSTOM && DefSettings.SHOWCMARKERS.get()) ||
+                (type == Type.NATURAL && DefSettings.SHOWNMARKERS.get())) {
+                if (!(m instanceof MapFile.SlothMarker || m instanceof MapFile.RealmMarker)) {
+                    return hit;
+                } else if (img != null) {
+                    final Coord sz = DefSettings.SMALLMMMARKERS.get() ? img.tex().sz().div(2) : img.tex().sz();
+                    return Area.sized(sz.div(2).inv(), sz);
+                } else {
+                    return null;
+                }
             } else {
                 return null;
             }
         }
 
-        public void draw(GOut g, Coord c) {
-            if (!tip.text.equals(m.nm)) {
-                tip = Text.render(m.nm);
-            }
-            if (m instanceof PMarker) {
-                Coord ul = c.sub(flagcc);
-                g.chcolor(((PMarker) m).color);
-                g.image(flagfg, ul);
-                g.chcolor();
-                g.image(flagbg, ul);
-            } else if (m instanceof SMarker) {
-                SMarker sm = (SMarker) m;
-                try {
-                    if (cc == null) {
-                        Resource res = MapFile.loadsaved(Resource.remote(), sm.res);
-                        img = res.layer(Resource.imgc);
-                        Resource.Neg neg = res.layer(Resource.negc);
-                        cc = (neg != null) ? neg.cc : img.sz.div(2);
-                        if (hit == null)
-                            hit = Area.sized(cc.inv(), img.sz);
-                    }
-                } catch (Loading l) {
-                } catch (Exception e) {
-                    cc = Coord.z;
+        public void draw(GOut g, Coord c, int dlvl) {
+            if ((type == Type.PLACED && DefSettings.SHOWPMARKERS.get()) ||
+                    (type == Type.KINGDOM && DefSettings.SHOWKMARKERS.get()) ||
+                    (type == Type.LINKED && DefSettings.SHOWLMARKERS.get()) ||
+                    (type == Type.CUSTOM && DefSettings.SHOWCMARKERS.get()) ||
+                    (type == Type.NATURAL && DefSettings.SHOWNMARKERS.get())) {
+                if (!tip.text.equals(m.nm) && !(m instanceof MapFile.RealmMarker)) {
+                    tip = Text.render(m.nm);
                 }
-                if (img != null)
-                    g.image(img, c.sub(cc));
-            } else if (m instanceof MapFile.SlothMarker) {
-                final MapFile.SlothMarker mark = (MapFile.SlothMarker) m;
-                g.chcolor(mark.color);
-                if (img != null) {
-                    final Coord sz = !DefSettings.SMALLMMMARKERS.get() ? Utils.imgsz(img.img) : Utils.imgsz(img.img).div(2);
-                    cc = sz.div(2);
-                    g.image(img.tex(), c.sub(cc), sz);
-                } else {
+                if (m instanceof PMarker) {
+                    Coord ul = c.sub(flagcc);
+                    g.chcolor(((PMarker) m).color);
+                    g.image(flagfg, ul);
+                    g.chcolor();
+                    g.image(flagbg, ul);
+                } else if (m instanceof SMarker) {
+                    SMarker sm = (SMarker) m;
                     try {
-                        Resource res = MapFile.loadsaved(Resource.remote(), ((MapFile.SlothMarker) m).res);
-                        img = res.layer(Resource.imgc);
+                        if (cc == null) {
+                            Resource res = MapFile.loadsaved(Resource.remote(), sm.res);
+                            img = res.layer(Resource.imgc);
+                            Resource.Neg neg = res.layer(Resource.negc);
+                            cc = (neg != null) ? neg.cc : img.sz.div(2);
+                            if (hit == null)
+                                hit = Area.sized(cc.inv(), img.sz);
+                        }
                     } catch (Loading l) {
-                        //ignore
+                    } catch (Exception e) {
+                        cc = Coord.z;
+                    }
+                    if (img != null)
+                        g.image(img, c.sub(cc));
+                } else if (m instanceof MapFile.SlothMarker) {
+                    final MapFile.SlothMarker mark = (MapFile.SlothMarker) m;
+                    g.chcolor(mark.color);
+                    if (img != null) {
+                        final Coord sz = !DefSettings.SMALLMMMARKERS.get() ? Utils.imgsz(img.img) : Utils.imgsz(img.img).div(2);
+                        cc = sz.div(2);
+                        g.image(img.tex(), c.sub(cc), sz);
+                    } else {
+                        try {
+                            Resource res = MapFile.loadsaved(Resource.remote(), ((MapFile.SlothMarker) m).res);
+                            img = res.layer(Resource.imgc);
+                        } catch (Loading l) {
+                            //ignore
+                        }
+                    }
+                    g.chcolor();
+                } else if (m instanceof MapFile.RealmMarker) {
+                    final MapFile.RealmMarker mark = (MapFile.RealmMarker) m;
+                    if (img != null) {
+                        final Coord sz = !DefSettings.SMALLMMMARKERS.get() ? Utils.imgsz(img.img) : Utils.imgsz(img.img).div(2);
+                        cc = sz.div(2);
+                        g.image(img.tex(), c.sub(cc), sz);
+                        if(DefSettings.SHOWKMARKERRAD.get()) {
+                            g.chcolor(MarkerData.getRealmColor(mark.realm));
+                            g.frect(c.sub(new Coord(250, 250).div(1 << dlvl)), new Coord(500, 500).div(1 << dlvl));
+                            g.chcolor();
+                        }
+                    } else {
+                        try {
+                            Resource res = MapFile.loadsaved(Resource.remote(), ((MapFile.RealmMarker) m).res);
+                            img = res.layer(Resource.imgc);
+                        } catch (Loading l) {
+                            //ignore
+                        }
                     }
                 }
-                g.chcolor();
             }
         }
     }
@@ -377,7 +431,7 @@ public class MapFileWidget extends Widget {
                 remark(loc, dtext.margin(cmaps.mul(1 << dlvl)));
             if (markers != null) {
                 for (DisplayMarker mark : markers)
-                    mark.draw(g, mark.m.tc.sub(loc.tc).div(1 << dlvl).add(hsz));
+                    mark.draw(g, mark.m.tc.sub(loc.tc).div(1 << dlvl).add(hsz), dlvl);
             }
         }
     }

@@ -10,7 +10,6 @@
 (defconstant +hotkey-1+ 141)
 (defconstant +hotkey-2+ 142)
 (defconstant +hotkey-3+ 143)
-(defconstant +hotkey-4+ 144)
 (java-field hk-items "belt")
 
 (defmacro hk-use-item (slot flags)
@@ -30,7 +29,7 @@
   `(wait-until (lambda () (not (is-hotkey-set ,slot)))))
 
 
-(export '(+hotkey-1+ +hotkey-2+ +hotkey-3+ +hotkey-4+
+(export '(+hotkey-1+ +hotkey-2+ +hotkey-3+
           hk-use-item hk-set-item hk-unset-item
           is-hotkey-set
           wait-until-hotkey-is-set wait-until-hotkey-is-unset))

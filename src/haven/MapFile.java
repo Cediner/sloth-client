@@ -37,6 +37,7 @@ import com.google.common.flogger.FluentLogger;
 import haven.Defer.Future;
 import haven.resutil.Ridges;
 import haven.sloth.util.IDPool;
+import sun.security.krb5.Realm;
 
 import static haven.MCache.cmaps;
 
@@ -399,6 +400,17 @@ public class MapFile {
         }
     }
 
+    public static class RealmMarker extends Marker {
+        public final Resource.Spec res;
+        public String realm;
+
+        public RealmMarker(long seg, Coord tc, String nm, Resource.Spec res, String realm) {
+            super(seg, tc, nm);
+            this.res = res;
+            this.realm = realm;
+        }
+    }
+
     private static Marker loadmarker(MapFile file, Message fp) {
         int ver = fp.uint8();
         if (ver == 1) {
@@ -440,6 +452,16 @@ public class MapFile {
                         throw (new Message.FormatError("Unknown linked marker version: " + version));
                     }
                 }
+                case 'k': {
+                    final int version = fp.uint8();
+                    if (version == 0) {
+                        Resource.Spec res = new Resource.Spec(Resource.remote(), fp.string(), fp.uint16());
+                        String realm = fp.string();
+                        return new RealmMarker(seg, tc, nm, res, realm);
+                    } else {
+                        throw (new Message.FormatError("Unknown realm marker version: " + version));
+                    }
+                }
                 default:
                     throw (new Message.FormatError("Unknown marker type: " + (int) type));
             }
@@ -464,6 +486,7 @@ public class MapFile {
             fp.adduint16(sm.res.ver);
         } else if (mark instanceof SlothMarker) {
             SlothMarker rm = (SlothMarker) mark;
+            //Linked => l, Realm => k, Sloth => r
             fp.adduint8(mark instanceof LinkedMarker ? 'l' : 'r');
             fp.adduint8(mark instanceof LinkedMarker ? 2 : 1); //version
             fp.addcolor(rm.color);
@@ -474,6 +497,13 @@ public class MapFile {
                 fp.adduint8(((LinkedMarker) rm).type);
                 fp.addint64(((LinkedMarker) rm).lid);
             }
+        } else if(mark instanceof RealmMarker) {
+            RealmMarker rm = (RealmMarker) mark;
+            fp.adduint8('k');
+            fp.adduint8(0);
+            fp.addstring(rm.res.name);
+            fp.adduint16(rm.res.ver);
+            fp.addstring(rm.realm);
         } else {
             throw (new ClassCastException("Can only save PMarkers and SMarkers and SlothMarkers and LinkedMarkers"));
         }
