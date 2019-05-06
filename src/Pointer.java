@@ -203,7 +203,7 @@ public class Pointer extends Widget {
             if (gobid > 0) {
                 ui.gui.map.wdgmsg("click", rootpos().add(c), this.tc.floor(posres), button, ui.modflags(), 0, (int) gobid, this.tc.floor(posres), 0, -1);
             } else {
-                ui.gui.map.wdgmsg("click", rootpos().add(c), this.tc.floor(posres), button, ui.modflags());
+                ui.gui.map.queuemove(this.tc);
             }
             return true;
         } else {

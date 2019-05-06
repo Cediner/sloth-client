@@ -1,3 +1,7 @@
+5/5/19
+    - Alerting for humans will now work on villagers or realm members you don't have kinned
+    - Pathfinding will allow walking through shallow water
+
 5/4/19
     - Added in Kingdom markers to the map, these are just for cairns for now and display their radius if desired
       Kingdom markers also allow you to name the realm they are for. Realm's can be assigned colors that are

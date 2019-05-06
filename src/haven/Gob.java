@@ -31,6 +31,7 @@ import haven.resutil.WaterTile;
 import haven.sloth.DefSettings;
 import haven.sloth.gfx.HitboxMesh;
 import haven.sloth.gob.*;
+import haven.sloth.io.DangerousData;
 import haven.sloth.io.HighlightData;
 import haven.sloth.io.MarkerData;
 import haven.sloth.script.pathfinding.Hitbox;
@@ -493,10 +494,14 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
     public boolean isFriendly() {
         final KinInfo kin = getattr(KinInfo.class);
         if(kin != null) {
-            return DefSettings.BADKIN.get() != kin.group || kin.isVillager();
+            return DefSettings.BADKIN.get() != kin.group || (kin.isVillager() && (kin.name == null || kin.name.equals("") || kin.name.equals(" ")));
         } else {
             return false;
         }
+    }
+
+    public boolean isDangerous() {
+        return DangerousData.isDangerous(name());
     }
 
     public boolean isDead() {

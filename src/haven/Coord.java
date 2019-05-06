@@ -34,6 +34,7 @@ import java.util.Optional;
 public class Coord implements Comparable<Coord>, java.io.Serializable {
     public int x, y;
     public static Coord z = new Coord(0, 0);
+    public static Coord o = new Coord(1, 1);
     public static Coord[] uecw = {new Coord(0, -1), new Coord(1, 0), new Coord(0, 1), new Coord(-1, 0)};
     public static Coord[] uccw = {new Coord(0, 0), new Coord(1, 0), new Coord(1, 1), new Coord(0, 1)};
     public static Coord[] upcw = {new Coord(0, -1), new Coord(1, -1), new Coord(1, 0), new Coord(1, 1),
