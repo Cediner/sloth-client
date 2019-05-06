@@ -21,6 +21,10 @@
 ;;;; SpeedGet
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defconstant +speed+ "haven.Speedget")
+(defconstant +crawl+ 0)
+(defconstant +walk+ 1)
+(defconstant +run+ 2)
+(defconstant +sprint+ 3)
 (java-func +session+ session-speedget "getSpeedget")
 (java-func +speed+ speed-set-1 "set" +int+)
 (java-field speed-cur-1 "cur")
@@ -34,7 +38,8 @@
 (defmacro speed-set (speed)
   `(speed-set-1 (speed) ,speed))
 
-(export '(speed speed-cur speed-max speed-set))
+(export '(speed speed-cur speed-max speed-set
+          +crawl+ +walk+ +run+ +sprint+))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; VMeters

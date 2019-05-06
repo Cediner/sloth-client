@@ -19,6 +19,7 @@
 ;;friendly
 (java-func +gob+ is-gob-dead "isDead")
 (java-func +gob+ is-gob-friendly "isFriendly")
+(java-func +gob+ is-gob-dangerous "isDangerous")
 (java-func +gob+ is-gob-moving-1 "moving")
 ;;human-specific functions
 (java-func +gob+ gob-kinname "kinname")
@@ -119,7 +120,7 @@
           gob-kinname gob-equipment
           gob-id gob-rc
           is-gob-a my-gob
-          is-gob-moving is-gob-friendly
+          is-gob-moving is-gob-friendly is-gob-dangerous
           wait-for-movement
           wait-for-movement-to-start
           wait-for-movement-to-finish

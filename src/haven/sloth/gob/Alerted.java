@@ -90,9 +90,6 @@ public class Alerted {
             } else if (plgob != -1 && g.id != plgob) {
                 //For bodies only play on unknown or RED or village/realm member that you don't have kinned
                 final KinInfo kin = g.getattr(KinInfo.class);
-                if(kin != null) {
-                    System.out.println(kin.name);
-                }
                 if (kin == null || kin.group == DefSettings.BADKIN.get() || (kin.isVillager() && (kin.name == null || kin.name.equals("") || kin.name.equals(" ")))) {
                     Audio.play(sfxmap.get(name));
                 }
