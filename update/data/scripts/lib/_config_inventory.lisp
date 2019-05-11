@@ -24,8 +24,20 @@
 (java-func +inv+ inventory-items "items")
 (java-func +inv+ inventory-size "totalSlots")
 (java-func +inv+ inventory-used-slots "usedSlots")
-(java-func +inv+ inventory-can-drop-at "canDropAt" +coord+)
-(java-func +inv+ inventory-item-at "itemAt" +coord+)
+;;(java-func +inv+ inventory-can-drop-at "canDropAt" +coord+)
+;;(java-func +inv+ inventory-item-at "itemAt" +coord+)
+
+(defun inventory-can-drop-at (inv coord)
+  (null (inventory-item-at inv coord)))
+
+(defun inventory-item-at (inv coord)
+  (let ((found (loop
+                  for itm in (listify (inventory-items inv))
+                  when (coord-between coord (item-position itm) (item-size itm))
+                  return itm)))
+    (if found
+        found
+        nil)))
 
 (defmacro inventory-free-slots (inv)
   `(- (inventory-size ,inv) (inventory-used-slots ,inv)))

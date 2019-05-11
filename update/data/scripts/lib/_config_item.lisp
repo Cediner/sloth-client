@@ -39,6 +39,9 @@
 (defmacro item-position (itm)
   `(coord-div (widget-c (item-witem ,itm)) +item-sz+))
 
+(defmacro item-size (itm)
+  `(coord-div (widget-sz (item-witem ,itm)) +item-sz+))
+
 (defmacro item-inventory (itm)
   `(widget-parent (item-witem ,itm)))
 
@@ -58,7 +61,7 @@
   `(wdgmsg ,itm "itemact" ,mouse-flags))
 
 (export '(liquid-type weight-type seed-type
-          item-position item-inventory
+          item-position item-size item-inventory
           item-name item-is-food item-get-contents item-witem
           item-quality item-amount item-meter
           contents-name contents-type contents-current contents-max

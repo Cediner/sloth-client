@@ -18,7 +18,14 @@
   `(jnew +coord2d+ ,c))
 (defmacro fakec ()
   `(coord 1 1))
+(defun coord-between (c tl s)
+  (let ((br (coord-add tl s)))
+    (and (>= (coord-x c) (coord-x tl))
+         (>= (coord-y c) (coord-y tl))
+         (< (coord-x c) (coord-x br))
+         (< (coord-y c) (coord-y br)))))
 
+  
 (defmacro coord2d (x y)
   `(jnew +coord2d+ ,x ,y))
 (java-field coord2d-x "x")
