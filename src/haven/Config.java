@@ -52,6 +52,7 @@ public class Config {
     public static String defserv = getprop("haven.defserv", "game.havenandhearth.com");
     public static URL resurl = geturl("haven.resurl", "http://game.havenandhearth.com/hres/");
     public static URL screenurl = geturl("haven.screenurl", "http://game.havenandhearth.com/mt/ss");
+    public static URL cachebase = geturl("haven.cachebase", "");
     public static boolean dbtext = getprop("haven.dbtext", "off").equals("on");
     public static boolean profile = getprop("haven.profile", "off").equals("on");
     public static boolean profilegpu = getprop("haven.profilegpu", "off").equals("on");

@@ -974,7 +974,7 @@ public class CharWnd extends Window {
     }
 
     public static class Quest {
-        public static final int QST_PEND = 0, QST_DONE = 1, QST_FAIL = 2;
+        public static final int QST_PEND = 0, QST_DONE = 1, QST_FAIL = 2, QST_DISABLED = 3;
         public static final Color[] stcol = {
                 new Color(255, 255, 64), new Color(64, 255, 64), new Color(255, 64, 64),
         };
@@ -1151,6 +1151,20 @@ public class CharWnd extends Window {
                 return (cond);
             }
 
+            private CharWnd cw = null;
+            public int done() {
+                if(cw == null)
+                    cw = getparent(CharWnd.class);
+                if(cw == null)
+                    return Quest.QST_PEND;
+                Quest qst;
+                if((qst = cw.cqst.get(id)) != null)
+                    return qst.done;
+                if((qst = cw.dqst.get(id)) != null)
+                    return qst.done;
+                return Quest.QST_PEND;
+            }
+
             public void refresh() {
             }
 
@@ -1248,6 +1262,8 @@ public class CharWnd extends Window {
                 public String title();
 
                 public Condition[] conds();
+
+                public int done();
             }
 
             public QView(QVInfo info) {
@@ -1274,6 +1290,8 @@ public class CharWnd extends Window {
                 if (rtitle != null) {
                     if (rootxlate(ui.mc).isect(Coord.z, rtitle.sz()))
                         g.chcolor(192, 192, 255, 255);
+                    else if(info.done() == QST_DISABLED)
+                        g.chcolor(255, 128, 0, 255);
                     g.image(rtitle, new Coord(3, y));
                     g.chcolor();
                     y += rtitle.sz().y + 5;
@@ -1886,7 +1904,10 @@ public class CharWnd extends Window {
             } catch (Loading e) {
                 g.image(WItem.missing.layer(Resource.imgc).tex(), Coord.z, new Coord(itemh, itemh));
             }
+            if(q.done == Quest.QST_DISABLED)
+                g.chcolor(255, 128, 0, 255);
             g.aimage(q.rnm.get().tex(), new Coord(itemh + 5, itemh / 2), 0, 0.5);
+            g.chcolor();
         }
 
         public void change(Quest q) {
@@ -2427,10 +2448,11 @@ public class CharWnd extends Window {
                         q.res = res;
                         q.done = st;
                         q.mtime = mtime;
-                        if ((fst == Quest.QST_PEND) && (st != Quest.QST_PEND))
+                        if (((fst == Quest.QST_PEND) || (fst == Quest.QST_DISABLED)) &&
+                                !((st != Quest.QST_PEND) || (st == Quest.QST_DISABLED)))
                             q.done(getparent(GameUI.class));
                     }
-                    QuestList nl = (q.done == Quest.QST_PEND) ? cqst : dqst;
+                    QuestList nl = (q.done == Quest.QST_PEND) || (q.done == Quest.QST_DISABLED) ? cqst : dqst;
                     if (nl != cl) {
                         if (cl != null)
                             cl.remove(q);

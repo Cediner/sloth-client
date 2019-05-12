@@ -285,7 +285,7 @@ public class UI {
             if (wdg != null)
                 wdg.uimsg(msg.intern(), args);
             else
-                throw (new UIException("Uimsg to non-existent widget " + id, msg, args));
+                logger.atSevere().log("Uimsg to non-existent widget %d - %s - %s", id, msg, Arrays.toString(args));
         }
     }
 
