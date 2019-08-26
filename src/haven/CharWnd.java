@@ -2449,7 +2449,7 @@ public class CharWnd extends Window {
                         q.done = st;
                         q.mtime = mtime;
                         if (((fst == Quest.QST_PEND) || (fst == Quest.QST_DISABLED)) &&
-                                !((st != Quest.QST_PEND) || (st == Quest.QST_DISABLED)))
+                                !((st == Quest.QST_PEND) || (st == Quest.QST_DISABLED)))
                             q.done(getparent(GameUI.class));
                     }
                     QuestList nl = (q.done == Quest.QST_PEND) || (q.done == Quest.QST_DISABLED) ? cqst : dqst;
