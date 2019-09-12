@@ -29,7 +29,6 @@ package haven.glsl;
 import static haven.glsl.Cons.*;
 import static haven.glsl.Function.PDir.*;
 import static haven.glsl.Type.*;
-
 import haven.glsl.ValBlock.Value;
 
 public class Phong extends ValBlock.Group {
@@ -88,7 +87,7 @@ public class Phong extends ValBlock.Group {
         public Statement dcurs, scurs;
 
         private DoLight() {
-            super(VOID);
+            super(VOID, "phong");
 
             ValBlock.Group tdep = dvals.new Group() {
                 public void cons1() {
@@ -156,7 +155,6 @@ public class Phong extends ValBlock.Group {
             mods.add(mod, order);
         }
     }
-
     public final DoLight dolight;
 
     public void cons1() {

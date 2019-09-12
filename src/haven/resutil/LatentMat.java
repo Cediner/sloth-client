@@ -24,24 +24,45 @@
  *  Boston, MA 02111-1307 USA
  */
 
-package haven;
+package haven.resutil;
 
-import java.awt.Color;
+import haven.*;
+import haven.glsl.*;
 
-public class Astronomy {
-    public final double dt, mp, yt, sp, sd;
-    public final boolean night;
-    public final Color mc;
-    public final int is;
+import static haven.glsl.Cons.*;
+import static haven.glsl.Type.*;
 
-    public Astronomy(double dt, double mp, double yt, boolean night, Color mc, int is, double sp, double sd) {
-        this.dt = dt;
-        this.mp = mp;
-        this.yt = yt;
-        this.night = night;
-        this.mc = mc;
-        this.is = is;
-        this.sp = sp;
-        this.sd = sd;
+public class LatentMat extends GLState.Abstract {
+    public static final Slot<LatentMat> slot = new Slot<>(Slot.Type.DRAW, LatentMat.class);
+    public final GLState mat;
+    public final String id, act;
+
+    public LatentMat(GLState mat, String id) {
+        this.mat = mat;
+        this.id = id;
+        this.act = null;
+    }
+
+    public LatentMat(String act) {
+        this.mat = null;
+        this.id = null;
+        this.act = act;
+    }
+
+    public void prep(Buffer buf) {
+        if ((mat != null) && (id != null))
+            buf.put(slot, this);
+        if (act != null) {
+            LatentMat cur = buf.get(slot);
+            if ((cur != null) && (cur.id == act))
+                cur.mat.prep(buf);
+        }
+    }
+
+    @Material.ResName("latent")
+    public static class $latent implements Material.ResCons {
+        public GLState cons(Resource res, Object... args) {
+            return (new LatentMat(((String) args[0]).intern()));
+        }
     }
 }

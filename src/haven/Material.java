@@ -253,7 +253,10 @@ public class Material extends GLState {
         if (f != null) {
             return (f.create(owner, res, sdt));
         }
-        return (res.layer(Material.Res.class).get());
+        Res mat = res.layer(Material.Res.class);
+        if (mat == null)
+            return (null);
+        return (mat.get());
     }
 
     private static class LegacyOwner implements Owner {
@@ -409,8 +412,15 @@ public class Material extends GLState {
     @ResName("mlink")
     public static class $mlink implements ResCons2 {
         public Res.Resolver cons(final Resource res, Object... args) {
-            final Indir<Resource> lres = res.pool.load((String) args[0], (Integer) args[1]);
-            final int id = (args.length > 2) ? (Integer) args[2] : -1;
+            final Indir<Resource> lres;
+            final int id;
+            if (args[0] instanceof String) {
+                lres = res.pool.load((String) args[0], (Integer) args[1]);
+                id = (args.length > 2) ? (Integer) args[2] : -1;
+            } else {
+                lres = res.indir();
+                id = (Integer) args[0];
+            }
             return (new Res.Resolver() {
                 public void resolve(Collection<GLState> buf) {
                     if (id >= 0) {
@@ -419,10 +429,10 @@ public class Material extends GLState {
                             throw (new Resource.LoadException("No such material in " + lres.get() + ": " + id, res));
                         buf.add(mat.get());
                     } else {
-                        Res mat = lres.get().layer(Res.class);
+                        Material mat = fromres((Owner) null, lres.get(), Message.nil);
                         if (mat == null)
                             throw (new Resource.LoadException("No material in " + lres.get(), res));
-                        buf.add(mat.get());
+                        buf.add(mat);
                     }
                 }
             });

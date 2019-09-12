@@ -42,6 +42,7 @@ public class HavenPanel extends GLCanvas implements Runnable, Console.Directory 
     boolean inited = false;
     int w, h;
     public boolean bgmode = false;
+    boolean iswap = true, aswap;
     long fd = 10, bgfd = 200, fps = 0;
     long last_sess_upd = System.currentTimeMillis();
     long ssent = 0, srecv = 0;
@@ -126,7 +127,7 @@ public class HavenPanel extends GLCanvas implements Runnable, Console.Directory 
                             BGL gl = g.gl;
                             gl.glColor3f(1, 1, 1);
                             gl.glPointSize(4);
-                            gl.joglSetSwapInterval(1);
+                            gl.joglSetSwapInterval((aswap = iswap) ? 1 : 0);
                             gl.glEnable(GL.GL_BLEND);
                             //gl.glEnable(GL.GL_LINE_SMOOTH);
                             gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
@@ -345,7 +346,7 @@ public class HavenPanel extends GLCanvas implements Runnable, Console.Directory 
             if (DefSettings.SHOWFPS.get()) {
                 FastText.aprintf(g, new Coord(w, 0), 1, 0, "FPS: %d (%d%%, %d%% idle)", fps, (int) (uidle * 100.0), (int) (ridle * 100.0));
                 FastText.aprintf(g, new Coord(w, 15), 1, 0, "S: %d | R: %d", sent, recv);
-                if(ui.gui != null && ui.gui.map != null) {
+                if (ui.gui != null && ui.gui.map != null) {
                     FastText.aprintf(g, new Coord(w, 30), 1, 0, "%.2f units/s", ui.gui.map.speed());
                 }
             }
@@ -463,6 +464,8 @@ public class HavenPanel extends GLCanvas implements Runnable, Console.Directory 
             DefSettings.checkForDirty();
             f.doneat = System.currentTimeMillis();
         }
+        if (iswap != aswap)
+            gl.setSwapInterval((aswap = iswap) ? 1 : 0);
     }
 
     void dispatch() {
@@ -614,14 +617,16 @@ public class HavenPanel extends GLCanvas implements Runnable, Console.Directory 
 
                         frames[framep] = now;
                         waited[framep] = fwaited;
-                        for (int i = 0, ckf = framep, twait = 0; i < frames.length; i++) {
-                            ckf = (ckf - 1 + frames.length) % frames.length;
-                            twait += waited[ckf];
-                            if (now - frames[ckf] > 1000) {
-                                fps = i;
-                                uidle = ((double) twait) / ((double) (now - frames[ckf]));
-                                break;
+                        {
+                            int i = 0, ckf = framep, twait = 0;
+                            for (; i < frames.length - 1; i++) {
+                                ckf = (ckf - 1 + frames.length) % frames.length;
+                                twait += waited[ckf];
+                                if (now - frames[ckf] > 1000)
+                                    break;
                             }
+                            fps = (i * 1000) / (now - frames[ckf]);
+                            uidle = ((double) twait) / ((double) (now - frames[ckf]));
                         }
                         framep = (framep + 1) % frames.length;
 
@@ -676,6 +681,9 @@ public class HavenPanel extends GLCanvas implements Runnable, Console.Directory 
             public void run(Console cons, String[] args) {
                 bgfd = 1000 / Integer.parseInt(args[1]);
             }
+        });
+        cmdmap.put("vsync", (cons, args) -> {
+            iswap = Utils.parsebool(args[1]);
         });
     }
 

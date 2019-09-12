@@ -58,7 +58,7 @@ public class Utils {
         });
     }
 
-    static void drawgay(BufferedImage t, BufferedImage img, Coord c) {
+    public static void drawgay(BufferedImage t, BufferedImage img, Coord c) {
         Coord sz = imgsz(img);
         for (int y = 0; y < sz.y; y++) {
             for (int x = 0; x < sz.x; x++) {
@@ -79,13 +79,13 @@ public class Utils {
         return (m.getHeight());
     }
 
-    static Coord textsz(Graphics g, String text) {
+    public static Coord textsz(Graphics g, String text) {
         java.awt.FontMetrics m = g.getFontMetrics();
         java.awt.geom.Rectangle2D ts = m.getStringBounds(text, g);
         return (new Coord((int) ts.getWidth(), (int) ts.getHeight()));
     }
 
-    static void aligntext(Graphics g, String text, Coord c, double ax, double ay) {
+    public static void aligntext(Graphics g, String text, Coord c, double ax, double ay) {
         java.awt.FontMetrics m = g.getFontMetrics();
         java.awt.geom.Rectangle2D ts = m.getStringBounds(text, g);
         g.drawString(text, (int) (c.x - ts.getWidth() * ax), (int) (c.y + m.getAscent() - ts.getHeight() * ay));
@@ -301,11 +301,11 @@ public class Utils {
     }
 
     public static byte f2s8(float v) {
-	return((byte)Math.max(Math.min(Math.round(v * 127f), 127), -127));
+        return ((byte) Math.max(Math.min(Math.round(v * 127f), 127), -127));
     }
 
     public static byte f2u8(float v) {
-	return((byte)Math.max(Math.min(Math.round(v * 255f), 255), 0));
+        return ((byte) Math.max(Math.min(Math.round(v * 255f), 255), 0));
     }
 
     public static long uint32(int n) {
@@ -817,20 +817,20 @@ public class Utils {
     }
 
     public static void hexdump(byte[] arr, PrintStream out, int width) {
-	if(arr == null) {
-	    out.println("null");
-	    return;
-	}
-	if(width <= 0)
-	    width = 16;
-	for(int i = 0; i < arr.length; i += width) {
-	    out.printf("%08x:\t", i);
-	    for(int o = 0; (o < width) && (i + o < arr.length); o++) {
-		if(o > 0) out.print(' ');
-		out.printf("%02x", arr[i + o]);
-	    }
-	    out.print('\n');
-	}
+        if (arr == null) {
+            out.println("null");
+            return;
+        }
+        if (width <= 0)
+            width = 16;
+        for (int i = 0; i < arr.length; i += width) {
+            out.printf("%08x:\t", i);
+            for (int o = 0; (o < width) && (i + o < arr.length); o++) {
+                if (o > 0) out.print(' ');
+                out.printf("%02x", arr[i + o]);
+            }
+            out.print('\n');
+        }
     }
 
     public static String titlecase(String str) {
@@ -866,25 +866,6 @@ public class Utils {
                 ((col & 0x0f00) >> 8) * 17,
                 ((col & 0x00f0) >> 4) * 17,
                 ((col & 0x000f) >> 0) * 17));
-    }
-
-    public static BufferedImage hconcat(final BufferedImage... imgs) {
-        int width = 0;
-        int height = 0;
-        for (final BufferedImage img : imgs) {
-            width += img.getWidth();
-            height = Math.max(height, img.getHeight());
-        }
-
-        final BufferedImage img = TexI.mkbuf(new Coord(width, height));
-        final Graphics g = img.createGraphics();
-        int x = 0;
-        for (final BufferedImage i : imgs) {
-            g.drawImage(i, x, 0, null);
-            x += i.getWidth();
-        }
-        g.dispose();
-        return img;
     }
 
     public static BufferedImage outline(BufferedImage img, Color col) {
@@ -1197,12 +1178,12 @@ public class Utils {
     }
 
     public static ByteBuffer growbuf(ByteBuffer buf, int req) {
-	if(buf.remaining() >= req)
-	    return(buf);
-	int sz = buf.capacity();
-	while(sz - buf.position() < req)
-	    sz <<= 1;
-	return(ByteBuffer.allocate(sz).order(buf.order()).put((ByteBuffer)buf.flip()));
+        if (buf.remaining() >= req)
+            return (buf);
+        int sz = buf.capacity();
+        while (sz - buf.position() < req)
+            sz <<= 1;
+        return (ByteBuffer.allocate(sz).order(buf.order()).put((ByteBuffer) buf.flip()));
     }
 
     public static float[] c2fa(Color c) {
@@ -1576,37 +1557,37 @@ public class Utils {
     }
 
     public static <E, T extends Collection<E>> T merge(T dst, Iterable<? extends E> a, Iterable<? extends E> b, Comparator<? super E> cmp) {
-	Iterator<? extends E> i = a.iterator(), o = b.iterator();
-	if(i.hasNext() && o.hasNext()) {
-	    E e = i.next(), f = o.next();
-	    while(true) {
-		if(cmp.compare(e, f) <= 0) {
-		    dst.add(e);
-		    if(i.hasNext()) {
-			e = i.next();
-		    } else {
-			dst.add(f);
-			break;
-		    }
-		} else {
-		    dst.add(f);
-		    if(o.hasNext()) {
-			f = o.next();
-		    } else {
-			dst.add(e);
-			break;
-		    }
-		}
-	    }
-	}
-	while(i.hasNext())
-	    dst.add(i.next());
-	while(o.hasNext())
-	    dst.add(o.next());
-	return(dst);
+        Iterator<? extends E> i = a.iterator(), o = b.iterator();
+        if (i.hasNext() && o.hasNext()) {
+            E e = i.next(), f = o.next();
+            while (true) {
+                if (cmp.compare(e, f) <= 0) {
+                    dst.add(e);
+                    if (i.hasNext()) {
+                        e = i.next();
+                    } else {
+                        dst.add(f);
+                        break;
+                    }
+                } else {
+                    dst.add(f);
+                    if (o.hasNext()) {
+                        f = o.next();
+                    } else {
+                        dst.add(e);
+                        break;
+                    }
+                }
+            }
+        }
+        while (i.hasNext())
+            dst.add(i.next());
+        while (o.hasNext())
+            dst.add(o.next());
+        return (dst);
     }
 
-    public static final Comparator<Object> idcmd = new Comparator<Object>() {
+    public static final Comparator<Object> idcmp = new Comparator<Object>() {
         int eid = 0;
         final Map<Ref, Long> emerg = new HashMap<Ref, Long>();
         final ReferenceQueue<Object> cleanq = new ReferenceQueue<Object>();

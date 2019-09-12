@@ -1152,15 +1152,16 @@ public class CharWnd extends Window {
             }
 
             private CharWnd cw = null;
+
             public int done() {
-                if(cw == null)
+                if (cw == null)
                     cw = getparent(CharWnd.class);
-                if(cw == null)
+                if (cw == null)
                     return Quest.QST_PEND;
                 Quest qst;
-                if((qst = cw.cqst.get(id)) != null)
+                if ((qst = cw.cqst.get(id)) != null)
                     return qst.done;
-                if((qst = cw.dqst.get(id)) != null)
+                if ((qst = cw.dqst.get(id)) != null)
                     return qst.done;
                 return Quest.QST_PEND;
             }
@@ -1290,7 +1291,7 @@ public class CharWnd extends Window {
                 if (rtitle != null) {
                     if (rootxlate(ui.mc).isect(Coord.z, rtitle.sz()))
                         g.chcolor(192, 192, 255, 255);
-                    else if(info.done() == QST_DISABLED)
+                    else if (info.done() == QST_DISABLED)
                         g.chcolor(255, 128, 0, 255);
                     g.image(rtitle, new Coord(3, y));
                     g.chcolor();
@@ -1540,7 +1541,7 @@ public class CharWnd extends Window {
         public final Text.Foundry prsf = new Text.Foundry(Text.sans, 15).aa(true);
         public List<Credo> ncr = Collections.emptyList(), ccr = Collections.emptyList();
         public Credo pcr = null;
-        public int pcl, pclt, pcql, pcqlt, pqid;
+        public int pcl, pclt, pcql, pcqlt, pqid, cost;
         public Credo sel = null;
         private final Img pcrc, ncrc, ccrc;
         private final Button pbtn, qbtn;
@@ -1633,6 +1634,8 @@ public class CharWnd extends Window {
                 y = crgrid(y, ncr);
                 if (pcr == null) {
                     cont.add(pbtn, 5, y);
+                    if (cost > 0)
+                        cont.adda(new Label(String.format("Cost: %,d LP", cost)), pbtn.c.x + pbtn.sz.x + 10, pbtn.c.y + (pbtn.sz.y / 2), 0, 0.5);
                     y += pbtn.sz.y;
                 }
                 y += 10;
@@ -1904,7 +1907,7 @@ public class CharWnd extends Window {
             } catch (Loading e) {
                 g.image(WItem.missing.layer(Resource.imgc).tex(), Coord.z, new Coord(itemh, itemh));
             }
-            if(q.done == Quest.QST_DISABLED)
+            if (q.done == Quest.QST_DISABLED)
                 g.chcolor(255, 128, 0, 255);
             g.aimage(q.rnm.get().tex(), new Coord(itemh + 5, itemh / 2), 0, 0.5);
             g.chcolor();
@@ -2400,6 +2403,8 @@ public class CharWnd extends Window {
             credos.ccr(deccrlist(args, 0, true));
         } else if (nm == "ncr") {
             credos.ncr(deccrlist(args, 0, false));
+        } else if (nm == "crcost") {
+            credos.cost = (Integer) args[0];
         } else if (nm == "pcr") {
             if (args.length > 0) {
                 int a = 0;
@@ -2452,7 +2457,7 @@ public class CharWnd extends Window {
                                 !((st == Quest.QST_PEND) || (st == Quest.QST_DISABLED)))
                             q.done(getparent(GameUI.class));
                     }
-                    QuestList nl = (q.done == Quest.QST_PEND) || (q.done == Quest.QST_DISABLED) ? cqst : dqst;
+                    QuestList nl = ((q.done == Quest.QST_PEND) || (q.done == Quest.QST_DISABLED)) ? cqst : dqst;
                     if (nl != cl) {
                         if (cl != null)
                             cl.remove(q);

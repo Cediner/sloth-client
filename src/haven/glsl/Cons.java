@@ -267,6 +267,10 @@ public class Cons {
         return (Function.Builtin.texture2D.call(s, c));
     }
 
+    public static Expression shadow2D(Expression s, Expression c) {
+        return (Function.Builtin.shadow2D.call(s, c));
+    }
+
     public static Expression texture3D(Expression s, Expression c) {
         return (Function.Builtin.texture3D.call(s, c));
     }
@@ -285,6 +289,10 @@ public class Cons {
 
     public static Expression clamp(Expression x, Expression a, Expression b) {
         return (Function.Builtin.clamp.call(x, a, b));
+    }
+
+    public static Expression step(Expression edge, Expression x) {
+        return (Function.Builtin.step.call(edge, x));
     }
 
     public static Expression smoothstep(Expression a, Expression b, Expression x) {
@@ -355,6 +363,5 @@ public class Cons {
     public static <T> T id(T a) {
         return (a);
     }
-
     public static final Macro1<Expression> idm = in -> in;
 }

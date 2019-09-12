@@ -30,6 +30,7 @@ import haven.sloth.gui.MovableWidget;
 
 import static java.lang.Math.PI;
 
+/* TODO: Consider merging in https://github.com/dolda2000/hafen-client/commit/d7d22a760a03627398c2d5c8b25d0dd4c2a0851d */
 public class Cal extends MovableWidget {
     public static final double hbr = 20;
     static TexI bg = new TexI(Resource.loadimg("gfx/hud/calendar/glass"));
