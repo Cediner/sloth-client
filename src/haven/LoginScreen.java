@@ -26,7 +26,6 @@
 
 package haven;
 
-import haven.sloth.script.Context;
 import haven.sloth.security.AccountManagement;
 
 import java.awt.*;
