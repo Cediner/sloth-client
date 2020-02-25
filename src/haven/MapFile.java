@@ -734,57 +734,111 @@ public class MapFile {
     }
 
     public static class Grid extends DataGrid {
-        public final long id;
-        private int useq = -1;
+		public final long id;
+		private boolean[] norepl;
+		private int useq = -1;
 
-        public Grid(long id, TileInfo[] tilesets, byte[] tiles, int[] z, long mtime) {
-            super(tilesets, tiles, z, mtime);
-            this.id = id;
-        }
+		public Grid(long id, TileInfo[] tilesets, byte[] tiles, int[] z, long mtime) {
+			super(tilesets, tiles, z, mtime);
+			this.id = id;
+		}
 
-        public static Grid from(MCache map, MCache.Grid cg) {
-            int oseq = cg.seq;
-            int nt = 0;
-            Resource.Spec[] sets = new Resource.Spec[256];
-            int[] tmap = new int[256];
-            int[] rmap = new int[256];
-            Arrays.fill(tmap, -1);
-            for (int tn : cg.tiles) {
-                if (tmap[tn] == -1) {
-                    tmap[tn] = nt;
-                    rmap[nt] = tn;
-                    sets[nt] = map.nsets[tn];
-                    nt++;
-                }
+		public static Grid from(MCache map, MCache.Grid cg) {
+			int oseq = cg.seq;
+			int nt = 0;
+			Resource.Spec[] sets = new Resource.Spec[256];
+			int[] tmap = new int[256];
+			int[] rmap = new int[256];
+			boolean[] norepl = new boolean[256];
+			Arrays.fill(tmap, -1);
+			for (int tn : cg.tiles) {
+				if (tmap[tn] == -1) {
+					tmap[tn] = nt;
+					rmap[nt] = tn;
+					sets[nt] = map.nsets[tn];
+					try {
+						for (String tag : map.tileset(tn).tags) {
+							if (tag.equals("norepl"))
+								norepl[nt] = true;
+						}
+					} catch (Loading l) {
+					}
+					nt++;
+				}
             }
             int[] prios = new int[nt];
             for (int i = 0, tn = 0; i < 256; i++) {
                 if (tmap[i] != -1)
                     prios[tmap[i]] = tn++;
             }
-            TileInfo[] infos = new TileInfo[nt];
-            for (int i = 0; i < nt; i++)
-                infos[i] = new TileInfo(sets[i], prios[i]);
-            byte[] tiles = new byte[cmaps.x * cmaps.y];
-            int[] z = new int[cmaps.x * cmaps.y];
-            for (int i = 0; i < cg.tiles.length; i++) {
-                tiles[i] = (byte) (tmap[cg.tiles[i]]);
-                z[i] = cg.z[i];
-            }
-            Grid g = new Grid(cg.id, infos, tiles, z, System.currentTimeMillis());
-            g.useq = oseq;
-            return (g);
-        }
+			TileInfo[] infos = new TileInfo[nt];
+			for (int i = 0; i < nt; i++)
+				infos[i] = new TileInfo(sets[i], prios[i]);
+			byte[] tiles = new byte[cmaps.x * cmaps.y];
+			int[] z = new int[cmaps.x * cmaps.y];
+			for (int i = 0; i < cg.tiles.length; i++) {
+				tiles[i] = (byte) (tmap[cg.tiles[i]]);
+				z[i] = cg.z[i];
+			}
+			Grid g = new Grid(cg.id, infos, tiles, z, System.currentTimeMillis());
+			g.norepl = norepl;
+			g.useq = oseq;
+			return (g);
+		}
 
-        public void save(Message fp) {
-            fp.adduint8(3);
-            ZMessage z = new ZMessage(fp);
-            z.addint64(id);
-            z.addint64(mtime);
-            z.adduint8(tilesets.length);
-            for (int i = 0; i < tilesets.length; i++) {
-                z.addstring(tilesets[i].res.name);
-                z.adduint16(tilesets[i].res.ver);
+		public Grid mergeprev(Grid prev) {
+			if ((norepl == null) || (prev.tiles.length != this.tiles.length))
+				return (this);
+			boolean[] used = new boolean[prev.tilesets.length];
+			boolean any = false;
+			int[] tmap = new int[prev.tilesets.length];
+			for (int i = 0; i < tmap.length; i++)
+				tmap[i] = -1;
+			for (int i = 0; i < this.tiles.length; i++) {
+				if (norepl[this.tiles[i]]) {
+					used[prev.tiles[i]] = true;
+					any = true;
+				}
+			}
+			if (!any)
+				return (this);
+			TileInfo[] ntilesets = this.tilesets;
+			for (int i = 0; i < used.length; i++) {
+				if (used[i] && (tmap[i] < 0)) {
+					dedup:
+					{
+						for (int o = 0; o < this.tilesets.length; o++) {
+							if (this.tilesets[o].res.name.equals(prev.tilesets[i].res.name)) {
+								tmap[i] = o;
+								break dedup;
+							}
+						}
+						tmap[i] = ntilesets.length;
+						ntilesets = Utils.extend(ntilesets, prev.tilesets[i]);
+					}
+				}
+			}
+			byte[] ntiles = new byte[this.tiles.length];
+			for (int i = 0; i < this.tiles.length; i++) {
+				if (norepl[this.tiles[i]])
+					ntiles[i] = (byte) tmap[prev.tiles[i]];
+				else
+					ntiles[i] = this.tiles[i];
+			}
+			Grid g = new Grid(this.id, ntilesets, ntiles, prev.z, this.mtime);
+			g.useq = this.useq;
+			return (g);
+		}
+
+		public void save(Message fp) {
+			fp.adduint8(3);
+			ZMessage z = new ZMessage(fp);
+			z.addint64(id);
+			z.addint64(mtime);
+			z.adduint8(tilesets.length);
+			for (int i = 0; i < tilesets.length; i++) {
+				z.addstring(tilesets[i].res.name);
+				z.adduint16(tilesets[i].res.ver);
                 z.adduint8(tilesets[i].prio);
             }
             z.addbytes(tiles);
@@ -1477,11 +1531,16 @@ public class MapFile {
                 Grid cur = seg.loaded(g.id);
                 //I want to force update on anything still sporting NOZ or day old grids..
                 if (cur == null || cur.useq != g.seq || g.z[0] == NOZ) {
-                    Grid sg = Grid.from(map, g);
-                    sg.save(MapFile.this);
-                    seg.include(sg, g.gc.add(moff)); //XXX: Write lock required
-                    //seg.updateGrid(sg.id, sg);
-                }
+					Grid sg = Grid.from(map, g);
+					Grid prev = cur;
+					if (prev == null)
+						prev = Grid.load(MapFile.this, sg.id);
+					if (prev != null)
+						sg = sg.mergeprev(prev);
+					sg.save(MapFile.this);
+					seg.include(sg, g.gc.add(moff)); //XXX: Write lock required
+					//seg.updateGrid(sg.id, sg);
+				}
                 if (seg.id != mseg) {
                     if (merge == null)
                         merge = new HashSet<>();

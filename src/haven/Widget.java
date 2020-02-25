@@ -689,6 +689,7 @@ public class Widget {
                 };
             }
         } else if (msg == "gk") {
+            //XXX: We're not doing Loftar's Keybind system over ours
             gkey = (Integer) args[0];
         } else {
             System.err.println("Unhandled widget message: " + msg);
@@ -987,6 +988,14 @@ public class Widget {
             unlink();
             linkfirst();
         }
+    }
+
+    public <T> T getchild(Class<T> cl) {
+        for (Widget wdg = child; wdg != null; wdg = wdg.next) {
+            if (cl.isInstance(wdg))
+                return (cl.cast(wdg));
+        }
+        return (null);
     }
 
     @Deprecated

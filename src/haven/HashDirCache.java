@@ -348,64 +348,67 @@ public class HashDirCache implements ResCache {
     }
 
     public static void main(String[] args) throws IOException {
-        if (args.length < 2) {
-            System.err.println("usage: HashDirCache [-h] ID-URI COMMAND [ARGS...]");
-            System.exit(1);
-        }
-        HashDirCache cache;
-        if (args[0].indexOf(':') >= 0)
-            cache = new HashDirCache(URI.create(args[0]));
-        else
-            cache = new HashDirCache(args[0]);
-        switch (args[1]) {
-            case "ls":
-                final Pattern reg = Pattern.compile(args.length > 2 ? args[2] : ".+");
-                for (Iterator<String> i = cache.list(); i.hasNext(); ) {
-                    String nm = i.next();
-                    if (reg.matcher(nm).matches()) {
-                        System.out.println(nm);
-                    }
-                }
-                break;
-            case "cat":
-                InputStream fp;
-                try {
-                    fp = cache.fetch(args[2]);
-                } catch (FileNotFoundException e) {
-                    System.err.printf("%s: not found\n", args[2]);
-                    System.exit(1);
-                    break;
-                }
-                byte[] buf = new byte[1024];
-                while (true) {
-                    int n = fp.read(buf);
-                    if (n < 0)
-                        break;
-                    System.out.write(buf, 0, n);
-                }
-                break;
-            case "purge":
-                for (Iterator<String> i = cache.list(); i.hasNext(); ) {
-                    String nm = i.next();
-                    try {
-                        cache.remove(nm);
-                    } catch (FileNotFoundException e) {
-                        System.err.printf("%s: not found\n", nm);
-                    }
-                }
-                break;
-            case "rm":
-                for (int i = 2; i < args.length; i++) {
-                    try {
-                        cache.remove(args[i]);
-                    } catch (FileNotFoundException e) {
-                        System.err.printf("%s: not found\n", args[i]);
-                    }
-                }
-                break;
-            default:
-                System.err.printf("%s: no such command\n", args[2]);
-                break;
-        }
-    }
+		if (args.length < 2) {
+			System.err.println("usage: HashDirCache [-h] ID-URI COMMAND [ARGS...]");
+			System.exit(1);
+		}
+		HashDirCache cache;
+		if (args[0].indexOf(':') >= 0)
+			cache = new HashDirCache(URI.create(args[0]));
+		else
+			cache = new HashDirCache(args[0]);
+		switch (args[1]) {
+			case "ls":
+				final Pattern reg = Pattern.compile(args.length > 2 ? args[2] : ".+");
+				for (Iterator<String> i = cache.list(); i.hasNext(); ) {
+					String nm = i.next();
+					if (reg.matcher(nm).matches()) {
+						System.out.println(nm);
+					}
+				}
+				break;
+			case "cat":
+				InputStream fp;
+				try {
+					fp = cache.fetch(args[2]);
+				} catch (FileNotFoundException e) {
+					System.err.printf("%s: not found\n", args[2]);
+					System.exit(1);
+					break;
+				}
+				byte[] buf = new byte[1024];
+				while (true) {
+					int n = fp.read(buf);
+					if (n < 0)
+						break;
+					System.out.write(buf, 0, n);
+				}
+				break;
+			case "purge":
+				int n = 0;
+				for (Iterator<String> i = cache.list(); i.hasNext(); ) {
+					String nm = i.next();
+					try {
+						cache.remove(nm);
+						n++;
+					} catch (FileNotFoundException e) {
+						System.err.printf("%s: not found\n", nm);
+					}
+				}
+				System.err.printf("%s: %d files purged\n", cache.id, n);
+				break;
+			case "rm":
+				for (int i = 2; i < args.length; i++) {
+					try {
+						cache.remove(args[i]);
+					} catch (FileNotFoundException e) {
+						System.err.printf("%s: not found\n", args[i]);
+					}
+				}
+				break;
+			default:
+				System.err.printf("%s: no such command\n", args[2]);
+				break;
+		}
+	}
 }

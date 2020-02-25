@@ -50,6 +50,8 @@ public abstract class Searchbox<T> extends Listbox<T> {
         if ((ev.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) != 0) mod |= C;
         if ((ev.getModifiersEx() & (InputEvent.META_DOWN_MASK | InputEvent.ALT_DOWN_MASK)) != 0) mod |= M;
         int code = ev.getKeyCode();
+        if (ev.getKeyChar() == ev.CHAR_UNDEFINED)
+            c = '\0';
         if (mod == 0) {
             if (c == 8) {
                 if (searching != null) {

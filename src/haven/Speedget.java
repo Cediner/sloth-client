@@ -134,7 +134,7 @@ public class Speedget extends MovableWidget {
 
     public boolean mousewheel(Coord c, int amount) {
         if (max >= 0)
-            set((cur + max + 1 + amount) % (max + 1));
+            set(Utils.clip(cur + amount, 0, max));
         return (true);
     }
 

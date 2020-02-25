@@ -696,8 +696,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
             }
             break;
             case "map-mark": {
-                long gobid = ((Integer) args[0]);
-                long oid = (Long) args[1];
+                long gobid = ((Integer) args[0]) & 0xffffffff;
+				long oid = (Long) args[1];
                 Indir<Resource> res = ui.sess.getres((Integer) args[2]);
                 String nm = (String) args[3];
                 if (mapfile != null)
@@ -716,32 +716,38 @@ public class GameUI extends ConsoleHost implements Console.Directory {
                 return;
             } else if (sender == mapfile) {
                 mapfile.hide();
-                return;
-            } else if (sender == help) {
-                ui.destroy(help);
-                help = null;
-                return;
-            }
-        }
-        super.wdgmsg(sender, msg, args);
-    }
+				return;
+			} else if (sender == help) {
+				ui.destroy(help);
+				help = null;
+				return;
+			}
+		}
+		super.wdgmsg(sender, msg, args);
+	}
 
-    private void fitwdg(Widget wdg) {
-        if (wdg.c.x < 0)
-            wdg.c.x = 0;
-        if (wdg.c.y < 0)
-            wdg.c.y = 0;
-        if (wdg.c.x + wdg.sz.x > sz.x)
-            wdg.c.x = sz.x - wdg.sz.x;
-        if (wdg.c.y + wdg.sz.y > sz.y)
-            wdg.c.y = sz.y - wdg.sz.y;
-    }
+	private Coord fitwdg(Widget wdg, Coord c) {
+		Coord ret = new Coord(c);
+		if (ret.x < 0)
+			ret.x = 0;
+		if (ret.y < 0)
+			ret.y = 0;
+		if (ret.x + wdg.sz.x > sz.x)
+			ret.x = sz.x - wdg.sz.x;
+		if (ret.y + wdg.sz.y > sz.y)
+			ret.y = sz.y - wdg.sz.y;
+		return (ret);
+	}
 
-    public boolean mousedown(Coord c, int button) {
-        return (super.mousedown(c, button));
-    }
+	private void fitwdg(Widget wdg) {
+		wdg.c = fitwdg(wdg, wdg.c);
+	}
 
-    @Override
+	public boolean mousedown(Coord c, int button) {
+		return (super.mousedown(c, button));
+	}
+
+	@Override
     public boolean mousewheel(Coord c, int amount) {
         if (fv != null && ui.modctrl) {
             fv.scroll(amount);
