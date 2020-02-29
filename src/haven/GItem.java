@@ -275,9 +275,19 @@ public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owne
         return null;
     }
 
+    public String[] getRawContents() {
+        final ArrayList<String> contents = new ArrayList<>();
+        getinfo(ItemInfo.Contents.class)
+                .flatMap(cont -> getinfo(ItemInfo.Name.Name.class, cont.sub))
+                .ifPresent((cnt) -> contents.add(cnt.str.text));
+
+        return contents.toArray(new String[0]);
+    }
+
     public boolean isFood() {
         return getinfo(FoodInfo.class).isPresent();
     }
+
     /******************************************************************************/
 
     public Resource resource() {

@@ -18,6 +18,7 @@
 (java-func +item+ item-name "rnm")
 (java-func +item+ item-is-food "isFood")
 (java-func +item+ item-get-contents "hasContents")
+(java-func +item+ item-get-all-contents "getRawContents")
 (java-func +item+ item-witem "witem")
 (java-field item-quality "quality")
 (java-field item-amount "num")
