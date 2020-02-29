@@ -26,10 +26,13 @@
 
 package haven;
 
+import com.google.common.flogger.FluentLogger;
 import haven.res.ui.tt.Armor;
 import haven.res.ui.tt.ISlots;
 import haven.res.ui.tt.attrmod.AttrMod;
 import haven.res.ui.tt.wpn.Damage;
+import haven.sloth.gui.equip.EquipmentItem;
+import haven.sloth.gui.equip.EquipmentType;
 
 import java.awt.*;
 import java.lang.ref.WeakReference;
@@ -39,6 +42,7 @@ import java.util.List;
 import static haven.Inventory.invsq;
 
 public class Equipory extends Widget implements DTarget {
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     private static final Tex bg = Resource.loadtex("gfx/hud/equip/bg");
     private static final Color debuff = new Color(255, 128, 128);
     private static final Color buff = new Color(128, 255, 128);
@@ -148,6 +152,27 @@ public class Equipory extends Widget implements DTarget {
         }
     }
 
+    /*******************************************************************************
+     * For Scripting API only
+     */
+    public EquipmentItem[] getEquippedItems() {
+        final ArrayList<EquipmentItem> itms = new ArrayList<>();
+
+        for (final GItem itm : children(GItem.class)) {
+            EquipmentType type = EquipmentType.Unknown;
+            for (WItem witm : wmap.get(itm)) {
+                if (EquipmentType.eqmap.containsKey(witm.c)) {
+                    type = EquipmentType.eqmap.get(witm.c);
+                }
+            }
+            itms.add(new EquipmentItem(type, itm));
+        }
+
+        return itms.toArray(new EquipmentItem[0]);
+    }
+
+    /******************************************************************************/
+
     public void addchild(Widget child, Object... args) {
         if (child instanceof GItem) {
             add(child);
@@ -200,6 +225,7 @@ public class Equipory extends Widget implements DTarget {
         wdgmsg("drop", epat(cc));
         return (true);
     }
+
 
     public void drawslots(GOut g) {
         int slots = 0;

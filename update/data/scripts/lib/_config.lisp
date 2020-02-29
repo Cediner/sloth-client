@@ -91,3 +91,4 @@
 (load "data/scripts/lib/_config_pointer.lisp")
 (load "data/scripts/lib/_config_bbox.lisp")
 (load "data/scripts/lib/_config_utilities.lisp")
+(load "data/scripts/lib/_config_equip.lisp")
