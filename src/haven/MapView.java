@@ -2213,6 +2213,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
                     args = Utils.extend(args, gobargs);
                     if (clickb == 1 || gobargs.length > 0)
                         clearmovequeue();
+                    logger.atFinest().log("Click: %s", Arrays.toString(args));
                     wdgmsg("click", args);
                 }
             }

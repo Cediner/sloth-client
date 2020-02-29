@@ -60,10 +60,6 @@ public class Fightview extends Widget {
     public double maneuvermeter;
     public final Map<DefenseType, Double> defweights = new HashMap<>();
 
-    private GiveButton curgive;
-    private Avaview curava;
-    private Button curpurs;
-
     public class Relation {
         public final long gobid;
         public final Avaview ava;
@@ -106,7 +102,7 @@ public class Fightview extends Widget {
 
         public void give(int state) {
             if (this == current)
-                curgive.state = state;
+                current.give.state = state;
             this.give.state = state;
         }
 
