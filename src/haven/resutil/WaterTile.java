@@ -28,6 +28,7 @@ package haven.resutil;
 
 import java.util.*;
 
+import com.google.common.flogger.FluentLogger;
 import haven.*;
 import haven.glsl.*;
 
@@ -40,6 +41,7 @@ import com.jogamp.opengl.*;
 import java.awt.Color;
 
 public class WaterTile extends Tiler {
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     private final int depth;
     public final Tiler.MCons bottom;
 
@@ -420,7 +422,7 @@ public class WaterTile extends Tiler {
         super(id);
         this.bottom = bottom;
         this.depth = depth;
-        if (id == 172) {
+        if (id == 173) {
             this.mat = GLState.compose(deepfog, boff);
             this.fog = obfog;
         } else {
