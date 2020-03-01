@@ -166,9 +166,28 @@
     (msg-clear-messages)
     gob))
 
+(defun prompt-for-coord (prompt)
+  (msg-listen)
+  (chat-send-message (bot-chat) prompt)
+  (let ((ret nil))
+    (loop
+       until ret 
+       do (progn
+            (loop
+               while (and (msg-has-message) (null ret))
+               do (when (msg-has-message)
+                    (let ((msg (msg-poll-message)))
+                      (when (string= "click-tile" (msg-subject msg))
+                        (setf ret (aref (msg-args msg) 0))))))
+            (sleep 1)))
+    (msg-stop-listening)
+    (msg-clear-messages)
+    ret))
+
+
 (export '(check-stam-and-drink drink-water refill-water-from-hand refill-water-from-inventory
           check-for-starving
           check-for-movement
           backoff-randomly
-          prompt-for-input prompt-for-selected-gob
+          prompt-for-input prompt-for-selected-gob prompt-for-coord
           get-bbox))
