@@ -229,6 +229,20 @@ public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owne
         }
     }
 
+    public <T> List<T> getinfos(Class<T> type) {
+        final List<T> infos = new ArrayList<>();
+        try {
+            for (final ItemInfo info : info()) {
+                if (type.isInstance(info)) {
+                    infos.add(type.cast(info));
+                }
+            }
+            return infos;
+        } catch (Exception e) {
+            return infos;
+        }
+    }
+
     public Optional<String> name() {
         final ItemInfo.Name name = getinfo(ItemInfo.Name.class).orElse(null);
         if (name != null) {
@@ -277,9 +291,11 @@ public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owne
 
     public String[] getRawContents() {
         final ArrayList<String> contents = new ArrayList<>();
-        getinfo(ItemInfo.Contents.class)
-                .flatMap(cont -> getinfo(ItemInfo.Name.Name.class, cont.sub))
-                .ifPresent((cnt) -> contents.add(cnt.str.text));
+
+        for (ItemInfo.Contents cont : getinfos(ItemInfo.Contents.class)) {
+            getinfo(ItemInfo.Name.Name.class, cont.sub)
+                    .ifPresent((cnt) -> contents.add(cnt.str.text));
+        }
 
         return contents.toArray(new String[0]);
     }

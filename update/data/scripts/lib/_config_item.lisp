@@ -64,6 +64,7 @@
 (export '(liquid-type weight-type seed-type
           item-position item-size item-inventory
           item-name item-is-food item-get-contents item-witem
+          item-get-all-contents
           item-quality item-amount item-meter
           contents-name contents-type contents-current contents-max
           is-item-contents
