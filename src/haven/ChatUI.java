@@ -27,6 +27,7 @@
 package haven;
 
 import haven.sloth.gob.Mark;
+import haven.sloth.gui.ChatUtils;
 import haven.sloth.script.Context;
 
 import java.util.*;
@@ -875,6 +876,13 @@ public class ChatUI extends Widget {
                                 g.addol(new Mark(20000));
                             });
                             return;
+                        } else {
+                            final Matcher dmatch = ChatUtils.CHAT_EXT_MSG_PAT.matcher(line);
+                            if (dmatch.find()) {
+                                final String subject = dmatch.group(1);
+                                final String dargs = dmatch.group(2);
+                                ChatUtils.parseExternalCommand(this, subject, dargs);
+                            }
                         }
                     }
                 } catch (Exception e) {
@@ -930,6 +938,16 @@ public class ChatUI extends Widget {
                 String t = (String) args[0];
                 String line = (String) args[1];
                 if (t.equals("in")) {
+                    try {
+                        final Matcher dmatch = ChatUtils.CHAT_EXT_MSG_PAT.matcher(line);
+                        if (dmatch.find()) {
+                            final String subject = dmatch.group(1);
+                            final String dargs = dmatch.group(2);
+                            ChatUtils.parseExternalCommand(this, subject, dargs);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     Context.dispatchmsg(this, "priv-in-msg", line, name());
                     Message cmsg = new InMessage(line, iw());
                     append(cmsg);

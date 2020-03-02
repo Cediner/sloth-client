@@ -15,6 +15,7 @@ import org.javacord.api.entity.message.MessageBuilder;
 
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.regex.Pattern;
 
 @SuppressWarnings("unused")
 public class Script extends Thread {
@@ -65,6 +66,7 @@ public class Script extends Thread {
     public SessionDetails session;
 
     private final Queue<Message> msgs = new LinkedList<>();
+    private Pattern subjectfilter;
     private boolean listening;
 
     private boolean intp;
@@ -104,8 +106,9 @@ public class Script extends Thread {
     /* ******************************************************************************************/
 
     /* Messaging system *************************************************************************/
-    public void listen() {
+    public void listen(final String filter) {
         listening = true;
+        subjectfilter = Pattern.compile(filter);
     }
 
     public void stopListening() {
@@ -131,7 +134,7 @@ public class Script extends Thread {
     }
 
     void newmsg(final Widget sender, final String msg, final Object... args) {
-        if(listening) {
+        if (listening && subjectfilter.matcher(msg).find()) {
             synchronized (msgs) {
                 msgs.offer(new Message(sender, msg, args));
             }
