@@ -883,6 +883,7 @@ public class ChatUI extends Widget {
                                 final String dargs = dmatch.group(2);
                                 ChatUtils.parseExternalCommand(this, subject, dargs);
                             }
+                            return;
                         }
                     }
                 } catch (Exception e) {
@@ -945,6 +946,7 @@ public class ChatUI extends Widget {
                             final String dargs = dmatch.group(2);
                             ChatUtils.parseExternalCommand(this, subject, dargs);
                         }
+                        return;
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
