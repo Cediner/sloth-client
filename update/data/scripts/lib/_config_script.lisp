@@ -25,14 +25,14 @@
 ;;
 ;; Known Messages:
 ;;   Chat Related
-;;      Bot Chat - Subject: "msg" Args: (bot-chat-obj, text)
-;;      Area Chat - Subject: "area-msg" Args: (area-chat-obj, from-name, text)
-;;      Realm Chat - Subject: "realm-msg" Args: (realm-chat-obj, from-name, text)
-;;      Village chat -  Subject: "village-msg" Args: (village-chat-obj, from-name, text)
-;;      Party Chat - Subject: "pt-msg" Args: (party-chat-obj, from-name, text)
+;;      Bot Chat - Subject: "msg" Args: (text)
+;;      Area Chat - Subject: "area-msg" Args: (text, from-name)
+;;      Realm Chat - Subject: "realm-msg" Args: (text, from-name)
+;;      Village chat -  Subject: "village-msg" Args: (text, from-name)
+;;      Party Chat - Subject: "pt-msg" Args: (text, from-name)
 ;;      Private Chat
-;;         Inbound - Subject: "priv-in-msg" Args: (priv-chat-obj, from-name, text)
-;;         Outbound - Subject: "priv-out-msg" Args: (priv-chat-obj, text)
+;;         Inbound - Subject: "priv-in-msg" Args: (text, from-name)
+;;         Outbound - Subject: "priv-out-msg" Args: (text)
 ;;   Tile Selection - Subject: "bot-select" Args( starting-coord, ending-coord )
 ;;   Mark Gob - Subject: "click-gob" Arg: (gob)
 ;;   Mark Tile - Subject: "click-tile" Arg: (tile-coord)
