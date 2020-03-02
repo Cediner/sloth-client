@@ -32,7 +32,7 @@
 
 ;;type -> Gob Types
 (defmacro is-gob-a (gob type)
-  `(equalp (ivar ,gob "type") ,type))
+  `(equal (ivar ,gob "type") ,type))
 
 (defmacro my-gob ()
   `(oc-get-gob (mv-plgob (mv))))
