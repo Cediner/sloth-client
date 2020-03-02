@@ -18,6 +18,26 @@
 (with-script-define msg-stop-listening script-stop-listening)
 (with-script-define msg-clear-messages script-clear-messages)
 (with-script-define msg-has-message script-has-message)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; msg-poll-message
+;; Returns the next message queued up, if any, or throws an exception if none.
+;;
+;; Known Messages:
+;;   Chat Related
+;;      Bot Chat - Subject: "msg" Args: (bot-chat-obj, text)
+;;      Area Chat - Subject: "area-msg" Args: (area-chat-obj, from-name, text)
+;;      Realm Chat - Subject: "realm-msg" Args: (realm-chat-obj, from-name, text)
+;;      Village chat -  Subject: "village-msg" Args: (village-chat-obj, from-name, text)
+;;      Party Chat - Subject: "pt-msg" Args: (party-chat-obj, from-name, text)
+;;      Private Chat
+;;         Inbound - Subject: "priv-in-msg" Args: (priv-chat-obj, from-name, text)
+;;         Outbound - Subject: "priv-out-msg" Args: (priv-chat-obj, text)
+;;   Tile Selection - Subject: "bot-select" Args( starting-coord, ending-coord )
+;;   Mark Gob - Subject: "click-gob" Arg: (gob)
+;;   Mark Tile - Subject: "click-tile" Arg: (tile-coord)
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (with-script-define msg-poll-message script-poll-message)
 
 (java-field msg-sender "sender")

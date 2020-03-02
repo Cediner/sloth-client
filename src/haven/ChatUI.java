@@ -715,7 +715,7 @@ public class ChatUI extends Widget {
 
         @Override
         public void send(String text) {
-            Context.dispatchmsg(this, "msg", text);
+            Context.dispatchmsg(this, "msg", this, text);
             uimsg("msg", text);
         }
     }
@@ -805,12 +805,20 @@ public class ChatUI extends Widget {
             if (msg == "msg") {
                 Integer from = (Integer) args[0];
                 String line = (String) args[1];
+                final String subject;
+                if (this == ui.gui.chat.area)
+                    subject = "area-msg";
+                else if (this == ui.gui.chat.realm)
+                    subject = "realm-msg";
+                else
+                    subject = "village-msg";
                 if (from == null) {
                     append(new MyMessage(line, iw()));
+                    Context.dispatchmsg(this, subject, this, ui.sess.details.chrname(), line);
                 } else {
                     BuddyWnd.Buddy b = getparent(GameUI.class).buddies.find(from);
                     String nm = (b == null) ? "???" : (b.name);
-                    Context.dispatchmsg(this, "msg", nm, line);
+                    Context.dispatchmsg(this, subject, this, nm, line);
 
                     Message cmsg = new NamedMessage(from, line, fromcolor(from), iw());
                     append(cmsg);
@@ -884,7 +892,7 @@ public class ChatUI extends Widget {
                 } else {
                     BuddyWnd.Buddy b = getparent(GameUI.class).buddies.find(from);
                     String nm = (b == null) ? "???" : (b.name);
-                    Context.dispatchmsg(this, "msg", nm, line);
+                    Context.dispatchmsg(this, "pt-msg", this, nm, line);
 
                     Message cmsg = new NamedMessage(from, line, Utils.blendcol(col, Color.WHITE, 0.5), iw());
                     append(cmsg);
@@ -922,11 +930,12 @@ public class ChatUI extends Widget {
                 String t = (String) args[0];
                 String line = (String) args[1];
                 if (t.equals("in")) {
-                    Context.dispatchmsg(this, "msg", line);
+                    Context.dispatchmsg(this, "priv-in-msg", this, name(), line);
                     Message cmsg = new InMessage(line, iw());
                     append(cmsg);
                     notify(cmsg, 3);
                 } else if (t.equals("out")) {
+                    Context.dispatchmsg(this, "priv-out-msg", this, line);
                     append(new OutMessage(line, iw()));
                 }
             } else if (msg == "err") {

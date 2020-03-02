@@ -72,4 +72,4 @@
           item-transfer item-transfer-all-alike
           item-drop
           item-take
-          item-interact item-iteract-with-held-item))
+          item-interact item-interact-with-held-item))
