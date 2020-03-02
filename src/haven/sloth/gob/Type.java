@@ -24,13 +24,18 @@ public enum Type {
     private static Map<String, Type> types = new HashMap<>();
 
     static {
+        final Map<String, Type> namemap = new HashMap<>();
+        for (final Type type : values()) {
+            namemap.put(type.name(), type);
+        }
+
         try (final Connection sql = DriverManager.getConnection("jdbc:sqlite:data/static.sqlite")) {
             try (final Statement stmt = sql.createStatement()) {
                 try (final ResultSet res = stmt.executeQuery(
                         "SELECT object.name, type.name_key " +
                                 "FROM object JOIN type USING (type_id)")) {
                     while (res.next()) {
-                        types.put(res.getString(1), Type.valueOf(res.getString(2)));
+                        types.put(res.getString(1), namemap.get(res.getString(2)));
                     }
                 }
             }
