@@ -14,7 +14,7 @@
 (java-func +script+ script-clear-messages "clearmsgs")
 (java-func +script+ script-has-message "hasmsg")
 (java-func +script+ script-poll-message "pollmsg")
-(with-script-define msg-listen-1 script-listen)
+(with-script-define msg-listen-1 script-listen filter)
 (with-script-define msg-stop-listening script-stop-listening)
 (with-script-define msg-clear-messages script-clear-messages)
 (with-script-define msg-has-message script-has-message)
