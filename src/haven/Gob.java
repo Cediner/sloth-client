@@ -314,6 +314,9 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
                 //Gobs we care about
                 //Figure out our type first
                 type = Type.getType(name);
+                //Avoid mannequins...
+                if (type == Type.HUMAN && attr.containsKey(GobHealth.class))
+                    type = Type.UNKNOWN;
 
                 //Check for any special attributes we should attach
                 Alerted.checkAlert(name, ui.gui.map.rlplgob, this);
