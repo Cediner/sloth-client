@@ -1,6 +1,9 @@
 package haven.sloth.io;
 
 import com.google.common.flogger.FluentLogger;
+import org.sqlite.SQLiteConfig;
+import org.sqlite.SQLiteConnection;
+import org.sqlite.SQLiteDataSource;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -77,9 +80,16 @@ public class Storage {
     }
 
     private Connection mkcon(final String jdbc) throws SQLException {
-        final Connection con = DriverManager.getConnection(jdbc);
-        con.setAutoCommit(false);
-        return con;
+        final SQLiteDataSource ds = new SQLiteDataSource();
+        ds.setUrl(jdbc);
+        ds.setPageSize(4096);
+        ds.setCacheSize(2000);
+        ds.setEnforceForeignKeys(true);
+        ds.setJournalMode(SQLiteConfig.JournalMode.WAL.name());
+        final SQLiteConnection scon = ds.getConnection(null, null);
+        scon.setAutoCommit(false);
+        scon.setBusyTimeout(15000);
+        return scon;
     }
 
     @FunctionalInterface
@@ -89,6 +99,7 @@ public class Storage {
 
     public synchronized void ensure(final SQLCallback callback) {
         try {
+            conn.createStatement().execute("BEGIN TRANSACTION ");
             callback.run(conn);
             conn.commit();
         } catch (SQLException se) {
@@ -110,6 +121,7 @@ public class Storage {
         final StackTraceElement[] stack = Thread.currentThread().getStackTrace();
         writerHandler.execute(() -> {
             try {
+                conn.createStatement().execute("BEGIN TRANSACTION ");
                 callback.run(conn);
                 conn.commit();
             } catch (SQLException se) {
