@@ -53,7 +53,7 @@ public class MapWnd extends Window {
     private static final Tex viewbox = Resource.loadtex("custom/mm/hud/view", 3);
     private static final Resource markcurs = Resource.local().loadwait("gfx/hud/curs/flag");
     public final MapFileWidget view;
-    private final MapFileData mfdata;
+    //private final MapFileData mfdata;
     public final MapView mv;
     private final Locator player;
     private final Widget toolbar;
@@ -65,7 +65,7 @@ public class MapWnd extends Window {
         super(sz, title, title, false);
         this.mv = mv;
         this.player = new MapLocator(mv);
-        mfdata = new MapFileData();
+        //mfdata = new MapFileData();
         view = add(new View(file));
         recenter();
         toolbar = add(new Widget(Coord.z));
