@@ -693,8 +693,8 @@ public class Resource implements Serializable {
             synchronized (Resource.class) {
                 if (_local == null) {
                     Pool local = new Pool(new JarSource());
-                    sqlcache = new SQLResCache();
-                    local.add(new CacheSource(sqlcache));
+                    //sqlcache = new SQLResCache();
+                    //local.add(new CacheSource(sqlcache));
                     try {
                         String dir = Config.resdir;
                         if (dir == null)
@@ -737,7 +737,7 @@ public class Resource implements Serializable {
                 if (_remote == null) {
                     Pool remote = new Pool(local());
                     if (prscache != null) {
-                        remote.add(makeTee(new CacheSource(prscache), sqlcache));
+                        remote.add(new CacheSource(prscache));
                     }
                     _remote = remote;
                     ;
@@ -749,8 +749,8 @@ public class Resource implements Serializable {
 
     public static void addurl(URL url) {
         ResSource src = new HttpSource(url);
-        if (sqlcache != null) {
-            src = makeTee(src, sqlcache);
+        if (prscache != null) {
+            src = makeTee(src, prscache);
         }
         remote().add(src);
     }
