@@ -1,12 +1,11 @@
 package haven.sloth;
 
 import com.google.common.flogger.FluentLogger;
+import haven.MapFile;
 import haven.sloth.gob.*;
 import haven.sloth.gui.BeltWnd;
-import haven.sloth.io.HighlightData;
-import haven.sloth.io.ItemData;
-import haven.sloth.io.MapData;
-import haven.sloth.io.Storage;
+import haven.sloth.io.*;
+import haven.sloth.io.map.MapFileData;
 import haven.sloth.script.Script;
 
 import java.awt.*;
@@ -82,6 +81,7 @@ public class DefSettings {
     public static final IndirSetting<Boolean> SHOWFARMRADIUS = new IndirSetting<>(global, "gameplay.show-farming-radius");   //[Bool] Toggle radius on farming equipment (beehive/trough)
     public static final IndirSetting<Boolean> SHOWHITBOX = new IndirSetting<>(global, "gameplay.show-hitbox");               //[Bool] Toggle hitbox squares
     public static final IndirSetting<Boolean> SHOWHIDDEN = new IndirSetting<>(global, "gameplay.show-hidden");               //[Bool] Toggle hidden squares
+    public static final IndirSetting<Boolean> SHOWHIDDENGOB = new IndirSetting<>(global, "gameplay.show-hidden-gob");        //[Bool] Toggle hidden to show
     public static final IndirSetting<Color> HIDDENCOLOR = new IndirSetting<>(global, "gameplay.hidden-color");               //[RGBA] Color of hidden squares
     public static final IndirSetting<Boolean> SHOWQUALITY = new IndirSetting<>(global, "gameplay.show-item-quality");        //[Bool] Toggle item quality
     public static final IndirSetting<Boolean> SHOWWEAR = new IndirSetting<>(global, "gameplay.show-item-wear");              //[Bool] Toggle item wear bar
@@ -226,6 +226,7 @@ public class DefSettings {
         SHOWFARMRADIUS.ensure(false);
         SHOWHITBOX.ensure(false);
         SHOWHIDDEN.ensure(true);
+        SHOWHIDDENGOB.ensure(false);
         HIDDENCOLOR.ensure(Color.RED);
         SHOWQUALITY.ensure(true);
         SHOWWEAR.ensure(true);
@@ -322,6 +323,7 @@ public class DefSettings {
             HighlightData.init();
             ItemData.init(optint.get());
             MapData.init();
+            //MapFileData.init();
             //Internal lookups are no longer needed
             optint.get().close();
         } else {

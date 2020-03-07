@@ -5,8 +5,12 @@ import haven.Coord;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+/**
+ * this is for getting global grid coordinates from a source of know grid ids -> (x, y)
+ */
 public class GridData {
     private static Storage gridstore;
+
     static {
         gridstore = Storage.create("jdbc:sqlite:data/static.sqlite").orElse(null);
     }

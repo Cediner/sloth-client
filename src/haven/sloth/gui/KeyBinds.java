@@ -121,6 +121,11 @@ public class KeyBinds {
             ui.sess.glob.oc.changeAllGobs();
             return true;
         }));
+        add(new KeyBind("Toggle Gob When Hidden", new IndirSetting<String>(DefSettings.global, "keybind.toggle-show-hidden-gob"), "S-G", ui -> {
+            DefSettings.SHOWHIDDENGOB.set(!DefSettings.SHOWHIDDENGOB.get());
+            ui.sess.glob.oc.changeAllGobs();
+            return true;
+        }));
         //Misc
         add(new KeyBind("Focus map", new IndirSetting<>(DefSettings.global, "keybind.focus-map"), "Escape", ui -> {
             if (ui.gui != null && ui.gui.map != null && !ui.gui.map.hasfocus) {
@@ -217,6 +222,38 @@ public class KeyBinds {
         add(new KeyBind("Cycle character speed", new IndirSetting<>(DefSettings.global, "keybind.cycle-char-speed"), "C-R", ui -> {
             if (ui.gui != null && ui.gui.speed != null) {
                 ui.gui.speed.cyclespeed();
+                return true;
+            } else {
+                return false;
+            }
+        }));
+        add(new KeyBind("Change to Crawl Speed", new IndirSetting<>(DefSettings.global, "keybind.crawl-char-speed"), "M-Q", ui -> {
+            if (ui.gui != null && ui.gui.speed != null) {
+                ui.gui.speed.setSpeed(Speedget.Speed.CRAWL);
+                return true;
+            } else {
+                return false;
+            }
+        }));
+        add(new KeyBind("Change to Walk Speed", new IndirSetting<>(DefSettings.global, "keybind.walk-char-speed"), "M-W", ui -> {
+            if (ui.gui != null && ui.gui.speed != null) {
+                ui.gui.speed.setSpeed(Speedget.Speed.WALK);
+                return true;
+            } else {
+                return false;
+            }
+        }));
+        add(new KeyBind("Change to Run Speed", new IndirSetting<>(DefSettings.global, "keybind.run-char-speed"), "M-E", ui -> {
+            if (ui.gui != null && ui.gui.speed != null) {
+                ui.gui.speed.setSpeed(Speedget.Speed.RUN);
+                return true;
+            } else {
+                return false;
+            }
+        }));
+        add(new KeyBind("Change to Sprint Speed", new IndirSetting<>(DefSettings.global, "keybind.sprint-char-speed"), "M-R", ui -> {
+            if (ui.gui != null && ui.gui.speed != null) {
+                ui.gui.speed.setSpeed(Speedget.Speed.SPRINT);
                 return true;
             } else {
                 return false;

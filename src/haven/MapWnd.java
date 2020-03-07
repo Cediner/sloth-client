@@ -37,7 +37,8 @@ import haven.MapFileWidget.*;
 import haven.sloth.DefSettings;
 import haven.sloth.gob.Type;
 import haven.sloth.gui.DowseWnd;
-import haven.sloth.io.MarkerData;
+import haven.sloth.io.map.MapFileData;
+import haven.sloth.io.map.markers.MarkerData;
 
 import static haven.LocalMiniMap.plx;
 import static haven.MCache.tilesz;
@@ -52,6 +53,7 @@ public class MapWnd extends Window {
     private static final Tex viewbox = Resource.loadtex("custom/mm/hud/view", 3);
     private static final Resource markcurs = Resource.local().loadwait("gfx/hud/curs/flag");
     public final MapFileWidget view;
+    private final MapFileData mfdata;
     public final MapView mv;
     private final Locator player;
     private final Widget toolbar;
@@ -63,6 +65,7 @@ public class MapWnd extends Window {
         super(sz, title, title, false);
         this.mv = mv;
         this.player = new MapLocator(mv);
+        mfdata = new MapFileData();
         view = add(new View(file));
         recenter();
         toolbar = add(new Widget(Coord.z));
@@ -460,6 +463,7 @@ public class MapWnd extends Window {
                 newgrids.put(grid.id, grid.seq);
                 if (!currentgrids.containsKey(grid.id) || currentgrids.get(grid.id) != grid.seq) {
                     view.file.update(ui.sess.glob.map, grid.gc);
+                    //mfdata.update(ui.sess.glob.map, grid.gc);
                 }
             }
         }

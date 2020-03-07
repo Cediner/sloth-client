@@ -2,9 +2,8 @@ package haven.sloth.gui;
 
 import haven.*;
 import haven.Button;
-import haven.Label;
 import haven.Window;
-import haven.sloth.io.MarkerData;
+import haven.sloth.io.map.markers.MarkerData;
 
 import java.awt.*;
 import java.util.*;

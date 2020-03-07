@@ -71,6 +71,16 @@ public class Storage {
         }
     }
 
+    public PreparedStatement ensurePrepare(final String sql) {
+        try {
+            return prepare(sql);
+        } catch (SQLException se) {
+            logger.atSevere().withCause(se).log("Failed to prepare statement needed");
+            System.exit(0);
+        }
+        return null;
+    }
+
     public void close() {
         try {
             conn.close();
@@ -99,7 +109,6 @@ public class Storage {
 
     public synchronized void ensure(final SQLCallback callback) {
         try {
-            conn.createStatement().execute("BEGIN TRANSACTION ");
             callback.run(conn);
             conn.commit();
         } catch (SQLException se) {
@@ -121,7 +130,6 @@ public class Storage {
         final StackTraceElement[] stack = Thread.currentThread().getStackTrace();
         writerHandler.execute(() -> {
             try {
-                conn.createStatement().execute("BEGIN TRANSACTION ");
                 callback.run(conn);
                 conn.commit();
             } catch (SQLException se) {
@@ -136,5 +144,26 @@ public class Storage {
                 logger.atSevere().withCause(se).log("Failed to commit transaction");
             }
         });
+    }
+
+    /**
+     * These are not done async
+     */
+    public synchronized void writeAndWait(final SQLCallback callback) {
+        final StackTraceElement[] stack = Thread.currentThread().getStackTrace();
+        try {
+            callback.run(conn);
+            conn.commit();
+        } catch (SQLException se) {
+            try {
+                conn.rollback();
+            } catch (SQLException se2) {
+                //Eat it.
+            }
+            for (final StackTraceElement ele : stack) {
+                logger.atSevere().log(ele.toString());
+            }
+            logger.atSevere().withCause(se).log("Failed to commit transaction");
+        }
     }
 }

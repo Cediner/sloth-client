@@ -34,6 +34,20 @@ public class Speedget extends MovableWidget {
     public static final Tex imgs[][];
     public static final String tips[];
     public static final Coord tsz;
+
+    public enum Speed {
+        CRAWL(0),
+        WALK(1),
+        RUN(2),
+        SPRINT(3);
+
+        final int id;
+
+        Speed(final int id) {
+            this.id = id;
+        }
+    }
+
     public int cur, max;
 
     static {
@@ -152,6 +166,12 @@ public class Speedget extends MovableWidget {
             else
                 n = (cur + 1) % (max + 1);
             set(n);
+        }
+    }
+
+    public void setSpeed(final Speed spd) {
+        if (max >= 0 && spd.id <= max) {
+            set(spd.id);
         }
     }
 }

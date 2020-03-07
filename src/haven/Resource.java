@@ -26,6 +26,8 @@
 
 package haven;
 
+import haven.sloth.io.SQLResCache;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.annotation.*;
@@ -41,6 +43,7 @@ import java.util.concurrent.Executors;
 public class Resource implements Serializable {
     public static Resource fake = new Resource(null, "fake", -1);
     private static ResCache prscache;
+    private static ResCache sqlcache;
     public static ThreadGroup loadergroup = null;
     private static Map<String, LayerFactory<?>> ltypes = new TreeMap<String, LayerFactory<?>>();
     public static Class<Image> imgc = Image.class;
@@ -690,6 +693,8 @@ public class Resource implements Serializable {
             synchronized (Resource.class) {
                 if (_local == null) {
                     Pool local = new Pool(new JarSource());
+                    sqlcache = new SQLResCache();
+                    local.add(new CacheSource(sqlcache));
                     try {
                         String dir = Config.resdir;
                         if (dir == null)
@@ -710,13 +715,30 @@ public class Resource implements Serializable {
 
     private static Pool _remote = null;
 
+    public static ResSource makeTee(final ResSource src, final ResCache dst) {
+        class Caching extends TeeSource {
+            private final transient ResCache cache;
+
+            Caching(ResSource bk, ResCache cache) {
+                super(bk);
+                this.cache = cache;
+            }
+
+            public OutputStream fork(String name) throws IOException {
+                return (cache.store("res/" + name));
+            }
+        }
+        return new Caching(src, dst);
+    }
+
     public static Pool remote() {
         if (_remote == null) {
             synchronized (Resource.class) {
                 if (_remote == null) {
                     Pool remote = new Pool(local());
-                    if (prscache != null)
-                        remote.add(new CacheSource(prscache));
+                    if (prscache != null) {
+                        remote.add(makeTee(new CacheSource(prscache), sqlcache));
+                    }
                     _remote = remote;
                     ;
                 }
@@ -727,20 +749,8 @@ public class Resource implements Serializable {
 
     public static void addurl(URL url) {
         ResSource src = new HttpSource(url);
-        if (prscache != null) {
-            class Caching extends TeeSource {
-                private final transient ResCache cache;
-
-                Caching(ResSource bk, ResCache cache) {
-                    super(bk);
-                    this.cache = cache;
-                }
-
-                public OutputStream fork(String name) throws IOException {
-                    return (cache.store("res/" + name));
-                }
-            }
-            src = new Caching(src, prscache);
+        if (sqlcache != null) {
+            src = makeTee(src, sqlcache);
         }
         remote().add(src);
     }

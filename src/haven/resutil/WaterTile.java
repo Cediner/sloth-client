@@ -422,7 +422,7 @@ public class WaterTile extends Tiler {
         super(id);
         this.bottom = bottom;
         this.depth = depth;
-        if (id == 173) {
+        if (id == 188) {
             this.mat = GLState.compose(deepfog, boff);
             this.fog = obfog;
         } else {

@@ -33,7 +33,7 @@ import haven.sloth.gfx.HitboxMesh;
 import haven.sloth.gob.*;
 import haven.sloth.io.DangerousData;
 import haven.sloth.io.HighlightData;
-import haven.sloth.io.MarkerData;
+import haven.sloth.io.map.markers.MarkerData;
 import haven.sloth.script.pathfinding.Hitbox;
 
 import java.util.*;
@@ -859,7 +859,7 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
         loc.tick();
 
         final Hidden hid = getattr(Hidden.class);
-        if (hid == null) {
+        if (hid == null || DefSettings.SHOWHIDDENGOB.get()) {
             synchronized (ols) {
                 for (Overlay ol : ols)
                     rl.add(ol, null);
@@ -917,7 +917,7 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
     public Object staticp() {
         if (seq != null) {
             return ((seq == DYNAMIC) ? null : seq);
-        } else if (getattr(Hidden.class) == null) {
+        } else if (getattr(Hidden.class) == null || DefSettings.SHOWHIDDENGOB.get()) {
             int rs = 0;
             for (GAttrib attr : attr.values()) {
                 Object as = attr.staticp();

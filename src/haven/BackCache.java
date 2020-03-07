@@ -80,4 +80,8 @@ public class BackCache<K, V> {
         store.accept(key, val);
         cache.put(key, val);
     }
+
+    public Collection<V> values() {
+        return cache.values();
+    }
 }

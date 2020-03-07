@@ -40,6 +40,7 @@
                 <pathelement path="lib/bcprov-jdk15on-160.jar"/>
                 <pathelement path="lib/abcl.jar"/>
                 <pathelement path="lib/abcl-contrib.jar"/>
+                <pathelement path="lib/sqlite-jdbc-3.30.1.jar"/>
 
                 <pathelement path="lib/jackson-annotations-2.9.0.jar"/>
                 <pathelement path="lib/jackson-core-2.9.3.jar"/>
@@ -83,7 +84,7 @@
             <manifest>
                 <attribute name="Main-Class" value="haven.MainFrame"/>
                 <attribute name="Class-Path"
-                           value="jogl-all.jar gluegen-rt.jar builtin-res.jar hafen-res.jar flogger-0.3.1.jar flogger-system-backend-0.3.1.jar sqlite-jdbc-3.26.0.jar bcprov-jdk15on-160.jar abcl.jar abcl-contrib.jar jackson-annotations-2.9.0.jar jackson-core-2.9.3.jar jackson-databind-2.9.3.jar log4j-api-2.11.0.jar logging-interceptor-3.9.1.jar nv-websocket-client-2.6.jar okhttp-3.9.1.jar okio-1.13.0.jar javacord-api-3.0.4.jar javacord-core-3.0.4.jar"/>
+                           value="jogl-all.jar gluegen-rt.jar builtin-res.jar hafen-res.jar flogger-0.3.1.jar flogger-system-backend-0.3.1.jar sqlite-jdbc-3.30.1.jar bcprov-jdk15on-160.jar abcl.jar abcl-contrib.jar jackson-annotations-2.9.0.jar jackson-core-2.9.3.jar jackson-databind-2.9.3.jar log4j-api-2.11.0.jar logging-interceptor-3.9.1.jar nv-websocket-client-2.6.jar okhttp-3.9.1.jar okio-1.13.0.jar javacord-api-3.0.4.jar javacord-core-3.0.4.jar"/>
             </manifest>
         </jar>
         <chmod file="build/hafen.jar" perm="a+x"/>
@@ -109,7 +110,7 @@
                 <include name="builtin-res.jar"/>
                 <include name="flogger-0.3.1.jar"/>
                 <include name="flogger-system-backend-0.3.1.jar"/>
-                <include name="sqlite-jdbc-3.26.0.jar"/>
+                <include name="sqlite-jdbc-3.30.1.jar"/>
                 <include name="bcprov-jdk15on-160.jar"/>
                 <include name="abcl.jar"/>
                 <include name="abcl-contrib.jar"/>

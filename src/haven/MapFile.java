@@ -762,28 +762,29 @@ public class MapFile {
 								norepl[nt] = true;
 						}
 					} catch (Loading l) {
-					}
-					nt++;
-				}
+                    }
+                    nt++;
+                }
             }
             int[] prios = new int[nt];
             for (int i = 0, tn = 0; i < 256; i++) {
                 if (tmap[i] != -1)
                     prios[tmap[i]] = tn++;
             }
-			TileInfo[] infos = new TileInfo[nt];
-			for (int i = 0; i < nt; i++)
-				infos[i] = new TileInfo(sets[i], prios[i]);
-			byte[] tiles = new byte[cmaps.x * cmaps.y];
-			int[] z = new int[cmaps.x * cmaps.y];
-			for (int i = 0; i < cg.tiles.length; i++) {
-				tiles[i] = (byte) (tmap[cg.tiles[i]]);
-				z[i] = cg.z[i];
-			}
-			Grid g = new Grid(cg.id, infos, tiles, z, System.currentTimeMillis());
-			g.norepl = norepl;
-			g.useq = oseq;
-			return (g);
+            TileInfo[] infos = new TileInfo[nt];
+            for (int i = 0; i < nt; i++) {
+                infos[i] = new TileInfo(sets[i], prios[i]);
+            }
+            byte[] tiles = new byte[cmaps.x * cmaps.y];
+            int[] z = new int[cmaps.x * cmaps.y];
+            for (int i = 0; i < cg.tiles.length; i++) {
+                tiles[i] = (byte) (tmap[cg.tiles[i]]);
+                z[i] = cg.z[i];
+            }
+            Grid g = new Grid(cg.id, infos, tiles, z, System.currentTimeMillis());
+            g.norepl = norepl;
+            g.useq = oseq;
+            return (g);
 		}
 
 		public Grid mergeprev(Grid prev) {

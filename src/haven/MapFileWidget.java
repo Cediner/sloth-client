@@ -37,7 +37,7 @@ import haven.MapFile.Marker;
 import haven.MapFile.PMarker;
 import haven.MapFile.SMarker;
 import haven.sloth.DefSettings;
-import haven.sloth.io.MarkerData;
+import haven.sloth.io.map.markers.MarkerData;
 
 import static haven.MCache.cmaps;
 
