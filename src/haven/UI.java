@@ -127,9 +127,24 @@ public class UI {
         root = new RootWidget(this, sz);
         widgets.put(0, root);
         rwidgets.put(root, 0);
+        setSession(sess);
+    }
+
+    public UI(Context uictx, Coord sz) {
+        this(uictx, sz, null);
+    }
+
+    public void setSession(final Session sess) {
         this.sess = sess;
-        if (sess != null)
+        if (this.sess != null)
             this.sess.glob.ui = new WeakReference<>(this);
+    }
+
+    public void reset(final Coord sz) {
+        destroy();
+        root = new RootWidget(this, sz);
+        widgets.put(0, root);
+        rwidgets.put(root, 0);
     }
 
     public void setreceiver(Receiver rcvr) {

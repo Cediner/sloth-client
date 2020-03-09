@@ -162,6 +162,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
         scripts = add(new ScriptManager());
         scripts.hide();
         pointer = add(new MapPointer());
+        add(new SessionDisplay());
     }
 
     public class Hidepanel extends Widget {

@@ -34,9 +34,16 @@ import java.util.*;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.*;
 import haven.sloth.DefSettings;
+import haven.sloth.util.ObservableCollection;
 
 public class HavenPanel extends GLCanvas implements Runnable, Console.Directory, UI.Context {
+    //All of our UIs
+    public final ObservableCollection<UI> sessions = new ObservableCollection<>(new ArrayList<>());
+    //The UI for the next frame, or null of no change
+    private UI nextUI;
+    //The current active UI
     UI ui;
+
     boolean inited = false;
     int w, h;
     public boolean bgmode = false;
@@ -205,7 +212,6 @@ public class HavenPanel extends GLCanvas implements Runnable, Console.Directory,
 
     public void init() {
         setFocusTraversalKeysEnabled(false);
-        //newui(null);
         addKeyListener(new KeyAdapter() {
             public void keyTyped(KeyEvent e) {
                 synchronized (events) {
@@ -267,19 +273,47 @@ public class HavenPanel extends GLCanvas implements Runnable, Console.Directory,
         inited = true;
     }
 
-    UI newui(Session sess) {
-        if (ui != null)
-            ui.destroy();
-        ui = new UI(this, new Coord(w, h), sess);
-        ui.root.guprof = uprof;
-        ui.root.grprof = rprof;
-        ui.root.ggprof = gprof;
+    public UI newui(Session sess) {
+        final UI lui = new UI(this, new Coord(w, h), sess);
+        lui.root.guprof = uprof;
+        lui.root.grprof = rprof;
+        lui.root.ggprof = gprof;
         if (getParent() instanceof Console.Directory)
-            ui.cons.add((Console.Directory) getParent());
-        ui.cons.add(this);
+            lui.cons.add((Console.Directory) getParent());
+        lui.cons.add(this);
         if (glconf != null)
-            ui.cons.add(glconf);
-        return (ui);
+            lui.cons.add(glconf);
+        synchronized (sessions) {
+            sessions.add(lui);
+        }
+        if (this.ui == null) {
+            //set default UI if first one
+            this.ui = lui;
+        }
+        return (lui);
+    }
+
+    //Set the UI for the next frame
+    public void setActiveUI(final UI lui) {
+        if (this.ui != lui)
+            nextUI = lui;
+    }
+
+    //Remove a UI
+    public void removeUI(final UI lui) {
+        lui.destroy();
+        synchronized (sessions) {
+            sessions.remove(lui);
+        }
+
+        //Update the next active UI if we have any others currently.
+        if (this.ui == lui) {
+            synchronized (sessions) {
+                Iterator<UI> itr = sessions.iterator();
+                if (itr.hasNext())
+                    setActiveUI(itr.next());
+            }
+        }
     }
 
     private static Cursor makeawtcurs(BufferedImage img, Coord hs) {
@@ -567,6 +601,9 @@ public class HavenPanel extends GLCanvas implements Runnable, Console.Directory,
                 long frames[] = new long[128];
                 int framep = 0, waited[] = new int[128];
                 while (true) {
+                    if (nextUI != null)
+                        ui = nextUI;
+
                     if (!DefSettings.PAUSED.get()) {
                         int fwaited = 0;
                         Debug.cycle();
@@ -651,6 +688,20 @@ public class HavenPanel extends GLCanvas implements Runnable, Console.Directory,
                         // if(haven.Context.map != null)
                         //    haven.Context.map.try_move();
                         Thread.sleep(100);
+                    }
+
+                    //Update all other UIs as well, just don't render
+                    synchronized (sessions) {
+                        for (final UI lui : sessions) {
+                            if (lui != ui) {
+                                if (lui.sess != null)
+                                    lui.sess.glob.ctick();
+                                lui.tick();
+                                if ((lui.root.sz.x != w) || (lui.root.sz.y != h))
+                                    lui.root.resize(new Coord(w, h));
+                                lui.audio.cycle();
+                            }
+                        }
                     }
                 }
             } finally {

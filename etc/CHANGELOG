@@ -2,6 +2,8 @@
     - Updated combat formulas
     - Readded alternative storage system, but less aggressive. To convert cache files
     to the new storage ahead of time run the "res-convert.bat"
+    - Added Sessions and widget to choose from. Your base session will remain the master session and if
+    exited will close everything. Test it out.
 
 3/7/20
     - Trying out new storage system for res

@@ -26,6 +26,7 @@
 
 package haven;
 
+import com.google.common.flogger.FluentLogger;
 import haven.sloth.DefSettings;
 import haven.sloth.Settings;
 
@@ -34,10 +35,13 @@ import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 import java.lang.reflect.*;
+import java.util.List;
 
 public class MainFrame extends java.awt.Frame implements Runnable, Console.Directory {
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     private static final String title = "Haven and Hearth";
-    HavenPanel p;
+    public static MainFrame instance;
+    public final HavenPanel p;
     private final ThreadGroup g;
     public final Thread mt;
     DisplayMode fsmode = null, prefs = null;
@@ -240,16 +244,52 @@ public class MainFrame extends java.awt.Frame implements Runnable, Console.Direc
         }
     }
 
+    private final List<Thread> sessionThreads = new ArrayList<>();
+
+    public void makeNewSession() {
+        final Thread rui = new HackThread(() -> {
+            final UI lui = p.newui(null);
+            try {
+                UI.Runner fun;
+                //Login first
+                Bootstrap bill = new Bootstrap(Config.defserv, Config.mainport);
+                if ((Config.authuser != null) && (Config.authck != null)) {
+                    bill.setinitcookie(Config.authuser, Config.authck);
+                    Config.authck = null;
+                }
+                final Session sess = bill.run(lui);
+                //reset UI and play game
+                lui.reset(new Coord(p.w, p.h));
+                lui.setSession(sess);
+                new RemoteUI(sess).run(lui);
+                //Remove this UI once done
+                p.removeUI(lui);
+            } catch (InterruptedException e) {
+            } finally {
+                p.removeUI(lui);
+                synchronized (sessionThreads) {
+                    sessionThreads.remove(Thread.currentThread());
+                }
+            }
+        }, "Remote UI Session thread");
+        rui.start();
+        synchronized (sessionThreads) {
+            sessionThreads.add(rui);
+        }
+    }
+
     public void run() {
         if (Thread.currentThread() != this.mt)
             throw (new RuntimeException("MainFrame is being run from an invalid context"));
         Thread ui = new HackThread(p, "Haven UI thread");
         ui.start();
         try {
+            final UI lui = p.newui(null);
             try {
                 Session sess = null;
                 while (true) {
                     UI.Runner fun;
+                    lui.reset(new Coord(p.w, p.h));
                     if (sess == null) {
                         Bootstrap bill = new Bootstrap(Config.defserv, Config.mainport);
                         if ((Config.authuser != null) && (Config.authck != null)) {
@@ -260,15 +300,23 @@ public class MainFrame extends java.awt.Frame implements Runnable, Console.Direc
                         setTitle(title);
                     } else {
                         fun = new RemoteUI(sess);
+                        lui.setSession(sess);
                         setTitle(title + " \u2013 " + sess.username);
                     }
-                    sess = fun.run(p.newui(sess));
+                    sess = fun.run(lui);
                 }
             } catch (InterruptedException e) {
+            } finally {
+                p.removeUI(lui);
             }
             savewndstate();
         } finally {
             ui.interrupt();
+            synchronized (sessionThreads) {
+                for (final Thread thr : sessionThreads) {
+                    thr.interrupt();
+                }
+            }
             dispose();
         }
     }
@@ -389,7 +437,7 @@ public class MainFrame extends java.awt.Frame implements Runnable, Console.Direc
         }
         setupres();
         DefSettings.init(); //init after res has been setup...
-        MainFrame f = new MainFrame(null);
+        MainFrame f = (instance = new MainFrame(null));
         if (Utils.getprefb("fullscreen", false))
             f.setfs();
         f.mt.start();
