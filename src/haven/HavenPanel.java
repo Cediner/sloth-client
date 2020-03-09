@@ -81,7 +81,6 @@ public class HavenPanel extends GLCanvas implements Runnable, Console.Directory,
         if (gldebug)
             setContextCreationFlags(getContextCreationFlags() | GLContext.CTX_OPTION_DEBUG);
         setSize(this.w = w, this.h = h);
-        newui(null);
         initgl();
         if (Toolkit.getDefaultToolkit().getMaximumCursorColors() >= 256)
             cursmode = "awt";
@@ -112,7 +111,7 @@ public class HavenPanel extends GLCanvas implements Runnable, Console.Directory,
                     }
                     glconf = GLConfig.fromgl(gl, d.getContext(), getChosenGLCapabilities());
                     if (gldebug)
-                        d.getContext().addGLDebugListener((event) -> System.err.println(event));
+                        d.getContext().addGLDebugListener(System.err::println);
 
 			/* if(gldebug) {
 			    if(!d.getContext().isGLDebugMessageEnabled())
@@ -206,7 +205,7 @@ public class HavenPanel extends GLCanvas implements Runnable, Console.Directory,
 
     public void init() {
         setFocusTraversalKeysEnabled(false);
-        newui(null);
+        //newui(null);
         addKeyListener(new KeyAdapter() {
             public void keyTyped(KeyEvent e) {
                 synchronized (events) {

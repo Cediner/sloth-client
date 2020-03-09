@@ -26,6 +26,8 @@
 
 package haven;
 
+import haven.sloth.io.SQLResCache;
+
 import java.util.*;
 import java.io.*;
 import java.nio.channels.*;
@@ -358,16 +360,36 @@ public class HashDirCache implements ResCache {
 		else
 			cache = new HashDirCache(args[0]);
 		switch (args[1]) {
-			case "ls":
-				final Pattern reg = Pattern.compile(args.length > 2 ? args[2] : ".+");
-				for (Iterator<String> i = cache.list(); i.hasNext(); ) {
-					String nm = i.next();
-					if (reg.matcher(nm).matches()) {
-						System.out.println(nm);
-					}
-				}
-				break;
-			case "cat":
+            case "convert-all": {
+                final SQLResCache sqlcache = new SQLResCache();
+                for (Iterator<String> i = cache.list(); i.hasNext(); ) {
+                    final String nm = i.next();
+                    if (nm.startsWith("res/")) {
+                        System.out.printf("Converting %s\n", nm);
+                        final InputStream is = cache.fetch(nm);
+                        final OutputStream os = sqlcache.store(nm);
+                        final byte[] buffer = new byte[4096];
+                        int len;
+                        while ((len = is.read(buffer)) > 0) {
+                            os.write(buffer, 0, len);
+                        }
+                        is.close();
+                        os.close();
+                    }
+                }
+                System.exit(0);
+            }
+            break;
+            case "ls":
+                final Pattern reg = Pattern.compile(args.length > 2 ? args[2] : ".+");
+                for (Iterator<String> i = cache.list(); i.hasNext(); ) {
+                    String nm = i.next();
+                    if (reg.matcher(nm).matches()) {
+                        System.out.println(nm);
+                    }
+                }
+                break;
+            case "cat":
 				InputStream fp;
 				try {
 					fp = cache.fetch(args[2]);

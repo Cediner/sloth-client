@@ -112,7 +112,10 @@ public class Attack extends Card implements Attacks {
      * sqrt(block weight/attack weight)
      * <p>
      * So:
+     * Historical Formula:
      * def -> def + (((1 - def_{old}) * opening * sqrt(sqrt((attackweight * Mu)/blockweight))))
+     * w12:
+     * def -> def + (((1 - def_{old}) * opening * ((attackweight * Mu)/blockweight))^(1/3)
      */
     public Map<DefenseType, Double> calculateEnemyDefWeights(final Maneuver maneuver, final double maneuvermeter,
                                                              final int ua, final int mc, final int cards,
@@ -123,7 +126,7 @@ public class Attack extends Card implements Attacks {
         final Map<DefenseType, Double> futureWeights = new HashMap<>();
         for (final DefenseType def : DefenseType.values()) {
             futureWeights.put(def, enemyDefWeight.get(def) + ((1 - enemyDefWeight.get(def)) * openingweights.get(def)
-                    * Math.sqrt(Math.sqrt(atkweight / blockweight))));
+                    * Math.cbrt(atkweight / blockweight)));
         }
         return futureWeights;
     }
@@ -153,7 +156,7 @@ public class Attack extends Card implements Attacks {
                 final double truth = afterWeights.get(def) - beforeWeights.get(def);
                 //The block weight needed to hit this
                 //blockweight = atkweight/(((ndef - odef)/((1-odef)*opening))^2)^2
-                blockweight += atkweight / Math.pow(Math.pow((truth / ((1 - beforeWeights.get(def)) * openingweights.get(def))), 2), 2);
+                blockweight += atkweight / Math.pow((truth / ((1 - beforeWeights.get(def)) * openingweights.get(def))), 3);
                 openings++;
             }
         }
