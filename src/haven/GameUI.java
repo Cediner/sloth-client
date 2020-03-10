@@ -138,7 +138,6 @@ public class GameUI extends ConsoleHost implements Console.Directory {
             public void flush() {
             }
         });
-        Debug.log = ui.cons.out;
 
         buffs = add(new Bufflist(), new Coord(95, 65));
         portrait = add(new Avaview(Avaview.dasz, plid, "plavacam"), new Coord(10, 10));
@@ -983,7 +982,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
             try {
                 add(gettype(args[1]).create(ui, new Object[0]), 200, 200);
             } catch (RuntimeException e) {
-                e.printStackTrace(Debug.log);
+                e.printStackTrace();
             }
         });
     }

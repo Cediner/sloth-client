@@ -268,6 +268,11 @@ public class UI {
         }
         removeid(wdg);
         wdg.reqdestroy();
+
+        if (cons.out != null) {
+            cons.out.close();
+            cons.out = null;
+        }
     }
 
     public void destroy(int id) {
