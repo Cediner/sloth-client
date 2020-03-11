@@ -50,7 +50,15 @@ public class AudioSprite {
 
     public static final Sprite.Factory fact = new Sprite.Factory() {
         public Sprite create(Sprite.Owner owner, Resource res, Message sdt) {
-            if (DefSettings.PAUSED.get() || DefSettings.NOGOBAUDIO.get()) {
+            final UI ui;
+            if (owner instanceof Gob) {
+                ui = ((Gob) owner).glob.ui.get();
+            } else {
+                ui = null;
+            }
+
+            if (DefSettings.PAUSED.get() || DefSettings.NOGOBAUDIO.get() ||
+                    (ui != null && !MainFrame.instance.p.isActiveUI(ui))) {
                 return new IgnoreSprite(owner, res);
             }
             {

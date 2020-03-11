@@ -293,10 +293,38 @@ public class HavenPanel extends GLCanvas implements Runnable, Console.Directory,
         return (lui);
     }
 
+    public boolean isActiveUI(final UI lui) {
+        return this.ui == lui;
+    }
+
     //Set the UI for the next frame
     public void setActiveUI(final UI lui) {
         if (this.ui != lui)
             nextUI = lui;
+    }
+
+    public int sessionCount() {
+        synchronized (sessions) {
+            return sessions.size();
+        }
+    }
+
+    public boolean isMasterUIActive() {
+        synchronized (sessions) {
+            Iterator<UI> itr = sessions.iterator();
+            if (itr.hasNext())
+                return itr.next() == this.ui;
+            else
+                return false;
+        }
+    }
+
+    public void closeCurrentSession() {
+        if (this.ui.gui != null) {
+            this.ui.gui.act("lo");
+        } else {
+            this.ui.sess.close();
+        }
     }
 
     //Remove a UI

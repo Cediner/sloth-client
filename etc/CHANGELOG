@@ -1,3 +1,7 @@
+3/10/20
+    - Client should now ignore Audiosprites of non-active sessions
+    - Hitting the exit button on the window will now log out sessions or prompt if done on the master session
+
 3/9/20
     - Updated combat formulas
     - Readded alternative storage system, but less aggressive. To convert cache files

@@ -30,6 +30,7 @@ import com.google.common.flogger.FluentLogger;
 import haven.sloth.DefSettings;
 import haven.sloth.Settings;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -213,7 +214,21 @@ public class MainFrame extends java.awt.Frame implements Runnable, Console.Direc
         p.init();
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
-                g.interrupt();
+                if (p.sessionCount() > 1) {
+                    if (p.isMasterUIActive()) {
+                        if (JOptionPane.showConfirmDialog(MainFrame.this,
+                                "Are you sure you want to quit? You have other active sessions open.",
+                                "Close Client",
+                                JOptionPane.YES_NO_OPTION,
+                                JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+                            g.interrupt();
+                        }
+                    } else {
+                        p.closeCurrentSession();
+                    }
+                } else {
+                    g.interrupt();
+                }
             }
 
             public void windowActivated(WindowEvent e) {
