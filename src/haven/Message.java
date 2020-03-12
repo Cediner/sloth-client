@@ -211,41 +211,73 @@ public abstract class Message {
     }
 
     public void bytes(byte[] b) {
-        bytes(b, 0, b.length);
-    }
+		bytes(b, 0, b.length);
+	}
 
-    public Coord coord() {
-        return (new Coord(int32(), int32()));
-    }
+	public Coord coord() {
+		return (new Coord(int32(), int32()));
+	}
 
-    public Color color() {
-        return (new Color(uint8(), uint8(), uint8(), uint8()));
-    }
+	public Color color() {
+		return (new Color(uint8(), uint8(), uint8(), uint8()));
+	}
 
-    public float float32() {
-        int off = rget(4);
-        return (Utils.float32d(rbuf, off));
-    }
+	public float float8() {
+		return (Utils.mfdec((byte) int8()));
+	}
 
-    public double float64() {
-        int off = rget(8);
-        return (Utils.float64d(rbuf, off));
-    }
+	public float float16() {
+		return (Utils.hfdec((short) int16()));
+	}
 
-    public double cpfloat() {
-        int off = rget(5);
-        return (Utils.floatd(rbuf, off));
-    }
+	public float float32() {
+		int off = rget(4);
+		return (Utils.float32d(rbuf, off));
+	}
 
-    public Object[] list() {
-        ArrayList<Object> ret = new ArrayList<Object>();
-        list:
-        while (true) {
-            if (eom())
-                break;
-            int t = uint8();
-            switch (t) {
-                case T_END:
+	public double float64() {
+		int off = rget(8);
+		return (Utils.float64d(rbuf, off));
+	}
+
+	public double cpfloat() {
+		int off = rget(5);
+		return (Utils.floatd(rbuf, off));
+	}
+
+	public float snorm8() {
+		return (Utils.clip(int8(), -0x7f, 0x7f) / 0x7fp0f);
+	}
+
+	public float unorm8() {
+		return (uint8() / 0xffp0f);
+	}
+
+	public float snorm16() {
+		return (Utils.clip(int16(), -0x7fff, 0x7fff) / 0x7fffp0f);
+	}
+
+	public float unorm16() {
+		return (uint16() / 0xffffp0f);
+	}
+
+	public double snorm32() {
+		return (Utils.clip(int32(), -0x7fffffff, 0x7fffffff) / 0x7fffffffp0);
+	}
+
+	public double unorm32() {
+		return (uint32() / 0xffffffffp0);
+	}
+
+	public Object[] list() {
+		ArrayList<Object> ret = new ArrayList<Object>();
+		list:
+		while (true) {
+			if (eom())
+				break;
+			int t = uint8();
+			switch (t) {
+				case T_END:
                     break list;
                 case T_INT:
                     ret.add(int32());
@@ -320,32 +352,44 @@ public abstract class Message {
     }
 
     public Message addbytes(byte[] src, int off, int len) {
-        wensure(len);
-        System.arraycopy(src, off, wbuf, wh, len);
-        wh += len;
-        return (this);
-    }
+		wensure(len);
+		System.arraycopy(src, off, wbuf, wh, len);
+		wh += len;
+		return (this);
+	}
 
-    public Message addbytes(byte[] src) {
-        addbytes(src, 0, src.length);
-        return (this);
-    }
+	public Message addbytes(byte[] src) {
+		addbytes(src, 0, src.length);
+		return (this);
+	}
 
-    public Message adduint8(int num) {
-        wensure(1);
-        wbuf[wh++] = (byte) num;
-        return (this);
-    }
+	public Message addint8(byte num) {
+		wensure(1);
+		wbuf[wh++] = num;
+		return (this);
+	}
 
-    public Message adduint16(int num) {
-        int off = wget(2);
-        Utils.uint16e(num, wbuf, off);
-        return (this);
-    }
+	public Message adduint8(int num) {
+		wensure(1);
+		wbuf[wh++] = (byte) num;
+		return (this);
+	}
 
-    public Message addint32(int num) {
-        int off = wget(4);
-        Utils.int32e(num, wbuf, off);
+	public Message addint16(short num) {
+		int off = wget(2);
+		Utils.int16e(num, wbuf, off);
+		return (this);
+	}
+
+	public Message adduint16(int num) {
+		int off = wget(2);
+		Utils.uint16e(num, wbuf, off);
+		return (this);
+	}
+
+	public Message addint32(int num) {
+		int off = wget(4);
+		Utils.int32e(num, wbuf, off);
         return (this);
     }
 
@@ -375,27 +419,35 @@ public abstract class Message {
     public Message addcoord(Coord c) {
         addint32(c.x);
         addint32(c.y);
-        return (this);
-    }
+		return (this);
+	}
 
-    public Message addcolor(Color color) {
-        adduint8(color.getRed());
-        adduint8(color.getGreen());
-        adduint8(color.getBlue());
-        adduint8(color.getAlpha());
-        return (this);
-    }
+	public Message addcolor(Color color) {
+		adduint8(color.getRed());
+		adduint8(color.getGreen());
+		adduint8(color.getBlue());
+		adduint8(color.getAlpha());
+		return (this);
+	}
 
-    public Message addfloat32(float num) {
-        int off = wget(4);
-        Utils.float32e(num, wbuf, off);
-        return (this);
-    }
+	public Message addfloat8(float num) {
+		return (addint8(Utils.mfenc(num)));
+	}
 
-    public Message addfloat64(double num) {
-        int off = wget(8);
-        Utils.float64e(num, wbuf, off);
-        return (this);
+	public Message addfloat16(float num) {
+		return (addint16(Utils.hfenc(num)));
+	}
+
+	public Message addfloat32(float num) {
+		int off = wget(4);
+		Utils.float32e(num, wbuf, off);
+		return (this);
+	}
+
+	public Message addfloat64(double num) {
+		int off = wget(8);
+		Utils.float64e(num, wbuf, off);
+		return (this);
     }
 
     public Message addlist(Object... args) {
