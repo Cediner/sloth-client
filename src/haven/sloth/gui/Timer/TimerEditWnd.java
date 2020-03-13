@@ -17,9 +17,10 @@ public class TimerEditWnd extends Window {
         add(new Label("Hours"), new Coord(225, 10));
         final TextEntry txthours = new TextEntry(50, "") {
             @Override
-            public boolean type(char c, KeyEvent ev) {
+            public boolean keydown(KeyEvent ev) {
+                final char c = ev.getKeyChar();
                 if (c == 0x8 || c == 0x7f || c == 0x09 || (c >= 0x30 && c <= 0x39 && text.length() <= 2))
-                    return super.type(c, ev);
+                    return super.keydown(ev);
                 return true;
             }
         };
@@ -28,9 +29,10 @@ public class TimerEditWnd extends Window {
         add(new Label("Minutes"), new Coord(285, 10));
         final TextEntry txtminutes = new TextEntry(50, "") {
             @Override
-            public boolean type(char c, KeyEvent ev) {
+            public boolean keydown(KeyEvent ev) {
+                final char c = ev.getKeyChar();
                 if (c == 0x8 || c == 0x7f || c == 0x09 || (c >= 0x30 && c <= 0x39 && text.length() <= 1))
-                    return super.type(c, ev);
+                    return super.keydown(ev);
                 return true;
             }
         };

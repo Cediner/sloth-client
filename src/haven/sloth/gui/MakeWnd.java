@@ -28,10 +28,6 @@ public class MakeWnd extends Window implements ObservableListener<MenuGrid.Pagin
                 refilter();
             }
 
-            public boolean type(char c, KeyEvent ev) {
-                return super.type(c, ev);
-            }
-
             public boolean keydown(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_UP) {
                     final Optional<Integer> idx = list.selindex();

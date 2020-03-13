@@ -208,13 +208,8 @@ public class TextEntry extends SIWidget {
             onActivate.accept(text);
     }
 
-    public boolean type(char c, KeyEvent ev) {
+    public boolean keydown(KeyEvent ev) {
         return (buf.key(ev));
-    }
-
-    public boolean keydown(KeyEvent e) {
-        buf.key(e);
-        return (true);
     }
 
     public boolean mousedown(Coord c, int button) {

@@ -725,9 +725,9 @@ public class FightWnd extends Widget {
             }
         }
 
-        public boolean type(char c, KeyEvent ev) {
+        public boolean keydown(KeyEvent ev) {
             if (edit != -1) {
-                if (c == 27) {
+                if (ev.getKeyChar() == 27) {
                     edit = -1;
                     redit = null;
                     nmed = null;
@@ -735,14 +735,6 @@ public class FightWnd extends Widget {
                 } else {
                     return (nmed.key(ev));
                 }
-            }
-            return (super.type(c, ev));
-        }
-
-        public boolean keydown(KeyEvent ev) {
-            if (edit != -1) {
-                nmed.key(ev);
-                return (true);
             }
             return (super.keydown(ev));
         }

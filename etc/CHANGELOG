@@ -1,3 +1,7 @@
+3/13/20
+    - Updated to loftar's updated key system
+    - Menu grid no longer triggers when Ctrl/Shift/Alt is down
+
 3/10/20
     - Client should now ignore Audiosprites of non-active sessions
     - Hitting the exit button on the window will now log out sessions or prompt if done on the master session

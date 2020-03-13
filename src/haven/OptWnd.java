@@ -65,7 +65,8 @@ public class OptWnd extends Window {
             chpanel(tgt);
         }
 
-        public boolean type(char key, java.awt.event.KeyEvent ev) {
+        public boolean keydown(java.awt.event.KeyEvent ev) {
+            final char key = ev.getKeyChar();
             if ((this.key != -1) && (key == this.key)) {
                 click();
                 return (true);

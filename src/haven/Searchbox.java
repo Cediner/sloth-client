@@ -50,7 +50,7 @@ public abstract class Searchbox<T> extends Listbox<T> {
         if ((ev.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) != 0) mod |= C;
         if ((ev.getModifiersEx() & (InputEvent.META_DOWN_MASK | InputEvent.ALT_DOWN_MASK)) != 0) mod |= M;
         int code = ev.getKeyCode();
-        if (ev.getKeyChar() == ev.CHAR_UNDEFINED)
+        if (ev.getKeyChar() == KeyEvent.CHAR_UNDEFINED)
             c = '\0';
         if (mod == 0) {
             if (c == 8) {
@@ -92,12 +92,8 @@ public abstract class Searchbox<T> extends Listbox<T> {
         return (super.keydown(ev));
     }
 
-    public boolean type(char c, KeyEvent ev) {
-        return (key(c, ev));
-    }
-
     public boolean keydown(KeyEvent ev) {
-        return (key((char) 0, ev));
+        return (key(ev.getKeyChar(), ev));
     }
 
     private void updinfo() {

@@ -826,7 +826,8 @@ public class Widget {
         return (false);
     }
 
-    public boolean type(char key, KeyEvent ev) {
+    public boolean keydown(KeyEvent ev) {
+        final char key = ev.getKeyChar();
         if (canactivate) {
             if (key == 10) {
                 wdgmsg("activate");
@@ -841,7 +842,7 @@ public class Widget {
         }
         if (focusctl) {
             if (focused != null) {
-                if (focused.type(key, ev))
+                if (focused.keydown(ev))
                     return (true);
                 if (focustab) {
                     if (key == '\t') {
@@ -871,32 +872,12 @@ public class Widget {
         } else {
             for (Widget wdg = child; wdg != null; wdg = wdg.next) {
                 if (wdg.visible) {
-                    if (wdg.type(key, ev))
+                    if (wdg.keydown(ev))
                         return (true);
                 }
             }
             return (false);
         }
-    }
-
-    public boolean keydown(KeyEvent ev) {
-        if (focusctl) {
-            if (focused != null) {
-                if (focused.keydown(ev))
-                    return (true);
-                return (false);
-            } else {
-                return (false);
-            }
-        } else {
-            for (Widget wdg = child; wdg != null; wdg = wdg.next) {
-                if (wdg.visible) {
-                    if (wdg.keydown(ev))
-                        return (true);
-                }
-            }
-        }
-        return (false);
     }
 
     public boolean keyup(KeyEvent ev) {

@@ -1403,15 +1403,6 @@ public class ChatUI extends Widget {
         }
     }
 
-    public boolean type(char key, KeyEvent ev) {
-        if (qline != null) {
-            qline.key(ev);
-            return (true);
-        } else {
-            return (super.type(key, ev));
-        }
-    }
-
     public boolean globtype(char key, KeyEvent ev) {
         if (key == 10) {
             if (!visible && (sel instanceof EntryChannel)) {

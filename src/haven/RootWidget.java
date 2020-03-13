@@ -52,8 +52,8 @@ public class RootWidget extends ConsoleHost {
     }
 
     public boolean globtype(char key, KeyEvent ev) {
-        if (!super.globtype(key, ev)) {
-            if (kbs.globtype(ev, ui)) {
+        if (!kbs.globtype(ev, ui)) {
+            if (super.globtype(key, ev)) {
                 return true;
             } else if (key != 0 && (last_gk != key || (System.currentTimeMillis() - last_gk_time) >= 500)) {
                 wdgmsg("gk", (int) key);

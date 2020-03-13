@@ -659,24 +659,26 @@ public class MenuGrid extends MovableWidget {
     }
 
     public boolean globtype(char k, KeyEvent ev) {
-        if ((k == 27) && (this.cur != null)) {
-            this.cur = null;
-            curoff = 0;
-            updlayout();
-            return (true);
-        } else if ((k == 8) && (this.cur != null)) {
-            this.cur = paginafor(this.cur.act().parent);
-            curoff = 0;
-            updlayout();
-            return (true);
-        } else if ((k == 'N') && (layout[gsz.x - 2][gsz.y - 1] == next)) {
-            use(next, false);
-            return (true);
-        }
-        PagButton r = hotmap.get(Character.toUpperCase(k));
-        if (r != null) {
-            use(r, true);
-            return (true);
+        if (ui.modflags() == 0) {
+            if ((k == 27) && (this.cur != null)) {
+                this.cur = null;
+                curoff = 0;
+                updlayout();
+                return (true);
+            } else if ((k == 8) && (this.cur != null)) {
+                this.cur = paginafor(this.cur.act().parent);
+                curoff = 0;
+                updlayout();
+                return (true);
+            } else if ((k == 'N') && (layout[gsz.x - 2][gsz.y - 1] == next)) {
+                use(next, false);
+                return (true);
+            }
+            PagButton r = hotmap.get(Character.toUpperCase(k));
+            if (r != null) {
+                use(r, true);
+                return (true);
+            }
         }
         return (false);
     }

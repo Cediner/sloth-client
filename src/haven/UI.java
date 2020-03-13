@@ -330,6 +330,7 @@ public class UI {
         return (g.toArray(new Grab[0]));
     }
 
+    /*
     public void type(KeyEvent ev) {
         setmods(ev);
         for (Grab g : c(keygrab)) {
@@ -341,7 +342,7 @@ public class UI {
         }
         if (!root.type(ev.getKeyChar(), ev))
             root.globtype(ev.getKeyChar(), ev);
-    }
+    }*/
 
     public void keydown(KeyEvent ev) {
         setmods(ev);
@@ -352,8 +353,13 @@ public class UI {
                     return;
             }
         }
-        if (!root.keydown(ev))
-            root.globtype((char) 0, ev);
+
+        if (!root.keydown(ev)) {
+            char key = ev.getKeyChar();
+            if (key == KeyEvent.CHAR_UNDEFINED)
+                key = 0;
+            root.globtype(key, ev);
+        }
     }
 
     public void keyup(KeyEvent ev) {
