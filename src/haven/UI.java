@@ -52,7 +52,7 @@ public class UI {
     public Console cons = new WidgetConsole();
     private Collection<AfterDraw> afterdraws = new LinkedList<AfterDraw>();
     private final Context uictx;
-    public final ActAudio audio = new ActAudio();
+    public ActAudio audio = new ActAudio();
 
     {
         lastevent = lasttick = Utils.rtime();
@@ -145,6 +145,7 @@ public class UI {
         root = new RootWidget(this, sz);
         widgets.put(0, root);
         rwidgets.put(root, 0);
+        audio = new ActAudio();
     }
 
     public void setreceiver(Receiver rcvr) {
