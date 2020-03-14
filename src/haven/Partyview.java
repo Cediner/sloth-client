@@ -70,7 +70,7 @@ public class Partyview extends Widget {
             if (w == null) {
                 w = add(new Avaview(new Coord(27, 27), m.gobid, "ptavacam") {
                     private Tex tooltip = null;
-                    private Text.Line tt = null;
+                    private RichText tt = null;
                     private int dist;
 
                     public Object tooltip(Coord c, Widget prev) {
@@ -91,7 +91,8 @@ public class Partyview extends Widget {
                                     tt.tex().dispose();
                                 if (cdist != dist) {
                                     dist = cdist;
-                                    return tt = Text.render("Distance: " + dist + "\nPosition: " + ppc);
+                                    return tt = RichText.render("Id: " + m.gobid + "\nDistance: " + dist + "\nPosition: " + ppc,
+                                            150);
                                 } else {
                                     return tt;
                                 }
