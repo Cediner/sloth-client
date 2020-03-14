@@ -222,6 +222,12 @@ public class Window extends MovableWidget implements DTarget {
         return btn;
     }
 
+    public IButton addBtn(final String res, final String tt, final Runnable action, final Runnable laction) {
+        final IButton btn = add(new IButton(Theme.fullres(res), tt, action, laction));
+        btns.add(btn);
+        return btn;
+    }
+
     @Override
     public void toggleLock() {
         if (locked()) {

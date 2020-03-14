@@ -31,10 +31,11 @@ import java.awt.image.BufferedImage;
 
 public class IButton extends SIWidget {
     public BufferedImage up, down, hover;
-    private Runnable action;
+    private Runnable action, laction;
     boolean h = false;
     boolean a = false;
     UI.Grab d = null;
+    private long pressStart = 0L;
 
     @RName("ibtn")
     public static class $_ implements Factory {
@@ -43,12 +44,17 @@ public class IButton extends SIWidget {
         }
     }
 
-    public IButton(BufferedImage up, BufferedImage down, BufferedImage hover, final Runnable action) {
+    public IButton(BufferedImage up, BufferedImage down, BufferedImage hover, final Runnable action, final Runnable longAction) {
         super(Utils.imgsz(up));
         this.up = up;
         this.down = down;
         this.hover = hover;
         this.action = action;
+        this.laction = longAction;
+    }
+
+    public IButton(BufferedImage up, BufferedImage down, BufferedImage hover, final Runnable action) {
+        this(up, down, hover, action, action);
     }
 
     public IButton(BufferedImage up, BufferedImage down, BufferedImage hover) {
@@ -57,6 +63,7 @@ public class IButton extends SIWidget {
         this.down = down;
         this.hover = hover;
         this.action = () -> wdgmsg("activate");
+        this.laction = () -> wdgmsg("activate");
     }
 
     public IButton(BufferedImage up, BufferedImage down) {
@@ -77,6 +84,11 @@ public class IButton extends SIWidget {
 
     public IButton(final String res, final String tooltip, final Runnable action) {
         this(Resource.loadimg(res, 0), Resource.loadimg(res, 1), Resource.loadimg(res, 2), action);
+        this.tooltip = tooltip;
+    }
+
+    public IButton(final String res, final String tooltip, final Runnable action, final Runnable laction) {
+        this(Resource.loadimg(res, 0), Resource.loadimg(res, 1), Resource.loadimg(res, 2), action, laction);
         this.tooltip = tooltip;
     }
 
@@ -107,6 +119,10 @@ public class IButton extends SIWidget {
         action.run();
     }
 
+    public void longclick() {
+        laction.run();
+    }
+
     protected void depress() {
     }
 
@@ -122,6 +138,7 @@ public class IButton extends SIWidget {
         d = ui.grabmouse(this);
         depress();
         redraw();
+        pressStart = System.currentTimeMillis();
         return (true);
     }
 
@@ -132,7 +149,11 @@ public class IButton extends SIWidget {
             mousemove(c);
             if (checkhit(c)) {
                 unpress();
-                click();
+                if (System.currentTimeMillis() - pressStart < 3000) {
+                    click();
+                } else {
+                    longclick();
+                }
             }
             return (true);
         }

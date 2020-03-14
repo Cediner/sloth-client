@@ -135,6 +135,24 @@ public class KeyBinds {
                 return false;
             }
         }));
+        add(new KeyBind("Recall map pos/size one",
+                new IndirSetting<>(DefSettings.global, "keybind.recall-map-pos-size-one"), "C-Z", ui -> {
+            if (ui.gui != null && ui.gui.mapfile != null) {
+                ui.gui.mapfile.recall(DefSettings.MMMEMSIZEONE, DefSettings.MMMEMPOSONE);
+                return true;
+            } else {
+                return false;
+            }
+        }));
+        add(new KeyBind("Recall map pos/size two",
+                new IndirSetting<>(DefSettings.global, "keybind.recall-map-pos-size-two"), "C-X", ui -> {
+            if (ui.gui != null && ui.gui.mapfile != null) {
+                ui.gui.mapfile.recall(DefSettings.MMMEMSIZETWO, DefSettings.MMMEMPOSTWO);
+                return true;
+            } else {
+                return false;
+            }
+        }));
         //Item locking for held item
         add(new KeyBind("Lock item on mouse", new IndirSetting<>(DefSettings.global, "keybind.lock-held"), "Back Quote", ui -> {
             if (ui.gui != null && ui.gui.vhand != null) {

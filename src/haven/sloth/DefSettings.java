@@ -1,6 +1,8 @@
 package haven.sloth;
 
 import com.google.common.flogger.FluentLogger;
+import haven.Coord;
+import haven.Indir;
 import haven.MapFile;
 import haven.sloth.gob.*;
 import haven.sloth.gui.BeltWnd;
@@ -135,6 +137,10 @@ public class DefSettings {
     public static final IndirSetting<Boolean> SHOWLMARKERS = new IndirSetting<>(global, "gameplay.show-linked-markers");      //[Bool] Toggle Linked markers
     public static final IndirSetting<Boolean> SHOWKMARKERS = new IndirSetting<>(global, "gameplay.show-kingdom-markers");      //[Bool] Toggle Kingdom markers
     public static final IndirSetting<Boolean> SHOWKMARKERRAD = new IndirSetting<>(global, "gameplay.show-kingdom-marker-radius");      //[Bool] Toggle Kingdom markers radius
+    public static final IndirSetting<Coord> MMMEMSIZEONE = new IndirSetting<>(global, "minimap.remembered-size-one");
+    public static final IndirSetting<Coord> MMMEMPOSONE = new IndirSetting<>(global, "minimap.remembered-pos-one");
+    public static final IndirSetting<Coord> MMMEMSIZETWO = new IndirSetting<>(global, "minimap.remembered-size-two");
+    public static final IndirSetting<Coord> MMMEMPOSTWO = new IndirSetting<>(global, "minimap.remembered-pos-two");
 
     //Debug
     public static final IndirSetting<Boolean> DEBUG = new IndirSetting<>(global, "system.debug");
@@ -272,6 +278,10 @@ public class DefSettings {
         SHOWKMARKERS.ensure(true);
         SHOWCMARKERS.ensure(true);
         SHOWKMARKERRAD.ensure(false);
+        MMMEMSIZEONE.ensure(new Coord(300, 300));
+        MMMEMPOSONE.ensure(new Coord(0, 0));
+        MMMEMSIZETWO.ensure(new Coord(600, 600));
+        MMMEMPOSTWO.ensure(new Coord(0, 0));
         //Cameras
         CAMERA.ensure("sortho");
         FREECAMREXAXIS.ensure(false);

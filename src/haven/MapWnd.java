@@ -35,6 +35,7 @@ import haven.MapFile.PMarker;
 import haven.MapFile.SMarker;
 import haven.MapFileWidget.*;
 import haven.sloth.DefSettings;
+import haven.sloth.IndirSetting;
 import haven.sloth.gob.Type;
 import haven.sloth.gui.DowseWnd;
 import haven.sloth.io.map.MapFileData;
@@ -121,7 +122,26 @@ public class MapWnd extends Window {
                 ui.gui.map.disol(0, 1);
             }
         });
+
+        addBtn("buttons/square/two", "2nd remembered window size",
+                () -> recall(DefSettings.MMMEMSIZETWO, DefSettings.MMMEMPOSTWO),
+                () -> remember(DefSettings.MMMEMSIZETWO, DefSettings.MMMEMPOSTWO));
+        addBtn("buttons/square/one", "1st remembered window size",
+                () -> recall(DefSettings.MMMEMSIZEONE, DefSettings.MMMEMPOSONE),
+                () -> remember(DefSettings.MMMEMSIZEONE, DefSettings.MMMEMPOSONE));
         resize(sz);
+    }
+
+    private void remember(final IndirSetting<Coord> size, final IndirSetting<Coord> pos) {
+        size.set(asz);
+        pos.set(c);
+    }
+
+    public void recall(final IndirSetting<Coord> size, final IndirSetting<Coord> pos) {
+        resize(size.get());
+        move(pos.get());
+        Utils.setprefc("wndsz-map", asz);
+        savePosition();
     }
 
     private class View extends MapFileWidget {

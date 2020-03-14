@@ -106,7 +106,7 @@ public abstract class MovableWidget extends Widget {
         return dm != null;
     }
 
-    private void savePosition() {
+    public void savePosition() {
         if (key != null) {
             final Coord2d rel = relpos();
             knownPositions.put(key, rel);
