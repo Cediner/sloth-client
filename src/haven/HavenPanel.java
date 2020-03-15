@@ -771,7 +771,8 @@ public class HavenPanel extends GLCanvas implements Runnable, Console.Directory,
             }
         } catch (InterruptedException e) {
         } finally {
-            ui.destroy();
+            if (ui != null)
+                ui.destroy();
         }
     }
 
