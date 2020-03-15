@@ -107,6 +107,16 @@ public abstract class Listbox<T> extends ListWidget<T> {
         return listitem(idx);
     }
 
+    @Override
+    public Object tooltip(Coord c, Widget prev) {
+        final T item = itemat(c);
+        if (item != null) {
+            return itemtooltip(new Coord(c.x, c.y % itemh), item);
+        } else {
+            return super.tooltip(c, prev);
+        }
+    }
+
     public boolean mousedown(Coord c, int button) {
         if (super.mousedown(c, button))
             return (true);

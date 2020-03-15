@@ -13,7 +13,7 @@ public class ObservableCollection<T> implements Iterable<T> {
         this.base = base;
     }
 
-    public boolean add(T item) {
+    public synchronized boolean add(T item) {
         if (base.add(item)) {
             listeners.forEach((lst) -> lst.added(item));
             return true;
@@ -22,7 +22,7 @@ public class ObservableCollection<T> implements Iterable<T> {
         }
     }
 
-    public boolean remove(T item) {
+    public synchronized boolean remove(T item) {
         if (base.remove(item)) {
             listeners.forEach((lst) -> lst.remove(item));
             return true;
@@ -31,20 +31,20 @@ public class ObservableCollection<T> implements Iterable<T> {
         }
     }
 
-    public int size() {
+    public synchronized int size() {
         return base.size();
     }
 
-    public boolean contains(T other) {
+    public synchronized boolean contains(T other) {
         return base.contains(other);
     }
 
-    public void addListener(final ObservableListener<T> listener) {
+    public synchronized void addListener(final ObservableListener<T> listener) {
         listeners.add(listener);
         listener.init(base);
     }
 
-    public void removeListener(final ObservableListener<T> listener) {
+    public synchronized void removeListener(final ObservableListener<T> listener) {
         listeners.remove(listener);
     }
 

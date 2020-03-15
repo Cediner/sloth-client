@@ -4,6 +4,9 @@
     Turn them on under Gameplay Settings > Minimap
     - Start of slave system, more to come.
     - Config changes will backup first
+    - Added a forage helper window that will show you what you should be able to see based off your per*exp.
+    If you hover over their name it'll also show what terrain they can be found on. "Forests" refers to a generic
+    bunch of forest like terrains. Can bring it up via Shift+F or m-f in menugrid
 
 3/13/20
     - Updated to loftar's updated key system

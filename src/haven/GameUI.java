@@ -90,6 +90,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public MapPointer pointer;
     public Speedget speed;
     private ScriptManager scripts;
+    private ForageHelperWnd foragehelper;
     public final List<DowseWnd> dowsewnds = new ArrayList<>();
 
     @RName("gameui")
@@ -161,6 +162,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
         scripts = add(new ScriptManager());
         scripts.hide();
         pointer = add(new MapPointer());
+        foragehelper = add(new ForageHelperWnd());
+        foragehelper.hide();
         ui.root.sessionDisplay.unlink();
         add(ui.root.sessionDisplay);
     }
@@ -846,6 +849,14 @@ public class GameUI extends ConsoleHost implements Console.Directory {
             alerted.raise();
             fitwdg(alerted);
             setfocus(alerted);
+        }
+    }
+
+    public void toggleForageHelper() {
+        if (foragehelper != null && foragehelper.show(!foragehelper.visible)) {
+            foragehelper.raise();
+            fitwdg(foragehelper);
+            setfocus(foragehelper);
         }
     }
 

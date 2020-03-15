@@ -107,6 +107,14 @@ public class KeyBinds {
                 return false;
             }
         }));
+        add(new KeyBind("Toggle Forage Helper", new IndirSetting<>(DefSettings.global, "keybind.toggle-forage-helper"), "S-F", ui -> {
+            if (ui.gui != null) {
+                ui.gui.toggleForageHelper();
+                return true;
+            } else {
+                return false;
+            }
+        }));
         //Special settings toggles
         add(new KeyBind("Toggle grid lines", new IndirSetting<>(DefSettings.global, "keybind.toggle-grid"), "C-G", ui -> {
             DefSettings.SHOWGRID.set(!DefSettings.SHOWGRID.get());

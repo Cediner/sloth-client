@@ -314,6 +314,9 @@ public class MenuGrid extends MovableWidget {
         addSpecial(new SpecialPagina(this, "management::scripts",
                 Resource.local().load("custom/paginae/default/wnd/scripts"),
                 (pag) -> ui.gui.toggleScripts()));
+        addSpecial(new SpecialPagina(this, "management::foragehelper",
+                Resource.local().load("custom/paginae/default/wnd/foragehelper"),
+                (pag) -> ui.gui.toggleForageHelper()));
         //Scripts
         final File dir = new File("data/scripts/");
         if (dir.exists()) {
