@@ -3,6 +3,7 @@
     - Added marker names to minimap along with gob names. Both are optional and off by default.
     Turn them on under Gameplay Settings > Minimap
     - Start of slave system, more to come.
+    - Config changes will backup first
 
 3/13/20
     - Updated to loftar's updated key system

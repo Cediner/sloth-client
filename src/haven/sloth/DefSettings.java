@@ -337,6 +337,7 @@ public class DefSettings {
             HighlightData.init();
             ItemData.init(optint.get());
             MapData.init();
+            ForagableData.init(optint.get());
             //MapFileData.init();
             //Internal lookups are no longer needed
             optint.get().close();

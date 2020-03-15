@@ -100,26 +100,47 @@ INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/cavelouse/cavel
 INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/goat/wildgoat', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
 
 INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/sheep/sheep', (SELECT type_id FROM type WHERE name_key = 'TAMEDANIMAL'));
-INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/cattle/bull', (SELECT type_id FROM type WHERE name_key = 'TAMEDANIMAL'));
-INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/cattle/cattle', (SELECT type_id FROM type WHERE name_key = 'TAMEDANIMAL'));
-INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/cattle/cow', (SELECT type_id FROM type WHERE name_key = 'TAMEDANIMAL'));
-INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/sheep/ram', (SELECT type_id FROM type WHERE name_key = 'TAMEDANIMAL'));
-INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/goat/billy', (SELECT type_id FROM type WHERE name_key = 'TAMEDANIMAL'));
-INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/goat/nanny', (SELECT type_id FROM type WHERE name_key = 'TAMEDANIMAL'));
-INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/horse/horse', (SELECT type_id FROM type WHERE name_key = 'TAMEDANIMAL'));
-INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/horse/mare', (SELECT type_id FROM type WHERE name_key = 'TAMEDANIMAL'));
-INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/horse/stallion', (SELECT type_id FROM type WHERE name_key = 'TAMEDANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/kritter/cattle/bull', (SELECT type_id FROM type WHERE name_key = 'TAMEDANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/kritter/cattle/cattle', (SELECT type_id FROM type WHERE name_key = 'TAMEDANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/kritter/cattle/cow', (SELECT type_id FROM type WHERE name_key = 'TAMEDANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/kritter/sheep/ram', (SELECT type_id FROM type WHERE name_key = 'TAMEDANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/kritter/goat/billy', (SELECT type_id FROM type WHERE name_key = 'TAMEDANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/kritter/goat/nanny', (SELECT type_id FROM type WHERE name_key = 'TAMEDANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/kritter/horse/horse', (SELECT type_id FROM type WHERE name_key = 'TAMEDANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/kritter/horse/mare', (SELECT type_id FROM type WHERE name_key = 'TAMEDANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/kritter/horse/stallion', (SELECT type_id FROM type WHERE name_key = 'TAMEDANIMAL'));
 
-INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/rabbit/rabbit', (SELECT type_id FROM type WHERE name_key = 'SMALLANIMAL'));
-INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/chicken/chick', (SELECT type_id FROM type WHERE name_key = 'SMALLANIMAL'));
-INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/chicken/chicken', (SELECT type_id FROM type WHERE name_key = 'SMALLANIMAL'));
-INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/chicken/hen', (SELECT type_id FROM type WHERE name_key = 'SMALLANIMAL'));
-INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/chicken/rooster', (SELECT type_id FROM type WHERE name_key = 'SMALLANIMAL'));
-INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/hedgehog/hedgehog', (SELECT type_id FROM type WHERE name_key = 'SMALLANIMAL'));
-INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/ladybug/ladybug', (SELECT type_id FROM type WHERE name_key = 'SMALLANIMAL'));
-INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/rat/rat', (SELECT type_id FROM type WHERE name_key = 'SMALLANIMAL'));
-INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/squirrel/squirrel', (SELECT type_id FROM type WHERE name_key = 'SMALLANIMAL'));
-INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/toad/toad', (SELECT type_id FROM type WHERE name_key = 'SMALLANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/kritter/crab/crab', (SELECT type_id FROM type WHERE name_key = 'SMALLANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/kritter/rabbit/rabbit', (SELECT type_id FROM type WHERE name_key = 'SMALLANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/kritter/chicken/chick', (SELECT type_id FROM type WHERE name_key = 'SMALLANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/kritter/chicken/chicken', (SELECT type_id FROM type WHERE name_key = 'SMALLANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/kritter/chicken/hen', (SELECT type_id FROM type WHERE name_key = 'SMALLANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/kritter/chicken/rooster', (SELECT type_id FROM type WHERE name_key = 'SMALLANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/kritter/hedgehog/hedgehog', (SELECT type_id FROM type WHERE name_key = 'SMALLANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/kritter/ladybug/ladybug', (SELECT type_id FROM type WHERE name_key = 'SMALLANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/kritter/rat/rat', (SELECT type_id FROM type WHERE name_key = 'SMALLANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/kritter/squirrel/squirrel', (SELECT type_id FROM type WHERE name_key = 'SMALLANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/kritter/toad/toad', (SELECT type_id FROM type WHERE name_key = 'SMALLANIMAL'));
 INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/frog/frog', (SELECT type_id FROM type WHERE name_key = 'SMALLANIMAL'));
 INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/silkmoth/silkmoth', (SELECT type_id FROM type WHERE name_key = 'SMALLANIMAL'));
 INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/dragonfly/dragonfly', (SELECT type_id FROM type WHERE name_key = 'SMALLANIMAL'));
@@ -822,13 +843,114 @@ INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'TOOL'), "WOODSMAN'S AXE");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "WOODSMAN'S TUNIC");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "WOODSMAN'S USHANKA");
-INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "WOOL PANTS");
-INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "WOOL SHIRT");
-INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "YULE TOP");
+INSERT OR IGNORE INTO item (item_type_id, name_key)
+VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "WOOL PANTS");
+INSERT OR IGNORE INTO item (item_type_id, name_key)
+VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "WOOL SHIRT");
+INSERT OR IGNORE INTO item (item_type_id, name_key)
+VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "YULE TOP");
 
-INSERT OR IGNORE INTO item_contents VALUES ((SELECT item_id FROM item WHERE name_key = 'WATERSKIN'), 3.0, 0.0, 0.0);
-INSERT OR IGNORE INTO item_contents VALUES ((SELECT item_id FROM item WHERE name_key = 'WATERFLASK'), 2.0, 0.0, 0.0);
-INSERT OR IGNORE INTO item_contents VALUES ((SELECT item_id FROM item WHERE name_key = 'BIRCHBARK KUKSA'), 0.4, 0.0, 0.0);
-INSERT OR IGNORE INTO item_contents VALUES ((SELECT item_id FROM item WHERE name_key = 'BUCKET'), 10.0, 10.0, 1000.0);
+INSERT OR IGNORE INTO item_contents
+VALUES ((SELECT item_id FROM item WHERE name_key = 'WATERSKIN'), 3.0, 0.0, 0.0);
+INSERT OR IGNORE INTO item_contents
+VALUES ((SELECT item_id FROM item WHERE name_key = 'WATERFLASK'), 2.0, 0.0, 0.0);
+INSERT OR IGNORE INTO item_contents
+VALUES ((SELECT item_id FROM item WHERE name_key = 'BIRCHBARK KUKSA'), 0.4, 0.0, 0.0);
+INSERT OR IGNORE INTO item_contents
+VALUES ((SELECT item_id FROM item WHERE name_key = 'BUCKET'), 10.0, 10.0, 1000.0);
 
-INSERT OR IGNORE INTO item_equipable SELECT item_id FROM item WHERE item_type_id in (SELECT item_type_id FROM item_type WHERE name_key in ('EQUIPMENT', 'TOOL', 'ARMOR', 'WEAPON'));
+INSERT OR IGNORE INTO item_equipable
+SELECT item_id
+FROM item
+WHERE item_type_id in (SELECT item_type_id FROM item_type WHERE name_key in ('EQUIPMENT', 'TOOL', 'ARMOR', 'WEAPON'));
+
+
+
+CREATE TABLE IF NOT EXISTS forageable
+(
+    name     TEXT PRIMAY KEY,
+    inv_res  TEXT    NOT NULL,
+    game_res TEXT    NOT NULL,
+    min_val  INTEGER NOT NULL,
+    max_val  INTEGER NOT NULL,
+    location TEXT    NOT NULL
+)
+
+INSERT OR IGNORE INTO forageable
+VALUES ("Blueberries", "gfx/terobjs/items/blueberry", "gfx/terobjs/blueberry", 5, 20, "Forests, Grasslands"),
+       ("Perfect Autumn Leaf", "gfx/invobjs/herbs/perfectautumnleaf", "", 10, 40, "Forests"),
+       ("Spindly Taproot", "gfx/invobjs/herbs/spindlytaproot", "", 10, 40, "Forests"),
+       ("Elven Lights", "gfx/invobjs/herbs/yulelights", "", 10, 40, "Forests (Winter)"),
+       ("Dandelion", "res/gfx/terobjs/items/dandelion", "", 10, 40, "Grassland, Forests"),
+       ("Mistletoe", "gfx/invobjs/herbs/mistletoe", "", 10, 40, "Forests"),
+       ("Coltsfoot", "gfx/invobjs/herbs/coltsfoot", "", 10, 40, "Leaf Patch, Ox Pasture, Green Brake"),
+       ("Stinging Nettle", "gfx/invobjs/herbs/stingingnettle", "", 25, 100, "Forests"),
+       ("Chives", "gfx/invobjs/herbs/chives", "", 50, 200, "Smobre Bramble"),
+       ("Chantrelles", "gfx/terobjs/items/chantrelle", "", 52, 208, "Forests"),
+       ("Wild Windsown Weed", "gfx/invobjs/herbs/windweed", "", 80, 320, "Forests, Grassland, Swamp"),
+       ("Dewy Lady's Mantle", "gfx/invobjs/herbs/ladysmantledew", "", 80, 320, "Swamp, Bog, Grassland"),
+       ("Lady's Mantle", "gfx/invobjs/herbs/ladysmantle", "", 80, 320, "Bog, Swamp, Grassland, Fen"),
+       ("Thorny Thistle", "gfx/invobjs/herbs/thornythistle", "", 90, 360, "Dirt"),
+       ("Gooseneck Barnacle", "gfx/invobjs/herbs/goosebarnacle", "", 100, 400, "Skargard"),
+       ("Heartsease", "gfx/invobjs/herbs/heartsease", "", 100, 400, "Grass"),
+       ("Stalagoom", "gfx/invobjs/herbs/stalagoom", "", 100, 400, "Cave"),
+       ("Lingonberries", "gfx/invobjs/herbs/lingon", "", 108, 432, "Forest"),
+       ("Peculiar Flotsam", "gfx/invobjs/herbs/flotsam", "", 110, 440, "Water"),
+       ("Bloated Bolete", "gfx/invobjs/herbs/bloatedbolete", "", 110, 440, "Forest, Grassland"),
+       ("Four-Leaf Clover", "gfx/invobjs/herbs/fourleafclover", "", 130, 520,
+        "Moor, Highground, Leaf Patch, Flower Meadow"),
+       ("Clover", "gfx/invobjs/herbs/fourleafclover", "", 130, 520, "Moor, Highground, Leaf Patch, Flower Meadow"),
+       ("Uncommon Snapdragon", "gfx/invobjs/herbs/snapdragon", "", 144, 576,
+        "Moor, Lush Field, Red Plain, Greens Wald, Highground"),
+       ("Parasol Mushroom", "gfx/invobjs/herbs/parasolshroom", "", 150, 600, "Lichen Wold, Cloud Range, Shady Corpse"),
+       ("Dusk Fern", "gfx/invobjs/herbs/duskfern", "", 150, 600, "Cave"),
+       ("Morels", "", "", 150, 600, "Forests"),
+       ("Waybroad", "gfx/invobjs/herbs/waybroad", "", 150, 600,
+        "Bog, Fen, Swamp, Grassland, Highground, Timber Land, Red Plain"),
+       ("Candleberry", "gfx/invobjs/herbs/candleberry", "", 160, 640, "Swamp, Bog, Fen"),
+       ("Yellowfeet", "gfx/invobjs/herbs/yellowfoot", "", 200, 800, "Forests"),
+       ("Yarrow", "gfx/invobjs/herbs/yarrow", "", 200, 800, "Grassland"),
+       ("Lamp Stalk", "gfx/invobjs/herbs/lampstalk", "", 200, 800, "Water"),
+       ("Spirited Mandrake Root", "gfx/invobjs/mandrakespirited", "", 200, 800, "Moor"),
+       ("Mandrake Root", "gfx/invobjs/herbs/mandrake", "", 200, 800, "Moor, Pine Barren"),
+       ("Cattail", "gfx/invobjs/herbs/cattailfibre", "", 210, 840, "Shallow Water, Bog, Swamp, Fen"),
+       ("Swamplily", "gfx/terobjs/items/leaf-swamplily", "", 250, 1000, "Shallow Water, Bog, Fen, Swamp"),
+       ("Washed-up Bladderwrack", "gfx/invobjs/herbs/bladderwrack", "", 250, 1000, "Beach, Skargard"),
+       ("Gray Clay", "gfx/terobjs/items/clay-gray", "", 270, 1080, "Shallow Water"),
+       ("Tangled Bramble", "gfx/invobjs/herbs/tangledbramble", "", 280, 1120, "Dirt"),
+       ("Royal Toadstool", "gfx/invobjs/herbs/royaltoadstool", "", 324, 1296, "Swamp"),
+       ("Frog's Crown", "gfx/invobjs/herbs/frogscrown", "", 450, 1800, "Mountain, Swamp"),
+       ("Giant Puffball", "gfx/invobjs/herbs/giantpuffball", "", 500, 2000,
+        "Root Bosk, Greens Ward, Leaf Patch, Blue Sod"),
+       ("Rustroot", "gfx/invobjs/herbs/rustroot", "", 500, 2000, "Forests"),
+       ("Chiming Bluebell", "gfx/invobjs/herbs/chimingbluebell", "", 520, 2080, "Swamp, Grassland, Cloud Range"),
+       ("Cavebulb", "gfx/invobjs/herbs/cavebulb", "", 525, 2100, "Cave"),
+       ("Razor Clam", "gfx/invobjs/herbs/razorclams-b", "", 600, 2400, "Beach"),
+       ("Common Starfish", "gfx/invobjs/herbs/commonstarfish", "", 700, 2800, "Beach, Skarguard"),
+       ("River Pearl Mussel", "gfx/invobjs/herbs/mussels", "", 760, 3040, "Shallow Water"),
+       ("Bay Bolete", "gfx/invobjs/herbs/baybolete", "", 960, 3840, "Sombre Bramble, Greens Ward, Oak Wilds, Dry Flat"),
+       ("Rainbowpad", "gfx/invobjs/rainbowpad", "", 1000, 4000, "Swamp"),
+       ("Frogspawn", "gfx/invobjs/herbs/frogspawn", "", 1000, 4000, "Shallow Water"),
+       ("Blood Stern", "gfx/invobjs/herbs/bloodstern", "", 1250, 5000, "Forest"),
+       ("Glimmermoss", "gfx/invobjs/herbs/glimmermoss", "", 1275, 5100, "Cave"),
+       ("Edelweiss", "gfx/invobjs/herbs/edelweiss", "", 1600, 6400, "Mountain"),
+       ("Strawberry", "gfx/invobjs/herbs/strawberry", "", 1850, 7400,
+        "Flower Meadow, Sombre Bramble, Greens Ward, Deep Tangle, Cloud Range"),
+       ("Rainbow Shell", "gfx/invobjs/herbs/seashell", "", 2500, 10000, "Beach, Shallow Water"),
+       ("Kvann", "gfx/invobjs/herbs/kvann", "", 2500, 10000, "Root Bosk, Leaf Patch,  Oak Wilds"),
+       ("Camomile", "gfx/invobjs/herbs/camomile", "", 3300, 13200, "Bog, Swamp, Fen, Flower Meadow"),
+       ("Dill", "gfx/invobjs/herbs/dill", "", 3500, 14000, "Blue Sod, Lush Field"),
+       ("Sage", "", "", 3500, 14000, "Greens Ward, Beech Grove"),
+       ("Thyme", "gfx/invobjs/herbs/thyme", "", 3500, 14000, "Red Plain, Leaf Patch"),
+       ("Black Trumpets", "gfx/invobjs/herbs/blacktrumpet", "", 3500, 14000, "Beech Grove, Pine Barren, Lichen  Wold"),
+       ("Green Kelp", "gfx/invobjs/herbs/greenkelp", "", 3500, 14000, "Water, Beach"),
+       ("Cave Coral", "gfx/invobjs/herbs/cavecoral", "", 3692, 14768, "Cave"),
+       ("Oyster", "gfx/invobjs/herbs/oyster", "", 4000, 16000, "Shallow Water"),
+       ("Cave Clay", "gfx/invobjs/clay-cave", "", 4600, 18400, "Cave"),
+       ("Field Blewits", "gfx/invobjs/herbs/fieldblewit", "", 5000, 20000,
+        "Beech Grove, Cloud Range, Root Bosk, Dry Flat"),
+       ("Cave Lantern", "gfx/invobjs/herbs/cavelantern", "", 8000, 32000, "Cave"),
+       ("Wintergreen", "gfx/invobjs/herbs/wintergreen", "", 12000, 48000, "Greens Ward, Moss Brush"),
+       ("Marsh-Mallow", "gfx/invobjs/herbs/marshmallow", "", 12500, 50000,
+        "Beech Grove, Fen, Lichen Wold, Sombre Bramble, Bog, Swamp, Shady Corpse"),
+       ("Indigo Cap", "", "", 39000, 156000, "Cave");

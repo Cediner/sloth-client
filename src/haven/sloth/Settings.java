@@ -7,6 +7,10 @@ import haven.Coord3f;
 
 import java.awt.*;
 import java.io.*;
+import java.nio.file.CopyOption;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -143,50 +147,73 @@ public class Settings {
         return this;
     }
 
+    private void backup() throws IOException {
+        final File bkdir = new File("backups");
+        final File current = new File(filename);
+        final File target = new File(String.format("backups/%s.%d", filename, System.currentTimeMillis()));
+        //Backup current file
+        if (current.exists()) {
+            if (bkdir.exists() || bkdir.mkdirs()) {
+                Files.move(current.toPath(), target.toPath());
+            } else {
+                throw new IOException("Failed to create backup directory, check permissions");
+            }
+        }
+    }
+
     /**
      * Saves our settings to our file. Ignores any errors
+     * 1) Backup current file
+     * 2) Write to temp file
+     * 3) Copy temp over current file
      */
     public void save() {
         try {
-            if (!new File(filename).exists())
-                if (!new File(filename).createNewFile()) {
-                    logger.atSevere().log("Failed to save settings for %s", filename);
-                    return;
-                }
-        } catch (IOException e) {
-            logger.atSevere().withCause(e).log("Failed to save settings for %s", filename);
-            return;
-        }
-        String lastSection = "";
-        try (final BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
-            for (final String skey : settings.keySet()) {
-                try {
-                    final String section = skey.substring(0, skey.indexOf("."));
-                    final String key = skey.substring(skey.indexOf(".") + 1);
-                    if (!lastSection.equals(section)) {
-                        writer.write('[');
-                        writer.write(section);
-                        writer.write(']');
-                        writer.newLine();
-                        lastSection = section;
-                    }
+            final File target = new File(filename);
+            final File tmp = new File(filename + ".tmp");
+            backup();
 
-                    writer.write(key);
-                    writer.write(" = ");
-                    if (!(settings.get(skey) instanceof Color)) {
-                        writer.write(settings.get(skey).toString());
-                    } else {
-                        //Default Color toString leaves out alpha... and doesn't match what we wanted
-                        final Color c = (Color) settings.get(skey);
-                        writer.write(String.format("%d,%d,%d,%d",
-                                c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()));
-                    }
-                    writer.newLine();
-                } catch (Exception e) {
-                    logger.atSevere().withCause(e).log("Setting [%s] is invalid.", skey);
+            //write to temp file
+            if (!tmp.exists()) {
+                if (!tmp.createNewFile()) {
+                    throw new IOException("Failed to create temp file, check permissions");
                 }
             }
-        } catch (Exception e) {
+
+            String lastSection = "";
+            try (final BufferedWriter writer = new BufferedWriter(new FileWriter(tmp))) {
+                for (final String skey : settings.keySet()) {
+                    try {
+                        final String section = skey.substring(0, skey.indexOf("."));
+                        final String key = skey.substring(skey.indexOf(".") + 1);
+                        if (!lastSection.equals(section)) {
+                            writer.write('[');
+                            writer.write(section);
+                            writer.write(']');
+                            writer.newLine();
+                            lastSection = section;
+                        }
+
+                        writer.write(key);
+                        writer.write(" = ");
+                        if (!(settings.get(skey) instanceof Color)) {
+                            writer.write(settings.get(skey).toString());
+                        } else {
+                            //Default Color toString leaves out alpha... and doesn't match what we wanted
+                            final Color c = (Color) settings.get(skey);
+                            writer.write(String.format("%d,%d,%d,%d",
+                                    c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()));
+                        }
+                        writer.newLine();
+                    } catch (Exception e) {
+                        logger.atSevere().withCause(e).log("Setting [%s] is invalid.", skey);
+                    }
+                }
+            }
+
+            //Copy over temp to current file
+            Files.move(tmp.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
             logger.atSevere().withCause(e).log("Failed to save settings for %s", filename);
             return;
         }

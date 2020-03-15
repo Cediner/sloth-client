@@ -125,7 +125,9 @@ public class HavenPanel extends GLCanvas implements Runnable, Console.Directory,
 				System.err.println("GL debugging not actually enabled");
 			    ((GL2)gl).glDebugMessageControl(GL.GL_DONT_CARE, GL.GL_DONT_CARE, GL.GL_DONT_CARE, 0, null, true);
 			} */
-                    ui.cons.add(glconf);
+                    if (ui != null) {
+                        ui.cons.add(glconf);
+                    }
                     gstate = new GLState() {
                         public void apply(GOut g) {
                             BGL gl = g.gl;
