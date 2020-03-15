@@ -664,91 +664,92 @@ public class HavenPanel extends GLCanvas implements Runnable, Console.Directory,
                 while (true) {
                     if (nextUI != null)
                         ui = nextUI;
+                    if (ui != null) {
+                        if (!DefSettings.PAUSED.get()) {
+                            int fwaited = 0;
+                            Debug.cycle();
+                            UI ui = this.ui;
+                            then = System.currentTimeMillis();
+                            CPUProfile.Frame curf = null;
+                            if (Config.profile)
+                                curf = uprof.new Frame();
+                            synchronized (ui) {
+                                if (ui.sess != null)
+                                    ui.sess.glob.ctick();
+                                dispatch();
+                                ui.tick();
+                                if ((ui.root.sz.x != w) || (ui.root.sz.y != h))
+                                    ui.root.resize(new Coord(w, h));
+                            }
+                            if (curf != null)
+                                curf.tick("dsp");
 
-                    if (!DefSettings.PAUSED.get()) {
-                        int fwaited = 0;
-                        Debug.cycle();
-                        UI ui = this.ui;
-                        then = System.currentTimeMillis();
-                        CPUProfile.Frame curf = null;
-                        if (Config.profile)
-                            curf = uprof.new Frame();
-                        synchronized (ui) {
-                            if (ui.sess != null)
-                                ui.sess.glob.ctick();
-                            dispatch();
-                            ui.tick();
-                            if ((ui.root.sz.x != w) || (ui.root.sz.y != h))
-                                ui.root.resize(new Coord(w, h));
-                        }
-                        if (curf != null)
-                            curf.tick("dsp");
+                            BufferBGL buf = new BufferBGL();
+                            GLState.Applier state = this.state;
+                            rootdraw(state, ui, buf);
+                            if (curf != null)
+                                curf.tick("draw");
+                            synchronized (drawfun) {
+                                now = System.currentTimeMillis();
+                                while (bufdraw != null)
+                                    drawfun.wait();
+                                bufdraw = new Frame(buf, state.cgl);
+                                drawfun.notifyAll();
+                                fwaited += System.currentTimeMillis() - now;
+                            }
 
-                        BufferBGL buf = new BufferBGL();
-                        GLState.Applier state = this.state;
-                        rootdraw(state, ui, buf);
-                        if (curf != null)
-                            curf.tick("draw");
-                        synchronized (drawfun) {
+                            ui.audio.cycle();
+                            if (curf != null)
+                                curf.tick("aux");
+
                             now = System.currentTimeMillis();
-                            while (bufdraw != null)
-                                drawfun.wait();
-                            bufdraw = new Frame(buf, state.cgl);
-                            drawfun.notifyAll();
-                            fwaited += System.currentTimeMillis() - now;
-                        }
-
-                        ui.audio.cycle();
-                        if (curf != null)
-                            curf.tick("aux");
-
-                        now = System.currentTimeMillis();
-                        long fd = bgmode ? this.bgfd : this.fd;
-                        if (now - then < fd) {
-                            synchronized (events) {
-                                events.wait(fd - (now - then));
+                            long fd = bgmode ? this.bgfd : this.fd;
+                            if (now - then < fd) {
+                                synchronized (events) {
+                                    events.wait(fd - (now - then));
+                                }
+                                fwaited += System.currentTimeMillis() - now;
                             }
-                            fwaited += System.currentTimeMillis() - now;
-                        }
 
-                        frames[framep] = now;
-                        waited[framep] = fwaited;
-                        {
-                            int i = 0, ckf = framep, twait = 0;
-                            for (; i < frames.length - 1; i++) {
-                                ckf = (ckf - 1 + frames.length) % frames.length;
-                                twait += waited[ckf];
-                                if (now - frames[ckf] > 1000)
-                                    break;
+                            frames[framep] = now;
+                            waited[framep] = fwaited;
+                            {
+                                int i = 0, ckf = framep, twait = 0;
+                                for (; i < frames.length - 1; i++) {
+                                    ckf = (ckf - 1 + frames.length) % frames.length;
+                                    twait += waited[ckf];
+                                    if (now - frames[ckf] > 1000)
+                                        break;
+                                }
+                                fps = (i * 1000) / (now - frames[ckf]);
+                                uidle = ((double) twait) / ((double) (now - frames[ckf]));
                             }
-                            fps = (i * 1000) / (now - frames[ckf]);
-                            uidle = ((double) twait) / ((double) (now - frames[ckf]));
-                        }
-                        framep = (framep + 1) % frames.length;
+                            framep = (framep + 1) % frames.length;
 
-                        if (curf != null)
-                            curf.tick("wait");
-                        if (curf != null)
-                            curf.fin();
-                        if (Thread.interrupted())
-                            throw (new InterruptedException());
-                    } else {
-                        //Things that must run each frame, even when paused
-                        Debug.cycle();
-                        synchronized (ui) {
-                            if (ui.sess != null)
-                                ui.sess.glob.ctick();
-                            dispatch();
-                            ui.tick();
-                            if ((ui.root.sz.x != w) || (ui.root.sz.y != h))
-                                ui.root.resize(new Coord(w, h));
+                            if (curf != null)
+                                curf.tick("wait");
+                            if (curf != null)
+                                curf.fin();
+                            if (Thread.interrupted())
+                                throw (new InterruptedException());
+                        } else {
+                            //Things that must run each frame, even when paused
+                            Debug.cycle();
+                            synchronized (ui) {
+                                if (ui.sess != null)
+                                    ui.sess.glob.ctick();
+                                dispatch();
+                                ui.tick();
+                                if ((ui.root.sz.x != w) || (ui.root.sz.y != h))
+                                    ui.root.resize(new Coord(w, h));
+                            }
+                            ui.audio.cycle();
+                            //This is for scripts doing queued movements
+                            //TODO: Fix this once scripting is added back in
+                            // if(haven.Context.map != null)
+                            //    haven.Context.map.try_move();
+                            Thread.sleep(100);
                         }
-                        ui.audio.cycle();
-                        //This is for scripts doing queued movements
-                        //TODO: Fix this once scripting is added back in
-                        // if(haven.Context.map != null)
-                        //    haven.Context.map.try_move();
-                        Thread.sleep(100);
                     }
 
                     //Update all other UIs as well, just don't render
