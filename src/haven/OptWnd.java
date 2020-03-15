@@ -384,8 +384,10 @@ public class OptWnd extends Window {
             }
             { //minimap
                 minimap.add(new IndirCheckBox("Show Gobs on Minimap", SHOWMMGOBS));
+                minimap.add(new IndirCheckBox("Show Gob names on Minimap", SHOWMMGOBNAMES));
                 minimap.add(new IndirCheckBox("Show Minimap icons", SHOWMMMARKERS));
-                minimap.add(new IndirCheckBox("Make Minimap icons small", SMALLMMMARKERS));
+                minimap.add(new IndirCheckBox("Make Minimap small icons", SMALLMMMARKERS));
+                minimap.add(new IndirCheckBox("Show Minimap icon names", SHOWMMMARKERNAMES));
                 minimap.add(new IndirCheckBox("Show placed icons", SHOWPMARKERS));
                 minimap.add(new IndirCheckBox("Show natural icons", SHOWNMARKERS));
                 minimap.add(new IndirCheckBox("Show custom icons", SHOWCMARKERS));

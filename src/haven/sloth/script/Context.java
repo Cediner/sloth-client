@@ -5,6 +5,7 @@ import haven.sloth.util.IDPool;
 import haven.sloth.util.ObservableMap;
 import haven.sloth.util.ObservableMapListener;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 //TODO: A Context should contain Sessions. Sessions are each instance of UI along with any details
@@ -40,8 +41,16 @@ public class Context {
     }
 
     public synchronized static void dispatchmsg(final Widget wdg, final String msg, final Object... args) {
-        for(final Script script : scripts.values()) {
+        for (final Script script : scripts.values()) {
             script.newmsg(wdg, msg, args);
+        }
+    }
+
+    public synchronized static void dispatchmsg(final boolean trusted, final Widget wdg, final String msg, final Object... args) {
+        for (final Script script : scripts.values()) {
+            if (script.allowExternal() || trusted) {
+                script.newmsg(wdg, msg, args);
+            }
         }
     }
 }

@@ -26,8 +26,6 @@
 
 package haven;
 
-import haven.sloth.script.Context;
-
 import java.util.*;
 
 public class Charlist extends Widget {

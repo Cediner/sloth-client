@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 
 public class ChatUtils {
     //Dispatch messages from External sources: (dispatch subject [...args])
+    // or (dispatch target-gob subject [... args])
     //where an arg will be: (type values...)
     //Support arg types:
     //  string,
@@ -22,7 +23,10 @@ public class ChatUtils {
     //  coord2d
     //Ex: (dispatch lift-to (number 48214892912) (coord2d 4212.4, 4215.3))
     // -> Lift gob 48214892912 to (4212.4, 4215.3)
+    //Targeting everyone
     public static final Pattern CHAT_EXT_MSG_PAT = Pattern.compile("\\(dispatch ([a-zA-Z0-9\\-]+) (.+)\\)");
+    //Targeting a specific gob
+    public static final Pattern CHAT_SEXT_MSG_PAT = Pattern.compile("\\(dispatch ([0-9]+) ([a-zA-Z0-9\\-]+) (.+)\\)");
 
 
     private static String nextToken(final String argstr, final int[] ref) {
@@ -90,7 +94,7 @@ public class ChatUtils {
         }
     }
 
-    public static void parseExternalCommand(final Widget sender, final String subject, final String rawargstr) {
+    public static void parseExternalCommand(final boolean trusted, final Widget sender, final String subject, final String rawargstr) {
         final List<Object> args = new ArrayList<>();
         //remove dup spaces down to just 1, trim leading/following spaces, and get rid of spaces after ( and before )
         final String argstr = rawargstr
@@ -114,6 +118,6 @@ public class ChatUtils {
         }
 
         //Dispatch the message if everything went well
-        Context.dispatchmsg(sender, subject, args.toArray(new Object[0]));
+        Context.dispatchmsg(trusted, sender, subject, args.toArray(new Object[0]));
     }
 }

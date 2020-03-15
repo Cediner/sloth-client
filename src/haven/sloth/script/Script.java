@@ -68,6 +68,7 @@ public class Script extends Thread {
     private final Queue<Message> msgs = new LinkedList<>();
     private Pattern subjectfilter;
     private boolean listening;
+    private boolean allowExternalMsgs;
 
     private boolean intp;
 
@@ -106,9 +107,14 @@ public class Script extends Thread {
     /* ******************************************************************************************/
 
     /* Messaging system *************************************************************************/
-    public void listen(final String filter) {
+    public void listen(final String filter, final boolean allowexternal) {
         listening = true;
         subjectfilter = Pattern.compile(filter);
+        allowExternalMsgs = allowexternal;
+    }
+
+    public boolean allowExternal() {
+        return allowExternalMsgs;
     }
 
     public void stopListening() {

@@ -161,7 +161,15 @@ public class GameUI extends ConsoleHost implements Console.Directory {
         scripts = add(new ScriptManager());
         scripts.hide();
         pointer = add(new MapPointer());
-        add(new SessionDisplay());
+        ui.root.sessionDisplay.unlink();
+        add(ui.root.sessionDisplay);
+    }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        ui.root.sessionDisplay.unlink();
+        ui.root.add(ui.root.sessionDisplay);
     }
 
     public class Hidepanel extends Widget {

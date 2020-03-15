@@ -64,11 +64,11 @@ public class ChatUI extends Widget {
     private final LinkedList<Notification> notifs = new LinkedList<Notification>();
     private UI.Grab qgrab;
 
-    public Channel area;
-    public Channel party;
-    public Channel village;
-    public Channel realm;
-    private final List<Channel> privchats = new ArrayList<>();
+    public EntryChannel area;
+    public EntryChannel party;
+    public EntryChannel village;
+    public EntryChannel realm;
+    private final List<EntryChannel> privchats = new ArrayList<>();
 
     public ChatUI(int w, int h) {
         super(new Coord(w, h));
@@ -83,21 +83,21 @@ public class ChatUI extends Widget {
         resize(this.sz);
     }
 
-    public void addPrivChat(final Channel chan) {
+    public void addPrivChat(final EntryChannel chan) {
         synchronized (privchats) {
             privchats.add(chan);
         }
     }
 
-    public void remPrivChat(final Channel chan) {
+    public void remPrivChat(final EntryChannel chan) {
         synchronized (privchats) {
             privchats.remove(chan);
         }
     }
 
-    public Channel[] privchats() {
+    public EntryChannel[] privchats() {
         synchronized (privchats) {
-            return privchats.toArray(new Channel[0]);
+            return privchats.toArray(new EntryChannel[0]);
         }
     }
 
@@ -877,12 +877,24 @@ public class ChatUI extends Widget {
                             });
                             return;
                         } else {
-                            final Matcher dmatch = ChatUtils.CHAT_EXT_MSG_PAT.matcher(line);
-                            if (dmatch.find()) {
-                                final String subject = dmatch.group(1);
-                                final String dargs = dmatch.group(2);
-                                ChatUtils.parseExternalCommand(this, subject, dargs);
+
+                            final Matcher smatch = ChatUtils.CHAT_SEXT_MSG_PAT.matcher(line);
+                            if (smatch.find()) {
+                                final long targetid = Long.parseLong(smatch.group(1));
+                                if (ui.gui.map.plgob == targetid && ui.gui.map.ext.isMaster(gobid)) {
+                                    final String subject = smatch.group(2);
+                                    final String dargs = smatch.group(3);
+                                    ChatUtils.parseExternalCommand(true, this, subject, dargs);
+                                }
                                 return;
+                            } else {
+                                final Matcher dmatch = ChatUtils.CHAT_EXT_MSG_PAT.matcher(line);
+                                if (dmatch.find()) {
+                                    final String subject = dmatch.group(1);
+                                    final String dargs = dmatch.group(2);
+                                    ChatUtils.parseExternalCommand(false, this, subject, dargs);
+                                    return;
+                                }
                             }
                         }
                     }
@@ -944,7 +956,7 @@ public class ChatUI extends Widget {
                         if (dmatch.find()) {
                             final String subject = dmatch.group(1);
                             final String dargs = dmatch.group(2);
-                            ChatUtils.parseExternalCommand(this, subject, dargs);
+                            ChatUtils.parseExternalCommand(false, this, subject, dargs);
                             return;
                         }
                     } catch (Exception e) {

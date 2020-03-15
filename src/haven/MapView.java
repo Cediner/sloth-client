@@ -44,6 +44,8 @@ import java.lang.reflect.*;
 import com.jogamp.opengl.*;
 import haven.sloth.DefSettings;
 import haven.sloth.gob.*;
+import haven.sloth.gob.Type;
+import haven.sloth.gui.MapViewExt;
 import haven.sloth.gui.SoundSelector;
 import haven.sloth.io.HighlightData;
 import haven.sloth.script.Context;
@@ -80,6 +82,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
     private double mspeed, totaldist = 0, mspeedavg, totaldt = 0;
     private long lastMove = System.currentTimeMillis();
     public final Queue<Coord2d> movequeue = new ArrayDeque<>();
+    public final MapViewExt ext = new MapViewExt(this);
 
     public interface Delayed {
         public void run(GOut g);
@@ -2099,101 +2102,13 @@ public class MapView extends PView implements DTarget, Console.Directory {
             return Optional.empty();
         }
 
-        private void showSpecialMenu(final Gob g) {
-            g.resname().ifPresent((name) -> {
-                final FlowerMenu modmenu = new FlowerMenu((selection) -> {
-                    switch (selection) {
-                        case 0: //Mark for party
-                            g.mark(20000);
-                            for (Widget wdg = ui.gui.chat.lchild; wdg != null; wdg = wdg.prev) {
-                                if (wdg instanceof ChatUI.PartyChat) {
-                                    final ChatUI.PartyChat chat = (ChatUI.PartyChat) wdg;
-                                    chat.send(String.format(Mark.CHAT_FMT, g.id, 20000));
-                                }
-                            }
-                            break;
-                        case 1: //Mark for script
-                            Context.dispatchmsg(MapView.this, "click-gob", g);
-                            break;
-                        case 2: //Highlight for yourself
-                            if (!HighlightData.isHighlighted(name)) {
-                                HighlightData.add(name);
-                                ui.sess.glob.oc.highlightGobs(name);
-                            } else {
-                                HighlightData.remove(name);
-                                ui.sess.glob.oc.unhighlightGobs(name);
-                            }
-                            break;
-                        case 3: //Toggle hide
-                            if (Hidden.isHidden(name)) {
-                                Hidden.remove(name);
-                                ui.sess.glob.oc.unhideAll(name);
-                            } else {
-                                Hidden.add(name);
-                                ui.sess.glob.oc.hideAll(name);
-                            }
-                            break;
-                        case 4: //Toggle Sound
-                            if (Alerted.shouldAlert(name)) {
-                                Alerted.remove(name);
-                            } else {
-                                ui.gui.add(new SoundSelector(name), ui.mc);
-                            }
-                            break;
-                        case 5: //Delete all gobs like this one
-                            Deleted.add(name);
-                            ui.sess.glob.oc.removeAll(name);
-                            break;
-                        case 6: //Delete this specific gob
-                            g.dispose();
-                            ui.sess.glob.oc.remove(g.id);
-                            break;
-                    }
-                }, "Mark for party",
-                        "Mark for script",
-                        !HighlightData.isHighlighted(name) ? "Highlight" : "Remove Highlight",
-                        Hidden.isHidden(name) ? "Unhide" : "Hide",
-                        Alerted.shouldAlert(name) ? "Remove Sound" : "Add Sound",
-                        "Delete",
-                        "Delete this");
-                ui.gui.add(modmenu, ui.mc);
-            });
-        }
-
-
-        private void showSpecialMenu(final Coord2d mc) {
-            final FlowerMenu modmenu = new FlowerMenu((selection) -> {
-                switch (selection) {
-                    case 0: { //Mark for party
-                        //Translate to Grid + Gird Offset
-                        final Coord tc = mc.floor(tilesz);
-                        final Coord2d tcd = mc.div(tilesz);
-
-                        ui.sess.glob.map.getgridto(tc).ifPresent(grid -> {
-                            final Coord2d offset = tcd.sub(new Coord2d(grid.ul));
-                            for (Widget wdg = ui.gui.chat.lchild; wdg != null; wdg = wdg.prev) {
-                                if (wdg instanceof ChatUI.PartyChat) {
-                                    final ChatUI.PartyChat chat = (ChatUI.PartyChat) wdg;
-                                    chat.send(String.format(Mark.CHAT_TILE_FMT, grid.id, offset.x, offset.y));
-                                }
-                            }
-                        });
-                    } break;
-                    case 1: {
-                        Context.dispatchmsg(MapView.this, "click-tile", mc);
-                    } break;
-                }
-            }, "Mark for party", "Mark for script");
-            ui.gui.add(modmenu, ui.mc);
-        }
-
         protected void hit(Coord pc, Coord2d mc, ClickInfo inf) {
             if (clickb == MouseEvent.BUTTON3 && ui.modmeta) {
                 final Optional<Gob> gob = gobFromClick(inf);
                 if (gob.isPresent()) {
-                    showSpecialMenu(gob.get());
+                    ext.showSpecialMenu(gob.get());
                 } else {
-                    showSpecialMenu(mc);
+                    ext.showSpecialMenu(mc);
                 }
             } else {
                 final Object[] gobargs = gobclickargs(inf);

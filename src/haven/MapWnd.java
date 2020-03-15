@@ -303,6 +303,11 @@ public class MapWnd extends Window {
                                             g.chcolor(BuddyWnd.gc[kin.group]);
                                             g.image(friend, gc.sub(friend.sz().div(2)));
                                             g.chcolor();
+                                            if (DefSettings.SHOWMMGOBNAMES.get()) {
+                                                g.chcolor(BuddyWnd.gc[kin.group]);
+                                                g.image(kin.rendered(), gc.sub(friend.sz().div(2)).sub(kin.rendered().sz().div(2, 1)));
+                                                g.chcolor();
+                                            }
                                         } else {
                                             g.image(unknown, gc.sub(unknown.sz().div(2)));
                                         }

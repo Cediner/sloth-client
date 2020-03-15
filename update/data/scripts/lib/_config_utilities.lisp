@@ -100,24 +100,6 @@
         t)
       nil))
 
-(defun get-bbox (msg)
-  (msg-listen)
-  (chat-send-message (bot-chat) msg)
-  (bbox-trigger)
-  (let ((bbox nil))
-    (loop
-       until bbox
-       do (progn
-            (sleep 1)
-            (when (msg-has-message)
-              (let ((msg (msg-poll-message)))
-                (when (string= "bot-select" (msg-subject msg))
-                  (setf bbox (bbox-make (aref (msg-args msg) 0)
-                                        (aref (msg-args msg) 1))))))))
-    (msg-stop-listening)
-    (msg-clear-messages)
-    bbox))
-
 (defun check-for-movement (gob &key (wait-for 5))
   (let ((start-c (gob-rc gob)))
     (sleep wait-for)
@@ -130,59 +112,48 @@
                            (+ (random 11) 3)))
   (wait-for-movement :gob (my-gob)))
 
-(defun prompt-for-input (prompt)
-  (msg-listen)
-  (chat-send-message (bot-chat) prompt)
+;;Loops through messages till it finds one that meets filter-fun or it runs out of messages
+(defun loop-through-messages (filter-fun)
   (let ((ret nil))
-    (loop
-       until ret 
-       do (progn
-            (loop
-               while (and (msg-has-message) (null ret))
-               do (when (msg-has-message)
-                    (let ((msg (msg-poll-message)))
-                      (when (and (string= "msg" (msg-subject msg))
-                                 (jeq (bot-chat) (msg-sender msg)))
-                        (setf ret (aref (msg-args msg) 0))))))
-            (sleep 1)))
+    (loop while (and (msg-has-message) (null ret))
+          do (when (msg-has-message)
+               (let ((msg (msg-poll-message)))
+                 (when (funcall filter-fun msg)
+                   (setf ret msg)))))
+    ret))
+
+;;opens a listener for the specified subj, loops till it gets a message that meets filter criteria
+(defun wait-for-filtered-message (subj filter-fun)
+  (msg-listen subj)
+  (let ((ret nil))
+    (loop until ret
+          do (progn
+               (setf ret (loop-through-messages filter-fun))
+               (sleep 1)))
     (msg-stop-listening)
     (msg-clear-messages)
     ret))
+
+(defun wait-for-message (subj)
+  (wait-for-filtered-message subj (lambda (msg) t)))
+
+(defun get-bbox (prompt)
+  (chat-send-message (bot-chat) prompt)
+  (bbox-trigger)
+  (let ((msg (wait-for-message "(bot-select)")))
+	(bbox-make (aref (msg-args msg) 0) (aref (msg-args msg) 1)) ))
+
+(defun prompt-for-input (prompt)
+  (chat-send-message (bot-chat) prompt)
+  (aref (msg-args (wait-for-message "(msg)")) 0))
 
 (defun prompt-for-selected-gob (prompt)
-  (msg-listen)
   (chat-send-message (bot-chat) prompt)
-  (let ((gob nil))
-    (loop
-       until gob
-       do (progn
-            (sleep 1)
-            (loop
-               while (and (msg-has-message) (null gob))
-               do (let ((msg (msg-poll-message)))
-                    (when (string= "click-gob" (msg-subject msg))
-                      (setf gob (aref (msg-args msg) 0)))))))
-    (msg-stop-listening)
-    (msg-clear-messages)
-    gob))
+  (aref (msg-args (wait-for-message "(click-gob)")) 0))
 
 (defun prompt-for-coord (prompt)
-  (msg-listen)
   (chat-send-message (bot-chat) prompt)
-  (let ((ret nil))
-    (loop
-       until ret 
-       do (progn
-            (loop
-               while (and (msg-has-message) (null ret))
-               do (when (msg-has-message)
-                    (let ((msg (msg-poll-message)))
-                      (when (string= "click-tile" (msg-subject msg))
-                        (setf ret (aref (msg-args msg) 0))))))
-            (sleep 1)))
-    (msg-stop-listening)
-    (msg-clear-messages)
-    ret))
+  (aref (msg-args (wait-for-message "(click-tile)")) 0))
 
 
 (export '(check-stam-and-drink drink-water refill-water-from-hand refill-water-from-inventory
@@ -190,4 +161,4 @@
           check-for-movement
           backoff-randomly
           prompt-for-input prompt-for-selected-gob prompt-for-coord
-          get-bbox))
+          get-bbox wait-for-filtered-message wait-for-message loop-through-messages))

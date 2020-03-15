@@ -18,6 +18,7 @@
 (defconstant +object-array+ "[Ljava.lang.Object;")
 (defconstant +string+ "java.lang.String")
 (defconstant +double+ "double")
+(defconstant +boolean+ "boolean")
 
 (defconstant +script+ "haven.sloth.script.Script")
 (defconstant +context+ "haven.sloth.script.Context")

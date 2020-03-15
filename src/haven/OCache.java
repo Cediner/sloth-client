@@ -160,7 +160,7 @@ public class OCache implements Iterable<Gob> {
         }
     }
 
-    synchronized void hideAll(final String name) {
+    public synchronized void hideAll(final String name) {
         for (final Gob g : this) {
             g.resname().ifPresent(gname -> {
                 if (gname.equals(name)) {
@@ -182,7 +182,7 @@ public class OCache implements Iterable<Gob> {
         }
     }
 
-    synchronized void removeAll(final String name) {
+    public synchronized void removeAll(final String name) {
         //TODO: I2 iterator doesn't support remove and I should fix that later on, for now this is a two step process
         final List<Long> rem = new ArrayList<>();
         for (final Gob g : this) {

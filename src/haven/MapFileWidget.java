@@ -215,9 +215,10 @@ public class MapFileWidget extends Widget {
         public DisplayMarker(Marker marker) {
             this.m = marker;
             if(!(marker instanceof MapFile.RealmMarker)) {
-                this.tip = Text.render(m.nm);
+                tip = Text.renderstroked(m.nm, Color.WHITE, Color.BLACK);
             } else {
-                this.tip = Text.render(String.format("[%s] %s", ((MapFile.RealmMarker) marker).realm, marker.nm));
+                this.tip = Text.renderstroked(String.format("[%s] %s", ((MapFile.RealmMarker) marker).realm, marker.nm),
+                        Color.WHITE, Color.BLACK);
             }
             if (marker instanceof PMarker)
                 this.hit = Area.sized(flagcc.inv(), flagbg.sz);
@@ -260,7 +261,7 @@ public class MapFileWidget extends Widget {
                     (type == Type.CUSTOM && DefSettings.SHOWCMARKERS.get()) ||
                     (type == Type.NATURAL && DefSettings.SHOWNMARKERS.get())) {
                 if (!tip.text.equals(m.nm) && !(m instanceof MapFile.RealmMarker)) {
-                    tip = Text.render(m.nm);
+                    tip = Text.renderstroked(m.nm, Color.WHITE, Color.BLACK);
                 }
                 if (m instanceof PMarker) {
                     Coord ul = c.sub(flagcc);
@@ -268,6 +269,11 @@ public class MapFileWidget extends Widget {
                     g.image(flagfg, ul);
                     g.chcolor();
                     g.image(flagbg, ul);
+                    if (DefSettings.SHOWMMMARKERNAMES.get()) {
+                        final Coord tipc = new Coord(ul.x + flagbg.img.getWidth() / 2 - tip.sz().x / 2,
+                                ul.y - tip.sz().y);
+                        g.image(tip.tex(), tipc);
+                    }
                 } else if (m instanceof SMarker) {
                     SMarker sm = (SMarker) m;
                     try {
@@ -283,15 +289,26 @@ public class MapFileWidget extends Widget {
                     } catch (Exception e) {
                         cc = Coord.z;
                     }
-                    if (img != null)
-                        g.image(img, c.sub(cc));
+                    if (img != null) {
+                        final Coord ul = c.sub(cc);
+                        g.image(img, ul);
+                        if (DefSettings.SHOWMMMARKERNAMES.get()) {
+                            final Coord tipc = new Coord(ul.x + img.img.getWidth() / 2 - tip.sz().x / 2, ul.y - tip.sz().y);
+                            g.image(tip.tex(), tipc);
+                        }
+                    }
                 } else if (m instanceof MapFile.SlothMarker) {
                     final MapFile.SlothMarker mark = (MapFile.SlothMarker) m;
                     g.chcolor(mark.color);
                     if (img != null) {
                         final Coord sz = !DefSettings.SMALLMMMARKERS.get() ? Utils.imgsz(img.img) : Utils.imgsz(img.img).div(2);
                         cc = sz.div(2);
-                        g.image(img.tex(), c.sub(cc), sz);
+                        final Coord ul = c.sub(cc);
+                        g.image(img.tex(), ul, sz);
+                        if (DefSettings.SHOWMMMARKERNAMES.get()) {
+                            final Coord tipc = new Coord(ul.x + img.img.getWidth() / 2 - tip.sz().x / 2, ul.y - tip.sz().y);
+                            g.image(tip.tex(), tipc);
+                        }
                     } else {
                         try {
                             Resource res = MapFile.loadsaved(Resource.remote(), ((MapFile.SlothMarker) m).res);
@@ -306,11 +323,16 @@ public class MapFileWidget extends Widget {
                     if (img != null) {
                         final Coord sz = !DefSettings.SMALLMMMARKERS.get() ? Utils.imgsz(img.img) : Utils.imgsz(img.img).div(2);
                         cc = sz.div(2);
-                        g.image(img.tex(), c.sub(cc), sz);
-                        if(DefSettings.SHOWKMARKERRAD.get()) {
+                        final Coord ul = c.sub(cc);
+                        g.image(img.tex(), ul, sz);
+                        if (DefSettings.SHOWKMARKERRAD.get()) {
                             g.chcolor(MarkerData.getRealmColor(mark.realm));
                             g.frect(c.sub(new Coord(250, 250).div(1 << dlvl)), new Coord(500, 500).div(1 << dlvl));
                             g.chcolor();
+                        }
+                        if (DefSettings.SHOWMMMARKERNAMES.get()) {
+                            final Coord tipc = new Coord(ul.x + img.img.getWidth() / 2 - tip.sz().x / 2, ul.y - tip.sz().y);
+                            g.image(tip.tex(), tipc);
                         }
                     } else {
                         try {

@@ -976,6 +976,15 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
         return res().map((res) -> res.name);
     }
 
+    public String gobname() {
+        final KinInfo ki = getattr(KinInfo.class);
+        if (ki != null) {
+            return ki.name;
+        } else {
+            return "" + id;
+        }
+    }
+
     public String name() {
         return resname().orElse("");
     }

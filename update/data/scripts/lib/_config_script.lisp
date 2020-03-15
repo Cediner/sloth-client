@@ -9,18 +9,18 @@
      `(,',script-fun (my-script) ,,@args)))
 
 (java-field script-session "session")
-(java-func +script+ script-listen "listen" +string+)
+(java-func +script+ script-listen "listen" +string+ +boolean+)
 (java-func +script+ script-stop-listening "stopListening")
 (java-func +script+ script-clear-messages "clearmsgs")
 (java-func +script+ script-has-message "hasmsg")
 (java-func +script+ script-poll-message "pollmsg")
-(with-script-define msg-listen-1 script-listen filter)
+(with-script-define msg-listen-1 script-listen filter allow-external)
 (with-script-define msg-stop-listening script-stop-listening)
 (with-script-define msg-clear-messages script-clear-messages)
 (with-script-define msg-has-message script-has-message)
 
-(defun msg-listen (&optional (filter ".+"))
-  (msg-listen-1 filter))
+(defun msg-listen (&optional (filter ".+") (allow-external nil))
+  (msg-listen-1 filter allow-external))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; msg-poll-message

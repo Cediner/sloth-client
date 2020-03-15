@@ -129,6 +129,8 @@ public class DefSettings {
 
     //Minimap
     public static final IndirSetting<Boolean> SHOWMMGOBS = new IndirSetting<>(global, "gameplay.show-minimap-gobs");    //[Bool] Toggle minimap gobs
+    public static final IndirSetting<Boolean> SHOWMMMARKERNAMES = new IndirSetting<>(global, "gameplay.show-minimap-marker-names");    //[Bool] Toggle minimap icon names
+    public static final IndirSetting<Boolean> SHOWMMGOBNAMES = new IndirSetting<>(global, "gameplay.show-minimap-gob-names");    //[Bool] Toggle minimap gob names
     public static final IndirSetting<Boolean> SHOWMMMARKERS = new IndirSetting<>(global, "gameplay.show-minimap-markers");    //[Bool] Toggle minimap icons
     public static final IndirSetting<Boolean> SMALLMMMARKERS = new IndirSetting<>(global, "gameplay.small-minimap-markers");  //[Bool] Toggle SMALL minimap icons
     public static final IndirSetting<Boolean> SHOWPMARKERS = new IndirSetting<>(global, "gameplay.show-placed-markers");      //[Bool] Toggle Placed markers
@@ -273,6 +275,8 @@ public class DefSettings {
         MMSHOWGRID.ensure(false);
         MMSHOWVIEW.ensure(false);
         SHOWPMARKERS.ensure(true);
+        SHOWMMMARKERNAMES.ensure(false);
+        SHOWMMGOBNAMES.ensure(false);
         SHOWNMARKERS.ensure(true);
         SHOWLMARKERS.ensure(true);
         SHOWKMARKERS.ensure(true);

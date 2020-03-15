@@ -45,8 +45,7 @@ public class FlowerMenu extends Widget {
     public static final int ph = 30, ppl = 8;
     public Petal[] opts;
     private UI.Grab mg, kg;
-    //private final Optional<Consumer<Integer>> callback;
-    private final Consumer<Integer> callback;
+    private final Consumer<String> callback;
 
     @RName("sm")
     public static class $_ implements Factory {
@@ -207,7 +206,7 @@ public class FlowerMenu extends Widget {
         this.c = new Coord(x, y);
     }
 
-    public FlowerMenu(final Consumer<Integer> callback, final String... options) {
+    public FlowerMenu(final Consumer<String> callback, final String... options) {
         super(Coord.z);
         this.callback = callback;
         opts = new Petal[options.length];
@@ -307,7 +306,8 @@ public class FlowerMenu extends Widget {
                 wdgmsg("cl", option.num, ui.modflags());
             }
         } else {
-            callback.accept(option != null ? option.num : -1);
+            if (option != null)
+                callback.accept(option.name);
             ui.destroy(this);
         }
     }

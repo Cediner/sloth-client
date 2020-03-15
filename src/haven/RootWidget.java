@@ -28,6 +28,7 @@ package haven;
 
 
 import haven.sloth.gui.KeyBinds;
+import haven.sloth.gui.SessionDisplay;
 
 import java.awt.event.KeyEvent;
 
@@ -37,6 +38,7 @@ public class RootWidget extends ConsoleHost {
     private char last_gk;
     private long last_gk_time;
 
+    public SessionDisplay sessionDisplay = new SessionDisplay();
     public KeyBinds kbs = new KeyBinds();
 
     public RootWidget(UI ui, Coord sz) {
@@ -44,6 +46,7 @@ public class RootWidget extends ConsoleHost {
         setfocusctl(true);
         hasfocus = true;
         cursor = defcurs.indir();
+        add(sessionDisplay = new SessionDisplay());
     }
 
     @Override

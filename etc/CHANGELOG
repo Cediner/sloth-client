@@ -1,3 +1,9 @@
+3/15/20
+    - Updated so sessions can be seen at login/char lists screens
+    - Added marker names to minimap along with gob names. Both are optional and off by default.
+    Turn them on under Gameplay Settings > Minimap
+    - Start of slave system, more to come.
+
 3/13/20
     - Updated to loftar's updated key system
     - Menu grid no longer triggers when Ctrl/Shift/Alt is down

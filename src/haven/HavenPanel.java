@@ -323,7 +323,9 @@ public class HavenPanel extends GLCanvas implements Runnable, Console.Directory,
         if (this.ui.gui != null) {
             this.ui.gui.act("lo");
         } else {
-            this.ui.sess.close();
+            if (this.ui.sess != null) {
+                this.ui.sess.close();
+            } //TODO: should be a way to close a session that's not logged in
         }
     }
 
