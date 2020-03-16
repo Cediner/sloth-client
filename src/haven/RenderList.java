@@ -26,12 +26,14 @@
 
 package haven;
 
+import com.google.common.flogger.FluentLogger;
 import haven.GLState.Buffer;
 import haven.sloth.DefSettings;
 
 import java.util.*;
 
 public class RenderList {
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     public static final int INSTANCE_THRESHOLD = 10;
     public final GLConfig cfg;
     private Slot[] list = new Slot[100];
@@ -365,8 +367,11 @@ public class RenderList {
             if (list[i].skip || ((c = list[i].statroot) == null))
                 continue;
             if (c.slots.isEmpty()) {
-                if (newcache.get(c) != null)
-                    throw (new RuntimeException(String.format("statroot for %s already in new cache even though empty", c.root)));
+                if (newcache.get(c) != null) {
+                    //Dont' crash on this
+                    // throw (new RuntimeException(String.format("statroot for %s already in new cache even though empty", c.root)));
+                    logger.atInfo().log(String.format("statroot for %s already in new cache even though empty", c.root));
+                }
                 newcache.put(c, c);
             }
             c.slots.add(new SavedSlot(list[i]));
