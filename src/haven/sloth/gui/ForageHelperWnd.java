@@ -117,6 +117,8 @@ public class ForageHelperWnd extends Window implements Observer {
         super.added();
         final Glob.CAttr prc = ui.sess.glob.cattr.get("prc");
         final Glob.CAttr exp = ui.sess.glob.cattr.get("explore");
+        prc.addObserver(this);
+        exp.addObserver(this);
         this.prc = prc.comp;
         this.explore = exp.comp;
         update();
