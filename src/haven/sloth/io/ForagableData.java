@@ -21,11 +21,12 @@ public class ForagableData {
     public static void init(final Storage internal) {
         internal.ensure((sql) -> {
             try (final Statement stmt = sql.createStatement()) {
-                try (final ResultSet res = stmt.executeQuery("SELECT name, inv_res, min_val, max_val, location FROM forageable order by min_val, max_val")) {
+                try (final ResultSet res = stmt.executeQuery("SELECT name, inv_res, game_res, min_val, max_val, location FROM forageable order by min_val, max_val")) {
                     while (res.next()) {
                         forageable_names.add(res.getString(1));
                         forageables.add(new ForagableData(res.getString(1), res.getString(2),
-                                res.getInt(3), res.getInt(4), res.getString(5)));
+                                res.getString(3),
+                                res.getInt(4), res.getInt(5), res.getString(6)));
                     }
                 }
             }
@@ -40,15 +41,21 @@ public class ForagableData {
     public final Text name;
     public final RichText location;
     public final Resource res;
+    public final Resource mapres;
     public final int min_value, max_value;
 
-    public ForagableData(final String name, final String res, final int min, final int max, final String location) {
+    public ForagableData(final String name, final String res, final String mapres, final int min, final int max, final String location) {
         this.name = Text.render(name);
         this.location = RichText.render("Found in:\n  \u2022 " + location.replaceAll(",\\s+", "\n  \u2022 "), 200);
         if (res != null && !res.equals("")) {
             this.res = Resource.remote().loadwait(res);
         } else {
             this.res = null;
+        }
+        if (mapres != null && !mapres.equals("")) {
+            this.mapres = Resource.remote().loadwait(mapres);
+        } else {
+            this.mapres = null;
         }
         this.min_value = min;
         this.max_value = max;

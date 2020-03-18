@@ -200,6 +200,7 @@ public class MapViewExt {
             opts.add(Alerted.shouldAlert(name) ? "Remove Sound" : "Add Sound");
             opts.add("Delete");
             opts.add("Delete this");
+            opts.add("Clone in previewer");
             if (g.type == Type.HUMAN && g.id != mv.plgob) {
                 if (!masters.contains(g.id))
                     opts.add("Add as master");
@@ -257,6 +258,8 @@ public class MapViewExt {
                         g.dispose();
                         mv.ui.sess.glob.oc.remove(g.id);
                         break;
+                    case "Clone in previewer":
+                        mv.ui.gui.add(new ObjPreview(g, mv.ui));
                     case "Add as master":
                         addMaster(g.id);
                         break;

@@ -97,6 +97,9 @@ public class ForageHelperWnd extends Window implements Observer {
 
             @Override
             public void change(ForagableData item) {
+                if (item.mapres != null) {
+                    ui.gui.add(new ObjPreview(item.mapres, ui));
+                }
                 //do nothing
             }
         };
