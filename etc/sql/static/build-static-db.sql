@@ -87,19 +87,33 @@ INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/wolverine/wolve
 INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/adder/adder', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
 INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/beaver/beaver', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
 INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/swan/swan', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
-INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/caveangler/caveangler', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
-INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/otter/otter', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
-INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/reindeer/reindeer', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
-INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/ooze/greenooze', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
-INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/goldeneagle/goldeneagle', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
-INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/boreworm/boreworm', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
-INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/greyseal/greyseal', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
-INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/spermwhale/spermwhale', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
-INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/wildbees/beeswarm', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
-INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/cavelouse/cavelouse', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
-INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/goat/wildgoat', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/kritter/caveangler/caveangler', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/kritter/otter/otter', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/kritter/reindeer/reindeer', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/kritter/ooze/greenooze', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/kritter/goldeneagle/goldeneagle', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/kritter/boreworm/boreworm', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/kritter/greyseal/greyseal', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/kritter/spermwhale/spermwhale', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/kritter/wildbees/beeswarm', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/kritter/goat/wildgoat', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/kritter/cavelouse/cavelouse', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/kritter/rat/caverat', (SELECT type_id FROM type WHERE name_key = 'ANIMAL'));
 
-INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/sheep/sheep', (SELECT type_id FROM type WHERE name_key = 'TAMEDANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/kritter/sheep/sheep', (SELECT type_id FROM type WHERE name_key = 'TAMEDANIMAL'));
 INSERT OR IGNORE INTO object (name, type_id)
 VALUES ('gfx/kritter/cattle/bull', (SELECT type_id FROM type WHERE name_key = 'TAMEDANIMAL'));
 INSERT OR IGNORE INTO object (name, type_id)
@@ -433,26 +447,43 @@ INSERT OR IGNORE INTO dangerous VALUES ((SELECT object_id FROM object WHERE name
 INSERT OR IGNORE INTO dangerous VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/troll/troll'	        ));
 INSERT OR IGNORE INTO dangerous VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/lynx/lynx'		        ));
 INSERT OR IGNORE INTO dangerous VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/wolf/wolf'		        ));
-INSERT OR IGNORE INTO dangerous VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/wolverine/wolverine'    ));
-INSERT OR IGNORE INTO dangerous VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/adder/adder'	        ));
-INSERT OR IGNORE INTO dangerous VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/beaver/beaver'	        ));
-INSERT OR IGNORE INTO dangerous VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/walrus/walrus'	        ));
-INSERT OR IGNORE INTO dangerous VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/caveangler/caveangler'	));
-INSERT OR IGNORE INTO dangerous VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/ooze/greenooze'	        ));
-INSERT OR IGNORE INTO dangerous VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/goldeneagle/goldeneagle'));
-INSERT OR IGNORE INTO dangerous VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/boreworm/boreworm'	    ));
-INSERT OR IGNORE INTO dangerous VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/spermwhale/spermwhale'	));
-INSERT OR IGNORE INTO dangerous VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/cavelouse/cavelouse'	));
+INSERT OR IGNORE INTO dangerous
+VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/wolverine/wolverine'));
+INSERT OR IGNORE INTO dangerous
+VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/adder/adder'));
+INSERT OR IGNORE INTO dangerous
+VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/beaver/beaver'));
+INSERT OR IGNORE INTO dangerous
+VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/walrus/walrus'));
+INSERT OR IGNORE INTO dangerous
+VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/caveangler/caveangler'));
+INSERT OR IGNORE INTO dangerous
+VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/ooze/greenooze'));
+INSERT OR IGNORE INTO dangerous
+VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/goldeneagle/goldeneagle'));
+INSERT OR IGNORE INTO dangerous
+VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/boreworm/boreworm'));
+INSERT OR IGNORE INTO dangerous
+VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/spermwhale/spermwhale'));
+INSERT OR IGNORE INTO dangerous
+VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/cavelouse/cavelouse'));
+INSERT OR IGNORE INTO dangerous
+VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/goat/wildgoat'));
+INSERT OR IGNORE INTO dangerous
+VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/rat/caverat'));
 
-CREATE TABLE IF NOT EXISTS range (
-    object_id   INTEGER,    -- Objects that have some kind of radius for a reason
-    radius      INTEGER,    -- The circular range in tiles
+CREATE TABLE IF NOT EXISTS range
+(
+    object_id INTEGER, -- Objects that have some kind of radius for a reason
+    radius    INTEGER, -- The circular range in tiles
     CONSTRAINT dangerous_pk_object_id PRIMARY KEY (object_id),
-    CONSTRAINT dangerous_fk_object_id FOREIGN KEY (object_id) REFERENCES object(object_id) ON DELETE CASCADE
+    CONSTRAINT dangerous_fk_object_id FOREIGN KEY (object_id) REFERENCES object (object_id) ON DELETE CASCADE
 );
 -- objs with range
-INSERT OR IGNORE INTO range VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/walrus/walrus'	), 10);
-INSERT OR IGNORE INTO range VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/badger/badger'	), 10);
+INSERT OR IGNORE INTO range
+VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/walrus/walrus'), 10);
+INSERT OR IGNORE INTO range
+VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/badger/badger'), 10);
 INSERT OR IGNORE INTO range VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/bear/bear'		), 10);
 INSERT OR IGNORE INTO range VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/bat/bat'		), 10);
 INSERT OR IGNORE INTO range VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/boar/boar'		), 10);
@@ -463,16 +494,25 @@ INSERT OR IGNORE INTO range VALUES ((SELECT object_id FROM object WHERE name = '
 INSERT OR IGNORE INTO range VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/wolverine/wolverine'), 10);
 INSERT OR IGNORE INTO range VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/adder/adder'	), 10);
 INSERT OR IGNORE INTO range VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/beaver/beaver'	), 10);
-INSERT OR IGNORE INTO range VALUES ((SELECT object_id FROM object WHERE name = 'gfx/terobjs/trough'         ), 18);
-INSERT OR IGNORE INTO range VALUES ((SELECT object_id FROM object WHERE name = 'gfx/terobjs/beehive'        ), 13);
+INSERT OR IGNORE INTO range
+VALUES ((SELECT object_id FROM object WHERE name = 'gfx/terobjs/trough'), 18);
+INSERT OR IGNORE INTO range
+VALUES ((SELECT object_id FROM object WHERE name = 'gfx/terobjs/beehive'), 13);
+INSERT OR IGNORE INTO range
+VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/cavelouse/cavelouse'), 10);
+INSERT OR IGNORE INTO range
+VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/goat/wildgoat'), 10);
+INSERT OR IGNORE INTO range
+VALUES ((SELECT object_id FROM object WHERE name = 'gfx/kritter/rat/caverat'), 10);
 -- While true, these have a built in way to display their Radius and there's no point to duplicate that
 -- INSERT OR IGNORE INTO range VALUES ((SELECT object_id FROM object WHERE name = 'gfx/terobjs/minesupport'    ), 9);
 -- INSERT OR IGNORE INTO range VALUES ((SELECT object_id FROM object WHERE name = 'gfx/terobjs/column'         ), 11);
 
-CREATE TABLE IF NOT EXISTS move (
-    object_id   INTEGER,    -- Objects that can move
+CREATE TABLE IF NOT EXISTS move
+(
+    object_id INTEGER, -- Objects that can move
     CONSTRAINT move_pk_object_id PRIMARY KEY (object_id),
-    CONSTRAINT move_fk_object_id FOREIGN KEY (object_id) REFERENCES object(object_id) ON DELETE CASCADE
+    CONSTRAINT move_fk_object_id FOREIGN KEY (object_id) REFERENCES object (object_id) ON DELETE CASCADE
 );
 -- all humans
 INSERT OR IGNORE INTO move SELECT object_id FROM object WHERE type_id = (SELECT type_id FROM type WHERE name_key = 'HUMAN');

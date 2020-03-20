@@ -11,7 +11,7 @@ public class DangerousData {
     public static void init(final Storage internal) {
         internal.ensure((sql) -> {
             try (final Statement stmt = sql.createStatement()) {
-                try (final ResultSet res = stmt.executeQuery("SELECT name FROM dangerous JOIN object")) {
+                try (final ResultSet res = stmt.executeQuery("SELECT name FROM dangerous JOIN object using (object_id)")) {
                     while (res.next()) {
                         dangerous.add(res.getString(1));
                     }
