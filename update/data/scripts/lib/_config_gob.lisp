@@ -134,6 +134,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defconstant +gob-overlay+ "haven.Gob$Overlay")
 (java-func +gob-overlay+ gob-overlay-name "name")
+(java-func +gob-overlay+ gob-overlay-id "id")
 
 (defun gob-overlay-has (gob overlay-name)
   (doarr (ol (gob-overlays gob))
@@ -141,4 +142,4 @@
       (return-from gob-overlay-has t)))
   nil)
 
-(export '(gob-overlay-name gob-overlay-has))
+(export '(gob-overlays gob-overlay-name gob-overlay-id gob-overlay-has))

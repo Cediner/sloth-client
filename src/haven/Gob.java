@@ -73,13 +73,17 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 
         public String name() {
             try {
-                if(res != null)
+                if (res != null)
                     return res.get().name;
                 else
                     return "";
             } catch (Loading l) {
                 return "";
             }
+        }
+
+        public int id() {
+            return id;
         }
 
         public static interface CDel {
