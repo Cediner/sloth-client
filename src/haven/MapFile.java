@@ -40,10 +40,10 @@ import haven.sloth.util.IDPool;
 
 import static haven.MCache.cmaps;
 
-//TODO: move storage to sqlite for several advantages with locking, etc
 public class MapFile {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     private static final int NOZ = Integer.MIN_VALUE;
+    private static MapFile instance = null;
     public static boolean debug = false;
     public final ResCache store;
     public final String filename;
@@ -84,8 +84,6 @@ public class MapFile {
         return (buf.toString());
     }
 
-    //Due to loftar's desire to use ResCache as the datastore which is too generic for this job we can't
-    //take advantage of file locks by the OS...
     private InputStream sfetch(String ctl, Object... args) throws IOException {
         return (store.fetch(mangle(String.format(ctl, args))));
     }
@@ -95,39 +93,44 @@ public class MapFile {
     }
 
     public static MapFile load(ResCache store, String filename) {
-        MapFile file = new MapFile(store, filename);
-        InputStream fp;
-        try {
-            fp = file.sfetch("index");
-        } catch (FileNotFoundException e) {
-            file.markerids = new IDPool(0, Long.MAX_VALUE);
-            return (file);
-        } catch (IOException e) {
-            return (null);
-        }
-        try (StreamMessage data = new StreamMessage(fp)) {
-            int ver = data.uint8();
-            if (ver == 1 || ver == 2) {
-                file.markerids = ver == 1 ? new IDPool(0, Long.MAX_VALUE) : new IDPool(data);
-                for (int i = 0, no = data.int32(); i < no; i++)
-                    file.knownsegs.add(data.int64());
-                for (int i = 0, no = data.int32(); i < no; i++) {
-                    Marker mark = loadmarker(file, data);
-                    file.markers.add(mark);
-                    if (mark instanceof SMarker)
-                        file.smarkers.put(((SMarker) mark).oid, (SMarker) mark);
-                    else if (mark instanceof LinkedMarker)
-                        file.lmarkers.put(((LinkedMarker) mark).id, (LinkedMarker) mark);
-                }
-            } else {
-                logger.atFine().log("mapfile warning: unknown mapfile index version: %d\n", ver);
+        if (instance != null)
+            return instance;
+        else {
+            final MapFile file = new MapFile(store, filename);
+            InputStream fp;
+            try {
+                fp = file.sfetch("index");
+            } catch (FileNotFoundException e) {
+                file.markerids = new IDPool(0, Long.MAX_VALUE);
+                return (file);
+            } catch (IOException e) {
                 return (null);
             }
-        } catch (Message.BinError e) {
-            logger.atFine().log("mapfile warning: error when loading index: %s\n", e);
-            return (null);
+            try (StreamMessage data = new StreamMessage(fp)) {
+                int ver = data.uint8();
+                if (ver == 1 || ver == 2) {
+                    file.markerids = ver == 1 ? new IDPool(0, Long.MAX_VALUE) : new IDPool(data);
+                    for (int i = 0, no = data.int32(); i < no; i++)
+                        file.knownsegs.add(data.int64());
+                    for (int i = 0, no = data.int32(); i < no; i++) {
+                        Marker mark = loadmarker(file, data);
+                        file.markers.add(mark);
+                        if (mark instanceof SMarker)
+                            file.smarkers.put(((SMarker) mark).oid, (SMarker) mark);
+                        else if (mark instanceof LinkedMarker)
+                            file.lmarkers.put(((LinkedMarker) mark).id, (LinkedMarker) mark);
+                    }
+                } else {
+                    logger.atFine().log("mapfile warning: unknown mapfile index version: %d\n", ver);
+                    return (null);
+                }
+            } catch (Message.BinError e) {
+                logger.atFine().log("mapfile warning: error when loading index: %s\n", e);
+                return (null);
+            }
+            instance = file;
+            return (file);
         }
-        return (file);
     }
 
     private void save() {
