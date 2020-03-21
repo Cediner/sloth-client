@@ -75,7 +75,7 @@ public class OptWnd extends Window {
         }
     }
 
-    class Panel extends Widget {
+    static class Panel extends Widget {
         Panel() {
             visible = false;
             c = Coord.z;
@@ -252,6 +252,17 @@ public class OptWnd extends Window {
         return container;
     }
 
+    public Widget MouseBindEditWithLabel(final String text, final String group, final IndirSetting<String> bind) {
+        final Widget container = new Widget();
+        final Label lbl = new Label(text);
+        final MouseBindEdit kbe = new MouseBindEdit(group, bind);
+        final int height = Math.max(lbl.sz.y, kbe.sz.y) / 2;
+        container.add(lbl, new Coord(0, height - lbl.sz.y / 2));
+        container.add(kbe, new Coord(lbl.sz.x + 5, height - kbe.sz.y / 2));
+        container.pack();
+        return container;
+    }
+
     private void setcam(final String cam) {
         if (ui.gui != null) {
             ui.gui.map.setcam(cam);
@@ -267,6 +278,7 @@ public class OptWnd extends Window {
         final Panel camera = add(new Panel());
         final Panel uip = add(new Panel());
         final Panel kbp = add(new Panel());
+        final Panel mbp = add(new Panel());
         final int spacer = 5;
         int y;
 
@@ -276,23 +288,24 @@ public class OptWnd extends Window {
         main.add(new PButton(200, "UI settings", 'u', uip), new Coord(0, 90));
         main.add(new PButton(200, "Camera settings", 'c', camera), new Coord(0, 120));
         main.add(new PButton(200, "Keybind settings", 'k', kbp), new Coord(0, 150));
+        main.add(new PButton(200, "Mousebind settings", 'k', mbp), new Coord(0, 180));
         if (gopts) {
             main.add(new Button(200, "Switch character") {
                 public void click() {
                     getparent(GameUI.class).act("lo", "cs");
                 }
-            }, new Coord(0, 180));
+            }, new Coord(0, 210));
             main.add(new Button(200, "Log out") {
                 public void click() {
                     getparent(GameUI.class).act("lo");
                 }
-            }, new Coord(0, 210));
+            }, new Coord(0, 240));
         }
         main.add(new Button(200, "Close") {
             public void click() {
                 OptWnd.this.hide();
             }
-        }, new Coord(0, 240));
+        }, new Coord(0, 270));
         main.pack();
 
         { //Audio
@@ -519,6 +532,27 @@ public class OptWnd extends Window {
             c.y += kbp.add(binds, c.copy()).sz.y + spacer;
             kbp.add(new PButton(200, "Back", 27, main), c.copy());
             kbp.pack();
+        }
+
+        {//Mousebind settings
+            final Coord c = new Coord(0, 0);
+            final Grouping binds = new GridGrouping("Mousebinds", spacer, 600);
+            {
+                binds.add(new Img(RichText.render("Click on the black box to start editing. Escape to cancel or Enter to confirm. You must click on the box when changing the binding! If your choice shows up Red/Purple then it conflicts with another bind in that group.", 200).tex()));
+                for (final String grp : MouseBind.bindgrps.keySet()) {
+                    final Grouping bindgrp = new LinearGrouping(grp, spacer);
+                    for (final MouseBind mb : MouseBind.bindgrps.get(grp)) {
+                        bindgrp.add(MouseBindEditWithLabel(mb.name, mb.grouping, mb.bind));
+                    }
+                    bindgrp.pack();
+                    binds.add(bindgrp);
+                }
+                binds.pack();
+            }
+
+            c.y += mbp.add(binds, c.copy()).sz.y + spacer;
+            mbp.add(new PButton(200, "Back", 27, main), c.copy());
+            mbp.pack();
         }
 
         chpanel(main);

@@ -36,6 +36,7 @@ import java.util.regex.Pattern;
 import haven.ItemInfo.AttrCache;
 import haven.res.ui.tt.Wear;
 import haven.sloth.DefSettings;
+import haven.sloth.gui.MouseBind;
 import haven.sloth.io.ItemData;
 import haven.sloth.util.Images;
 
@@ -176,7 +177,7 @@ public class WItem extends Widget implements DTarget {
         GItem.InfoOverlay<?>[] ret = buf.toArray(new GItem.InfoOverlay<?>[0]);
         return (() -> ret);
     });
-    public final AttrCache<Double> itemmeter = new AttrCache<>(this::info, AttrCache.map1(GItem.MeterInfo.class, minf -> minf::meter));
+    public final AttrCache<Double> itemmeter = new AttrCache<Double>(this::info, AttrCache.map1(GItem.MeterInfo.class, minf -> minf::meter));
 
     private GSprite lspr = null;
 
@@ -293,44 +294,48 @@ public class WItem extends Widget implements DTarget {
     }
 
     public boolean mousedown(Coord c, int btn) {
-        if (btn == 1) {
-            if (!locked) {
-                if (ui.modshift) {
-                    int n = ui.modctrl ? -1 : 1;
-                    item.wdgmsg("transfer", c, n);
-                } else if (ui.modctrl) {
-                    item.wdgmsg("drop", c);
-                } else if (ui.modmeta && parent instanceof Inventory) {
-                    item.name().ifPresent(name -> ((Inventory) parent).dropAllAlike(name, c));
-                } else {
+        final String seq = MouseBind.generateSequence(ui, btn);
+        if (!(MouseBind.ITM_TRANSFER.check(seq, () -> {
+            item.wdgmsg("transfer", c, 1);
+            return true;
+        }) || MouseBind.ITM_TRANSFER_ALL_ALIKE.check(seq, () -> {
+            item.wdgmsg("transfer", c, -1);
+            return true;
+        }) || MouseBind.ITM_DROP.check(seq, () -> {
+            item.wdgmsg("drop", c);
+            return true;
+        }) || MouseBind.ITM_DROP_ALL_ALIKE.check(seq, () -> {
+            item.name().ifPresent(name -> ((Inventory) parent).dropAllAlike(name, c));
+            return true;
+        }) || MouseBind.ITM_TAKE.check(seq, () -> {
+            item.wdgmsg("take", c);
+            return true;
+        }) || MouseBind.ITM_TOGGLE_LOCK.check(seq, () -> {
+            locked = !locked;
+            return true;
+        }) || MouseBind.ITM_AUTO_EQUIP.check(seq, () -> {
+            final Optional<String> name = item.name();
+            if (name.isPresent() && DefSettings.AUTOEQUIP.get() && ItemData.isEquipable(name.get())) {
+                if (!(parent instanceof Equipory)) {
                     item.wdgmsg("take", c);
+                    ui.gui.equ.wdgmsg("drop", -1);
+                } else {
+                    item.wdgmsg("transfer", c);
                 }
-                return (true);
-            }
-        } else if (btn == 3) {
-            if (ui.modctrl) {
-                locked = !locked;
                 return true;
             } else {
-                final Optional<String> name = item.name();
-                if (name.isPresent()) {
-                    if (ui.modmeta && DefSettings.AUTOEQUIP.get() && ItemData.isEquipable(name.get())) {
-                        if (!(parent instanceof Equipory)) {
-                            item.wdgmsg("take", c);
-                            ui.gui.equ.wdgmsg("drop", -1);
-                        } else {
-                            item.wdgmsg("transfer", c);
-                        }
-                    } else {
-                        item.wdgmsg("iact", c, ui.modflags());
-                    }
-                } else {
-                    item.wdgmsg("iact", c, ui.modflags());
-                }
+                return false;
             }
-            return (true);
+        }))) {
+            if (btn == 3) {
+                item.wdgmsg("iact", c, ui.modflags());
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return true;
         }
-        return (false);
     }
 
     public boolean drop(Coord cc, Coord ul) {

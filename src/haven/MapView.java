@@ -46,6 +46,7 @@ import haven.sloth.DefSettings;
 import haven.sloth.gob.*;
 import haven.sloth.gob.Type;
 import haven.sloth.gui.MapViewExt;
+import haven.sloth.gui.MouseBind;
 import haven.sloth.gui.SoundSelector;
 import haven.sloth.io.HighlightData;
 import haven.sloth.script.Context;
@@ -2103,34 +2104,35 @@ public class MapView extends PView implements DTarget, Console.Directory {
         }
 
         protected void hit(Coord pc, Coord2d mc, ClickInfo inf) {
-            if (clickb == MouseEvent.BUTTON3 && ui.modmeta) {
+            final String seq = MouseBind.generateSequence(ui, clickb);
+            final Object[] gobargs = gobclickargs(inf);
+
+            if (!(MouseBind.MV_SHOW_SPEC_MENU.check(seq, () -> {
                 final Optional<Gob> gob = gobFromClick(inf);
                 if (gob.isPresent()) {
                     ext.showSpecialMenu(gob.get());
                 } else {
                     ext.showSpecialMenu(mc);
                 }
-            } else {
-                final Object[] gobargs = gobclickargs(inf);
-                Object[] args = {pc, mc.floor(posres), clickb, ui.modflags()};
-                if( (clickb == 1 || clickb == 3) && ui.modctrl && ui.modmeta && ui.modshift) {
-                    if(gobargs.length > 0) {
-                        final Gob g = ui.sess.glob.oc.getgob((int)gobargs[1]);
-                        if(g != null)
-                            pathto(g);
-                    } else {
-                        pathto(mc);
-                    }
-                } else if (clickb == 1 && ui.modmeta) {
-                    //Queued movement
-                    movequeue.add(mc);
+                return true;
+            }) || MouseBind.MV_QUEUE_MOVE.check(seq, () -> {
+                movequeue.add(mc);
+                return true;
+            }) || MouseBind.MV_PATHFIND_MOVE.check(seq, () -> {
+                if (gobargs.length > 0) {
+                    final Gob g = ui.sess.glob.oc.getgob((int) gobargs[1]);
+                    if (g != null)
+                        pathto(g);
                 } else {
-                    args = Utils.extend(args, gobargs);
-                    if (clickb == 1 || gobargs.length > 0)
-                        clearmovequeue();
-                    logger.atFinest().log("Click: %s", Arrays.toString(args));
-                    wdgmsg("click", args);
+                    pathto(mc);
                 }
+                return true;
+            }))) {
+                final Object[] args = Utils.extend(new Object[]{pc, mc.floor(posres), clickb, ui.modflags()}, gobargs);
+                if (clickb == 1 || gobargs.length > 0)
+                    clearmovequeue();
+                logger.atFinest().log("Click: %s", Arrays.toString(args));
+                wdgmsg("click", args);
             }
         }
     }
@@ -2206,18 +2208,24 @@ public class MapView extends PView implements DTarget, Console.Directory {
     }
 
     public boolean mousedown(Coord c, int button) {
+        final String seq = MouseBind.generateSequence(ui, button);
         parent.setfocus(this);
-        if (button == 2) {
-            if (((Camera) camera).click(c)) {
-                camdrag = ui.grabmouse(this);
+        if (!MouseBind.MV_LOCK_PLACING_OBJ.check(seq, () -> {
+            if (placing != null) {
+                placing.locked = !placing.locked;
+                return true;
+            } else {
+                return false;
             }
-        } else if (placing != null && ui.modctrl && button == 3) {
-            placing.locked = !placing.locked;
-        } else if (placing != null && !placing.locked) {
-            wdgmsg("place", placing.rc.floor(posres), (int) Math.round(placing.a * 32768 / Math.PI), button, ui.modflags());
-        } else if ((grab != null) && grab.mmousedown(c, button)) {
-        } else {
-            delay(new Click(c, ui.modflags(), button));
+        })) {
+            if (button == 2 && camera.click(c)) {
+                camdrag = ui.grabmouse(this);
+            } else if (placing != null && !placing.locked) {
+                wdgmsg("place", placing.rc.floor(posres), (int) Math.round(placing.a * 32768 / Math.PI), button, ui.modflags());
+            } else if ((grab != null) && grab.mmousedown(c, button)) {
+            } else {
+                delay(new Click(c, ui.modflags(), button));
+            }
         }
         return (true);
     }
