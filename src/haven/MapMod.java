@@ -136,7 +136,7 @@ public class MapMod extends Window implements MapView.Grabber {
         ol.update(c1, c2);
         this.c1 = c1;
         this.c2 = c2;
-        Coord sz = tc.sub(sc);
+        Coord sz = tc.sub(sc).positive().add(1, 1);
         if (fake)
             text.settext(String.format(fmt, sz.x, sz.y));
         else
