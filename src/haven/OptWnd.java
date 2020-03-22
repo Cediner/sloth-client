@@ -500,6 +500,8 @@ public class OptWnd extends Window {
                         ui.gui.nbelt.setVisibile(val);
                     }
                 }));
+                uig.add(new IndirCheckBox("Show Inventory on login", OPENINVONLOGIN, OPENINVONLOGIN::set));
+                uig.add(new IndirCheckBox("Show Belt on login/equip", OPENBELTONLOGIN, OPENBELTONLOGIN::set));
                 uig.pack();
             }
             { //Inventory

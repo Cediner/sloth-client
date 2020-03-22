@@ -375,13 +375,30 @@ public class KeyBinds {
             }
         }));
         add(new KeyBind("Move East", new IndirSetting<>(DefSettings.global, "keybind.move-right"), "Right", ui -> {
-            if(ui.gui != null && ui.gui.map != null) {
+            if (ui.gui != null && ui.gui.map != null) {
                 ui.gui.map.relMove(new Coord2d(1000, 0));
                 return true;
             } else {
                 return false;
             }
         }));
+        add(new KeyBind("Equip held item into left hand", new IndirSetting<>(DefSettings.global, "keybind.equip-held-lh"), "M-Z", ui -> {
+            if (ui.gui != null && ui.gui.vhand != null && ui.gui.equ != null) {
+                ui.gui.equ.wdgmsg("drop", 6);
+                return true;
+            } else {
+                return false;
+            }
+        }));
+        add(new KeyBind("Equip held item into right hand", new IndirSetting<>(DefSettings.global, "keybind.equip-held-rh"), "M-X", ui -> {
+            if (ui.gui != null && ui.gui.vhand != null && ui.gui.equ != null) {
+                ui.gui.equ.wdgmsg("drop", 7);
+                return true;
+            } else {
+                return false;
+            }
+        }));
+
 
         //Fight moves binding
         for (final KeyBind kb : Fightsess.keys) {

@@ -31,6 +31,7 @@ import haven.res.ui.tt.Armor;
 import haven.res.ui.tt.ISlots;
 import haven.res.ui.tt.attrmod.AttrMod;
 import haven.res.ui.tt.wpn.Damage;
+import haven.sloth.DefSettings;
 import haven.sloth.gui.equip.EquipmentItem;
 import haven.sloth.gui.equip.EquipmentType;
 
@@ -48,12 +49,12 @@ public class Equipory extends Widget implements DTarget {
     private static final Color buff = new Color(128, 255, 128);
     private static final int rx = 34 + bg.sz().x;
     public static final Coord ecoords[] = {
-            new Coord(0, 0),
-            new Coord(rx, 0),
-            new Coord(0, 33),
-            new Coord(rx, 33),
-            new Coord(0, 66),
-            new Coord(rx, 66),
+            new Coord(0, 0),    //head
+            new Coord(rx, 0),      //access
+            new Coord(0, 33),   //shirt
+            new Coord(rx, 33),     //shirt2
+            new Coord(0, 66),   //hands
+            new Coord(rx, 66),     //belt [5]
             new Coord(0, 99), //Weapon slot	[6]
             new Coord(rx, 99),   //Weapon slot   [7]
             new Coord(0, 132),
@@ -181,10 +182,21 @@ public class Equipory extends Widget implements DTarget {
             for (int i = 0; i < args.length; i++) {
                 int ep = (Integer) args[i];
                 v[i] = add(new WItem(g), ecoords[ep].add(1, 1));
-                if (ep == 6)
-                    lweap = g;
-                else if (ep == 7)
-                    rweap = g;
+                switch (ep) {
+                    case 5:
+                        if (DefSettings.OPENBELTONLOGIN.get()) {
+                            g.delayediact = true;
+                        }
+                        break;
+                    case 6:
+                        lweap = g;
+                        ui.gui.lrhandview.additm(v[i], new Coord(1, 1));
+                        break;
+                    case 7:
+                        rweap = g;
+                        ui.gui.lrhandview.additm(v[i], new Coord(2, 1));
+                        break;
+                }
             }
             wmap.put(g, v);
         } else {
@@ -196,12 +208,18 @@ public class Equipory extends Widget implements DTarget {
         super.cdestroy(w);
         if (w instanceof GItem) {
             GItem i = (GItem) w;
-            for (WItem v : wmap.remove(i))
+            final WItem[] witms = wmap.remove(i);
+            for (WItem v : witms)
                 ui.destroy(v);
-            if (lweap == i)
+            if (lweap == i) {
                 lweap = null;
-            else if (rweap == i)
+                for (WItem v : witms)
+                    ui.gui.lrhandview.remitm(v);
+            } else if (rweap == i) {
                 rweap = null;
+                for (WItem v : witms)
+                    ui.gui.lrhandview.remitm(v);
+            }
         }
     }
 

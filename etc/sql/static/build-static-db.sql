@@ -608,27 +608,48 @@ INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'ARMOR'), "BEAVER WRIST GUARDS");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "BEE HAT");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "BEERHAT");
-INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "BICYCLE HELMET");
-INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "BIRCHBARK BACKPACK");
-INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "BISHOP'S MITRE");
-INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "BLUEBELL HAT");
-INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "BLUEBERRY HAT");
-INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "BLUEBUCKET HAT");
-INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'ARMOR'), "BOAR TUSK HELMET");
-INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "BOBBY HELMET");
-INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'ARROW'), "BONE ARROW");
-INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'ARMOR'), "BONE GREAVES");
-INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'TOOL'), "BONE SAW");
-INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'ARMOR'), "BOREWORM MASK");
-INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "BOSSA NOVA RED");
-INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "BOUQUET OF FLOWERS");
-INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "BRAIN IN A JAR");
-INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'ARMOR'), "BRONZE HELM");
-INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'ARMOR'), "BRONZE PLATE");
-INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "BROWN PAPER BAG");
-INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "BULL PIPE");
-INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "BUNNY SLIPPERS");
-INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'FISHING'), "BUSHCRAFT FISHINGPOLE");
+INSERT OR IGNORE INTO item (item_type_id, name_key)
+VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "BICYCLE HELMET");
+INSERT OR IGNORE INTO item (item_type_id, name_key)
+VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "BIRCHBARK BACKPACK");
+INSERT OR IGNORE INTO item (item_type_id, name_key)
+VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "BISHOP'S MITRE");
+INSERT OR IGNORE INTO item (item_type_id, name_key)
+VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "BLUEBELL HAT");
+INSERT OR IGNORE INTO item (item_type_id, name_key)
+VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "BLUEBERRY HAT");
+INSERT OR IGNORE INTO item (item_type_id, name_key)
+VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "BLUEBUCKET HAT");
+INSERT OR IGNORE INTO item (item_type_id, name_key)
+VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'ARMOR'), "BOAR TUSK HELMET");
+INSERT OR IGNORE INTO item (item_type_id, name_key)
+VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "BOBBY HELMET");
+INSERT OR IGNORE INTO item (item_type_id, name_key)
+VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'ARROW'), "BONE ARROW");
+INSERT OR IGNORE INTO item (item_type_id, name_key)
+VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'ARMOR'), "BONE GREAVES");
+INSERT OR IGNORE INTO item (item_type_id, name_key)
+VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'TOOL'), "BONESAW");
+INSERT OR IGNORE INTO item (item_type_id, name_key)
+VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'ARMOR'), "BOREWORM MASK");
+INSERT OR IGNORE INTO item (item_type_id, name_key)
+VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "BOSSA NOVA RED");
+INSERT OR IGNORE INTO item (item_type_id, name_key)
+VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "BOUQUET OF FLOWERS");
+INSERT OR IGNORE INTO item (item_type_id, name_key)
+VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "BRAIN IN A JAR");
+INSERT OR IGNORE INTO item (item_type_id, name_key)
+VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'ARMOR'), "BRONZE HELM");
+INSERT OR IGNORE INTO item (item_type_id, name_key)
+VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'ARMOR'), "BRONZE PLATE");
+INSERT OR IGNORE INTO item (item_type_id, name_key)
+VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "BROWN PAPER BAG");
+INSERT OR IGNORE INTO item (item_type_id, name_key)
+VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "BULL PIPE");
+INSERT OR IGNORE INTO item (item_type_id, name_key)
+VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "BUNNY SLIPPERS");
+INSERT OR IGNORE INTO item (item_type_id, name_key)
+VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'FISHING'), "BUSHCRAFT FISHINGPOLE");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'WEAPON'), "BUTCHER'S CLEAVER");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "CAMPAIGN CAP");
 INSERT OR IGNORE INTO item (item_type_id, name_key) VALUES ((SELECT item_type_id FROM item_type WHERE name_key = 'EQUIPMENT'), "CANDLE CROWN");

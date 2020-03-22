@@ -142,4 +142,10 @@
       (return-from gob-overlay-has t)))
   nil)
 
-(export '(gob-overlays gob-overlay-name gob-overlay-id gob-overlay-has))
+(defun gob-get-overlay-by-name (gob overlay-name)
+  (doarr (ol (gob-overlays gob))
+    (when (string= (gob-overlay-name ol) overlay-name)
+      (return-from gob-get-overlay-by-name ol)))
+  nil)
+
+(export '(gob-overlays gob-overlay-name gob-overlay-id gob-overlay-has gob-get-overlay-by-name))

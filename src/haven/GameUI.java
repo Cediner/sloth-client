@@ -91,6 +91,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public Speedget speed;
     private ScriptManager scripts;
     private ForageHelperWnd foragehelper;
+    public final IndirSlotView lrhandview;
     public final List<DowseWnd> dowsewnds = new ArrayList<>();
 
     @RName("gameui")
@@ -111,6 +112,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
         this.genus = genus;
         setcanfocus(true);
         setfocusctl(true);
+
+        lrhandview = new IndirSlotView(new Coord(2, 1), "L-R hand view", new int[][]{{6, 7}});
     }
 
     protected void added() {
@@ -166,6 +169,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
         foragehelper.hide();
         ui.root.sessionDisplay.unlink();
         add(ui.root.sessionDisplay);
+        add(lrhandview);
     }
 
     @Override
@@ -500,7 +504,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
             };
             invwnd.add(maininv = (Inventory) child, Coord.z);
             invwnd.pack();
-            invwnd.hide();
+            if (!DefSettings.OPENINVONLOGIN.get())
+                invwnd.hide();
             add(invwnd, new Coord(100, 100));
         } else if (place == "equ") {
             equwnd = new Hidewnd(Coord.z, "Equipment");

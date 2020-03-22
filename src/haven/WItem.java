@@ -326,6 +326,24 @@ public class WItem extends Widget implements DTarget {
             } else {
                 return false;
             }
+        }) || MouseBind.ITM_AUTO_EQUIP_LH.check(seq, () -> {
+            final Optional<String> name = item.name();
+            if (name.isPresent() && DefSettings.AUTOEQUIP.get() && ItemData.isEquipable(name.get())) {
+                item.wdgmsg("take", c);
+                ui.gui.equ.wdgmsg("drop", 6);
+                return true;
+            } else {
+                return false;
+            }
+        }) || MouseBind.ITM_AUTO_EQUIP_RH.check(seq, () -> {
+            final Optional<String> name = item.name();
+            if (name.isPresent() && DefSettings.AUTOEQUIP.get() && ItemData.isEquipable(name.get())) {
+                item.wdgmsg("take", c);
+                ui.gui.equ.wdgmsg("drop", 7);
+                return true;
+            } else {
+                return false;
+            }
         }))) {
             if (btn == 3) {
                 item.wdgmsg("iact", c, ui.modflags());

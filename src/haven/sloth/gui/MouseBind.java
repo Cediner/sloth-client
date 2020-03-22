@@ -4,13 +4,10 @@ import haven.UI;
 import haven.sloth.DefSettings;
 import haven.sloth.IndirSetting;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class MouseBind {
-    public static final Map<String, Set<MouseBind>> bindgrps = new HashMap<>();
+    public static final Map<String, List<MouseBind>> bindgrps = new HashMap<>();
     //MapView related
     private static final String MV_GRP = "Map";
     public static final MouseBind MV_LOCK_PLACING_OBJ;
@@ -26,6 +23,8 @@ public class MouseBind {
     public static final MouseBind ITM_TAKE;
     public static final MouseBind ITM_TOGGLE_LOCK;
     public static final MouseBind ITM_AUTO_EQUIP;
+    public static final MouseBind ITM_AUTO_EQUIP_LH;
+    public static final MouseBind ITM_AUTO_EQUIP_RH;
     //
 
     static {
@@ -53,6 +52,10 @@ public class MouseBind {
                 new IndirSetting<>(DefSettings.global, "mousebind.itm-toggle-lock"), "C-B3"));
         ITM_AUTO_EQUIP = add(new MouseBind("Auto equip item", ITM_GRP,
                 new IndirSetting<>(DefSettings.global, "mousebind.itm-auto-equip"), "M-B3"));
+        ITM_AUTO_EQUIP_LH = add(new MouseBind("Auto equip item into left hand", ITM_GRP,
+                new IndirSetting<>(DefSettings.global, "mousebind.itm-auto-equip-lh"), "S-B2"));
+        ITM_AUTO_EQUIP_RH = add(new MouseBind("Auto equip item into right hand", ITM_GRP,
+                new IndirSetting<>(DefSettings.global, "mousebind.itm-auto-equip-rh"), "C-B2"));
     }
 
     @FunctionalInterface
@@ -92,7 +95,7 @@ public class MouseBind {
         if (bindgrps.containsKey(mb.grouping))
             bindgrps.get(mb.grouping).add(mb);
         else {
-            final Set<MouseBind> set = new HashSet<>();
+            final List<MouseBind> set = new ArrayList<>();
             set.add(mb);
             bindgrps.put(mb.grouping, set);
         }

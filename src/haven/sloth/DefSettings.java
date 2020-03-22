@@ -123,6 +123,8 @@ public class DefSettings {
     public static final IndirSetting<Boolean> FREECAMLOCKELAV = new IndirSetting<>(global, "camera.free.lock-elevation");    //[Bool] Lock freecam elevation angle
     public static final IndirSetting<Integer> TIMERVOLUME = new IndirSetting<>(global, "audio.timer-volume");                //[Int] Timer volume
     public static final IndirSetting<Boolean> NOGOBAUDIO = new IndirSetting<>(global, "audio.no-gob-audio");
+    public static final IndirSetting<Boolean> OPENINVONLOGIN = new IndirSetting<>(global, "gameplay.open-inv-on-login");
+    public static final IndirSetting<Boolean> OPENBELTONLOGIN = new IndirSetting<>(global, "gameplay.open-belt-on-login");
 
     public static final IndirSetting<Boolean> KEEPGOBS = new IndirSetting<>(global, "graphics.dont-delete-gobs");            //[Bool] Don't delete gobs
     public static final IndirSetting<Boolean> KEEPGRIDS = new IndirSetting<>(global, "graphics.dont-delete-grids");          //[Bool] Don't delete map grids
@@ -257,6 +259,8 @@ public class DefSettings {
         FORAGEANIMALS.ensure(true);
         PATHFINDINGTIER.ensure(1);
         DEBUG.ensure(false);
+        OPENINVONLOGIN.ensure(true);
+        OPENBELTONLOGIN.ensure(true);
         //Belts
         SHOWFKBELT.ensure(false);
         FKBELTPAGE.ensure(0);

@@ -123,6 +123,7 @@ public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owne
     public int quality;
     public Tex q_tex;
     private WItem witem = null;
+    public boolean delayediact = false;
 
 
     public GItem(Indir<Resource> res, Message sdt) {
@@ -132,6 +133,14 @@ public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owne
 
     public GItem(Indir<Resource> res) {
         this(res, Message.nil);
+    }
+
+    @Override
+    protected void binded() {
+        super.binded();
+        if (delayediact) {
+            wdgmsg("iact", Coord.o, 0);
+        }
     }
 
     public void updateQuality(final int q) {
