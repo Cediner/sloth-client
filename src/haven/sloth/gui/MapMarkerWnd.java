@@ -100,7 +100,6 @@ public class MapMarkerWnd extends Window {
             if (map.view.file.lock.readLock().tryLock()) {
                 try {
                     this.markers = map.view.file.markers.stream().filter(mflt).sorted(mcmp).collect(java.util.stream.Collectors.toList());
-                    list.display();
                 } finally {
                     map.view.file.lock.readLock().unlock();
                 }
@@ -349,6 +348,15 @@ public class MapMarkerWnd extends Window {
                 MapMarkerWnd.this.pack();
             }
             MapMarkerWnd.this.show();
+
+
+            if (map.view.file.lock.readLock().tryLock()) {
+                try {
+                    MapMarkerWnd.this.markers = map.view.file.markers.stream().filter(mflt).sorted(mcmp).collect(java.util.stream.Collectors.toList());
+                } finally {
+                    map.view.file.lock.readLock().unlock();
+                }
+            }
         }
     }
 }
