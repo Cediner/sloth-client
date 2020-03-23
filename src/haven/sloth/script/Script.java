@@ -208,6 +208,6 @@ public class Script extends Thread {
         }
 
         endDiscord();
-        Context.remove(sid);
+        session.context.remove(sid);
     }
 }

@@ -247,7 +247,7 @@ public class MenuGrid extends MovableWidget {
 
         private ScriptPagina(MenuGrid scm, Indir<Resource> res, String script) {
             super(scm, String.format("script::%s", script), res,
-                    (pag) -> Context.launch(script, pag.scm.ui.sess.details));
+                    (pag) -> scm.ui.sess.details.context.launch(script, pag.scm.ui.sess.details));
             final Resource tmp = new Resource(Resource.local(),  String.format("script::%s", script), 1);
             this.act = tmp.new AButton(Resource.local().load("custom/paginae/default/scripts"), script);
         }

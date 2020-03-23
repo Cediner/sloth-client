@@ -71,7 +71,7 @@ public class DiscordHelper extends Window {
             };
             final Button select = new Button(200, "Select", () -> {
                 if(botlst.sel != null && rolelst.sel != null) {
-                    Context.dispatchmsg(this, "discord", botlst.sel, rolelst.sel);
+                    ui.sess.details.context.dispatchmsg(this, "discord", botlst.sel, rolelst.sel);
                     ui.destroy(this);
                 }
             });

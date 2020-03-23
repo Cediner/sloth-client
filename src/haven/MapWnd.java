@@ -269,9 +269,9 @@ public class MapWnd extends Window {
                         final Coord tc = c.sub(sz.div(2)).mul(1 << dlvl()).add(curloc.tc);
                         final Coord gc = tc.div(cmaps);
                         try {
-                            return tc + "\n" + gc + "\n" + curloc.seg.gridid(gc) + " [" + curloc.seg.gridseq(gc) + "]";
+                            return tc + " - " + gc + " - " + curloc.seg.gridid(gc) + " [" + curloc.seg.gridtilename(tc, gc) + "]";
                         } catch (Exception e) {
-                            //ignore
+                            //Ignore
                         }
                     }
                     return super.tooltip(c, prev);

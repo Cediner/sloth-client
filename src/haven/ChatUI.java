@@ -716,7 +716,7 @@ public class ChatUI extends Widget {
 
         @Override
         public void send(String text) {
-            Context.dispatchmsg(this, "msg", text);
+            ui.sess.details.context.dispatchmsg(this, "msg", text);
             uimsg("msg", text);
         }
     }
@@ -815,11 +815,11 @@ public class ChatUI extends Widget {
                     subject = "village-msg";
                 if (from == null) {
                     append(new MyMessage(line, iw()));
-                    Context.dispatchmsg(this, subject, line, ui.sess.details.chrname());
+                    ui.sess.details.context.dispatchmsg(this, subject, line, ui.sess.details.chrname());
                 } else {
                     BuddyWnd.Buddy b = getparent(GameUI.class).buddies.find(from);
                     String nm = (b == null) ? "???" : (b.name);
-                    Context.dispatchmsg(this, subject, line, nm);
+                    ui.sess.details.context.dispatchmsg(this, subject, line, nm);
 
                     Message cmsg = new NamedMessage(from, line, fromcolor(from), iw());
                     append(cmsg);
@@ -884,7 +884,7 @@ public class ChatUI extends Widget {
                                 if (ui.gui.map.plgob == targetid && ui.gui.map.ext.isMaster(gobid)) {
                                     final String subject = smatch.group(2);
                                     final String dargs = smatch.group(3);
-                                    ChatUtils.parseExternalCommand(true, this, subject, dargs);
+                                    ChatUtils.parseExternalCommand(ui, true, this, subject, dargs);
                                 }
                                 return;
                             } else {
@@ -892,7 +892,7 @@ public class ChatUI extends Widget {
                                 if (dmatch.find()) {
                                     final String subject = dmatch.group(1);
                                     final String dargs = dmatch.group(2);
-                                    ChatUtils.parseExternalCommand(false, this, subject, dargs);
+                                    ChatUtils.parseExternalCommand(ui, false, this, subject, dargs);
                                     return;
                                 }
                             }
@@ -913,7 +913,7 @@ public class ChatUI extends Widget {
                 } else {
                     BuddyWnd.Buddy b = getparent(GameUI.class).buddies.find(from);
                     String nm = (b == null) ? "???" : (b.name);
-                    Context.dispatchmsg(this, "pt-msg", line, nm);
+                    ui.sess.details.context.dispatchmsg(this, "pt-msg", line, nm);
 
                     Message cmsg = new NamedMessage(from, line, Utils.blendcol(col, Color.WHITE, 0.5), iw());
                     append(cmsg);
@@ -956,18 +956,18 @@ public class ChatUI extends Widget {
                         if (dmatch.find()) {
                             final String subject = dmatch.group(1);
                             final String dargs = dmatch.group(2);
-                            ChatUtils.parseExternalCommand(false, this, subject, dargs);
+                            ChatUtils.parseExternalCommand(ui, false, this, subject, dargs);
                             return;
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    Context.dispatchmsg(this, "priv-in-msg", line, name());
+                    ui.sess.details.context.dispatchmsg(this, "priv-in-msg", line, name());
                     Message cmsg = new InMessage(line, iw());
                     append(cmsg);
                     notify(cmsg, 3);
                 } else if (t.equals("out")) {
-                    Context.dispatchmsg(this, "priv-out-msg", line);
+                    ui.sess.details.context.dispatchmsg(this, "priv-out-msg", line);
                     append(new OutMessage(line, iw()));
                 }
             } else if (msg == "err") {

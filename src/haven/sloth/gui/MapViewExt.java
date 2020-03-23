@@ -226,7 +226,7 @@ public class MapViewExt {
                         }
                         break;
                     case "Mark for script": //Mark for script
-                        Context.dispatchmsg(mv, "click-gob", g);
+                        mv.ui.sess.details.context.dispatchmsg(mv, "click-gob", g);
                         break;
                     case "Highlight": //Highlight for yourself
                         HighlightData.add(name);
@@ -311,7 +311,7 @@ public class MapViewExt {
                 }
                 break;
                 case "Mark for script": {
-                    Context.dispatchmsg(mv, "click-tile", mc);
+                    mv.ui.sess.details.context.dispatchmsg(mv, "click-tile", mc);
                 }
                 break;
                 case "Slaves":

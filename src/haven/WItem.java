@@ -302,10 +302,10 @@ public class WItem extends Widget implements DTarget {
             item.wdgmsg("transfer", c, -1);
             return true;
         }) || MouseBind.ITM_DROP.check(seq, () -> {
-            item.wdgmsg("drop", c);
+            item.wdgmsg("drop", c, 1);
             return true;
         }) || MouseBind.ITM_DROP_ALL_ALIKE.check(seq, () -> {
-            item.name().ifPresent(name -> ((Inventory) parent).dropAllAlike(name, c));
+            item.wdgmsg("drop", c, -1);
             return true;
         }) || MouseBind.ITM_TAKE.check(seq, () -> {
             item.wdgmsg("take", c);

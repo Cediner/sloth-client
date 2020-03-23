@@ -16,6 +16,7 @@ public class SessionDetails {
         MAIN, STUDY, BELT, SUPPLEMENTAL
     }
 
+    public final Context context;
     public final WeakReference<Session> session;
 
     public int shp, hhp, mhp;
@@ -55,6 +56,7 @@ public class SessionDetails {
     private final List<WeakReference<PointerData>> pointers = new ArrayList<>();
 
     public SessionDetails(final Session sess) {
+        this.context = new Context();
         this.session = new WeakReference<>(sess);
         shp = hhp = mhp = stam = energy = 0;
     }

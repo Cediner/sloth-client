@@ -1295,6 +1295,19 @@ public class MapFile {
             return (grid0(id));
         }
 
+        public String gridtilename(final Coord tc, final Coord gc) {
+            if (map.containsKey(gc)) {
+                if (cache.containsKey(map.get(gc))) {
+                    final Grid g = cache.get(map.get(gc)).loaded;
+                    return g.tilesets[g.gettile(tc.sub(gc.mul(cmaps)))].res.name;
+                } else {
+                    return "Unknown";
+                }
+            } else {
+                return "Unknown";
+            }
+        }
+
         public long gridid(Coord gc) {
             return map.get(gc);
         }

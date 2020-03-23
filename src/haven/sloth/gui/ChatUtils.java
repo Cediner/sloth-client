@@ -1,9 +1,6 @@
 package haven.sloth.gui;
 
-import haven.Coord;
-import haven.Coord2d;
-import haven.Coord3f;
-import haven.Widget;
+import haven.*;
 import haven.sloth.script.Context;
 
 import java.util.ArrayList;
@@ -94,7 +91,8 @@ public class ChatUtils {
         }
     }
 
-    public static void parseExternalCommand(final boolean trusted, final Widget sender, final String subject, final String rawargstr) {
+    public static void parseExternalCommand(final UI ui, final boolean trusted, final Widget sender,
+                                            final String subject, final String rawargstr) {
         final List<Object> args = new ArrayList<>();
         //remove dup spaces down to just 1, trim leading/following spaces, and get rid of spaces after ( and before )
         final String argstr = rawargstr
@@ -118,6 +116,6 @@ public class ChatUtils {
         }
 
         //Dispatch the message if everything went well
-        Context.dispatchmsg(trusted, sender, subject, args.toArray(new Object[0]));
+        ui.sess.details.context.dispatchmsg(trusted, sender, subject, args.toArray(new Object[0]));
     }
 }

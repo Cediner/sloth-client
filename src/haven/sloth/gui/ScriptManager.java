@@ -30,7 +30,12 @@ public class ScriptManager extends Window implements ObservableMapListener<Long,
         c.y += add(new Button(300, "Reload Config", Script::reloadConfig)).sz.y + 5;
         scripts = add(new LinearGrouping("Running Scripts", 5), c.copy());
         pack();
-        Context.listenTo(this);
+    }
+
+    @Override
+    protected void added() {
+        super.added();
+        ui.sess.details.context.listenTo(this);
     }
 
     @Override
@@ -40,7 +45,7 @@ public class ScriptManager extends Window implements ObservableMapListener<Long,
 
     @Override
     protected void removed() {
-        Context.stopListeningTo(this);
+        ui.sess.details.context.stopListeningTo(this);
     }
 
     @Override

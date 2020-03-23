@@ -157,7 +157,7 @@ public class MapMod extends Window implements MapView.Grabber {
             if ((c1 != null) && (c2 != null) && !fake)
                 wdgmsg("mod", c1, c2);
             else if(fake) {
-                Context.dispatchmsg(this, "bot-select", sc, ec);
+                ui.sess.details.context.dispatchmsg(this, "bot-select", sc, ec);
                 ui.destroy(this);
             }
             return;
