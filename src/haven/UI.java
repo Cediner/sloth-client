@@ -141,10 +141,14 @@ public class UI {
     }
 
     public void reset(final Coord sz) {
+        final RootWidget oldroot = root;
         destroy();
         root = new RootWidget(this, sz);
         widgets.put(0, root);
         rwidgets.put(root, 0);
+        root.ggprof = oldroot.ggprof;
+        root.grprof = oldroot.grprof;
+        root.guprof = oldroot.guprof;
         audio = new ActAudio();
     }
 

@@ -30,15 +30,19 @@ import java.util.*;
 
 public class Profwdg extends Widget {
     public final Profile prof;
-    public double mt = 0.05;
-    private static final int h = 80;
+    public double mt = 0.50;
+    private static final int h = 160;
     private final TexIM tex;
+    private double dscale = 0;
+    private Tex sscl = null;
 
     public Profwdg(Profile prof) {
         super(new Coord(prof.hist.length, h));
         this.prof = prof;
         this.tex = new TexIM(new Coord(prof.hist.length, h));
     }
+
+    private static final String[] units = {"s", "ms", "\u00b5s", "ns"};
 
     public void draw(GOut g) {
         double[] ttl = new double[prof.hist.length];
@@ -58,8 +62,24 @@ public class Profwdg extends Widget {
             mt = ttl[ti];
         else
             mt = 0.05;
+
+        if ((sscl == null) || (dscale < mt * 0.70) || (dscale > mt)) {
+            int p = (int) Math.floor(Math.log10(mt));
+            double b = Math.pow(10.0, p) * 0.5;
+            dscale = Math.floor(mt / b) * b;
+            int u = Utils.clip(-Utils.floordiv(p, 3), 0, units.length - 1);
+            if (sscl != null)
+                sscl.dispose();
+            sscl = Text.render(String.format("%.1f %s", dscale * Math.pow(10.0, u * 3), units[u])).tex();
+        }
+
         prof.draw(tex, mt / h);
         g.image(tex, Coord.z);
+        int sy = (int) Math.round((1 - (dscale / mt)) * h);
+        g.chcolor(192, 192, 192, 128);
+        g.line(new Coord(0, sy), new Coord(prof.hist.length, sy), 1);
+        g.chcolor();
+        g.image(sscl, new Coord(prof.hist.length - sscl.sz().x, sy - (sscl.sz().y / 2)));
     }
 
     public boolean keydown(java.awt.event.KeyEvent ev) {

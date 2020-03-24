@@ -253,6 +253,8 @@ public abstract class PView extends Widget {
                 if ((cc == null) && (cstate.cur.fb != null))
                     cc = new Color(0, 0, 0, 0);
                 rg.apply();
+                if (curf != null)
+                    curf.add("apply", g.st.time);
                 BGL gl = rg.gl;
                 if (cc == null) {
                     gl.glClear(GL.GL_DEPTH_BUFFER_BIT);
@@ -270,7 +272,6 @@ public abstract class PView extends Widget {
                 if (cstate.cur.fb != null)
                     cstate.cur.resolve(g);
                 if (curf != null) {
-                    curf.add("apply", g.st.time);
                     curf.tick("render", g.st.time);
                 }
             } catch (Exception e) {
