@@ -51,7 +51,9 @@
 (defmacro item-transfer-all-alike (itm)
   `(wdgmsg ,itm "transfer" (fakec) -1))
 (defmacro item-drop (itm)
-  `(wdgmsg ,itm "drop" (fakec)))
+  `(wdgmsg ,itm "drop" (fakec) 1))
+(defmacro item-drop-all-alike (itm)
+  `(wdgmsg ,itm "drop" (fakec) -1))
 (defmacro item-take (itm)
   `(wdgmsg ,itm "take" (fakec)))
 ;;ie: right clicking flask to drink
@@ -70,6 +72,6 @@
           is-item-contents
           held-item
           item-transfer item-transfer-all-alike
-          item-drop
+          item-drop item-drop-all-alike
           item-take
           item-interact item-interact-with-held-item))

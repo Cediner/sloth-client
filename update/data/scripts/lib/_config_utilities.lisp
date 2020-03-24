@@ -107,10 +107,10 @@
         nil
         t)))
 
-(defun backoff-randomly ()
+(defun backoff-randomly (&key (gob (my-gob)))
   (mv-move-to-rel (coord2d (+ (random 11) 3)
                            (+ (random 11) 3)))
-  (wait-for-movement :gob (my-gob)))
+  (wait-for-movement :gob gob))
 
 ;;Loops through messages till it finds one that meets filter-fun or it runs out of messages
 (defun loop-through-messages (filter-fun)

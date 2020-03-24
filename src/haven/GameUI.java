@@ -32,16 +32,14 @@ import haven.sloth.Theme;
 import haven.sloth.gfx.MapPointer;
 import haven.sloth.gui.*;
 import haven.sloth.gui.Timer.TimersWnd;
+import haven.sloth.gui.script.ScriptManager;
 import haven.sloth.io.BeltData;
-import haven.sloth.script.Context;
 
 import java.util.*;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.image.WritableRaster;
 import java.util.function.Consumer;
-
-import static haven.Inventory.invsq;
 
 public class GameUI extends ConsoleHost implements Console.Directory {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();

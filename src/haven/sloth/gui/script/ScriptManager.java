@@ -1,4 +1,4 @@
-package haven.sloth.gui;
+package haven.sloth.gui.script;
 
 import haven.*;
 import haven.sloth.gui.indir.IndirLabel;
