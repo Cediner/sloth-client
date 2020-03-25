@@ -2,12 +2,9 @@ package haven.sloth;
 
 import com.google.common.flogger.FluentLogger;
 import haven.Coord;
-import haven.Indir;
-import haven.MapFile;
 import haven.sloth.gob.*;
 import haven.sloth.gui.BeltWnd;
 import haven.sloth.io.*;
-import haven.sloth.io.map.MapFileData;
 import haven.sloth.script.Script;
 
 import java.awt.*;
@@ -145,6 +142,11 @@ public class DefSettings {
     public static final IndirSetting<Coord> MMMEMPOSONE = new IndirSetting<>(global, "minimap.remembered-pos-one");
     public static final IndirSetting<Coord> MMMEMSIZETWO = new IndirSetting<>(global, "minimap.remembered-size-two");
     public static final IndirSetting<Coord> MMMEMPOSTWO = new IndirSetting<>(global, "minimap.remembered-pos-two");
+
+    //Audio
+    public static final IndirSetting<Double> ALERTVOL = new IndirSetting<>(global, "audio.alert-volume");
+    public static final IndirSetting<Double> POPUPMSGVOL = new IndirSetting<>(global, "audio.popup-msg-volume");
+    public static final IndirSetting<Boolean> SOUNDONPOPUPMSG = new IndirSetting<>(global, "audio.sound-on-friend-login");
 
     //Debug
     public static final IndirSetting<Boolean> DEBUG = new IndirSetting<>(global, "system.debug");
@@ -290,6 +292,10 @@ public class DefSettings {
         MMMEMPOSONE.ensure(new Coord(0, 0));
         MMMEMSIZETWO.ensure(new Coord(600, 600));
         MMMEMPOSTWO.ensure(new Coord(0, 0));
+        //Audio
+        ALERTVOL.ensure(1.0);
+        POPUPMSGVOL.ensure(1.0);
+        SOUNDONPOPUPMSG.ensure(true);
         //Cameras
         CAMERA.ensure("sortho");
         FREECAMREXAXIS.ensure(false);

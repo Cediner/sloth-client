@@ -338,10 +338,34 @@ public class OptWnd extends Window {
                     ui.audio.amb.setvolume(val / 1000.0);
                 }
             }, new Coord(0, y)).sz.y + spacer;
+            y += audio.add(new Label("Alert volume"), new Coord(0, y)).sz.y + spacer;
+            y += audio.add(new HSlider(200, 0, 1000, 0) {
+                protected void attach(UI ui) {
+                    super.attach(ui);
+                    val = (int) (ALERTVOL.get() * 1000);
+                }
+
+                public void changed() {
+                    ALERTVOL.set(val / 1000.0);
+                }
+            }, new Coord(0, y)).sz.y + spacer;
+            y += audio.add(new Label("Popup Message volume"), new Coord(0, y)).sz.y + spacer;
+            y += audio.add(new HSlider(200, 0, 1000, 0) {
+                protected void attach(UI ui) {
+                    super.attach(ui);
+                    val = (int) (POPUPMSGVOL.get() * 1000);
+                }
+
+                public void changed() {
+                    POPUPMSGVOL.set(val / 1000.0);
+                }
+            }, new Coord(0, y)).sz.y + spacer;
+
 
             y += audio.add(new Label("Timer volume"), new Coord(0, y)).sz.y + spacer;
             y += audio.add(new IndirHSlider(200, 0, 1000, TIMERVOLUME), new Coord(0, y)).sz.y + spacer;
             y += audio.add(new IndirCheckBox("No Gob Audio", NOGOBAUDIO), new Coord(0, y)).sz.y + spacer;
+            y += audio.add(new IndirCheckBox("Popup Message Sound", SOUNDONPOPUPMSG), new Coord(0, y)).sz.y + spacer;
             audio.add(new PButton(200, "Back", 27, main), new Coord(0, y));
             audio.pack();
         }

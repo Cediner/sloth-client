@@ -9,10 +9,11 @@
 (defun get-dirt (stockpile)
   (mv-smart-move-to-gob stockpile)
   (mv-click-gob stockpile +right-button+ +mf-shift+)
-  (wait-for-movement))
+  (sleep 1))
 
 (defun dump-dirt (dump-tile)
-  (mv-smart-move dump-tile)
+  (mv-move-to dump-tile)
+  (wait-for-movement)
   (loop
      for itm = (inventory-get-item-by-name (main-inventory) "Soil")
      while itm

@@ -86,12 +86,13 @@ public class Alerted {
     public static void checkAlert(final String name, final long plgob, final Gob g) {
         if (sfxmap.containsKey(name)) {
             if (!name.equals("gfx/borka/body")) {
-                Audio.play(sfxmap.get(name));
+                Audio.play(sfxmap.get(name), DefSettings.ALERTVOL.get().floatValue());
             } else if (plgob != -1 && g.id != plgob) {
                 //For bodies only play on unknown or RED or village/realm member that you don't have kinned
                 final KinInfo kin = g.getattr(KinInfo.class);
-                if (kin == null || kin.group == DefSettings.BADKIN.get() || (kin.isVillager() && (kin.name == null || kin.name.equals("") || kin.name.equals(" ")))) {
-                    Audio.play(sfxmap.get(name));
+                if (kin == null || kin.group == DefSettings.BADKIN.get() ||
+                        (kin.isVillager() && (kin.name == null || kin.name.equals("") || kin.name.equals(" ")))) {
+                    Audio.play(sfxmap.get(name), DefSettings.ALERTVOL.get().floatValue());
                 }
             }
         }

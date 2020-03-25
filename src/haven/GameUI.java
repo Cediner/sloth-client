@@ -41,6 +41,8 @@ import java.awt.event.KeyEvent;
 import java.awt.image.WritableRaster;
 import java.util.function.Consumer;
 
+import static haven.sloth.DefSettings.POPUPMSGVOL;
+
 public class GameUI extends ConsoleHost implements Console.Directory {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     public static final Text.Foundry msgfoundry = new Text.Foundry(Text.dfont, 14);
@@ -959,8 +961,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public void msg(String msg) {
         msg(msg, Color.WHITE, Color.WHITE);
         double now = Utils.rtime();
-        if (now - lastmsgsfx > 0.1) {
-            Audio.play(msgsfx);
+        if (DefSettings.SOUNDONPOPUPMSG.get() && now - lastmsgsfx > 0.1) {
+            Audio.play(msgsfx, POPUPMSGVOL.get().floatValue());
             lastmsgsfx = now;
         }
     }

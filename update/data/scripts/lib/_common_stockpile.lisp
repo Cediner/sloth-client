@@ -9,7 +9,7 @@
 (defun get-next-item-on-ground (item-gob-name)
   (gob-get-closest-by-filter
    (lambda (gob)
-     (and (string= item-gob-name (gob-name gob))
+     (and (search item-gob-name (gob-name gob))
           (mv-find-path-to-gob gob)))))
 
 (defun pickup-items (original-position item-gob-name)
@@ -85,9 +85,12 @@
         (sleep 0.1)
         (pickup-items original-position item-gob-name)
         (mv-smart-move original-position)
-        (let ((itm (inventory-get-item-by-name (main-inventory) item-inv-name)))
+        (let ((itm (inventory-get-items-by-filter
+                    (main-inventory)
+                    (lambda (itm)
+                      (search item-inv-name (item-name itm))))))
           (when itm
-            (store-items itm stockpile-gob-name stockpile-item-name
+            (store-items (car itm) stockpile-gob-name stockpile-item-name
                          original-position bbox tiles)))))))
 
 (export '(stockpile-items-forever
