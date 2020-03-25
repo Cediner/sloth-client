@@ -178,7 +178,7 @@
             <fileset dir="etc/res/built/" includes="**"/>
         </copy>
         <copy todir="update/data/scripts">
-            <fileset dir="etc/scripts/" includes="**"/>
+            <fileset dir="etc/scripts/" includes="**" excludes="forage/**"/>
         </copy>
     </target>
 
