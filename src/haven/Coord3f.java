@@ -117,6 +117,11 @@ public class Coord3f {
         return (cmul(b.x, b.y, b.z));
     }
 
+    public Coord3f rotate(float a) {
+        return new Coord3f((float) (((x * Math.cos(a)) - (y * Math.sin(a)))),
+                (float) (((x * Math.sin(a)) + (y * Math.cos(a)))), z);
+    }
+
     public Coord3f rot(Coord3f p, float a) {
         float c = (float) Math.cos(a), s = (float) Math.sin(a), C = 1.0f - c;
         float ax = p.x, ay = p.y, az = p.z;

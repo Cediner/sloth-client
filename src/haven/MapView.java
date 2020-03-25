@@ -258,15 +258,24 @@ public class MapView extends PView implements DTarget, Console.Directory {
         private float elevorig, anglorig;
 
         public void tick(double dt) {
-            Coord3f cc = getcc();
+            Coord3f cc = getcenter();
             if (FLATWORLD.get())
                 cc.z = 0;
             cc.y = -cc.y;
             view.update(PointedCam.compute(cc.add(camoff).add(0.0f, 0.0f, 15f), dist, elev, angl));
         }
 
+        public Coord3f getcenter() {
+            return getcc();
+        }
+
         public float angle() {
             return (angl);
+        }
+
+
+        public void setDist(final float d) {
+            this.dist = d;
         }
 
         public boolean click(Coord c) {
@@ -303,6 +312,90 @@ public class MapView extends PView implements DTarget, Console.Directory {
 
     static {
         camtypes.put("bad", FreeCam.class);
+    }
+
+    public class Fixator extends FreeCam {
+        private Coord3f offset = new Coord3f(0, 0, 0);
+        private Coord doff;
+
+        @Override
+        public Coord3f getcenter() {
+            return getcc().add(offset);
+        }
+
+        public void reset() {
+            offset = new Coord3f(0, 0, 0);
+        }
+
+        @Override
+        public boolean click(Coord c) {
+            doff = c;
+            return super.click(c);
+        }
+
+        public void drag(final Coord c) {
+            if (ui.modctrl) {
+                offset = offset.add(new Coord3f(c.add(doff.inv())).rotate(-angle() + (float) (Math.PI / 2)));
+                doff = c;
+            } else {
+                super.drag(c);
+            }
+        }
+    }
+
+    static {
+        camtypes.put("fixator", Fixator.class);
+    }
+
+    public class FreeStyle extends FreeCam {
+        private Coord3f plcc = null;
+        private Coord3f focus = null;
+        private Coord doff;
+
+        public FreeStyle() {
+            setDist(250f);
+        }
+
+        @Override
+        public void tick(double dt) {
+            super.tick(dt);
+            final Coord3f nplcc = getcc();
+            if (Math.abs(nplcc.dist(plcc)) > (30 * 11)) {
+                reset();
+            }
+            plcc = nplcc;
+        }
+
+        @Override
+        public Coord3f getcenter() {
+            if (focus == null) {
+                focus = plcc = getcc();
+            }
+            return new Coord3f(focus);
+        }
+
+        public void reset() {
+            focus = getcc();
+        }
+
+        @Override
+        public boolean click(Coord c) {
+            doff = c;
+            return super.click(c);
+        }
+
+        public void drag(final Coord c) {
+            if (ui.modctrl) {
+                focus = focus.add(new Coord3f(c.add(doff.inv())).rotate(-angle() + (float) (Math.PI / 2)));
+                doff = c;
+            } else {
+                super.drag(c);
+            }
+        }
+    }
+
+    static {
+        camtypes.put("freestyle", FreeStyle.class);
     }
 
     public class TopDownCam extends Camera {

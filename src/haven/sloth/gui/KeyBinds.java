@@ -398,6 +398,22 @@ public class KeyBinds {
                 return false;
             }
         }));
+        add(new KeyBind("Recenter camera", new IndirSetting<>(DefSettings.global, "keybind.recenter-camera"), "S-C", ui -> {
+            if (ui.gui != null && ui.gui.map != null) {
+                final MapView.Camera c = ui.gui.map.camera;
+                if (c instanceof MapView.Fixator) {
+                    ((MapView.Fixator) c).reset();
+                    return true;
+                } else if (c instanceof MapView.FreeStyle) {
+                    ((MapView.FreeStyle) c).reset();
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }));
 
 
         //Fight moves binding

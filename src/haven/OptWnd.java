@@ -475,6 +475,8 @@ public class OptWnd extends Window {
                 rgrp.add("Free Cam", "bad");
                 rgrp.add("Follow Cam", "follow");
                 rgrp.add("Top Down Cam", "topdown");
+                rgrp.add("Fixator", "fixator");
+                rgrp.add("Freestyle", "freestyle");
             }
             final Grouping freeg = new LinearGrouping("Free Cam Settings", spacer);
             { //Free Cam Settings
