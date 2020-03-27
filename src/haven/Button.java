@@ -51,7 +51,7 @@ public class Button extends SIWidget {
     public Runnable action = null;
     static Text.Foundry tf = new Text.Foundry(Text.serif.deriveFont(Font.BOLD, 12)).aa(true);
     static Text.Furnace nf = new PUtils.BlurFurn(new PUtils.TexFurn(tf, Window.ctex), 1, 1, new Color(80, 40, 0));
-    private boolean a = false;
+    protected boolean a = false;
     private UI.Grab d = null;
 
     @RName("btn")
@@ -114,6 +114,13 @@ public class Button extends SIWidget {
     public Button(int w, BufferedImage cont) {
         this(w, largep(w));
         this.cont = cont;
+    }
+
+    public Button(final String text) {
+        this(0, false);
+        change(text);
+        sz = new Coord(cont.getWidth() + ul.getWidth() + um.getWidth() + ur.getWidth(), ul.getHeight());
+        this.action = () -> wdgmsg("activate");
     }
 
     public void draw(BufferedImage img) {
