@@ -76,7 +76,7 @@ public class Session implements Resource.Resolver {
     public final String username;
 
     //Monitoring
-    long sent = 0, recv = 0;
+    long sent = 0, recv = 0, pend = 0;
 
     @SuppressWarnings("serial")
     public static class MessageException extends RuntimeException {
@@ -511,6 +511,7 @@ public class Session implements Resource.Resolver {
 			  getThreadGroup().interrupt();
 			  }
 			*/
+                        pend = pending.size();
                         synchronized (pending) {
                             if (pending.size() > 0) {
                                 for (RMessage msg : pending) {
