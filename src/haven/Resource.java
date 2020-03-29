@@ -705,7 +705,7 @@ public class Resource implements Serializable {
                          * aids. */
                     }
                     sqlcache = new SQLResCache();
-                    local.add(new CacheSource(sqlcache));
+                    //bhare: local.add(new CacheSource(sqlcache));
 
                     if (prscache != null) {
                         local.add(new CacheSource(prscache));
