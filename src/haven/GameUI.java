@@ -32,6 +32,8 @@ import haven.sloth.Theme;
 import haven.sloth.gfx.MapPointer;
 import haven.sloth.gui.*;
 import haven.sloth.gui.Timer.TimersWnd;
+import haven.sloth.gui.equip.MiniEquipView;
+import haven.sloth.gui.item.MiniInvView;
 import haven.sloth.gui.script.ScriptManager;
 import haven.sloth.io.BeltData;
 
@@ -93,6 +95,9 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     private ForageHelperWnd foragehelper;
     public final IndirSlotView lrhandview;
     public final List<DowseWnd> dowsewnds = new ArrayList<>();
+
+    public MiniInvView mminv;
+    public MiniEquipView mmequ;
 
     @RName("gameui")
     public static class $_ implements Factory {
@@ -506,6 +511,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
             invwnd.pack();
             if (!DefSettings.OPENINVONLOGIN.get())
                 invwnd.hide();
+            mminv = new MiniInvView(maininv);
+            add(mminv, new Coord(100, 100));
             add(invwnd, new Coord(100, 100));
         } else if (place == "equ") {
             equwnd = new Hidewnd(Coord.z, "Equipment");
@@ -513,6 +520,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
             equ = (Equipory) child;
             equwnd.pack();
             equwnd.hide();
+            mmequ = new MiniEquipView(equ);
+            add(mmequ, new Coord(400, 10));
             add(equwnd, new Coord(400, 10));
         } else if (place == "hand") {
             GItem g = add((GItem) child);

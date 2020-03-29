@@ -213,6 +213,17 @@ public class WItem extends Widget implements DTarget {
     private static final Pattern[] contpats = {liquid_pat, weight_pat, seed_pat};
     private static final ItemData.ContainerType[] conttypes = {ItemData.ContainerType.LIQUID, ItemData.ContainerType.WEIGHT, ItemData.ContainerType.SEED};
 
+    public int wearlevel() {
+        final Optional<Wear> wear = item.getinfo(Wear.class);
+        if (wear.isPresent()) {
+            double p = 1 - wear.get().percent();
+            int h = (int) (p * (double) sz.y);
+            return p == 1.0 ? 3 : (int) (p / 0.25);
+        } else {
+            return -1;
+        }
+    }
+
     public void draw(GOut g) {
         GSprite spr = item.spr();
         if (spr != null) {

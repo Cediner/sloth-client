@@ -57,6 +57,7 @@
 
 (defun make-stockpile (itm stockpile-item-name stockpile-c)
   (item-take itm)
+  (wait-until (lambda () (held-item)))
   (mv-interact-held-item-with-tile stockpile-c +mf-none+)
   (wait-for-placing-gob)
   (mv-place-gob stockpile-c 0 +left-button+ +mf-shift+)

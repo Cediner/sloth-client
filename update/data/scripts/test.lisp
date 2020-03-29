@@ -50,13 +50,33 @@
     (login name)
     (wait-until (lambda () (speed)))))
 
+(defconstant +angler+ `("gfx/kritter/caveangler/caveangler"))
+
 (script
- (format t "pre-wait~%")
- (wait-for-movement)
- (format t  "post-wait~%")
- (logout-and-wait)
- (format t "post-login~%")
- (wait-for-movement)
- (format t "post-wait-2~%"))
-
-
+ (multiple-value-bind (token role)
+     (prompt-for-discord-info)
+   (let ((lake-name (prompt-for-input "Enter the lake name"))
+         (char-name (character-name))
+         (toggle 0))
+     (start-discord-session token)
+     (forever
+      (let ((targets (gob-get-all-by-filter
+                      (lambda (gob) 
+                        (and 
+                         (member (gob-name gob) +angler+ :test 'equal)
+                         (not (is-gob-dead gob)))))))
+        (if (> (length targets) 0) 
+            (if (= 0 toggle) 
+                (progn
+                  (send-discord-message +discord-bot-channel+
+                                        (format nil "<@&~A> Spotted an angler at ~A"
+                                                role
+                                                lake-name))
+                  (setq toggle 1))
+                (sleep 20))
+            (progn
+              (goto-character-screen)
+              (sleep (* 60 1))
+              (login char-name)
+              (setq toggle 0)
+              (sleep 20))))))))

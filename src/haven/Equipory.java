@@ -89,6 +89,7 @@ public class Equipory extends Widget implements DTarget {
         }
     }
 
+    public final WItem[] slots = new WItem[ecoords.length];
     Map<GItem, WItem[]> wmap = new HashMap<GItem, WItem[]>();
     private final Avaview ava;
 
@@ -182,6 +183,7 @@ public class Equipory extends Widget implements DTarget {
             for (int i = 0; i < args.length; i++) {
                 int ep = (Integer) args[i];
                 v[i] = add(new WItem(g), ecoords[ep].add(1, 1));
+                slots[ep] = v[i];
                 switch (ep) {
                     case 5:
                         if (DefSettings.OPENBELTONLOGIN.get()) {
@@ -209,8 +211,14 @@ public class Equipory extends Widget implements DTarget {
         if (w instanceof GItem) {
             GItem i = (GItem) w;
             final WItem[] witms = wmap.remove(i);
-            for (WItem v : witms)
+            for (WItem v : witms) {
                 ui.destroy(v);
+                for (int s = 0; s < slots.length; ++s) {
+                    if (slots[s] == v) {
+                        slots[s] = null;
+                    }
+                }
+            }
             if (lweap == i) {
                 lweap = null;
                 for (WItem v : witms)

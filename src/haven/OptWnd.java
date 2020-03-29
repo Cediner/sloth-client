@@ -526,6 +526,16 @@ public class OptWnd extends Window {
                         ui.gui.nbelt.setVisibile(val);
                     }
                 }));
+                uig.add(new IndirCheckBox("Show Mini Inventory", SHOWMINIINV, val -> {
+                    if (ui.gui != null && ui.gui.mminv != null) {
+                        ui.gui.mminv.visible = val;
+                    }
+                }));
+                uig.add(new IndirCheckBox("Show Mini Equipment View", SHOWMINIINV, val -> {
+                    if (ui.gui != null && ui.gui.mmequ != null) {
+                        ui.gui.mmequ.visible = val;
+                    }
+                }));
                 uig.add(new IndirCheckBox("Show Inventory on login", OPENINVONLOGIN, OPENINVONLOGIN::set));
                 uig.add(new IndirCheckBox("Show Belt on login/equip", OPENBELTONLOGIN, OPENBELTONLOGIN::set));
                 uig.pack();

@@ -72,6 +72,9 @@
       (setf argv (append argv `(,(intern (string-upcase (format nil "arg-~A" i)))))))
     `(defun ,lisp-func-name ,argv
        (checkintp)
+       #|(format t "(jcall (jmethod ~A ~A))~%" ,class ,java-func-name)
+       (loop for frame in (cddr (sys:backtrace))
+          do (format t "~A~%" frame))|#
        (jcall (jmethod ,class ,java-func-name ,@args) ,@argv))))
 
 (defmacro java-sfunc (class
@@ -92,6 +95,14 @@
       (misc-sysprint "An error has occured, check your log files to see why")
       (format t "~A~%" (jcall "getMessage" exp))
       (misc-log (jcall "getMessage" exp)))))
+
+(defmacro debug-script (&body body)
+  `(handler-bind
+       ((java-exception (msg) (print-excp msg))
+        (error (msg) (format t "~A~%" msg)))
+     (progn
+       ,@body
+       (misg-log "Successful run"))))
 
 (defmacro script (&body body)
   `(handler-case

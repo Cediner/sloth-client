@@ -145,17 +145,37 @@ public class Inventory extends Widget implements DTarget {
     public int usedSlots() {
         int slots = 0;
         synchronized (wmap) {
-            for(final WItem wi : wmap.values()) {
+            for (final WItem wi : wmap.values()) {
                 slots += wi.size();
             }
         }
         return slots;
     }
 
+    public WItem[][] itemmap() {
+        final WItem[][] map = new WItem[isz.x][isz.y];
+        synchronized (wmap) {
+            for (WItem wi : wmap.values()) {
+                Coord wc = wi.c.div(invsq.sz().sub(1, 1));
+                Coord wsz = wi.sz.div(invsq.sz().sub(1, 1)).add(wc);
+                for (int x = wc.x; x < wsz.x; ++x) {
+                    if (x >= 0 && x < map.length) {
+                        for (int y = wc.y; y < wsz.y; ++y) {
+                            if (y >= 0 && y < map[x].length) {
+                                map[x][y] = wi;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return map;
+    }
+
     @SuppressWarnings("unused")
     public boolean canDropAt(final Coord c) {
         final Coord cc = c.mul(sqsz);
-        if(cc.between(Coord.z, sz)) {
+        if (cc.between(Coord.z, sz)) {
             synchronized (wmap) {
                 for (WItem wi : wmap.values()) {
                     if (cc.between(wi.c, wi.sz))

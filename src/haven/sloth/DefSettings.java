@@ -164,6 +164,10 @@ public class DefSettings {
             TXBCOLFMT = "theme.%s.textbox.color",
             SLIDERCOLFMT = "theme.%s.slider.color";
 
+    //UI
+    public static final IndirSetting<Boolean> SHOWMINIINV = new IndirSetting<>(global, "ui.show-mini-inv");
+    public static final IndirSetting<Boolean> SHOWMINIEQU = new IndirSetting<>(global, "ui.show-mini-equ");
+
     //Unused
     public static final IndirSetting<Integer> TREESCALE = new IndirSetting<>(global, "graphics.tree-scale");                 //[Int ] Tree scaling value [1-16], 1 is default
     public static final IndirSetting<Boolean> MOREFLAVOBJS = new IndirSetting<>(global, "graphics.more-flavor-objs");        //[Bool] Toggle more flavor objects
@@ -325,6 +329,10 @@ public class DefSettings {
             //For options window
             THEMES.set(huds.toArray(new String[0]));
         }
+
+        //UI
+        SHOWMINIINV.ensure(false);
+        SHOWMINIEQU.ensure(false);
 
         //Audio
         TIMERVOLUME.ensure(1000);

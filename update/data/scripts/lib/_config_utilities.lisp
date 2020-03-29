@@ -64,7 +64,7 @@
       ;;Not holding anything of value on cursor
       (progn
         (when (held-item)
-          (item-drop (held-item)))
+          (mv-drop (gob-rc (my-gob)) +mf-none+))
         (wait-until (lambda () (null (held-item))))
         
         (loop

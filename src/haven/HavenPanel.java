@@ -50,8 +50,8 @@ public class HavenPanel extends GLCanvas implements Runnable, Console.Directory,
     boolean iswap = true, aswap;
     long fd = 10, bgfd = 200, fps = 0;
     long last_sess_upd = System.currentTimeMillis();
-    long ssent = 0, srecv = 0;
-    long sent = 0, recv = 0;
+    long ssent = 0, srecv = 0, sretran = 0;
+    long sent = 0, recv = 0, retran = 0;
     double uidle = 0.0, ridle = 0.0;
     Queue<InputEvent> events = new LinkedList<InputEvent>();
     private String cursmode = "tex";
@@ -401,14 +401,16 @@ public class HavenPanel extends GLCanvas implements Runnable, Console.Directory,
             if ((System.currentTimeMillis() - last_sess_upd) >= 1000) {
                 sent = ui.sess.sent - ssent;
                 recv = ui.sess.recv - srecv;
+                retran = ui.sess.retran - sretran;
                 ssent = ui.sess.sent;
                 srecv = ui.sess.recv;
+                sretran = ui.sess.retran;
                 last_sess_upd = System.currentTimeMillis();
             }
 
             if (DefSettings.SHOWFPS.get()) {
                 FastText.aprintf(g, new Coord(w, 0), 1, 0, "FPS: %d (%d%%, %d%% idle)", fps, (int) (uidle * 100.0), (int) (ridle * 100.0));
-                FastText.aprintf(g, new Coord(w, 15), 1, 0, "S: %d | R: %d | P: %d", sent, recv, ui.sess.pend);
+                FastText.aprintf(g, new Coord(w, 15), 1, 0, "S: %d | R: %d | P: %d | RT: %d", sent, recv, ui.sess.pend, retran);
                 if (ui.gui != null && ui.gui.map != null) {
                     FastText.aprintf(g, new Coord(w, 30), 1, 0, "%.2f units/s", ui.gui.map.speed());
                 }
