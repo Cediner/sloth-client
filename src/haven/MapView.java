@@ -385,7 +385,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
         }
 
         public void drag(final Coord c) {
-            if (ui.modctrl) {
+            if (ui.modflags() == 0) {
                 focus = focus.add(new Coord3f(c.add(doff.inv())).rotate(-angle() + (float) (Math.PI / 2)));
                 doff = c;
             } else {
