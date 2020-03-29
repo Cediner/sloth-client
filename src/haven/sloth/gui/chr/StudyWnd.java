@@ -79,4 +79,10 @@ public class StudyWnd extends Window {
         visible = DefSettings.SHOWSTUDY.get();
         pack();
     }
+
+    @Override
+    public void close() {
+        DefSettings.SHOWSTUDY.set(false);
+        hide();
+    }
 }

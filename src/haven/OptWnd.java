@@ -537,8 +537,8 @@ public class OptWnd extends Window {
                     }
                 }));
                 uig.add(new IndirCheckBox("Show Study Window", SHOWSTUDY, val -> {
-                    if (ui.gui != null && ui.gui.mmequ != null) {
-                        ui.gui.mmequ.visible = val;
+                    if (ui.gui != null && ui.gui.study != null) {
+                        ui.gui.study.visible = val;
                     }
                 }));
                 uig.add(new IndirCheckBox("Show Inventory on login", OPENINVONLOGIN, OPENINVONLOGIN::set));
