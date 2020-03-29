@@ -706,6 +706,10 @@ public class Resource implements Serializable {
                     }
                     sqlcache = new SQLResCache();
                     local.add(new CacheSource(sqlcache));
+
+                    if (prscache != null) {
+                        local.add(new CacheSource(prscache));
+                    }
                     _local = local;
                 }
             }
@@ -736,9 +740,6 @@ public class Resource implements Serializable {
             synchronized (Resource.class) {
                 if (_remote == null) {
                     Pool remote = new Pool(local());
-                    if (prscache != null) {
-                        remote.add(new CacheSource(prscache));
-                    }
                     _remote = remote;
                 }
             }
