@@ -167,6 +167,7 @@ public class DefSettings {
     //UI
     public static final IndirSetting<Boolean> SHOWMINIINV = new IndirSetting<>(global, "ui.show-mini-inv");
     public static final IndirSetting<Boolean> SHOWMINIEQU = new IndirSetting<>(global, "ui.show-mini-equ");
+    public static final IndirSetting<Boolean> SHOWSTUDY = new IndirSetting<>(global, "ui.show-study");
 
     //Unused
     public static final IndirSetting<Integer> TREESCALE = new IndirSetting<>(global, "graphics.tree-scale");                 //[Int ] Tree scaling value [1-16], 1 is default
@@ -333,6 +334,7 @@ public class DefSettings {
         //UI
         SHOWMINIINV.ensure(false);
         SHOWMINIEQU.ensure(false);
+        SHOWSTUDY.ensure(true);
 
         //Audio
         TIMERVOLUME.ensure(1000);

@@ -531,7 +531,12 @@ public class OptWnd extends Window {
                         ui.gui.mminv.visible = val;
                     }
                 }));
-                uig.add(new IndirCheckBox("Show Mini Equipment View", SHOWMINIINV, val -> {
+                uig.add(new IndirCheckBox("Show Mini Equipment View", SHOWMINIEQU, val -> {
+                    if (ui.gui != null && ui.gui.mmequ != null) {
+                        ui.gui.mmequ.visible = val;
+                    }
+                }));
+                uig.add(new IndirCheckBox("Show Study Window", SHOWSTUDY, val -> {
                     if (ui.gui != null && ui.gui.mmequ != null) {
                         ui.gui.mmequ.visible = val;
                     }

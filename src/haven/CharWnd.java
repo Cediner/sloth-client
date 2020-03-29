@@ -37,6 +37,7 @@ import static haven.PUtils.*;
 
 import haven.resutil.FoodInfo;
 import haven.resutil.Curiosity;
+import haven.sloth.gui.chr.StudyWnd;
 
 /* XXX: There starts to seem to be reason to split the while character
  * sheet into some more modular structure, as it is growing quite
@@ -2302,10 +2303,12 @@ public class CharWnd extends Window {
     public void addchild(Widget child, Object... args) {
         String place = (args[0] instanceof String) ? (((String) args[0]).intern()) : null;
         if (place == "study") {
+            ui.gui.study = ui.gui.add(new StudyWnd(child));
+            /*
             sattr.add(child, new Coord(260, 35).add(wbox.btloff()));
             Frame.around(sattr, Collections.singletonList(child));
             Widget inf = sattr.add(new StudyInfo(new Coord(attrw - 150, child.sz.y), child), new Coord(260 + 150, child.c.y).add(wbox.btloff().x, 0));
-            Frame.around(sattr, Collections.singletonList(inf));
+            Frame.around(sattr, Collections.singletonList(inf));*/
         } else if (place == "fmg") {
             fight = (FightWnd) child;
             fgt.add(child, 0, 0);

@@ -32,6 +32,7 @@ import haven.sloth.Theme;
 import haven.sloth.gfx.MapPointer;
 import haven.sloth.gui.*;
 import haven.sloth.gui.Timer.TimersWnd;
+import haven.sloth.gui.chr.StudyWnd;
 import haven.sloth.gui.equip.MiniEquipView;
 import haven.sloth.gui.item.MiniInvView;
 import haven.sloth.gui.script.ScriptManager;
@@ -98,6 +99,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 
     public MiniInvView mminv;
     public MiniEquipView mmequ;
+    public StudyWnd study;
 
     @RName("gameui")
     public static class $_ implements Factory {
