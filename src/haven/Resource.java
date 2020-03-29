@@ -693,6 +693,8 @@ public class Resource implements Serializable {
             synchronized (Resource.class) {
                 if (_local == null) {
                     Pool local = new Pool(new JarSource());
+                    sqlcache = new SQLResCache();
+                    //local.add(new CacheSource(sqlcache));
                     try {
                         String dir = Config.resdir;
                         if (dir == null)
@@ -703,12 +705,6 @@ public class Resource implements Serializable {
                         /* Ignore these. We don't want to be crashing the client
                          * for users just because of errors in development
                          * aids. */
-                    }
-                    sqlcache = new SQLResCache();
-                    //bhare: local.add(new CacheSource(sqlcache));
-
-                    if (prscache != null) {
-                        local.add(new CacheSource(prscache));
                     }
                     _local = local;
                 }
@@ -740,6 +736,9 @@ public class Resource implements Serializable {
             synchronized (Resource.class) {
                 if (_remote == null) {
                     Pool remote = new Pool(local());
+                    if (prscache != null) {
+                        remote.add(new CacheSource(prscache));
+                    }
                     _remote = remote;
                 }
             }
