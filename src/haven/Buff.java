@@ -119,6 +119,15 @@ public class Buff extends Widget implements ItemInfo.ResOwner, Bufflist.Managed 
     private final AttrCache<Tex> nmeteri = new AttrCache<>(this::info, AttrCache.map1s(GItem.NumberInfo.class, ninf -> new TexI(GItem.NumberInfo.numrender(ninf.itemnum(), ninf.numcolor()))));
     private final AttrCache<Double> cmeteri = new AttrCache<>(this::info, AttrCache.map1(GItem.MeterInfo.class, minf -> minf::meter));
 
+    private static final Map<String, Color> openings = new HashMap<String, Color>(4) {{
+        put("paginae/atk/dizzy", new Color(8, 103, 136));
+        put("paginae/atk/offbalance", new Color(8, 103, 1));
+        put("paginae/atk/cornered", new Color(221, 28, 26));
+        put("paginae/atk/reeling", new Color(203, 168, 6));
+    }};
+    private final Coord simpleOpeningSz = new Coord(32, 32);
+    private final Coord simpleOpeningSmallSz = new Coord(22, 21);
+
     /**
      * Only for Fightview to see the buffs in the list, nothing fancy.
      * Fight Buffs don't have meters aside from the ameter.
@@ -137,8 +146,11 @@ public class Buff extends Widget implements ItemInfo.ResOwner, Bufflist.Managed 
         }
 
         try {
-            Tex img = res.get().layer(Resource.imgc).tex();
-            g.image(img, imgoff, new Coord(22, 21));
+            final Resource res = this.res.get();
+            final Color clr = openings.get(res.name);
+            g.chcolor(clr);
+            g.frect(imgoff, simpleOpeningSmallSz);
+            g.chcolor();
         } catch (Loading l) {
             //do nothing
         }
@@ -152,6 +164,44 @@ public class Buff extends Widget implements ItemInfo.ResOwner, Bufflist.Managed 
             g.frect(c, c.add(tsz.x, 0), c.add(tsz), c.add(0, tsz.y));
             g.chcolor();
             FastText.printf(g, tc, "%d", this.ameter);
+        }
+    }
+
+    public void sessdraw(final GOut g, Coord bc) {
+        try {
+            Resource res = this.res.get();
+            Color clr = openings.get(res.name);
+            if (clr == null) {
+                draw(g.reclip(bc, sz));
+                return;
+            }
+
+            if (ameter >= 0) {
+                g.image(Buff.cframe, bc);
+                g.chcolor(Color.BLACK);
+                g.frect(bc.add(Buff.ameteroff), Buff.ametersz);
+                g.chcolor(Color.WHITE);
+                g.frect(bc.add(Buff.ameteroff), new Coord((ameter * Buff.ametersz.x) / 100, Buff.ametersz.y));
+            } else {
+                g.image(Buff.frame, bc);
+            }
+
+            bc.x += 3;
+            bc.y += 3;
+
+            g.chcolor(clr);
+            g.frect(bc, simpleOpeningSz);
+
+            g.chcolor(Color.WHITE);
+            if (ameter() >= 0) {
+                final Coord asz = FastText.sizes(ameter + "");
+                bc.x = bc.x + simpleOpeningSz.x / 2 - asz.x / 2;
+                bc.y = bc.y + simpleOpeningSz.y / 2 - asz.y / 2;
+                FastText.printsf(g, bc, "%d", ameter);
+            }
+            g.chcolor();
+        } catch (Loading l) {
+            draw(g.reclip(bc, sz));
         }
     }
 

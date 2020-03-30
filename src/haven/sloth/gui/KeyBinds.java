@@ -426,6 +426,14 @@ public class KeyBinds {
                 return false;
             }
         }));
+        add(new KeyBind("Peace current target", new IndirSetting<>(DefSettings.global, "keybind.peace-current-target"), "S-P", ui -> {
+            if (ui.gui != null && ui.gui.fv != null && ui.gui.fv.current != null) {
+                ui.gui.fv.current.give.wdgmsg("click", 1);
+                return true;
+            } else {
+                return false;
+            }
+        }));
 
 
         //Fight moves binding
