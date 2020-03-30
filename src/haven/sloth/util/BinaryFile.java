@@ -27,7 +27,7 @@ public class BinaryFile {
     private void ensure(int bytes) {
         if (off + bytes < back.length)
             return;
-        final byte[] nback = new byte[back.length + back.length << 1 + bytes];
+        final byte[] nback = new byte[Math.max(back.length + back.length << 1, back.length + bytes)];
         System.arraycopy(back, 0, nback, 0, back.length);
         back = nback;
     }
