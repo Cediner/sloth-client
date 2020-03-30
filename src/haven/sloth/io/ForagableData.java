@@ -34,8 +34,12 @@ public class ForagableData {
     }
 
     public static boolean isForagable(final String name, final Gob g) {
-        return name.startsWith("gfx/terobjs/herbs/") || (DefSettings.FORAGEANIMALS.get() && g.type == Type.SMALLANIMAL) ||
-                (name.equals("gfx/kritter/bat/bat") && g.isDead()) || forageable_names.contains(name);
+        return name.startsWith("gfx/terobjs/herbs/") ||
+                (DefSettings.FORAGEANIMALS.get() && g.type == Type.SMALLANIMAL) ||
+                (name.equals("gfx/kritter/bat/bat") && g.isDead()) ||
+                (name.equals("gfx/kritter/swan/swan") && g.isDead()) ||
+                (name.equals("gfx/terobjs/items/grub")) ||
+                forageable_names.contains(name);
     }
 
     public final Text name;
