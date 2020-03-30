@@ -158,26 +158,46 @@ VALUES ('gfx/kritter/toad/toad', (SELECT type_id FROM type WHERE name_key = 'SMA
 INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/frog/frog', (SELECT type_id FROM type WHERE name_key = 'SMALLANIMAL'));
 INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/silkmoth/silkmoth', (SELECT type_id FROM type WHERE name_key = 'SMALLANIMAL'));
 INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/dragonfly/dragonfly', (SELECT type_id FROM type WHERE name_key = 'SMALLANIMAL'));
-INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/grasshopper/grasshopper', (SELECT type_id FROM type WHERE name_key = 'SMALLANIMAL'));
-INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/forestlizard/forestlizard', (SELECT type_id FROM type WHERE name_key = 'SMALLANIMAL'));
-INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/waterstrider/waterstrider', (SELECT type_id FROM type WHERE name_key = 'SMALLANIMAL'));
-INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/irrbloss/irrbloss', (SELECT type_id FROM type WHERE name_key = 'SMALLANIMAL'));
-INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/forestsnail/forestsnail', (SELECT type_id FROM type WHERE name_key = 'SMALLANIMAL'));
-INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/stagbeetle/stagbeetle', (SELECT type_id FROM type WHERE name_key = 'SMALLANIMAL'));
-INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/firefly/firefly', (SELECT type_id FROM type WHERE name_key = 'SMALLANIMAL'));
-INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/jellyfish/jellyfish', (SELECT type_id FROM type WHERE name_key = 'SMALLANIMAL'));
-INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/cavecentipede/cavecentipede', (SELECT type_id FROM type WHERE name_key = 'SMALLANIMAL'));
-INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/kritter/cavemoth/cavemoth', (SELECT type_id FROM type WHERE name_key = 'SMALLANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/kritter/grasshopper/grasshopper', (SELECT type_id FROM type WHERE name_key = 'SMALLANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/kritter/forestlizard/forestlizard', (SELECT type_id FROM type WHERE name_key = 'SMALLANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/kritter/waterstrider/waterstrider', (SELECT type_id FROM type WHERE name_key = 'SMALLANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/kritter/irrbloss/irrbloss', (SELECT type_id FROM type WHERE name_key = 'SMALLANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/kritter/forestsnail/forestsnail', (SELECT type_id FROM type WHERE name_key = 'SMALLANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/kritter/stagbeetle/stagbeetle', (SELECT type_id FROM type WHERE name_key = 'SMALLANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/kritter/firefly/firefly', (SELECT type_id FROM type WHERE name_key = 'SMALLANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/kritter/jellyfish/jellyfish', (SELECT type_id FROM type WHERE name_key = 'SMALLANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/kritter/cavecentipede/cavecentipede', (SELECT type_id FROM type WHERE name_key = 'SMALLANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/kritter/cavemoth/cavemoth', (SELECT type_id FROM type WHERE name_key = 'SMALLANIMAL'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/kritter/mallard/mallard', (SELECT type_id FROM type WHERE name_key = 'SMALLANIMAL'));
 -- vehicles
 -- tiles
-INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/beach', (SELECT type_id FROM type WHERE name_key = 'TILE'));
-INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/beechgrove', (SELECT type_id FROM type WHERE name_key = 'TILE'));
-INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/bluesod', (SELECT type_id FROM type WHERE name_key = 'TILE'));
-INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/boards', (SELECT type_id FROM type WHERE name_key = 'TILE'));
-INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/bog', (SELECT type_id FROM type WHERE name_key = 'TILE'));
-INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/bogwater', (SELECT type_id FROM type WHERE name_key = 'TILE'));
-INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/cave', (SELECT type_id FROM type WHERE name_key = 'TILE'));
-INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/cloudrange', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/tiles/beach', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/tiles/beechgrove', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/tiles/bluesod', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/tiles/boards', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/tiles/bog', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/tiles/bogwater', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/tiles/cave', (SELECT type_id FROM type WHERE name_key = 'TILE'));
+INSERT OR IGNORE INTO object (name, type_id)
+VALUES ('gfx/tiles/cloudrange', (SELECT type_id FROM type WHERE name_key = 'TILE'));
 INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/deep', (SELECT type_id FROM type WHERE name_key = 'TILE'));
 INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/dirt', (SELECT type_id FROM type WHERE name_key = 'TILE'));
 INSERT OR IGNORE INTO object (name, type_id) VALUES('gfx/tiles/dryflat', (SELECT type_id FROM type WHERE name_key = 'TILE'));
