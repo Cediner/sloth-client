@@ -192,7 +192,7 @@ public class MapFileWidget extends Widget {
     }
 
     private enum Type {
-        NATURAL, PLACED, CUSTOM, LINKED, KINGDOM
+        NATURAL, PLACED, CUSTOM, LINKED, KINGDOM, VILLAGE
     }
 
     public static class DisplayMarker {
@@ -212,18 +212,22 @@ public class MapFileWidget extends Widget {
             flagcc = flag.layer(Resource.negc).cc;
         }
 
+        private void checkTip(final String nm) {
+            if(tip == null || !tip.text.equals(nm)) {
+                tip = Text.renderstroked(nm, Color.WHITE, Color.BLACK);
+            }
+        }
+
         public DisplayMarker(Marker marker) {
             this.m = marker;
-            if(!(marker instanceof MapFile.RealmMarker)) {
-                tip = Text.renderstroked(m.nm, Color.WHITE, Color.BLACK);
-            } else {
-                this.tip = Text.renderstroked(String.format("[%s] %s", ((MapFile.RealmMarker) marker).realm, marker.nm),
-                        Color.WHITE, Color.BLACK);
-            }
+            checkTip(marker.tip());
+
             if (marker instanceof PMarker)
                 this.hit = Area.sized(flagcc.inv(), flagbg.sz);
 
-            if(marker instanceof MapFile.RealmMarker)
+            if(marker instanceof MapFile.VillageMarker)
+                type = Type.VILLAGE;
+            else if(marker instanceof MapFile.RealmMarker)
                 type = Type.KINGDOM;
             else if(marker instanceof MapFile.LinkedMarker)
                 type = Type.LINKED;
@@ -240,7 +244,8 @@ public class MapFileWidget extends Widget {
                 (type == Type.KINGDOM && DefSettings.SHOWKMARKERS.get()) ||
                 (type == Type.LINKED && DefSettings.SHOWLMARKERS.get()) ||
                 (type == Type.CUSTOM && DefSettings.SHOWCMARKERS.get()) ||
-                (type == Type.NATURAL && DefSettings.SHOWNMARKERS.get())) {
+                (type == Type.NATURAL && DefSettings.SHOWNMARKERS.get()) ||
+                (type == Type.VILLAGE && DefSettings.SHOWVMARKERS.get())) {
                 if (!(m instanceof MapFile.SlothMarker || m instanceof MapFile.RealmMarker)) {
                     return hit;
                 } else if (img != null) {
@@ -259,10 +264,10 @@ public class MapFileWidget extends Widget {
                     (type == Type.KINGDOM && DefSettings.SHOWKMARKERS.get()) ||
                     (type == Type.LINKED && DefSettings.SHOWLMARKERS.get()) ||
                     (type == Type.CUSTOM && DefSettings.SHOWCMARKERS.get()) ||
-                    (type == Type.NATURAL && DefSettings.SHOWNMARKERS.get())) {
-                if (!tip.text.equals(m.nm) && !(m instanceof MapFile.RealmMarker)) {
-                    tip = Text.renderstroked(m.nm, Color.WHITE, Color.BLACK);
-                }
+                    (type == Type.NATURAL && DefSettings.SHOWNMARKERS.get()) ||
+                    (type == Type.VILLAGE && DefSettings.SHOWVMARKERS.get())) {
+                checkTip(m.tip());
+
                 if (m instanceof PMarker) {
                     Coord ul = c.sub(flagcc);
                     g.chcolor(((PMarker) m).color);
@@ -337,6 +342,45 @@ public class MapFileWidget extends Widget {
                     } else {
                         try {
                             Resource res = MapFile.loadsaved(Resource.remote(), ((MapFile.RealmMarker) m).res);
+                            img = res.layer(Resource.imgc);
+                        } catch (Loading l) {
+                            //ignore
+                        }
+                    }
+                } else if(m instanceof MapFile.VillageMarker) {
+                    final MapFile.VillageMarker mark = (MapFile.VillageMarker) m;
+                    if (img != null) {
+                        final Coord sz = !DefSettings.SMALLMMMARKERS.get() ? Utils.imgsz(img.img) : Utils.imgsz(img.img).div(2);
+                        cc = sz.div(2);
+                        final Coord ul = c.sub(cc);
+                        g.image(img.tex(), ul, sz);
+                        if (DefSettings.SHOWVMARKERRAD.get()) {
+                            final int offset, isz;
+                            if(mark.nm.equals("Idol")) {
+                                offset = 50;
+                                isz = 101;
+                            } else {
+                                //Banner
+                                offset = 30;
+                                isz = 61;
+                            }
+
+                            g.chcolor(MarkerData.getVillageColor(mark.village));
+                            g.frect(c.sub(new Coord(offset, offset).div(1 << dlvl)), new Coord(isz, isz).div(1 << dlvl));
+                            g.chcolor();
+                            g.chcolor(MarkerData.getVillageBoldColor(mark.village));
+                            g.rect(c.sub(new Coord(offset, offset).div(1 << dlvl)), new Coord(isz, isz).div(1 << dlvl));
+                            g.chcolor();
+                        }
+                        if (DefSettings.SHOWMMMARKERNAMES.get()) {
+                            final Coord tipc = new Coord(ul.x + img.img.getWidth() / 2 - tip.sz().x / 2, ul.y - tip.sz().y);
+                            g.chcolor(MarkerData.getVillageBoldColor(mark.village));
+                            g.image(tip.tex(), tipc);
+                            g.chcolor();
+                        }
+                    } else {
+                        try {
+                            Resource res = MapFile.loadsaved(Resource.remote(), ((MapFile.VillageMarker) m).res);
                             img = res.layer(Resource.imgc);
                         } catch (Loading l) {
                             //ignore

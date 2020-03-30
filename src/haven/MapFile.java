@@ -36,6 +36,7 @@ import java.awt.image.WritableRaster;
 import com.google.common.flogger.FluentLogger;
 import haven.Defer.Future;
 import haven.resutil.Ridges;
+import haven.sloth.DefSettings;
 import haven.sloth.util.IDPool;
 
 import static haven.MCache.cmaps;
@@ -113,12 +114,16 @@ public class MapFile {
                     for (int i = 0, no = data.int32(); i < no; i++)
                         file.knownsegs.add(data.int64());
                     for (int i = 0, no = data.int32(); i < no; i++) {
-                        Marker mark = loadmarker(file, data);
-                        file.markers.add(mark);
-                        if (mark instanceof SMarker)
-                            file.smarkers.put(((SMarker) mark).oid, (SMarker) mark);
-                        else if (mark instanceof LinkedMarker)
-                            file.lmarkers.put(((LinkedMarker) mark).id, (LinkedMarker) mark);
+                        try {
+                            Marker mark = loadmarker(file, data);
+                            file.markers.add(mark);
+                            if (mark instanceof SMarker)
+                                file.smarkers.put(((SMarker) mark).oid, (SMarker) mark);
+                            else if (mark instanceof LinkedMarker)
+                                file.lmarkers.put(((LinkedMarker) mark).id, (LinkedMarker) mark);
+                        } catch (Message.BinError e) {
+                            logger.atInfo().log("mapfile warning: error when loading marker, data may be missing: %s\n", e);
+                        }
                     }
                 } else {
                     logger.atFine().log("mapfile warning: unknown mapfile index version: %d\n", ver);
@@ -324,6 +329,10 @@ public class MapFile {
         public String name() {
             return nm;
         }
+
+        public String tip() {
+            return nm;
+        }
     }
 
     public static class PMarker extends Marker {
@@ -402,6 +411,28 @@ public class MapFile {
         }
     }
 
+    //Works just like Realm Marker but for Villages/Banners
+    public static class VillageMarker extends Marker {
+        //either vidol or banner
+        public final Resource.Spec res;
+        public String village;
+
+        public VillageMarker(long seg, Coord  tc, String nm, Resource.Spec res, String village) {
+            super(seg, tc, nm);
+            this.res = res;
+            this.village = village;
+        }
+
+        @Override
+        public String tip() {
+            if (nm.equals("Banner") && !DefSettings.SHOWVMARKERTIPS.get()) {
+                return "";
+            } else {
+                return String.format("[%s] %s", village, nm);
+            }
+        }
+    }
+
     public static class RealmMarker extends Marker {
         public final Resource.Spec res;
         public String realm;
@@ -410,6 +441,11 @@ public class MapFile {
             super(seg, tc, nm);
             this.res = res;
             this.realm = realm;
+        }
+
+        @Override
+        public String tip() {
+            return String.format("[%s] %s", realm, nm);
         }
     }
 
@@ -464,6 +500,16 @@ public class MapFile {
                         throw (new Message.FormatError("Unknown realm marker version: " + version));
                     }
                 }
+                case 'v': {
+                    final int version = fp.uint8();
+                    if (version == 0) {
+                        Resource.Spec res = new Resource.Spec(Resource.remote(), fp.string(), fp.uint16());
+                        String realm = fp.string();
+                        return new VillageMarker(seg, tc, nm, res, realm);
+                    } else {
+                        throw (new Message.FormatError("Unknown village marker version: " + version));
+                    }
+                }
                 default:
                     throw (new Message.FormatError("Unknown marker type: " + (int) type));
             }
@@ -506,6 +552,13 @@ public class MapFile {
             fp.addstring(rm.res.name);
             fp.adduint16(rm.res.ver);
             fp.addstring(rm.realm);
+        } else if(mark instanceof VillageMarker) {
+            VillageMarker rm = (VillageMarker) mark;
+            fp.adduint8('v');
+            fp.adduint8(0);
+            fp.addstring(rm.res.name);
+            fp.adduint16(rm.res.ver);
+            fp.addstring(rm.village);
         } else {
             throw (new ClassCastException("Can only save PMarkers and SMarkers and SlothMarkers and LinkedMarkers"));
         }

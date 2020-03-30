@@ -580,17 +580,24 @@ public class MapWnd extends Window {
                             else if(marker.type == MarkerData.Type.REALM &&mark instanceof MapFile.RealmMarker &&
                                     mark.seg == info.seg && sc.equals(mark.tc))
                                 return; //Duplicate
+                            else if(marker.type == MarkerData.Type.VILLAGE && mark instanceof MapFile.VillageMarker &&
+                                    mark.seg == info.seg && sc.equals(mark.tc))
+                                return; //Duplicate
                         }
 
                         final Marker mark;
                         if(marker.type == MarkerData.Type.SLOTH) {
                             mark = new MapFile.SlothMarker(info.seg, sc, marker.defname,
                                     Color.WHITE, new Resource.Spec(Resource.remote(), marker.res));
-                        } else {
+                        } else if(marker.type == MarkerData.Type.REALM){
                             mark = new MapFile.RealmMarker(info.seg, sc, marker.defname,
                                     new Resource.Spec(Resource.remote(), marker.res),
                                     "???");
                             //TODO: Auto name realm based off buff
+                        } else {
+                            //Village
+                            mark = new MapFile.VillageMarker(info.seg, sc, marker.defname,
+                                    new Resource.Spec(Resource.remote(), marker.res), ui.gui.curvil);
                         }
                         view.file.add(mark);
                     } finally {

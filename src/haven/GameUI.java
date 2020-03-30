@@ -101,6 +101,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public MiniEquipView mmequ;
     public StudyWnd study;
 
+    public String curvil = "???";
+
     @RName("gameui")
     public static class $_ implements Factory {
         public Widget create(UI ui, Object[] args) {
@@ -706,8 +708,10 @@ public class GameUI extends ConsoleHost implements Console.Directory {
                 if (map != null) {
                     if ((o != null) && (cur == null)) {
                         map.setpoltext(id, "Entering " + o);
+                        curvil = o;
                     } else if ((o == null) && (cur != null)) {
                         map.setpoltext(id, "Leaving " + cur);
+                        curvil = "???";
                     }
                 }
                 polowners.put(id, o);

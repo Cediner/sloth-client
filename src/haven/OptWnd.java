@@ -431,6 +431,9 @@ public class OptWnd extends Window {
                 minimap.add(new IndirCheckBox("Show linked icons", SHOWLMARKERS));
                 minimap.add(new IndirCheckBox("Show kingdom icons", SHOWKMARKERS));
                 minimap.add(new IndirCheckBox("Show kingdom icon radius", SHOWKMARKERRAD));
+                minimap.add(new IndirCheckBox("Show village icons", SHOWVMARKERS));
+                minimap.add(new IndirCheckBox("Show village icon radius", SHOWVMARKERRAD));
+                minimap.add(new IndirCheckBox("Show banner icon name", SHOWVMARKERTIPS));
                 minimap.pack();
             }
             { //misc

@@ -54,6 +54,7 @@ public class TextEntry extends SIWidget {
     public String text;
     private boolean dirty = false;
     private double focusstart;
+    private boolean readonly = false;
     private Text.Line tcache = null;
 
     @RName("text")
@@ -94,6 +95,10 @@ public class TextEntry extends SIWidget {
     public void setpw(final boolean val) {
         this.pw = val;
         commit();
+    }
+
+    public void setReadOnly(final boolean readonly) {
+        this.readonly = readonly;
     }
 
     public void commit() {
@@ -209,7 +214,7 @@ public class TextEntry extends SIWidget {
     }
 
     public boolean keydown(KeyEvent ev) {
-        return (buf.key(ev));
+        return !readonly && (buf.key(ev));
     }
 
     public boolean mousedown(Coord c, int button) {
