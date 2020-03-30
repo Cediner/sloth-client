@@ -134,6 +134,7 @@ public class LoginScreen extends Widget {
             accdb.save();
         } catch (Exception e) {
             error("Failed to save accounts");
+            e.printStackTrace();
         }
     }
 

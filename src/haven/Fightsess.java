@@ -57,6 +57,15 @@ public class Fightsess extends Widget {
     public int pho;
     private Fightview fv;
 
+    private Coord actionAnchor;
+    private Coord enemyBuffAnchor;
+    private Coord enemyIPAnchor;
+    private Coord enemyLastMoveAnchor;
+    private Coord buffAnchor;
+    private Coord IPAnchor;
+    private Coord lastMoveAnchor;
+    private Coord cooldownAnchor;
+
     public static class Action {
         public final int id;
         public final Indir<Resource> res;
@@ -116,6 +125,15 @@ public class Fightsess extends Widget {
     public void presize() {
         resize(parent.sz);
         pcc = sz.div(2);
+        final Coord center = sz.div(2);
+        actionAnchor = center.add(0, center.y / 2);
+        cooldownAnchor = center.sub(0, (int) (center.y / 1.5f));
+        enemyBuffAnchor = cooldownAnchor.add(50, 0);
+        enemyIPAnchor = cooldownAnchor.add(75, 15);
+        enemyLastMoveAnchor = cooldownAnchor.add(50, 50);
+        buffAnchor = cooldownAnchor.sub(50, 0);
+        IPAnchor = cooldownAnchor.add(-75, 15);
+        lastMoveAnchor = cooldownAnchor.add(-50, 50);
     }
 
     private void updatepos() {
@@ -195,24 +213,24 @@ public class Fightsess extends Widget {
         double now = Utils.rtime();
 
         for (Buff buff : fv.buffs.children(Buff.class)) {
-            buff.sessdraw(g, pcc.add(-buff.c.x - Buff.cframe.sz().x - 20, buff.c.y + pho - Buff.cframe.sz().y));
+            buff.sessdraw(g, buffAnchor.add(-buff.c.x - Buff.cframe.sz().x - 20, buff.c.y - Buff.cframe.sz().y));
         }
 
 
         if (fv.current != null) {
             for (Buff buff : fv.current.buffs.children(Buff.class)) {
-                buff.sessdraw(g, pcc.add(buff.c.x + 20, buff.c.y + pho - Buff.cframe.sz().y));
+                buff.sessdraw(g, enemyBuffAnchor.add(buff.c.x + 20, buff.c.y - Buff.cframe.sz().y));
             }
 
-            g.aimage(ip.get().tex(), pcc.add(-75, 0), 1, 0.5);
-            g.aimage(oip.get().tex(), pcc.add(75, 0), 0, 0.5);
+            g.aimage(ip.get().tex(), IPAnchor, 1, 0.5);
+            g.aimage(oip.get().tex(), enemyIPAnchor, 0, 0.5);
 
             if (fv.lsrel.size() > 1)
                 fxon(fv.current.gobid, tgtfx);
         }
 
         {
-            Coord cdc = pcc.add(cmc);
+            Coord cdc = cooldownAnchor;
             if (now < fv.atkct) {
                 double a = (now - fv.atkcs) / (fv.atkct - fv.atkcs);
                 g.chcolor(255, 0, 128, 224);
@@ -234,6 +252,7 @@ public class Fightsess extends Widget {
                 FastText.aprintsf(g, cdc.add(0, -50), 0.5, 0.0, "%s: %d", type, stat);
             }
         }
+
         try {
             Indir<Resource> lastact = fv.lastact;
             if (lastact != this.lastact1) {
@@ -243,7 +262,7 @@ public class Fightsess extends Widget {
             double lastuse = fv.lastuse;
             if (lastact != null) {
                 Tex ut = lastact.get().layer(Resource.imgc).tex();
-                Coord useul = pcc.add(usec1).sub(ut.sz().div(2));
+                Coord useul = lastMoveAnchor.sub(ut.sz().div(2));
                 g.image(ut, useul);
                 g.image(useframe, useul.sub(useframeo));
                 double a = now - lastuse;
@@ -256,6 +275,7 @@ public class Fightsess extends Widget {
             }
         } catch (Loading l) {
         }
+
         if (fv.current != null) {
             try {
                 Indir<Resource> lastact = fv.current.lastact;
@@ -266,7 +286,7 @@ public class Fightsess extends Widget {
                 double lastuse = fv.current.lastuse;
                 if (lastact != null) {
                     Tex ut = lastact.get().layer(Resource.imgc).tex();
-                    Coord useul = pcc.add(usec2).sub(ut.sz().div(2));
+                    Coord useul = enemyLastMoveAnchor.sub(ut.sz().div(2));
                     g.image(ut, useul);
                     g.image(useframe, useul.sub(useframeo));
                     double a = now - lastuse;
@@ -295,7 +315,7 @@ public class Fightsess extends Widget {
             weappen = 0.0;
         }
         for (int i = 0; i < actions.length; i++) {
-            Coord ca = pcc.add(actc(i));
+            Coord ca = actionAnchor.add(actc(i));
             Action act = actions[i];
             try {
                 if (act != null) {
