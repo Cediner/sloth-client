@@ -257,6 +257,9 @@ public class MapView extends PView implements DTarget, Console.Directory {
         private Coord dragorig = null;
         private float elevorig, anglorig;
 
+        private long lastwh = 0;
+        private float whz;
+
         public void tick(double dt) {
             Coord3f cc = getcenter();
             if (FLATWORLD.get())
@@ -302,9 +305,19 @@ public class MapView extends PView implements DTarget, Console.Directory {
         }
 
         public boolean wheel(Coord c, int amount) {
-            float d = dist + (amount * 10);
-            if (d < 5)
-                d = 5;
+            if (whz < 0 && amount > 0)
+                whz = 0;
+            else if (whz > 0 && amount < 0)
+                whz = 0;
+            else if ((System.currentTimeMillis() - lastwh) < 1000)
+                whz += amount * 5;
+            else
+                whz = amount * 5;
+            lastwh = System.currentTimeMillis();
+
+            float d = dist + whz;
+            if (d < 20)
+                d = 20;
             dist = d;
             return (true);
         }
@@ -410,6 +423,9 @@ public class MapView extends PView implements DTarget, Console.Directory {
         private float tangl = angl;
         private float anglorig;
 
+        private long lastwh = 0;
+        private float whz;
+
         public TopDownCam() {
         }
 
@@ -473,7 +489,17 @@ public class MapView extends PView implements DTarget, Console.Directory {
         }
 
         public boolean wheel(Coord c, int amount) {
-            chfield(tfield + amount * 10);
+            if (whz < 0 && amount > 0)
+                whz = 0;
+            else if (whz > 0 && amount < 0)
+                whz = 0;
+            else if ((System.currentTimeMillis() - lastwh) < 1000)
+                whz += amount * 5;
+            else
+                whz = amount * 5;
+            lastwh = System.currentTimeMillis();
+
+            chfield(tfield + whz);
             return (true);
         }
 
@@ -558,6 +584,9 @@ public class MapView extends PView implements DTarget, Console.Directory {
         private final float pi2 = (float) (Math.PI * 2);
         private boolean lock = true;
 
+        private long lastwh = 0;
+        private float whz;
+
         public SOrthoCam(boolean exact, boolean lock) {
             super(exact);
             this.lock = lock;
@@ -630,7 +659,17 @@ public class MapView extends PView implements DTarget, Console.Directory {
         }
 
         public boolean wheel(Coord c, int amount) {
-            chfield(tfield + amount * 10);
+            if (whz < 0 && amount > 0)
+                whz = 0;
+            else if (whz > 0 && amount < 0)
+                whz = 0;
+            else if ((System.currentTimeMillis() - lastwh) < 1000)
+                whz += amount * 5;
+            else
+                whz = amount * 5;
+            lastwh = System.currentTimeMillis();
+
+            chfield(tfield + whz);
             return (true);
         }
 
