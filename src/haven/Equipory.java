@@ -154,6 +154,14 @@ public class Equipory extends Widget implements DTarget {
         }
     }
 
+    public GItem leftHand() {
+        return lweap;
+    }
+
+    public GItem rightHand() {
+        return rweap;
+    }
+
     /*******************************************************************************
      * For Scripting API only
      */

@@ -383,17 +383,29 @@ public class KeyBinds {
             }
         }));
         add(new KeyBind("Equip held item into left hand", new IndirSetting<>(DefSettings.global, "keybind.equip-held-lh"), "M-Z", ui -> {
-            if (ui.gui != null && ui.gui.vhand != null && ui.gui.equ != null) {
-                ui.gui.equ.wdgmsg("drop", 6);
-                return true;
+            if (ui.gui != null && ui.gui.equ != null) {
+                if (!ui.gui.hand.isEmpty()) {
+                    ui.gui.equ.wdgmsg("drop", 6);
+                    return true;
+                } else if (ui.gui.equ.leftHand() != null) {
+                    ui.gui.equ.leftHand().wdgmsg("take", Coord.o);
+                    return true;
+                }
+                return false;
             } else {
                 return false;
             }
         }));
         add(new KeyBind("Equip held item into right hand", new IndirSetting<>(DefSettings.global, "keybind.equip-held-rh"), "M-X", ui -> {
-            if (ui.gui != null && ui.gui.vhand != null && ui.gui.equ != null) {
-                ui.gui.equ.wdgmsg("drop", 7);
-                return true;
+            if (ui.gui != null && ui.gui.equ != null) {
+                if (!ui.gui.hand.isEmpty()) {
+                    ui.gui.equ.wdgmsg("drop", 7);
+                    return true;
+                } else if (ui.gui.equ.rightHand() != null) {
+                    ui.gui.equ.rightHand().wdgmsg("take", Coord.o);
+                    return true;
+                }
+                return false;
             } else {
                 return false;
             }
