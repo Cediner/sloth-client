@@ -39,6 +39,7 @@ public class ForagableData {
                 (name.equals("gfx/kritter/bat/bat") && g.isDead()) ||
                 (name.equals("gfx/kritter/swan/swan") && g.isDead()) ||
                 (name.equals("gfx/terobjs/items/grub")) ||
+                (name.equals("gfx/terobjs/items/arrow")) ||
                 forageable_names.contains(name);
     }
 
