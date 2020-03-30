@@ -368,9 +368,6 @@ public class MapFileWidget extends Widget {
                             g.chcolor(MarkerData.getVillageColor(mark.village));
                             g.frect(c.sub(new Coord(offset, offset).div(1 << dlvl)), new Coord(isz, isz).div(1 << dlvl));
                             g.chcolor();
-                            g.chcolor(MarkerData.getVillageBoldColor(mark.village));
-                            g.rect(c.sub(new Coord(offset, offset).div(1 << dlvl)), new Coord(isz, isz).div(1 << dlvl));
-                            g.chcolor();
                         }
                         if (DefSettings.SHOWMMMARKERNAMES.get()) {
                             final Coord tipc = new Coord(ul.x + img.img.getWidth() / 2 - tip.sz().x / 2, ul.y - tip.sz().y);
