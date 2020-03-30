@@ -341,6 +341,9 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
                 }
                 if (type == Type.HUMAN) {
                     setattr(new Halo(this));
+                    if(id == ui.gui.map.plgob) {
+                        setattr(new MyGobIndicator(this));
+                    }
                 }
 
                 MarkerData.marker(name).ifPresent(mark -> ui.gui.mapfile.markobj(mark, rc));

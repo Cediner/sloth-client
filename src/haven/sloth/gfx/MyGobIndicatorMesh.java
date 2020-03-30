@@ -26,8 +26,8 @@ public class MyGobIndicatorMesh extends FastMesh {
         if (spr != null)
             return spr;
         else {
-            final float outerrad = 4f; //Outer distance of the circle
-            final float innerrad = 3f;  //Inner distance of the circle
+            final float outerrad = 3f; //Outer distance of the circle
+            final float innerrad = 2f;  //Inner distance of the circle
             final double step = Math.PI / 64;
             final int verts = 4 * 64;
             final int vertsd2 = verts / 2;
