@@ -297,6 +297,7 @@ public class MainFrame extends java.awt.Frame implements Runnable, Console.Direc
         if (Thread.currentThread() != this.mt)
             throw (new RuntimeException("MainFrame is being run from an invalid context"));
         Thread ui = new HackThread(p, "Haven UI thread");
+        logger.atInfo().log("Starting master UI thread");
         ui.start();
         try {
             final UI lui = p.newui(null);
@@ -444,17 +445,23 @@ public class MainFrame extends java.awt.Frame implements Runnable, Console.Direc
     }
 
     private static void main2(String[] args) {
+        logger.atInfo().log("Parse command line into Config");
         Config.cmdline(args);
         try {
+            logger.atInfo().log("javabughack");
             javabughack();
         } catch (InterruptedException e) {
             return;
         }
+        logger.atInfo().log("Setup res");
         setupres();
+        logger.atInfo().log("Init DefSettings and custom data");
         DefSettings.init(); //init after res has been setup...
+        logger.atInfo().log("Create the MainFrame");
         MainFrame f = (instance = new MainFrame(null));
         if (Utils.getprefb("fullscreen", false))
             f.setfs();
+        logger.atInfo().log("Start the MainFrame thread");
         f.mt.start();
         try {
             f.mt.join();
@@ -483,6 +490,7 @@ public class MainFrame extends java.awt.Frame implements Runnable, Console.Direc
         ThreadGroup g = new ThreadGroup("Haven main group");
         String ed;
         if (!(ed = Utils.getprop("haven.errorurl", "")).equals("")) {
+            logger.atInfo().log("Setting up loftar error logging");
             try {
                 final haven.error.ErrorHandler hg = new haven.error.ErrorHandler(new java.net.URL(ed));
                 hg.sethandler(new haven.error.ErrorGui(null) {
@@ -499,6 +507,7 @@ public class MainFrame extends java.awt.Frame implements Runnable, Console.Direc
                 main2(args);
             }
         }, "Haven main thread");
+        logger.atInfo().log("Starting main thread");
         main.start();
     }
 

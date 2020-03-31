@@ -198,7 +198,9 @@ public class DefSettings {
      * Ensure certain settings exist
      */
     public static void init() {
+        logger.atInfo().log("Loading global settings");
         global.load();
+        logger.atInfo().log("Ensuring settings are set to something");
         //Custom Graphics
         SKIPLOADING.ensure(true);
         SHOWFLAVOBJS.ensure(false);
@@ -351,19 +353,32 @@ public class DefSettings {
         SHOWGRID.ensure(false);
 
         //Piggy backing off this to init some other important settings
-        Script.reloadConfig();
+        logger.atInfo().log("Reload script config");
+        //load Script config in the background
+        new Thread(Script::reloadConfig).start();
         final Optional<Storage> optint = Storage.create("jdbc:sqlite:data/static.sqlite");
         if (optint.isPresent()) {
+            logger.atInfo().log("Loading movables");
             Movable.init(optint.get());
+            logger.atInfo().log("Loading growth");
             Growth.init(optint.get());
+            logger.atInfo().log("Loading range");
             Range.init(optint.get());
+            logger.atInfo().log("Loading alered");
             Alerted.init(optint.get());
+            logger.atInfo().log("Loading deleted");
             Deleted.init();
+            logger.atInfo().log("Loading hidden");
             Hidden.init();
+            logger.atInfo().log("Loading highlighted");
             HighlightData.init();
+            logger.atInfo().log("Loading itemdata");
             ItemData.init(optint.get());
+            logger.atInfo().log("Loading mapdata");
             MapData.init();
+            logger.atInfo().log("Loading foragables");
             ForagableData.init(optint.get());
+            logger.atInfo().log("Loading dangerous");
             DangerousData.init(optint.get());
             //MapFileData.init();
             //Internal lookups are no longer needed
