@@ -23,13 +23,19 @@
         (if (> (length targets) 0) 
             (if (= 0 toggle) 
                 (progn
-                  (send-discord-message +discord-bot-channel+
-                                        (format nil "<@&~A> Spotted an angler at ~A"
+                  (send-discord-message +discord-angler-channel+
+                                        (format nil "<@&~A> Spotted ~A angler(s) at ~A"
                                                 role
+												(length targets)
                                                 lake-name))
                   (setq toggle 1))
                 (sleep 20))
             (progn
+			  (when (= 1 toggle)
+				(send-discord-message +discord-angler-channel+ 
+										(format nil "<@&~A> Angler(s) dead at ~A"
+												role
+												lake-name)))
               (goto-character-screen)
               (sleep (* 60 20))
               (login char-name)

@@ -11,6 +11,7 @@
 (with-script-define end-discord-session script-end-discord)
 
 (defconstant +discord-bot-channel+ "bot-alerts")
+(defconstant +discord-angler-channel+ "angler-alerts")
 
 (defun prompt-for-discord-info ()
   (msg-listen)
@@ -35,4 +36,5 @@
 
 (export '(send-discord-message start-discord-session end-discord-session
           prompt-for-discord-info
-          +discord-bot-channel+))
+          +discord-bot-channel+
+		  +discord-angler-channel+))

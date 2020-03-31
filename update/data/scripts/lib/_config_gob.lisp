@@ -51,7 +51,7 @@
   (let ((start-c (gob-rc gob)))
     (wait-until (lambda () (or (funcall test gob)
                                (not (coord2d-eq start-c (gob-rc gob)))))
-                :timeout 5000)))
+                :timeout 2000)))
 
 (defun wait-for-movement-to-finish (&key (gob (my-gob)) (test #'is-gob-moving))
   (sleep 0.5)

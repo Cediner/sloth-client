@@ -15,11 +15,15 @@
 (defun pickup-items (original-position item-gob-name)
   (loop
      for gob = (get-next-item-on-ground item-gob-name) 
-     until (or (held-item) (null gob))
+     until (or (held-item)
+               (null gob))
      do (let ((id (gob-id gob)))
-          (mv-smart-move-to-gob gob)
+          ;(mv-smart-move-to-gob gob)
+          (unless (mv-los-gob gob)
+            (mv-path-to-gob gob))
           (mv-click-gob gob +right-button+ +mf-shift+)
-          (wait-for-movement)))
+          (sleep 2)
+          (mv-move-to (gob-rc gob))))
   (when (held-item)
     (item-drop (held-item)))
   (loop

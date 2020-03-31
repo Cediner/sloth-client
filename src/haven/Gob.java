@@ -205,6 +205,15 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
         private double a = 0.0;
         private Matrix4f update = null;
         private final Location xl = new Location(Matrix4f.id, "gobx"), rot = new Location(Matrix4f.id, "gob");
+        private final int sx, sy, sz;
+
+        public GobLocation() {
+            super();
+            final Random rnd = new Random();
+            sx = rnd.nextBoolean() ? 1 : -1 * rnd.nextInt(15);
+            sy = rnd.nextBoolean() ? 1 : -1 * rnd.nextInt(15);
+            sz = rnd.nextBoolean() ? 1 : -1 * rnd.nextInt(10);
+        }
 
         public void tick() {
             try {
@@ -217,6 +226,9 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
                     if (tl instanceof WaterTile)
                         c.z += 5;
                 }
+                c.x += Math.sin(Math.toRadians((System.currentTimeMillis()) % 360)) * sx;
+                c.y += Math.cos(Math.toRadians((System.currentTimeMillis()) % 360)) * sy;
+                c.z += Math.sin(Math.toRadians((System.currentTimeMillis()) % 360)) * sz;
                 if ((this.c == null) || !c.equals(this.c))
                     xl.update(Transform.makexlate(new Matrix4f(), this.c = c));
                 if (this.a != Gob.this.a)
