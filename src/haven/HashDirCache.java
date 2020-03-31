@@ -323,24 +323,9 @@ public class HashDirCache implements ResCache {
         return ("FileCache(" + id + ")");
     }
 
-    public static HashDirCache forjnlp() {
-        try {
-            javax.jnlp.BasicService basic = (javax.jnlp.BasicService) javax.jnlp.ServiceManager.lookup("javax.jnlp.BasicService");
-            if (basic == null)
-                return (null);
-            return (new HashDirCache(basic.getCodeBase().toURI()));
-        } catch (NoClassDefFoundError e) {
-            return (null);
-        } catch (Exception e) {
-            return (null);
-        }
-    }
-
     public static HashDirCache create() {
         HashDirCache ret;
         try {
-            if ((ret = forjnlp()) != null)
-                return (ret);
             if (Config.resurl != null)
                 return (new HashDirCache(Config.resurl.toURI()));
             return (new HashDirCache("default"));

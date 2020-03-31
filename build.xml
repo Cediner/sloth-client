@@ -34,7 +34,6 @@
             <classpath>
                 <pathelement path="lib/jogl-all.jar"/>
                 <pathelement path="lib/gluegen-rt.jar"/>
-                <pathelement path="lib/jnlp.jar"/>
                 <pathelement path="lib/jglob.jar"/>
                 <pathelement path="lib/flogger-0.3.1.jar"/>
                 <pathelement path="lib/bcprov-jdk15on-160.jar"/>
@@ -64,10 +63,6 @@
         <copy todir="build/classes/haven" file="etc/res-preload"/>
         <copy todir="build/classes/haven" file="etc/res-bgload"/>
         <copy todir="build/classes/haven" file="etc/icon.png"/>
-    </target>
-
-    <target name="appletview" depends="build-env">
-        <copy file="etc/applet.html" todir="build"/>
     </target>
 
     <target name="lib-classes" depends="build-env" unless="unpacked-lib">
@@ -194,7 +189,7 @@
         <move file="ver" todir="update"/>
     </target>
 
-    <target name="deftgt" depends="jars, appletview"/>
+    <target name="deftgt" depends="jars"/>
 
     <target name="run" depends="jars">
         <java jar="build/hafen.jar" fork="true"/>
