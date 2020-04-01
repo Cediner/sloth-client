@@ -359,7 +359,7 @@ public class Fightview extends Widget {
                 if (!(wdg instanceof Buff))
                     continue;
                 final Buff buf = (Buff) wdg;
-                if (buf.ameter >= 0) {
+                if (buf.ameter >= 0 && buf.isOpening()) {
                     buf.fightdraw(g.reclip(c.copy(), Buff.scframe.sz()));
                     c.x += Buff.scframe.sz().x + 2;
                 }

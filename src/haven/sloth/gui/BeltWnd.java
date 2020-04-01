@@ -300,7 +300,7 @@ public class BeltWnd extends MovableWidget {
         upd_page();
         for (int i = 0; i < btns.length; ++i) {
             final BeltBtn btn = btns[i];
-            ui.root.kbs.add(new KeyBinds.KeyBind(String.format("Hotbar %s - %d", name, i), btn.key,
+            ui.root.kbs.add("Hotbar", new KeyBinds.KeyBind(String.format("Hotbar %s - %d", name, i), btn.key,
                     btn.key.get(), ui -> {
                 if (BeltWnd.this.visible) {
                     btn.use();
@@ -312,7 +312,7 @@ public class BeltWnd extends MovableWidget {
         }
         for (int i = 1; i <= pagecount; ++i) {
             final int page = i - 1;
-            ui.root.kbs.add(new KeyBinds.KeyBind(String.format("Hotbar %s - Page %d", name, i),
+            ui.root.kbs.add("Hotbar", new KeyBinds.KeyBind(String.format("Hotbar %s - Page %d", name, i),
                     new IndirSetting<>(DefSettings.global, String.format("keybind.hotbar-%s-page-%d", name, i)),
                     name.equals("n") ? "M-" + i : "",
                     ui -> {

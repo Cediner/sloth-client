@@ -8,10 +8,7 @@ import haven.sloth.gob.Type;
 import haven.sloth.io.ForagableData;
 
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static haven.OCache.posres;
 
@@ -46,12 +43,13 @@ public class KeyBinds {
     }
 
     public final List<KeyBind> keybinds = new ArrayList<>();
+    public final HashMap<String, List<KeyBind>> groupings = new HashMap<>();
 
     public KeyBinds() {
         super();
         //In game events
         //Window toggles
-        add(new KeyBind("Toggle Minimap", new IndirSetting<>(DefSettings.global, "keybind.toggle-minimap"), "C-A", ui -> {
+        add("UI", new KeyBind("Toggle Minimap", new IndirSetting<>(DefSettings.global, "keybind.toggle-minimap"), "C-A", ui -> {
             if (ui.gui != null) {
                 ui.gui.toggleMapfile();
                 return true;
@@ -59,7 +57,7 @@ public class KeyBinds {
                 return false;
             }
         }));
-        add(new KeyBind("Toggle Inventory", new IndirSetting<>(DefSettings.global, "keybind.toggle-inventory"), "Tab", ui -> {
+        add("UI", new KeyBind("Toggle Inventory", new IndirSetting<>(DefSettings.global, "keybind.toggle-inventory"), "Tab", ui -> {
             if (ui.gui != null) {
                 ui.gui.toggleInv();
                 return true;
@@ -67,7 +65,7 @@ public class KeyBinds {
                 return false;
             }
         }));
-        add(new KeyBind("Toggle Equipment", new IndirSetting<>(DefSettings.global, "keybind.toggle-equipment"), "C-E", ui -> {
+        add("UI", new KeyBind("Toggle Equipment", new IndirSetting<>(DefSettings.global, "keybind.toggle-equipment"), "C-E", ui -> {
             if (ui.gui != null) {
                 ui.gui.toggleEquipment();
                 return true;
@@ -75,7 +73,7 @@ public class KeyBinds {
                 return false;
             }
         }));
-        add(new KeyBind("Toggle CharSheet", new IndirSetting<>(DefSettings.global, "keybind.toggle-charwnd"), "C-T", ui -> {
+        add("UI", new KeyBind("Toggle CharSheet", new IndirSetting<>(DefSettings.global, "keybind.toggle-charwnd"), "C-T", ui -> {
             if (ui.gui != null) {
                 ui.gui.toggleCharWnd();
                 return true;
@@ -83,7 +81,7 @@ public class KeyBinds {
                 return false;
             }
         }));
-        add(new KeyBind("Toggle Kin List", new IndirSetting<>(DefSettings.global, "keybind.toggle-kinlist"), "C-B", ui -> {
+        add("UI", new KeyBind("Toggle Kin List", new IndirSetting<>(DefSettings.global, "keybind.toggle-kinlist"), "C-B", ui -> {
             if (ui.gui != null) {
                 ui.gui.toggleKin();
                 return true;
@@ -91,7 +89,7 @@ public class KeyBinds {
                 return false;
             }
         }));
-        add(new KeyBind("Toggle Options", new IndirSetting<>(DefSettings.global, "keybind.toggle-options"), "C-O", ui -> {
+        add("UI", new KeyBind("Toggle Options", new IndirSetting<>(DefSettings.global, "keybind.toggle-options"), "C-O", ui -> {
             if (ui.gui != null) {
                 ui.gui.toggleOpts();
                 return true;
@@ -99,7 +97,7 @@ public class KeyBinds {
                 return false;
             }
         }));
-        add(new KeyBind("Toggle Chat", new IndirSetting<>(DefSettings.global, "keybind.toggle-chatwnd"), "C-C", ui -> {
+        add("UI", new KeyBind("Toggle Chat", new IndirSetting<>(DefSettings.global, "keybind.toggle-chatwnd"), "C-C", ui -> {
             if (ui.gui != null) {
                 ui.gui.toggleChat();
                 return true;
@@ -107,7 +105,7 @@ public class KeyBinds {
                 return false;
             }
         }));
-        add(new KeyBind("Toggle Forage Helper", new IndirSetting<>(DefSettings.global, "keybind.toggle-forage-helper"), "S-F", ui -> {
+        add("UI", new KeyBind("Toggle Forage Helper", new IndirSetting<>(DefSettings.global, "keybind.toggle-forage-helper"), "S-F", ui -> {
             if (ui.gui != null) {
                 ui.gui.toggleForageHelper();
                 return true;
@@ -116,26 +114,26 @@ public class KeyBinds {
             }
         }));
         //Special settings toggles
-        add(new KeyBind("Toggle grid lines", new IndirSetting<>(DefSettings.global, "keybind.toggle-grid"), "C-G", ui -> {
+        add("Gameplay", new KeyBind("Toggle grid lines", new IndirSetting<>(DefSettings.global, "keybind.toggle-grid"), "C-G", ui -> {
             DefSettings.SHOWGRID.set(!DefSettings.SHOWGRID.get());
             return true;
         }));
-        add(new KeyBind("Toggle hovertips", new IndirSetting<>(DefSettings.global, "keybind.toggle-hovertips"), "C-Q", ui -> {
+        add("Gameplay", new KeyBind("Toggle hovertips", new IndirSetting<>(DefSettings.global, "keybind.toggle-hovertips"), "C-Q", ui -> {
             DefSettings.SHOWHOVERTOOLTIPS.set(!DefSettings.SHOWHOVERTOOLTIPS.get());
             return true;
         }));
-        add(new KeyBind("Toggle hitboxes", new IndirSetting<>(DefSettings.global, "keybind.toggle-hitboxes"), "C-H", ui -> {
+        add("Gameplay", new KeyBind("Toggle hitboxes", new IndirSetting<>(DefSettings.global, "keybind.toggle-hitboxes"), "C-H", ui -> {
             DefSettings.SHOWHITBOX.set(!DefSettings.SHOWHITBOX.get());
             ui.sess.glob.oc.changeAllGobs();
             return true;
         }));
-        add(new KeyBind("Toggle Gob When Hidden", new IndirSetting<String>(DefSettings.global, "keybind.toggle-show-hidden-gob"), "S-G", ui -> {
+        add("Gameplay", new KeyBind("Toggle Gob When Hidden", new IndirSetting<String>(DefSettings.global, "keybind.toggle-show-hidden-gob"), "S-G", ui -> {
             DefSettings.SHOWHIDDENGOB.set(!DefSettings.SHOWHIDDENGOB.get());
             ui.sess.glob.oc.changeAllGobs();
             return true;
         }));
         //Misc
-        add(new KeyBind("Focus map", new IndirSetting<>(DefSettings.global, "keybind.focus-map"), "Escape", ui -> {
+        add("UI", new KeyBind("Focus map", new IndirSetting<>(DefSettings.global, "keybind.focus-map"), "Escape", ui -> {
             if (ui.gui != null && ui.gui.map != null && !ui.gui.map.hasfocus) {
                 ui.gui.setfocus(ui.gui.map);
                 return true;
@@ -143,7 +141,7 @@ public class KeyBinds {
                 return false;
             }
         }));
-        add(new KeyBind("Recall map pos/size one",
+        add("UI", new KeyBind("Recall map pos/size one",
                 new IndirSetting<>(DefSettings.global, "keybind.recall-map-pos-size-one"), "C-Z", ui -> {
             if (ui.gui != null && ui.gui.mapfile != null) {
                 ui.gui.mapfile.recall(DefSettings.MMMEMSIZEONE, DefSettings.MMMEMPOSONE);
@@ -152,7 +150,7 @@ public class KeyBinds {
                 return false;
             }
         }));
-        add(new KeyBind("Recall map pos/size two",
+        add("UI", new KeyBind("Recall map pos/size two",
                 new IndirSetting<>(DefSettings.global, "keybind.recall-map-pos-size-two"), "C-X", ui -> {
             if (ui.gui != null && ui.gui.mapfile != null) {
                 ui.gui.mapfile.recall(DefSettings.MMMEMSIZETWO, DefSettings.MMMEMPOSTWO);
@@ -162,7 +160,7 @@ public class KeyBinds {
             }
         }));
         //Item locking for held item
-        add(new KeyBind("Lock item on mouse", new IndirSetting<>(DefSettings.global, "keybind.lock-held"), "Back Quote", ui -> {
+        add("UI", new KeyBind("Lock item on mouse", new IndirSetting<>(DefSettings.global, "keybind.lock-held"), "Back Quote", ui -> {
             if (ui.gui != null && ui.gui.vhand != null) {
                 ui.gui.vhand.setLock(!ui.gui.vhand.locked());
                 return true;
@@ -171,7 +169,7 @@ public class KeyBinds {
             }
         }));
         //Loftar screenshooter
-        add(new KeyBind("Screenshot", new IndirSetting<>(DefSettings.global, "keybind.screenshot"), "M-S", ui -> {
+        add("UI", new KeyBind("Screenshot", new IndirSetting<>(DefSettings.global, "keybind.screenshot"), "M-S", ui -> {
             if (ui.gui != null && Config.screenurl != null) {
                 Screenshooter.take(ui.gui, Config.screenurl);
                 return true;
@@ -180,17 +178,17 @@ public class KeyBinds {
             }
         }));
         //Admin Console
-        add(new KeyBind("Console", new IndirSetting<>(DefSettings.global, "keybind.toggle-cmd"), "S-Semicolon", ui -> {
+        add("UI", new KeyBind("Console", new IndirSetting<>(DefSettings.global, "keybind.toggle-cmd"), "S-Semicolon", ui -> {
             ui.root.entercmd();
             return true;
         }));
 
         //Misc
-        add(new KeyBind("Toggle Pause", new IndirSetting<>(DefSettings.global, "keybind.toggle-pause"), "C-P", ui -> {
+        add("Gameplay", new KeyBind("Toggle Pause", new IndirSetting<>(DefSettings.global, "keybind.toggle-pause"), "C-P", ui -> {
             DefSettings.PAUSED.set(!DefSettings.PAUSED.get());
             return true;
         }));
-        add(new KeyBind("Toggle profiler", new IndirSetting<>(DefSettings.global, "keybind.toggle-profiler"), "C-L", ui -> {
+        add("UI", new KeyBind("Toggle profiler", new IndirSetting<>(DefSettings.global, "keybind.toggle-profiler"), "C-L", ui -> {
             if (Config.profile || Config.profilegpu) {
                 final ProfWnd wnd = ui.gui.add(new ProfWnd());
                 if (Config.profile) {
@@ -209,7 +207,7 @@ public class KeyBinds {
                 return false;
             }
         }));
-        add(new KeyBind("Forage closest item", new IndirSetting<>(DefSettings.global, "keybind.forage-closest-item"), "Q", ui -> {
+        add("Gameplay", new KeyBind("Forage closest item", new IndirSetting<>(DefSettings.global, "keybind.forage-closest-item"), "Q", ui -> {
             if (ui.gui != null && ui.gui.map != null) {
                 final Gob pl = ui.sess.glob.oc.getgob(ui.gui.map.plgob);
                 if (pl != null) {
@@ -245,7 +243,7 @@ public class KeyBinds {
                 return false;
             }
         }));
-        add(new KeyBind("Cycle character speed", new IndirSetting<>(DefSettings.global, "keybind.cycle-char-speed"), "C-R", ui -> {
+        add("Movement", new KeyBind("Cycle character speed", new IndirSetting<>(DefSettings.global, "keybind.cycle-char-speed"), "C-R", ui -> {
             if (ui.gui != null && ui.gui.speed != null) {
                 ui.gui.speed.cyclespeed();
                 return true;
@@ -253,7 +251,7 @@ public class KeyBinds {
                 return false;
             }
         }));
-        add(new KeyBind("Change to Crawl Speed", new IndirSetting<>(DefSettings.global, "keybind.crawl-char-speed"), "M-Q", ui -> {
+        add("Movement", new KeyBind("Change to Crawl Speed", new IndirSetting<>(DefSettings.global, "keybind.crawl-char-speed"), "M-Q", ui -> {
             if (ui.gui != null && ui.gui.speed != null) {
                 ui.gui.speed.setSpeed(Speedget.Speed.CRAWL);
                 return true;
@@ -261,7 +259,7 @@ public class KeyBinds {
                 return false;
             }
         }));
-        add(new KeyBind("Change to Walk Speed", new IndirSetting<>(DefSettings.global, "keybind.walk-char-speed"), "M-W", ui -> {
+        add("Movement", new KeyBind("Change to Walk Speed", new IndirSetting<>(DefSettings.global, "keybind.walk-char-speed"), "M-W", ui -> {
             if (ui.gui != null && ui.gui.speed != null) {
                 ui.gui.speed.setSpeed(Speedget.Speed.WALK);
                 return true;
@@ -269,7 +267,7 @@ public class KeyBinds {
                 return false;
             }
         }));
-        add(new KeyBind("Change to Run Speed", new IndirSetting<>(DefSettings.global, "keybind.run-char-speed"), "M-E", ui -> {
+        add("Movement", new KeyBind("Change to Run Speed", new IndirSetting<>(DefSettings.global, "keybind.run-char-speed"), "M-E", ui -> {
             if (ui.gui != null && ui.gui.speed != null) {
                 ui.gui.speed.setSpeed(Speedget.Speed.RUN);
                 return true;
@@ -277,7 +275,7 @@ public class KeyBinds {
                 return false;
             }
         }));
-        add(new KeyBind("Change to Sprint Speed", new IndirSetting<>(DefSettings.global, "keybind.sprint-char-speed"), "M-R", ui -> {
+        add("Movement", new KeyBind("Change to Sprint Speed", new IndirSetting<>(DefSettings.global, "keybind.sprint-char-speed"), "M-R", ui -> {
             if (ui.gui != null && ui.gui.speed != null) {
                 ui.gui.speed.setSpeed(Speedget.Speed.SPRINT);
                 return true;
@@ -285,7 +283,7 @@ public class KeyBinds {
                 return false;
             }
         }));
-        add(new KeyBind("Aggro animal nearest to mouse", new IndirSetting<>(DefSettings.global, "keybind.aggro-nearest-animal-to-mouse"), "C-F", ui -> {
+        add("Combat", new KeyBind("Aggro animal nearest to mouse", new IndirSetting<>(DefSettings.global, "keybind.aggro-nearest-animal-to-mouse"), "C-F", ui -> {
             if (ui.gui != null && ui.gui.map != null && ui.gui.menu != null) {
                 Gob target = null;
                 double dist = Float.MAX_VALUE;
@@ -316,7 +314,7 @@ public class KeyBinds {
                 return false;
             }
         }));
-        add(new KeyBind("Aggro player nearest to mouse", new IndirSetting<>(DefSettings.global, "keybind.aggro-nearest-player-to-mouse"), "C-D", ui -> {
+        add("Combat", new KeyBind("Aggro player nearest to mouse", new IndirSetting<>(DefSettings.global, "keybind.aggro-nearest-player-to-mouse"), "C-D", ui -> {
             if (ui.gui != null && ui.gui.map != null && ui.gui.menu != null) {
                 Gob target = null;
                 double dist = Float.MAX_VALUE;
@@ -350,31 +348,31 @@ public class KeyBinds {
                 return false;
             }
         }));
-        add(new KeyBind("Move West", new IndirSetting<>(DefSettings.global, "keybind.move-left"), "Left", ui -> {
-            if(ui.gui != null && ui.gui.map != null) {
+        add("Movement", new KeyBind("Move West", new IndirSetting<>(DefSettings.global, "keybind.move-left"), "Left", ui -> {
+            if (ui.gui != null && ui.gui.map != null) {
                 ui.gui.map.relMove(new Coord2d(-1000, 0));
                 return true;
             } else {
                 return false;
             }
         }));
-        add(new KeyBind("Move North", new IndirSetting<>(DefSettings.global, "keybind.move-up"), "Up", ui -> {
-            if(ui.gui != null && ui.gui.map != null) {
+        add("Movement", new KeyBind("Move North", new IndirSetting<>(DefSettings.global, "keybind.move-up"), "Up", ui -> {
+            if (ui.gui != null && ui.gui.map != null) {
                 ui.gui.map.relMove(new Coord2d(0, -1000));
                 return true;
             } else {
                 return false;
             }
         }));
-        add(new KeyBind("Move South", new IndirSetting<>(DefSettings.global, "keybind.move-down"), "Down", ui -> {
-            if(ui.gui != null && ui.gui.map != null) {
+        add("Movement", new KeyBind("Move South", new IndirSetting<>(DefSettings.global, "keybind.move-down"), "Down", ui -> {
+            if (ui.gui != null && ui.gui.map != null) {
                 ui.gui.map.relMove(new Coord2d(0, 1000));
                 return true;
             } else {
                 return false;
             }
         }));
-        add(new KeyBind("Move East", new IndirSetting<>(DefSettings.global, "keybind.move-right"), "Right", ui -> {
+        add("Movement", new KeyBind("Move East", new IndirSetting<>(DefSettings.global, "keybind.move-right"), "Right", ui -> {
             if (ui.gui != null && ui.gui.map != null) {
                 ui.gui.map.relMove(new Coord2d(1000, 0));
                 return true;
@@ -382,7 +380,7 @@ public class KeyBinds {
                 return false;
             }
         }));
-        add(new KeyBind("Equip held item into left hand", new IndirSetting<>(DefSettings.global, "keybind.equip-held-lh"), "M-Z", ui -> {
+        add("Gameplay", new KeyBind("Equip held item into left hand", new IndirSetting<>(DefSettings.global, "keybind.equip-held-lh"), "M-Z", ui -> {
             if (ui.gui != null && ui.gui.equ != null) {
                 if (!ui.gui.hand.isEmpty()) {
                     ui.gui.equ.wdgmsg("drop", 6);
@@ -396,7 +394,7 @@ public class KeyBinds {
                 return false;
             }
         }));
-        add(new KeyBind("Equip held item into right hand", new IndirSetting<>(DefSettings.global, "keybind.equip-held-rh"), "M-X", ui -> {
+        add("Gameplay", new KeyBind("Equip held item into right hand", new IndirSetting<>(DefSettings.global, "keybind.equip-held-rh"), "M-X", ui -> {
             if (ui.gui != null && ui.gui.equ != null) {
                 if (!ui.gui.hand.isEmpty()) {
                     ui.gui.equ.wdgmsg("drop", 7);
@@ -410,7 +408,7 @@ public class KeyBinds {
                 return false;
             }
         }));
-        add(new KeyBind("Recenter camera", new IndirSetting<>(DefSettings.global, "keybind.recenter-camera"), "S-C", ui -> {
+        add("Camera", new KeyBind("Recenter camera", new IndirSetting<>(DefSettings.global, "keybind.recenter-camera"), "S-C", ui -> {
             if (ui.gui != null && ui.gui.map != null) {
                 final MapView.Camera c = ui.gui.map.camera;
                 if (c instanceof MapView.Fixator) {
@@ -426,7 +424,7 @@ public class KeyBinds {
                 return false;
             }
         }));
-        add(new KeyBind("Peace current target", new IndirSetting<>(DefSettings.global, "keybind.peace-current-target"), "S-P", ui -> {
+        add("Combat", new KeyBind("Peace current target", new IndirSetting<>(DefSettings.global, "keybind.peace-current-target"), "S-P", ui -> {
             if (ui.gui != null && ui.gui.fv != null && ui.gui.fv.current != null) {
                 ui.gui.fv.current.give.wdgmsg("click", 1);
                 return true;
@@ -438,12 +436,15 @@ public class KeyBinds {
 
         //Fight moves binding
         for (final KeyBind kb : Fightsess.keys) {
-            add(kb);
+            add("Combat", kb);
         }
     }
 
-    public void add(final KeyBind kb) {
+    public void add(final String group, final KeyBind kb) {
         keybinds.add(kb);
+        final List<KeyBind> lst = groupings.getOrDefault(group, new ArrayList<>());
+        lst.add(kb);
+        groupings.put(group, lst);
     }
 
     boolean validBinding(final IndirSetting<String> key) {

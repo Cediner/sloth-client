@@ -7,36 +7,54 @@ import java.awt.*;
 
 public class Grouping extends Widget {
     public static final IBox box = new IBox(Theme.fullres("frame"));
-    private Text cap;
+    private final Text cap;
+    private final boolean showbox;
+
     private Coord ctl;
 
-    public Grouping(final String cap) {
-        setCap(cap);
+    public Grouping(final String cap, final boolean showbox) {
+        this.cap = Text.renderstroked(cap, Color.WHITE, Color.BLACK);
+        this.showbox = showbox;
     }
 
-    public void setCap(final String cap) {
-        this.cap = Text.renderstroked(cap, Color.WHITE, Color.BLACK);
+    public Grouping(final String cap) {
+        this(cap, true);
+    }
+
+    public Grouping(final boolean showbox) {
+        this.showbox = showbox;
+        this.cap = null;
+    }
+
+    public Grouping() {
+        this(true);
     }
 
     @Override
     public void resize(Coord sz) {
-        final Coord capsz = cap.sz();
+        final Coord capsz = cap != null ? cap.sz() : new Coord(0, 0);
         ctl = box.ctloff().add(0, capsz.y);
         sz.x = Math.max(sz.x, capsz.x);
-        this.sz = sz.add(box.cisz().add(0, cap.sz().y));
+        this.sz = sz.add(box.cisz().add(0, capsz.y));
     }
 
     @Override
     public void draw(GOut g) {
-        box.draw(g, Coord.z, sz);
-        g.aimage(cap.tex(), new Coord(sz.x / 2, box.ctloff().y), 0.5, 0);
+        if (showbox)
+            box.draw(g, Coord.z, sz);
+        if (cap != null)
+            g.aimage(cap.tex(), new Coord(sz.x / 2, box.ctloff().y), 0.5, 0);
         super.draw(g);
     }
 
     public Coord xlate(Coord c, boolean in) {
-        if (in)
-            return (c.add(ctl));
-        else
-            return (c.sub(ctl));
+        if (showbox) {
+            if (in)
+                return (c.add(ctl));
+            else
+                return (c.sub(ctl));
+        } else {
+            return c;
+        }
     }
 }

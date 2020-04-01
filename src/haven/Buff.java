@@ -128,6 +128,16 @@ public class Buff extends Widget implements ItemInfo.ResOwner, Bufflist.Managed 
     private final Coord simpleOpeningSz = new Coord(32, 32);
     private final Coord simpleOpeningSmallSz = new Coord(22, 21);
 
+    public boolean isOpening() {
+        try {
+            final Resource res = this.res.get();
+            final Color clr = openings.get(res.name);
+            return clr != null;
+        } catch (Loading l) {
+            return false;
+        }
+    }
+
     /**
      * Only for Fightview to see the buffs in the list, nothing fancy.
      * Fight Buffs don't have meters aside from the ameter.
@@ -135,35 +145,38 @@ public class Buff extends Widget implements ItemInfo.ResOwner, Bufflist.Managed 
      */
     void fightdraw(final GOut g) {
         final Coord sz = scframe.sz();
-        g.chcolor(255, 255, 255, a);
-        Double ameter = (this.ameter >= 0) ? (this.ameter / 100.0) : ameteri.get();
-        if (ameter != null) {
-            g.image(scframe, Coord.z);
-            g.chcolor(0, 0, 0, a);
-            g.frect(sameteroff, sametersz);
-            g.chcolor(255, 255, 255, a);
-            g.frect(sameteroff, new Coord((int) Math.floor(ameter * sametersz.x), sametersz.y));
-        }
 
         try {
             final Resource res = this.res.get();
             final Color clr = openings.get(res.name);
-            g.chcolor(clr);
-            g.frect(imgoff, simpleOpeningSmallSz);
-            g.chcolor();
+            if (clr != null) {
+                g.chcolor(255, 255, 255, a);
+                Double ameter = (this.ameter >= 0) ? (this.ameter / 100.0) : ameteri.get();
+                if (ameter != null) {
+                    g.image(scframe, Coord.z);
+                    g.chcolor(0, 0, 0, a);
+                    g.frect(sameteroff, sametersz);
+                    g.chcolor(255, 255, 255, a);
+                    g.frect(sameteroff, new Coord((int) Math.floor(ameter * sametersz.x), sametersz.y));
+                }
+
+                g.chcolor(clr);
+                g.frect(imgoff, simpleOpeningSmallSz);
+                g.chcolor();
+
+                if (ameter != null) {
+                    final int width = FastText.textw(this.ameter + "");
+                    final Coord c = new Coord(sz.x / 2 - width / 2, sz.y / 2 - 5);
+                    final Coord tc = c.sub(0, 3);
+                    final Coord tsz = new Coord(width, 10);
+                    g.chcolor(new Color(64, 64, 64, 215));
+                    g.frect(c, c.add(tsz.x, 0), c.add(tsz), c.add(0, tsz.y));
+                    g.chcolor();
+                    FastText.printf(g, tc, "%d", this.ameter);
+                }
+            }
         } catch (Loading l) {
             //do nothing
-        }
-
-        if (ameter != null) {
-            final int width = FastText.textw(this.ameter + "");
-            final Coord c = new Coord(sz.x / 2 - width / 2, sz.y / 2 - 5);
-            final Coord tc = c.sub(0, 3);
-            final Coord tsz = new Coord(width, 10);
-            g.chcolor(new Color(64, 64, 64, 215));
-            g.frect(c, c.add(tsz.x, 0), c.add(tsz), c.add(0, tsz.y));
-            g.chcolor();
-            FastText.printf(g, tc, "%d", this.ameter);
         }
     }
 

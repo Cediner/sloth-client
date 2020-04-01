@@ -7,8 +7,17 @@ public class LinearGrouping extends Grouping {
     private final int spacer;
 
     public LinearGrouping(final String cap, final int spacer) {
-        super(cap);
+        super(cap, true);
         this.spacer = spacer;
+    }
+
+    public LinearGrouping(final int spacer, final boolean box) {
+        super(box);
+        this.spacer = spacer;
+    }
+
+    public LinearGrouping(final int spacer) {
+        this(spacer, true);
     }
 
     @Override
