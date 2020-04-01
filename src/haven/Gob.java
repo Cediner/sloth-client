@@ -26,6 +26,7 @@
 
 package haven;
 
+import com.fasterxml.jackson.databind.util.Named;
 import com.google.common.flogger.FluentLogger;
 import haven.resutil.WaterTile;
 import haven.sloth.DefSettings;
@@ -425,6 +426,12 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
                     try {
                         ol.spr = Sprite.create(this, ol.res.get(), ol.sdt.clone());
                     } catch (Loading e) {
+                    } catch (RuntimeException bver) {
+                        //Bad version is loaded into the client, reload newer version...
+                        if (ol.res instanceof Named) {
+                            final Resource.Named nm = (Resource.Named) ol.res;
+                            ol.res = Resource.remote().load(nm.name, nm.ver);
+                        }
                     }
                 } else {
                     boolean done = ol.spr.tick(dt);

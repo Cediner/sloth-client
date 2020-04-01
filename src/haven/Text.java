@@ -294,6 +294,10 @@ public class Text {
         return (renderstroked(text, c, stroke, std));
     }
 
+    public static Line renderstroked(String text) {
+        return renderstroked(text, Color.WHITE, Color.BLACK);
+    }
+
     public static Line renderstroked(String text, Color c, Color stroke, Foundry foundry) {
         return (foundry.renderstroked(text, c, stroke));
     }

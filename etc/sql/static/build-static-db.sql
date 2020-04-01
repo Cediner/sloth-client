@@ -945,17 +945,32 @@ SELECT item_id
 FROM item
 WHERE item_type_id in (SELECT item_type_id FROM item_type WHERE name_key in ('EQUIPMENT', 'TOOL', 'ARMOR', 'WEAPON'));
 
+create table if not exists season_status
+(
+    id      INTEGER NOT NULL PRIMARY KEY,
+    display TEXT    NOT NULL
+);
 
+INSERT OR IGNORE INTO season_status (id, display)
+VALUES (0, "Yes"),
+       (1, "No"),
+       (2, "Unknown");
 
-CREATE TABLE IF NOT EXISTS forageable
+create table if not exists forageable
 (
     name     TEXT PRIMAY KEY,
-    inv_res  TEXT    NOT NULL,
-    game_res TEXT    NOT NULL,
-    min_val  INTEGER NOT NULL,
-    max_val  INTEGER NOT NULL,
-    location TEXT    NOT NULL
-)
+    inv_res  TEXT    not null,
+    game_res TEXT    not null,
+    min_val  INTEGER not null,
+    max_val  INTEGER not null,
+    location TEXT    not null,
+    spring   INTEGER default 0 not null,
+    summer   INTEGER default 0 not null,
+    autumn   INTEGER default 0 not null,
+    winter   INTEGER default 0 not null
+);
+
+
 
 INSERT OR IGNORE INTO forageable
 VALUES ("Blueberries", "gfx/terobjs/items/blueberry", "gfx/terobjs/blueberry", 5, 20, "Forests, Grasslands"),

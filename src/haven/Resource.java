@@ -736,6 +736,7 @@ public class Resource implements Serializable {
             synchronized (Resource.class) {
                 if (_remote == null) {
                     Pool remote = new Pool(local());
+                    //Add cache files
                     if (prscache != null) {
                         remote.add(new CacheSource(prscache));
                     }
@@ -1229,7 +1230,16 @@ public class Resource implements Serializable {
                             if (classpath.size() > 0) {
                                 Collection<ClassLoader> loaders = new LinkedList<ClassLoader>();
                                 for (Indir<Resource> res : classpath) {
-                                    loaders.add((wait ? Loading.waitfor(res) : res.get()).layer(CodeEntry.class).loader(wait));
+                                    try {
+                                        loaders.add((wait ? Loading.waitfor(res) : res.get()).layer(CodeEntry.class).loader(wait));
+                                    } catch (RuntimeException e) {
+                                        if (res instanceof Named) {
+                                            final Named nm = (Named) res;
+                                            loaders.add(remote().loadwait(nm.name, nm.ver).layer(CodeEntry.class).loader(wait));
+                                        } else {
+                                            throw e;
+                                        }
+                                    }
                                 }
                                 ret = new LibClassLoader(ret, loaders);
                             }

@@ -33,6 +33,7 @@ import haven.sloth.gfx.MapPointer;
 import haven.sloth.gui.*;
 import haven.sloth.gui.Timer.TimersWnd;
 import haven.sloth.gui.chr.StudyWnd;
+import haven.sloth.gui.core.Scrollport;
 import haven.sloth.gui.equip.MiniEquipView;
 import haven.sloth.gui.item.MiniInvView;
 import haven.sloth.gui.script.ScriptManager;

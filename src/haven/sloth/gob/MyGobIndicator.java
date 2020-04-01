@@ -25,6 +25,6 @@ public class MyGobIndicator extends GAttrib implements Rendered {
     public void tick() {
         super.tick();
         final UI ui = gob.glob.ui.get();
-        show = ui != null && (ui.gui.map.camera instanceof MapView.Fixator || ui.gui.map.camera instanceof MapView.FreeStyle);
+        show = ui != null && ui.gui != null && ui.gui.map != null && (ui.gui.map.camera instanceof MapView.Fixator || ui.gui.map.camera instanceof MapView.FreeStyle);
     }
 }
