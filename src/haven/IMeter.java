@@ -42,6 +42,7 @@ public class IMeter extends MovableWidget {
     static Coord msz = new Coord(75, 10);
     Indir<Resource> bg;
     List<Meter> meters;
+    private Tex tt;
 
     @RName("im")
     public static class $_ implements Factory {
@@ -90,6 +91,8 @@ public class IMeter extends MovableWidget {
             }
             g.chcolor();
             g.image(bg, Coord.z);
+            if (tt != null)
+                g.aimage(tt, sz.div(2), 0.5f, 0.5f);
         } catch (Loading l) {
             //Ignore
         }
@@ -105,6 +108,7 @@ public class IMeter extends MovableWidget {
             super.uimsg(msg, args);
             if(msg.equals("tip")) {
                 final String tt = (String)args[0];
+                this.tt = Text.renderstroked(tt.substring(tt.indexOf(':') + 1)).tex();
                 Matcher matcher = hppat.matcher(tt);
                 if(matcher.find()) {
                     ui.sess.details.shp = Integer.parseInt(matcher.group(1));
