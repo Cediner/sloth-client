@@ -147,6 +147,11 @@ public class Coord implements Comparable<Coord>, java.io.Serializable {
         return new Coord(Utils.floordiv(this.x, x), Utils.floordiv(this.y, y));
     }
 
+
+    public Coord div(double x, double y) {
+        return new Coord(Utils.floordiv(this.x, x), Utils.floordiv(this.y, y));
+    }
+
     public Coord div(int d) {
         return (div(new Coord(d, d)));
     }

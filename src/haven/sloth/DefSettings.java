@@ -5,6 +5,7 @@ import haven.Coord;
 import haven.Indir;
 import haven.sloth.gob.*;
 import haven.sloth.gui.BeltWnd;
+import haven.sloth.gui.chr.SkillTree;
 import haven.sloth.io.*;
 import haven.sloth.script.Script;
 
@@ -384,6 +385,8 @@ public class DefSettings {
             ForagableData.init(optint.get());
             logger.atInfo().log("Loading dangerous");
             DangerousData.init(optint.get());
+            logger.atInfo().log("Loading Skill Data");
+            SkillTree.init(optint.get());
             //MapFileData.init();
             //Internal lookups are no longer needed
             optint.get().close();

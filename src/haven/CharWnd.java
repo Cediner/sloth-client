@@ -2402,8 +2402,14 @@ public class CharWnd extends Window {
                 cons.update(t, m);
             }
         } else if (nm == "csk") {
+            //Known
+            final List<Skill> sks = decsklist(args, 0, true);
+            ui.gui.scwnd.skills.update(sks);
             skg.csk.update(decsklist(args, 0, true));
         } else if (nm == "nsk") {
+            //Avaiable
+            final List<Skill> sks = decsklist(args, 0, false);
+            ui.gui.scwnd.skills.update(sks);
             skg.nsk.update(decsklist(args, 0, false));
         } else if (nm == "ccr") {
             credos.ccr(deccrlist(args, 0, true));

@@ -32,6 +32,8 @@ import haven.sloth.Theme;
 import haven.sloth.gfx.MapPointer;
 import haven.sloth.gui.*;
 import haven.sloth.gui.Timer.TimersWnd;
+import haven.sloth.gui.chr.SkillTree;
+import haven.sloth.gui.chr.SkillnCredoWnd;
 import haven.sloth.gui.chr.StudyWnd;
 import haven.sloth.gui.core.Scrollport;
 import haven.sloth.gui.equip.MiniEquipView;
@@ -101,6 +103,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public MiniInvView mminv;
     public MiniEquipView mmequ;
     public StudyWnd study;
+    public SkillnCredoWnd scwnd;
 
     public String curvil = "???";
 
@@ -180,6 +183,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
         ui.root.sessionDisplay.unlink();
         add(ui.root.sessionDisplay);
         add(lrhandview);
+        scwnd = add(new SkillnCredoWnd());
+        scwnd.hide();
     }
 
     @Override

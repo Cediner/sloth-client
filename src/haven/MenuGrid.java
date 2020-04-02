@@ -320,6 +320,9 @@ public class MenuGrid extends MovableWidget {
         addSpecial(new SpecialPagina(this, "management::studyreport",
                 Resource.local().load("custom/paginae/default/wnd/study"),
                 (pag) -> ui.gui.study.visible = !ui.gui.study.visible));
+        addSpecial(new SpecialPagina(this, "management::skillsncredo",
+                Resource.local().load("custom/paginae/default/wnd/skillsncredo"),
+                (pag) -> ui.gui.scwnd.toggleVisibility()));
         //Scripts
         final File dir = new File("data/scripts/");
         if (dir.exists()) {
