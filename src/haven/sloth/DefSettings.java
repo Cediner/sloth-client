@@ -2,6 +2,7 @@ package haven.sloth;
 
 import com.google.common.flogger.FluentLogger;
 import haven.Coord;
+import haven.Indir;
 import haven.sloth.gob.*;
 import haven.sloth.gui.BeltWnd;
 import haven.sloth.io.*;
@@ -45,6 +46,7 @@ public class DefSettings {
 
     //Sections & settings for each one, for 'global'
     //Custom stuff
+    public static final IndirSetting<Boolean> PARALLEL = new IndirSetting<>(global, "engine.parallel");
     public static final IndirSetting<Boolean> SKIPLOADING = new IndirSetting<>(global, "graphics.skip-loading");             //[Bool] Skip loading screens
     public static final IndirSetting<Boolean> SHOWFLAVOBJS = new IndirSetting<>(global, "graphics.flav-objs-show");          //[Bool] Don't show flav objs
     public static final IndirSetting<Boolean> SYMMETRICOUTLINES = new IndirSetting<>(global, "graphics.outlines-symmetric"); //[Bool] Make outlines symmetric (bolder)
@@ -201,6 +203,8 @@ public class DefSettings {
         logger.atInfo().log("Loading global settings");
         global.load();
         logger.atInfo().log("Ensuring settings are set to something");
+        //Engine
+        PARALLEL.ensure(true);
         //Custom Graphics
         SKIPLOADING.ensure(true);
         SHOWFLAVOBJS.ensure(false);

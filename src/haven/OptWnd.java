@@ -373,6 +373,7 @@ public class OptWnd extends Window {
         { //Gameplay settings
             final Coord c = new Coord(0, 0);
             final Grouping gpsettings = new GridGrouping("Gameplay Settings", spacer, 600);
+            final Grouping engine = new LinearGrouping("Engine", spacer);
             final Grouping flowermenu = new LinearGrouping("FlowerMenu", spacer);
             final Grouping crops = new LinearGrouping("Crops/Flavor Objs", spacer);
             final Grouping gobs = new LinearGrouping("Gobs", spacer);
@@ -380,6 +381,10 @@ public class OptWnd extends Window {
             final Grouping minimap = new LinearGrouping("Minimap", spacer);
             final Grouping misc = new LinearGrouping("Misc", spacer);
             final Grouping pathfinding = new LinearGrouping("Pathfinder", spacer);
+            { //Engine
+                engine.add(new IndirCheckBox("Turn on parallel processing", PARALLEL));
+                engine.pack();
+            }
             { //flowermenu
                 flowermenu.add(new IndirCheckBox("Quick flowermenu", QUICKMENU));
                 flowermenu.add(new IndirCheckBox("Don't close flowermenu on clicks", BUGGEDMENU));
@@ -455,6 +460,7 @@ public class OptWnd extends Window {
                 pathfinding.pack();
             }
 
+            gpsettings.add(engine);
             gpsettings.add(flowermenu);
             gpsettings.add(crops);
             gpsettings.add(gobs);

@@ -51,7 +51,7 @@ public class ForagableData {
 
     public final Text name;
     public final RichText location;
-    public final Resource res;
+    public final Indir<Resource> res;
     public final int min_value, max_value;
     public final int spring;
     public final int summer;
@@ -65,7 +65,7 @@ public class ForagableData {
         this.name = Text.render(name);
         this.location = RichText.render("Found in:\n  \u2022 " + location.replaceAll(",\\s+", "\n  \u2022 "), 200);
         if (res != null && !res.equals("")) {
-            this.res = Resource.remote().loadwait(res);
+            this.res = Resource.remote().load(res);
         } else {
             this.res = null;
         }

@@ -190,7 +190,8 @@ public class KeyBinds {
         }));
         add("UI", new KeyBind("Toggle profiler", new IndirSetting<>(DefSettings.global, "keybind.toggle-profiler"), "C-L", ui -> {
             if (Config.profile || Config.profilegpu) {
-                final ProfWnd wnd = ui.gui.add(new ProfWnd());
+                final Widget par = ui.gui != null ? ui.gui : ui.root;
+                final ProfWnd wnd = par.add(new ProfWnd());
                 if (Config.profile) {
                     wnd.add(ui.root.guprof, "UI profile");
                     wnd.add(ui.root.grprof, "GL profile");

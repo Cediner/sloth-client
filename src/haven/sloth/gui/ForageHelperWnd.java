@@ -91,8 +91,15 @@ public class ForageHelperWnd extends Window implements Observer {
                 g.chcolor(Color.WHITE);
                 g.rect(Coord.z, g.sz);
                 //Draw icon if any
-                if (item.res != null && item.res.layer(Resource.imgc) != null) {
-                    g.image(item.res.layer(Resource.imgc).tex(), new Coord(1, 1), new Coord(29, 29));
+                if (item.res != null) {
+                    try {
+                        final Resource res = item.res.get();
+                        if (res.layer(Resource.imgc) != null) {
+                            g.image(res.layer(Resource.imgc).tex(), new Coord(1, 1), new Coord(29, 29));
+                        }
+                    } catch (Resource.Loading e) {
+                        //Ignore for now
+                    }
                 }
                 g.line(new Coord(30, 0), new Coord(30, 30), 1);
                 //Draw name
