@@ -3,7 +3,6 @@ package haven.sloth.gui;
 import haven.*;
 import haven.sloth.gui.layout.GridGrouping;
 import haven.sloth.gui.layout.LinearGrouping;
-import haven.sloth.script.Context;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -109,6 +108,7 @@ public class ForageWizardWnd extends Window {
                 final Foragable[] forages = {
                         new Foragable("Lady's Mantle", "gfx/terobjs/herbs/ladysmantle"),
                         new Foragable("Candleberry", "gfx/terobjs/herbs/candleberry"),
+                        new Foragable("Common Starfish", "gfx/terobjs/herbs/commonstarfish"),
                         new Foragable("Royal Toadstool", "gfx/terobjs/herbs/royaltoadstool"),
                         new Foragable("Cavebulb", "gfx/terobjs/herbs/cavebulb"),
                         new Foragable("Frogs Crown", "gfx/terobjs/herbs/frogscrown"),
@@ -121,6 +121,7 @@ public class ForageWizardWnd extends Window {
                         new Foragable("Edelweiss", "gfx/terobjs/herbs/edelweiss"),
                         new Foragable("Clover", "gfx/terobjs/herbs/clover"),
                         new Foragable("Snapdragon", "gfx/terobjs/herbs/snapdragon"),
+                        new Foragable("Stinging Nettle", "gfx/terobjs/herbs/stingingnettle"),
                         new Foragable("Blueberry", "gfx/terobjs/herbs/blueberry"),
                         new Foragable("Chantrelle", "gfx/terobjs/herbs/chantrelle"),
                 };
