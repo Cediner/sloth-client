@@ -1253,6 +1253,7 @@ public class CharWnd extends Window {
 
             public void destroy() {
                 super.destroy();
+                ;
                 if (cqv != null)
                     cqv.reqdestroy();
             }

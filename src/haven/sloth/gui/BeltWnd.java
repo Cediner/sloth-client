@@ -330,6 +330,7 @@ public class BeltWnd extends MovableWidget {
     @Override
     protected void removed() {
         ui.root.kbs.keybinds.removeIf(kb -> kb.name.startsWith("Hotbar"));
+        ui.root.kbs.clearGroup("Hotbar");
         super.removed();
     }
 

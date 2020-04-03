@@ -53,8 +53,8 @@ public class Tabs {
         }
 
         public void destroy() {
-            super.destroy();
             tabs.remove(this);
+            super.destroy();
         }
 
         public void showtab() {

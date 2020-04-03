@@ -30,6 +30,7 @@ import haven.sloth.DefSettings;
 import haven.sloth.IndirSetting;
 import haven.sloth.gfx.HitboxMesh;
 import haven.sloth.gui.*;
+import haven.sloth.gui.core.Scrollport;
 import haven.sloth.gui.indir.*;
 import haven.sloth.gui.layout.GridGrouping;
 import haven.sloth.gui.layout.Grouping;
@@ -575,17 +576,27 @@ public class OptWnd extends Window {
 
         {//Keybind settings
             final Coord c = new Coord(0, 0);
-            final Grouping binds = new GridGrouping("Keybinds", spacer, 600);
+            final LinearGrouping grp = new LinearGrouping(5);
+            final TabManager tabs = grp.add(new TabManager());
             {//Key Binds
-                binds.add(new Img(RichText.render("Click on the black box to start editing. Right click to cancel or Enter to confirm. If your choice shows up Red/Purple then it overlaps another keybind.", 200).tex()));
-                for (final KeyBinds.KeyBind kb : ui.root.kbs.keybinds) {
-                    binds.add(KeyBindEditWithLabel(kb.name, kb.keybind));
+                for (final String group : ui.root.kbs.groupings.keySet()) {
+                    final Scrollport view = new Scrollport(new Coord(480, 400));
+                    final Grouping binds = new GridGrouping(group + " Keybinds", spacer, 600);
+                    binds.add(new Img(RichText.render("Click on the black box to start editing. Right click to cancel or Enter to confirm. If your choice shows up Red/Purple then it overlaps another keybind.", 200).tex()));
+                    for (final KeyBinds.KeyBind kb : ui.root.kbs.groupings.get(group)) {
+                        binds.add(KeyBindEditWithLabel(kb.name, kb.keybind));
+                    }
+                    binds.pack();
+                    view.add(binds);
+                    view.pack();
+                    tabs.addtab(view, group);
                 }
-                binds.pack();
             }
 
-            c.y += kbp.add(binds, c.copy()).sz.y + spacer;
-            kbp.add(new PButton(200, "Back", 27, main), c.copy());
+            c.y += tabs.sz.y + spacer;
+            grp.add(new PButton(200, "Back", 27, main), c.copy());
+            grp.pack();
+            kbp.add(grp);
             kbp.pack();
         }
 

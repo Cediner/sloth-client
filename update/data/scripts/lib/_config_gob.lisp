@@ -34,18 +34,18 @@
 (defmacro is-gob-a (gob type)
   `(equal (ivar ,gob "type") ,type))
 
-(defmacro my-gob ()
-  `(oc-get-gob (mv-plgob (mv))))
+(defun my-gob ()
+  (oc-get-gob (mv-plgob (mv))))
 
 (defun is-gob-moving (gob)
   (or (is-gob-moving-1 gob)
       (and (= (mv-plgob (mv)) (gob-id gob))
            (mv-has-moves (mv)))))
 
-(defmacro wait-for-movement (&key (gob (my-gob)) (test #'is-gob-moving))
-  `(progn
-     (wait-for-movement-to-start :gob ,gob)
-     (wait-for-movement-to-finish :gob ,gob, :test ,test)))
+(defun wait-for-movement (&key (gob (my-gob)) (test #'is-gob-moving))
+  (progn
+     (wait-for-movement-to-start :gob gob :test test)
+     (wait-for-movement-to-finish :gob gob :test test)))
   
 (defun wait-for-movement-to-start (&key (gob (my-gob)) (test #'is-gob-moving))
   (let ((start-c (gob-rc gob)))

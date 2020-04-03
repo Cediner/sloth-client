@@ -1,6 +1,7 @@
 package haven.sloth.gui.chr;
 
 import haven.Coord;
+import haven.Widget;
 import haven.Window;
 import haven.sloth.gui.TabManager;
 
@@ -21,5 +22,12 @@ public class SkillnCredoWnd extends Window {
     @Override
     public void close() {
         hide();
+    }
+
+    @Override
+    public void wdgmsg(Widget sender, String msg, Object... args) {
+        if (!msg.equals("select-tab")) {
+            super.wdgmsg(sender, msg, args);
+        }
     }
 }

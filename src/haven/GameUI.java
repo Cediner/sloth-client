@@ -189,8 +189,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 
     @Override
     public void destroy() {
-        super.destroy();
         ui.root.add(ui.root.sessionDisplay = new SessionDisplay());
+        super.destroy();
     }
 
     public class Hidepanel extends Widget {

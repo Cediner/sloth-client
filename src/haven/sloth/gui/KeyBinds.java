@@ -448,6 +448,10 @@ public class KeyBinds {
         groupings.put(group, lst);
     }
 
+    public void clearGroup(final String group) {
+        groupings.remove(group);
+    }
+
     boolean validBinding(final IndirSetting<String> key) {
         for (final KeyBind kb : keybinds) {
             if (kb.keybind == key || !kb.keybind.get().equals(key.get()))

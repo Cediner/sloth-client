@@ -533,6 +533,8 @@ public class Widget {
             setcanfocus(false);
         unlink();
         parent.cdestroy(this);
+        parent = null;
+        ui = null;
     }
 
     public void cdestroy(Widget w) {

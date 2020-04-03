@@ -101,7 +101,6 @@ public class SessWidget extends AWidget {
     }
 
     public void destroy() {
-        super.destroy();
         /* XXX: There's a race condition here, but I admit I'm not
          * sure what can properly be done about it, and it ought at
          * least be uncommon. */
@@ -112,5 +111,6 @@ public class SessWidget extends AWidget {
         } else {
             conn.cancel();
         }
+        super.destroy();
     }
 }
