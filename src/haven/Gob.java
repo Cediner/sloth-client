@@ -339,6 +339,10 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
                 }
                 if(name.startsWith("gfx/terobjs/dframe")) {
                     setattr(new DryingFrameStatus(this));
+                } else if(name.equals("gfx/terobjs/ttub")) {
+                    setattr(new TanTubStatus(this));
+                } else if(name.equals("gfx/terobjs/cupboard")) {
+                    setattr(new CupboardStatus(this));
                 }
                 if (HighlightData.isHighlighted(name)) {
                     mark(-1);
