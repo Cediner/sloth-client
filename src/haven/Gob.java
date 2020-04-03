@@ -337,6 +337,9 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
                 if (Hidden.isHidden(name)) {
                     setattr(new Hidden(this));
                 }
+                if(name.startsWith("gfx/terobjs/dframe")) {
+                    setattr(new DryingFrameStatus(this));
+                }
                 if (HighlightData.isHighlighted(name)) {
                     mark(-1);
                 }

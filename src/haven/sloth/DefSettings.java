@@ -126,6 +126,7 @@ public class DefSettings {
     public static final IndirSetting<Boolean> NOGOBAUDIO = new IndirSetting<>(global, "audio.no-gob-audio");
     public static final IndirSetting<Boolean> OPENINVONLOGIN = new IndirSetting<>(global, "gameplay.open-inv-on-login");
     public static final IndirSetting<Boolean> OPENBELTONLOGIN = new IndirSetting<>(global, "gameplay.open-belt-on-login");
+    public static final IndirSetting<Boolean> COLORDFRAMES= new IndirSetting<>(global, "gameplay.show-colored-frames");
 
     public static final IndirSetting<Boolean> KEEPGOBS = new IndirSetting<>(global, "graphics.dont-delete-gobs");            //[Bool] Don't delete gobs
     public static final IndirSetting<Boolean> KEEPGRIDS = new IndirSetting<>(global, "graphics.dont-delete-grids");          //[Bool] Don't delete map grids
@@ -279,6 +280,7 @@ public class DefSettings {
         DEBUG.ensure(false);
         OPENINVONLOGIN.ensure(true);
         OPENBELTONLOGIN.ensure(true);
+        COLORDFRAMES.ensure(true);
         //Belts
         SHOWFKBELT.ensure(false);
         FKBELTPAGE.ensure(0);

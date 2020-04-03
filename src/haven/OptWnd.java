@@ -404,6 +404,7 @@ public class OptWnd extends Window {
             { //gobs
                 gobs.add(new IndirCheckBox("Toggle halo pointers", SHOWHALO));
                 gobs.add(new IndirCheckBox("Toggle halo pointers on hearthing", SHOWHALOONHEARTH));
+                gobs.add(new IndirCheckBox("Show colored drying frames", COLORDFRAMES));
                 gobs.add(new IndirCheckBox("Show Gob HP (Performance hit)", SHOWGOBHP, val -> {
                     if (ui.sess != null) {
                         ui.sess.glob.oc.changeHealthGobs();
