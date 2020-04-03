@@ -363,7 +363,7 @@ public class WaterTile extends Tiler {
     }
 
 
-    private static final BottomFog waterfog = new BottomFog(new Color(0, 16, 48));
+    private static final BottomFog waterfog = new BottomFog(new Color(18, 97, 160));
     private static final BottomFog deepfog = new BottomFog(new Color(128, 7, 7));
     private static final GLState boff = new States.DepthOffset(4, 4);
 

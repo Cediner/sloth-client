@@ -803,14 +803,29 @@ public class CharWnd extends Window {
         public final String nm;
         public final Indir<Resource> res;
         public boolean has = false;
+        public boolean on = false;
         private String sortkey;
         private Tex small;
+
+        public int crl, crlt, crql, crqlt;
+        public int qid;
 
         private Credo(String nm, Indir<Resource> res, boolean has) {
             this.nm = nm;
             this.res = res;
             this.has = has;
             this.sortkey = nm;
+        }
+
+        private Credo(String nm, Indir<Resource> res, boolean has,
+                      int crl, int crlt, int crql, int crqlt, int qid) {
+            this(nm, res, has);
+            this.on = true;
+            this.crl = crl;
+            this.crlt = crlt;
+            this.crql = crql;
+            this.crqlt = crqlt;
+            this.qid = qid;
         }
 
         public String rendertext() {
@@ -2405,16 +2420,22 @@ public class CharWnd extends Window {
             //Known
             final List<Skill> sks = decsklist(args, 0, true);
             ui.gui.scwnd.skills.update(sks);
-            skg.csk.update(decsklist(args, 0, true));
+            skg.csk.update(sks);
         } else if (nm == "nsk") {
             //Avaiable
             final List<Skill> sks = decsklist(args, 0, false);
             ui.gui.scwnd.skills.update(sks);
-            skg.nsk.update(decsklist(args, 0, false));
+            skg.nsk.update(sks);
         } else if (nm == "ccr") {
-            credos.ccr(deccrlist(args, 0, true));
+            //Known Credos
+            final List<Credo> crds = deccrlist(args, 0, true);
+            ui.gui.scwnd.credos.update(crds);
+            credos.ccr(crds);
         } else if (nm == "ncr") {
-            credos.ncr(deccrlist(args, 0, false));
+            //Avaiable Credos
+            final List<Credo> crds = deccrlist(args, 0, false);
+            ui.gui.scwnd.credos.update(crds);
+            credos.ncr(crds);
         } else if (nm == "crcost") {
             credos.cost = (Integer) args[0];
         } else if (nm == "pcr") {
@@ -2425,8 +2446,11 @@ public class CharWnd extends Window {
                 int crl = (Integer) args[a++], crlt = (Integer) args[a++];
                 int crql = (Integer) args[a++], crqlt = (Integer) args[a++];
                 int qid = (Integer) args[a++];
-                credos.pcr(new Credo(cnm, res, false),
+                List<Credo> lst = new ArrayList<>();
+                lst.add(new Credo(cnm, res, false, crl, crlt, crql, crqlt, qid));
+                credos.pcr(lst.get(0),
                         crl, crlt, crql, crqlt, qid);
+                ui.gui.scwnd.credos.update(lst);
             } else {
                 credos.pcr(null, 0, 0, 0, 0, 0);
             }

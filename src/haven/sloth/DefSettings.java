@@ -5,6 +5,7 @@ import haven.Coord;
 import haven.Indir;
 import haven.sloth.gob.*;
 import haven.sloth.gui.BeltWnd;
+import haven.sloth.gui.chr.CredoTree;
 import haven.sloth.gui.chr.SkillTree;
 import haven.sloth.io.*;
 import haven.sloth.script.Script;
@@ -387,6 +388,8 @@ public class DefSettings {
             DangerousData.init(optint.get());
             logger.atInfo().log("Loading Skill Data");
             SkillTree.init(optint.get());
+            logger.atInfo().log("Loading Credo Data");
+            CredoTree.init(optint.get());
             //MapFileData.init();
             //Internal lookups are no longer needed
             optint.get().close();
