@@ -26,7 +26,6 @@ public class SkillTree extends Widget {
     private static final Tex locked = Resource.loadtex("custom/skills/states", 2);
     private static final List<SkillData> skillData = new ArrayList<>();
     private static final Coord csz = new Coord(90, 130);
-
     public static void init(final Storage internal) {
         internal.ensure((sql) -> {
             try (final Statement stmt = sql.createStatement()) {
@@ -80,9 +79,7 @@ public class SkillTree extends Widget {
 
     private interface SkillWidget {
         Coord c();
-
         Coord sz();
-
         CharWnd.Skill skill();
     }
 

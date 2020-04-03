@@ -9,6 +9,7 @@
   (loop
      do (progn
           (mv-smart-move-to-gob gob)
+		  (wait-for-movement)
           (mv-click-gob gob +right-button+ +mf-ctrl+)
           (wait-for-flowermenu)
           (when (flowermenu)
@@ -18,7 +19,8 @@
                 (check-stam-and-drink))))
 
 (script
- (let ((bad ()))
+ (let ((bad ())
+	   (bbox (get-bbox "Select an area to deforest")))
    (loop
       for gob = (gob-get-closest-by-filter
                  (lambda (g)
@@ -27,8 +29,10 @@
                    (not (search "stump" (gob-name g)))
                    (not (search "log" (gob-name g)))
                    (not (search "trunk" (gob-name g)))
-                   (not (member (gob-id g) bad)))))
+                   (not (member (gob-id g) bad))
+				   (bbox-within bbox (gob-rc g)))))
       while gob
-      do (progn 
+      do (progn
+		   (check-for-starving)
            (chop gob)
            (when (oc-get-gob (gob-id gob)) (push (gob-id gob) bad))))))

@@ -18,16 +18,19 @@
                 (check-stam-and-drink))))
 
 (script
- (let ((bad ()))
+ (let ((bad ())
+	   (bbox (get-bbox "Select an area to destump")))
    (loop
       for gob = (gob-get-closest-by-filter
                  (lambda (g)
                    (and 
                     (search "trees" (gob-name g)) 
                     (search "stump" (gob-name g))
-                    (not (member (gob-id g) bad)))))
+                   (not (member (gob-id g) bad))
+				   (bbox-within bbox (gob-rc g)))))
       while gob
       do (progn
+		   (check-for-starving)
            (destroy gob)
            (when (oc-get-gob (gob-id gob))
              (push (gob-id gob) bad))))))
