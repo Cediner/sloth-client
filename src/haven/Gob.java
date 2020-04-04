@@ -31,6 +31,7 @@ import com.google.common.flogger.FluentLogger;
 import haven.resutil.WaterTile;
 import haven.sloth.DefSettings;
 import haven.sloth.gfx.HitboxMesh;
+import haven.sloth.gfx.PlantStageSprite;
 import haven.sloth.gob.*;
 import haven.sloth.io.DangerousData;
 import haven.sloth.io.HighlightData;
@@ -326,7 +327,9 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
                 //Check for any special attributes we should attach
                 Alerted.checkAlert(name, ui.gui.map.rlplgob, this);
                 if (Growth.isGrowth(name)) {
-                    setattr(new Growth(this));
+                    final int sdt = !fallowplant() ? sdt() : -1;
+                    addol(new Overlay(PlantStageSprite.id,
+                            new PlantStageSprite(this, sdt, getMaxStage(Growth.maxstage(name)), multistageplant())));
                 }
                 if (Movable.isMovable(name)) {
                     setattr(new Movable(this));
@@ -370,6 +373,23 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
             }
             discovered = true;
         }
+    }
+
+    public int getMaxStage(final int guess) {
+        int max = guess;
+        for (FastMesh.MeshRes layer : getres().layers(FastMesh.MeshRes.class)) {
+            final int stg = layer.id / 10;
+            max = Math.max(stg, max);
+        }
+        return max;
+    }
+
+    public boolean multistageplant() {
+        return name().endsWith("terobjs/plants/carrot") || name().endsWith("terobjs/plants/hemp");
+    }
+
+    public boolean fallowplant() {
+        return name().endsWith("/fallowplant");
     }
 
     public boolean isDiscovered() {
@@ -894,9 +914,6 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
             GobHealth hlt = getattr(GobHealth.class);
             if (hlt != null) {
                 rl.prepc(hlt.getfx());
-                if (DefSettings.SHOWGOBHP.get()) {
-                    rl.add(hlt.hpfx, null);
-                }
             }
 
             for (final haven.sloth.gob.Rendered attr : renderedattrs) {

@@ -407,7 +407,7 @@ public abstract class ItemInfo {
                         try {
                             final Field q = inf.getClass().getField("q");
                             q.setAccessible(true);
-                            gi.updateQuality((int) q.getDouble(inf));
+                            gi.updateQuality((int) Math.round(q.getDouble(inf)));
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

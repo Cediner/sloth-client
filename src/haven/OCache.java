@@ -136,22 +136,6 @@ public class OCache implements Iterable<Gob> {
         }
     }
 
-    synchronized void changeCropGobs() {
-        for (final Gob g : this) {
-            if (g.getattr(Growth.class) != null) {
-                changed(g);
-            }
-        }
-    }
-
-    synchronized void changeHealthGobs() {
-        for (Gob g : this) {
-            if (g.getattr(GobHealth.class) != null &&
-                    g.getattr(GobHealth.class).hp < 4)
-                changed(g);
-        }
-    }
-
     synchronized void changeStaticGobs() {
         for (Gob g : this) {
             if (g.staticp() != null) {

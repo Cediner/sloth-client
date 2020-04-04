@@ -27,21 +27,19 @@
 package haven;
 
 import haven.sloth.DefSettings;
+import haven.sloth.gfx.GobHealthSprite;
 
 import java.awt.Color;
 
 import static haven.Gob.SEMISTATIC;
 
-/**
- * TODO: Think of a way to represent the stage in 3D to avoid static/semistatic mess.
- */
 public class GobHealth extends GAttrib {
     private static final Tex[] gobhp = new Tex[]{
             Text.renderstroked("25%", Color.WHITE, Color.BLACK, Gob.gobhpf).tex(),
             Text.renderstroked("50%", Color.WHITE, Color.BLACK, Gob.gobhpf).tex(),
             Text.renderstroked("75%", Color.WHITE, Color.BLACK, Gob.gobhpf).tex()
     };
-    int hp;
+    public int hp;
     Material.Colors fx;
     public PView.Draw2D hpfx;
 
@@ -56,6 +54,8 @@ public class GobHealth extends GAttrib {
                 }
             }
         };
+        if (g.findol(GobHealthSprite.id) == null)
+            g.addol(new Gob.Overlay(GobHealthSprite.id, new GobHealthSprite(g)));
     }
 
     public GLState getfx() {

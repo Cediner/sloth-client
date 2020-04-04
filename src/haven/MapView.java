@@ -1876,10 +1876,12 @@ public class MapView extends PView implements DTarget, Console.Directory {
     }
 
     public void relMove(final Coord2d c) {
-        final Gob g = ui.sess.glob.oc.getgob(plgob);
-        if(g != null) {
-            final Coord gc = new Coord2d(g.getc()).add(c).floor(posres);
-            wdgmsg("click", new Coord(1, 1), gc, 1, 0);
+        if (ui != null) {
+            final Gob g = ui.sess.glob.oc.getgob(plgob);
+            if (g != null) {
+                final Coord gc = new Coord2d(g.getc()).add(c).floor(posres);
+                wdgmsg("click", new Coord(1, 1), gc, 1, 0);
+            }
         }
     }
 

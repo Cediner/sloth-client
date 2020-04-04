@@ -393,11 +393,7 @@ public class OptWnd extends Window {
             }
             { //crops
                 crops.add(new IndirCheckBox("Simple Crops", SIMPLECROPS));
-                crops.add(new IndirCheckBox("Show Crop Stage (Performance hit)", SHOWCROPSTAGE, val -> {
-                    if (ui.sess != null) {
-                        ui.sess.glob.oc.changeCropGobs();
-                    }
-                }));
+                crops.add(new IndirCheckBox("Show Crop Stage", SHOWCROPSTAGE));
                 crops.add(new IndirCheckBox("Show Flavor Objects", SHOWFLAVOBJS));
                 crops.add(new IndirCheckBox("Show Farming Equipment Radius", SHOWFARMRADIUS));
                 crops.pack();
@@ -408,11 +404,7 @@ public class OptWnd extends Window {
                 gobs.add(new IndirCheckBox("Show colored drying frames", COLORDFRAMES));
                 gobs.add(new IndirCheckBox("Show colored tanning tubs", COLORTUBS));
                 gobs.add(new IndirCheckBox("Show colored cupboards", COLORCUPBOARDS));
-                gobs.add(new IndirCheckBox("Show Gob HP (Performance hit)", SHOWGOBHP, val -> {
-                    if (ui.sess != null) {
-                        ui.sess.glob.oc.changeHealthGobs();
-                    }
-                }));
+                gobs.add(new IndirCheckBox("Show Gob HP", SHOWGOBHP));
                 gobs.add(new IndirCheckBox("Show Gob Paths", SHOWGOBPATH));
                 gobs.add(ColorPreWithLabel("Minimap path color: ", MMPATHCOL));
                 gobs.add(ColorPreWithLabel("Unknown gob path color: ", GOBPATHCOL));

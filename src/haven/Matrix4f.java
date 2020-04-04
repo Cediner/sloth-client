@@ -93,6 +93,10 @@ public class Matrix4f {
         return (n);
     }
 
+    public float[] homoc() {
+        return new float[]{m[12], m[13], m[14], 1};
+    }
+
     public Coord3f mul4(Coord3f b) {
         float x = (m[0] * b.x) + (m[4] * b.y) + (m[8] * b.z) + m[12];
         float y = (m[1] * b.x) + (m[5] * b.y) + (m[9] * b.z) + m[13];

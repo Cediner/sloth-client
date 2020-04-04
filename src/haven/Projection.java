@@ -63,6 +63,14 @@ public class Projection extends Transform {
                 n.z));
     }
 
+    public Coord get2dCoord(float[] homoc, Coord wndsz) {
+        float[] o = fin(Matrix4f.id).mul4(homoc);
+        float d = 1 / o[3];
+        float nx = o[0] * d;
+        float ny = o[1] * d;
+        return new Coord((int) (((nx + 1) / 2) * wndsz.x), (int) (((-ny + 1) / 2) * wndsz.y));
+    }
+
     public static Matrix4f makefrustum(Matrix4f d, float left, float right, float bottom, float top, float near, float far) {
         d.m[0] = (2 * near) / (right - left);
         d.m[5] = (2 * near) / (top - bottom);
