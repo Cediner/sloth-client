@@ -174,7 +174,10 @@ public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owne
 
     @Deprecated
     public Glob glob() {
-        return (ui.sess.glob);
+        if (ui != null && ui.sess != null)
+            return (ui.sess.glob);
+        else
+            return witem.ui.sess.glob;
     }
 
     /**

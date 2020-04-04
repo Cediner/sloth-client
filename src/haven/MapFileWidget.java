@@ -88,7 +88,7 @@ public class MapFileWidget extends Widget {
 
         public Location locate(MapFile file) {
             Coord mc = new Coord2d(mv.getcc()).floor(MCache.tilesz);
-            if (mc == null)
+            if (mc == null || mv.ui == null)
                 throw (new Loading("Waiting for initial location"));
             MCache.Grid plg = mv.ui.sess.glob.map.getgrid(mc.div(cmaps));
             GridInfo info = file.gridinfo.get(plg.id);

@@ -58,7 +58,7 @@ public class DowseWnd extends Window {
     @Override
     public void close() {
         onClose.run();
-        ui.destroy(this);
         ui.gui.remDowseWnd(this);
+        ui.destroy(this);
     }
 }
