@@ -1784,6 +1784,19 @@ public class MapView extends PView implements DTarget, Console.Directory {
         return mspeedavg;
     }
 
+    public double rspeed() {
+        if (ui != null) {
+            final Gob g = ui.sess.glob.oc.getgob(plgob);
+            if (g != null) {
+                return g.getv();
+            } else {
+                return 0.0;
+            }
+        } else {
+            return 0.0;
+        }
+    }
+
     /**
      * 1) If you made it to your destination within a reasonable limit
      * a) Exactly on target destination

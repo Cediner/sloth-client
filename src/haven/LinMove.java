@@ -45,7 +45,8 @@ public class LinMove extends Moving {
      *
      * @param gob Our Gob
      * @param s   The ORIGINAL starting coordinate of this line move
-     * @param v   A vector specifying the direction of our line movement, will never change
+     * @param v   A vector specifying the direction of our line movement, will never change. This is also the velocity
+     *            vector!
      */
     public LinMove(Gob gob, Coord2d s, Coord2d v) {
         super(gob);
