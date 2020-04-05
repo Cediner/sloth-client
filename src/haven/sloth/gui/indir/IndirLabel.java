@@ -13,7 +13,7 @@ public class IndirLabel extends Widget {
 
     public IndirLabel(final Supplier<String> render) {
         this.render = render;
-        this.text = Text.render(render.get());
+        this.text = Text.std12.render(render.get());
         this.sz = text.sz();
     }
 

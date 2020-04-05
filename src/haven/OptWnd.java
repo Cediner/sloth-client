@@ -35,6 +35,7 @@ import haven.sloth.gui.indir.*;
 import haven.sloth.gui.layout.GridGrouping;
 import haven.sloth.gui.layout.Grouping;
 import haven.sloth.gui.layout.LinearGrouping;
+import haven.sloth.gui.opts.VideoOpts;
 
 import java.awt.*;
 import java.util.function.Consumer;
@@ -97,110 +98,20 @@ public class OptWnd extends Window {
 
             CPanel(GLSettings gcf) {
                 this.cf = gcf;
-                final int spacer = 5;
-                final Grouping lighting = new LinearGrouping("Lighting", spacer);
-                final Grouping shadows = new LinearGrouping("Shadows", spacer);
-                final Grouping outlines = new LinearGrouping("Outlines", spacer);
-                final Grouping view = new LinearGrouping("View", spacer);
-                final Grouping misc = new LinearGrouping("Misc", spacer);
 
-                {//Lighting
-                    lighting.add(new IndirCheckBox("Per-fragment lighting", cf.PFLIGHTING));
-                    lighting.add(new IndirCheckBox("Cel Shading", cf.CELSHADING));
-                    //Custom global light
-                    lighting.add(new IndirCheckBox("Custom Global Light", NIGHTVISION));
-                    {
-                        int y = 0;
-                        final Widget container = new Widget();
-                        final Label lamb = new Label("Ambient");
-                        final Label ldif = new Label("Diffuse");
-                        final Label lspc = new Label("Specular");
-                        final IndirColorPreview amb = new IndirColorPreview(new Coord(lamb.sz.x, 16), NVAMBIENTCOL);
-                        final IndirColorPreview dif = new IndirColorPreview(new Coord(lamb.sz.x, 16), NVDIFFUSECOL);
-                        final IndirColorPreview spc = new IndirColorPreview(new Coord(lamb.sz.x, 16), NVSPECCOC);
-                        container.add(lamb, new Coord(0, y));
-                        container.add(ldif, new Coord(100 - ldif.sz.x / 2, y));
-                        container.add(lspc, new Coord(200 - lspc.sz.x, y));
-                        y += lamb.sz.y + spacer;
-                        container.add(amb, new Coord(lamb.c.x, y));
-                        container.add(dif, new Coord(ldif.c.x, y));
-                        container.add(spc, new Coord(lspc.c.x, y));
-                        container.pack();
-                        lighting.add(container);
-                    }
-                    lighting.add(new IndirCheckBox("Dark Mode (overrides custom gobal light)", DARKMODE));
-                    lighting.pack();
-                }
-                {//Shadows
-                    shadows.add(new IndirCheckBox("Render shadows", cf.SHADOWS));
-                    //shadow quality
-                    shadows.add(new IndirLabel(() -> String.format("Shadow Quality: %d", MapView.shadowmap[SHADOWSQUALITY.get()])));
-                    shadows.add(new IndirHSlider(200, 0, MapView.shadowmap.length - 1, SHADOWSQUALITY, val -> {
-                        if (ui.gui != null && ui.gui.map != null) {
-                            ui.gui.map.resetshadows();
-                        }
-                    }));
-                    shadows.pack();
-                }
-                {//outlines
-                    outlines.add(new IndirCheckBox("Render Outlines", cf.OUTLINES));
-                    outlines.add(new IndirCheckBox("Symmetric Outlines", SYMMETRICOUTLINES));
-                    outlines.pack();
-                }
-                {//view
-                    view.add(new IndirCheckBox("Flatworld (Legacy)", FLATWORLD, val -> {
-                        if (ui.sess != null) {
-                            ui.sess.glob.map.invalidateAll();
-                            ui.sess.glob.oc.changeAllGobs();
-                        }
-                    }));
-                    view.add(new IndirCheckBox("Skip Loading", SKIPLOADING));
-                    view.add(new IndirCheckBox("Show Weather", WEATHER));
-                    view.add(new IndirCheckBox("Show Animations", ANIMATIONS, val -> ui.sess.glob.oc.changeAllGobs()));
-                    view.add(new IndirCheckBox("Show Gobs", SHOWGOBS));
-                    view.add(new IndirCheckBox("Show Map", SHOWMAP));
-                    view.add(new IndirCheckBox("Show Transition Tiles", SHOWTRANTILES, val -> {
-                        if (ui.sess != null) {
-                            ui.sess.glob.map.invalidateAll();
-                        }
-                    }));
-                    view.add(new IndirLabel(() -> String.format("Map View Distance: %d", DRAWGRIDRADIUS.get())));
-                    view.add(new IndirHSlider(200, 2, 5, DRAWGRIDRADIUS, val -> {
-                        if (ui.gui != null && ui.gui.map != null) {
-                            ui.gui.map.view = val;
-                        }
-                    }));
-                    view.add(new IndirCheckBox("Never delete grids", KEEPGRIDS));
-                    view.add(new IndirCheckBox("Never delete gobs", KEEPGOBS));
-                    view.add(new IndirCheckBox("Render water surface", cf.WATERSURFACE));
-                    view.pack();
-                }
-                {//misc
-                    misc.add(new IndirCheckBox("Antialiasing", cf.ANTIALIASING));
-                    misc.add(new IndirLabel(() -> String.format("MSAA Level: %d", MSAALEVEL.get())));
-                    misc.add(new IndirHSlider(200, 0, 8, MSAALEVEL));
-                    misc.add(new IndirLabel(() -> String.format("Anisotropic filtering: %.1f\u00d7", cf.ANISOLEVEL.get() / 2.0)));
-                    misc.add(new IndirHSlider(200, (int) (cf.anisotex.min() * 2), (int) (cf.anisotex.max() * 2), cf.ANISOLEVEL));
-                    misc.add(new IndirCheckBox("Toggle Alpha Coverage", cf.ALPHACOV));
-                    misc.add(new IndirCheckBox("Wireframe mode", WIREFRAMEMODE));
-                    misc.pack();
-                }
                 int y = 0;
+                y += add(new VideoOpts(gcf)).sz.y + 5;
+                pack();
 
-                y += add(lighting, new Coord(0, y)).sz.y;
-                y += add(shadows, new Coord(0, y)).sz.y;
-                y += add(outlines, new Coord(0, y)).sz.y;
-                y += add(view, new Coord(0, y)).sz.y;
-                y += add(misc, new Coord(0, y)).sz.y;
-                y += add(new Button(200, "Reset to defaults") {
+                add(new Button(200, "Reset to defaults") {
                     public void click() {
                         DefSettings.resetgraphics();
                         cf.cfg.resetprefs();
                         curcf.destroy();
                         curcf = null;
                     }
-                }, new Coord(0, y)).sz.y + 5;
-                bback.c = new Coord(bback.c.x, y);
+                }, new Coord(0, y));
+                bback.c = new Coord(sz.x - bback.sz.x, y);
                 pack();
             }
         }

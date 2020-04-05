@@ -63,7 +63,7 @@ public abstract class ConsoleHost extends Widget {
                 String msg = e.getMessage();
                 if (msg == null)
                     msg = e.toString();
-                if (ui != null) {
+                if (ui != null && ui.cons != null) {
                     ui.cons.out.println(msg);
                     error(msg);
                 }

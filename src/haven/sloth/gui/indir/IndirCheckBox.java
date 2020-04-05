@@ -23,7 +23,7 @@ public class IndirCheckBox extends Widget {
 
     public IndirCheckBox(final String lbl, final IndirSetting<Boolean> setting, final Consumer<Boolean> onChange) {
         super(Coord.z);
-        this.lbl = Text.render(lbl);
+        this.lbl = Text.std12.render(lbl);
         this.onChange = onChange;
         this.setting = setting;
 

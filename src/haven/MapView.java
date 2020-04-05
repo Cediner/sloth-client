@@ -1225,7 +1225,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
     }
 
 
-    void resetshadows() {
+    public void resetshadows() {
         smap = null;
     }
 

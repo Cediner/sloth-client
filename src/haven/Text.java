@@ -33,11 +33,12 @@ import java.util.*;
 public class Text {
     public static final Font serif = new Font("Serif", Font.PLAIN, 10);
     public static final Font sans = new Font("Sans", Font.PLAIN, 10);
+    public static final Font sans12 = new Font("Sans", Font.PLAIN, 12);
     public static final Font sansb = new Font("Sans", Font.BOLD, 10);
     public static final Font mono = new Font("Monospaced", Font.PLAIN, 10);
     public static final Font fraktur = Resource.local().loadwait("ui/fraktur").layer(Resource.Font.class).font;
     public static final Font dfont = sans;
-    public static final Foundry std;
+    public static final Foundry std, std12, std16;
     public final BufferedImage img;
     public final String text;
     private Tex tex;
@@ -46,6 +47,8 @@ public class Text {
 
     static {
         std = new Foundry(sans, 10);
+        std12 = new Foundry(sans12, 12);
+        std16 = new Foundry(sans, 16);
     }
 
     public static class Line extends Text {

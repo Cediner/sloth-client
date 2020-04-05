@@ -7,11 +7,12 @@ public class Scrollport extends Widget {
     private static final Tex vchainb = Theme.tex("scroll/vertical", 0);
     private static final Tex vchainm = Theme.tex("scroll/vertical", 1);
     private static final Tex vchaint = Theme.tex("scroll/vertical", 2);
-    static final Tex vflarp = Theme.tex("scroll/vertical", 3);
+    private static final Tex vflarp = Theme.tex("scroll/vertical", 3);
     private static final Tex hchainl = Theme.tex("scroll/horizontal", 0);
     private static final Tex hchainm = Theme.tex("scroll/horizontal", 1);
     private static final Tex hchainr = Theme.tex("scroll/horizontal", 2);
-    static final Tex hflarp = Theme.tex("scroll/horizontal", 3);
+    private static final Tex hflarp = Theme.tex("scroll/horizontal", 3);
+    private static final int sensitivity = 10;
 
     private final Coord ul;
     private Coord vsz;
@@ -83,7 +84,7 @@ public class Scrollport extends Widget {
     @Override
     public boolean mousewheel(Coord c, int amount) {
         if (!super.mousewheel(c, amount)) {
-            ul.y += step.y * amount * 5;
+            ul.y += step.y * amount * sensitivity;
             if (ul.y > (rsz.y - vsz.y))
                 ul.y = (rsz.y - vsz.y);
             if (ul.y < 0)

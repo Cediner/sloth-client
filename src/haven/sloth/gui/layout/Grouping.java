@@ -11,9 +11,10 @@ public class Grouping extends Widget {
     private final boolean showbox;
 
     private Coord ctl;
+    private Coord capy = new Coord(0, 0);
 
     public Grouping(final String cap, final boolean showbox) {
-        this.cap = Text.renderstroked(cap, Color.WHITE, Color.BLACK);
+        this.cap = Text.renderstroked(cap, Color.WHITE, Color.BLACK, Text.std16);
         this.showbox = showbox;
     }
 
@@ -32,10 +33,18 @@ public class Grouping extends Widget {
 
     @Override
     public void resize(Coord sz) {
-        final Coord capsz = cap != null ? cap.sz() : new Coord(0, 0);
-        ctl = box.ctloff().add(0, capsz.y);
+        final Coord capsz = cap != null ? cap.sz().add(0, 5) : new Coord(0, 0);
+        if (showbox) {
+            capy = box.ctloff();
+        } else {
+            capy = new Coord(0, 0);
+        }
+        ctl = capy.add(0, capsz.y);
         sz.x = Math.max(sz.x, capsz.x);
-        this.sz = sz.add(box.cisz().add(0, capsz.y));
+        if (showbox)
+            this.sz = sz.add(box.cisz().add(0, capsz.y));
+        else
+            this.sz = sz.add(0, capsz.y);
     }
 
     @Override
@@ -43,18 +52,14 @@ public class Grouping extends Widget {
         if (showbox)
             box.draw(g, Coord.z, sz);
         if (cap != null)
-            g.aimage(cap.tex(), new Coord(sz.x / 2, box.ctloff().y), 0.5, 0);
+            g.image(cap.tex(), capy);
         super.draw(g);
     }
 
     public Coord xlate(Coord c, boolean in) {
-        if (showbox) {
-            if (in)
-                return (c.add(ctl));
-            else
-                return (c.sub(ctl));
-        } else {
-            return c;
-        }
+        if (in)
+            return (c.add(ctl));
+        else
+            return (c.sub(ctl));
     }
 }
