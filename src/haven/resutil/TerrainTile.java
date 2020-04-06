@@ -384,7 +384,12 @@ public class TerrainTile extends Tiler implements Tiler.MCons, Tiler.CTrans {
                     Object[] desc = (Object[]) rdesc;
                     String p = (String) desc[0];
                     if (p.equals("rmat")) {
-                        Resource mres = set.getres().pool.load((String) desc[1], (Integer) desc[2]).get();
+                        Resource mres;
+                        try {
+                            mres = set.getres().pool.load((String) desc[1], (Integer) desc[2]).get();
+                        } catch (Resource.LoadException e) {
+                            mres = Resource.remote().loadwait((String) desc[1], (Integer) desc[2]);
+                        }
                         mat = mres.layer(Material.Res.class).get();
                         if (desc.length > 3)
                             texh = (Float) desc[3];
