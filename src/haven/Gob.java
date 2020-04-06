@@ -30,6 +30,7 @@ import com.fasterxml.jackson.databind.util.Named;
 import com.google.common.flogger.FluentLogger;
 import haven.resutil.WaterTile;
 import haven.sloth.DefSettings;
+import haven.sloth.gfx.GobSpeedSprite;
 import haven.sloth.gfx.HitboxMesh;
 import haven.sloth.gfx.PlantStageSprite;
 import haven.sloth.gob.*;
@@ -323,6 +324,10 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
                 //Avoid mannequins...
                 if (type == Type.HUMAN && attr.containsKey(GobHealth.class))
                     type = Type.UNKNOWN;
+
+                if (type == Type.HUMAN || type == Type.ANIMAL) {
+                    addol(new Overlay(GobSpeedSprite.id, new GobSpeedSprite(this)));
+                }
 
                 //Check for any special attributes we should attach
                 Alerted.checkAlert(name, ui.gui.map.rlplgob, this);

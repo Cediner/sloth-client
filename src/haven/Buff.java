@@ -51,7 +51,7 @@ public class Buff extends Widget implements ItemInfo.ResOwner, Bufflist.Managed 
     private List<ItemInfo> info = Collections.emptyList();
     /* Deprecated */
     String tt = null;
-    int ameter = -1;
+    public int ameter = -1;
     int nmeter = -1;
     Tex ntext = null;
 
@@ -143,7 +143,7 @@ public class Buff extends Widget implements ItemInfo.ResOwner, Bufflist.Managed 
      * Fight Buffs don't have meters aside from the ameter.
      * Fight buffs also use the cframe always
      */
-    void fightdraw(final GOut g) {
+    public void fightdraw(final GOut g) {
         final Coord sz = scframe.sz();
 
         try {

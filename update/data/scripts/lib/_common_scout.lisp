@@ -48,7 +48,7 @@
                  (setf (spotted-gob-last-rc-at gob) (get-real-location-coord (gob-rc target)))
                  (setf (spotted-gob-tick gob) tick)
                  (setf (spotted-gob-last-alert gob) (get-time))
-                 (send-discord-message +discord-bot-channel+
+                 (send-discord-message "player-alerts" 
                                        (format nil "<@&~A> Still spotted a ~A [~A] @ ~A"
                                                role
                                                name
@@ -67,7 +67,7 @@
                                             :last-alert (get-time)
                                             :tick tick)))
                  (setf (gethash (spotted-gob-id gob) spotted-gobs) gob)
-                 (send-discord-message +discord-bot-channel+
+                 (send-discord-message "player-alerts"
                                        (format nil
                                                (if extra
                                                    "<@&~A> Spotted a ~A [~A] @ ~A Wearing:~%~A"
@@ -96,7 +96,7 @@
      do (let ((gob (gethash id spotted-gobs)))
           (remhash id spotted-gobs)
           (let ((msg (describe-missing-gob gob)))
-            (send-discord-message +discord-bot-channel+
+            (send-discord-message "player-alerts"
                                   (format nil "<@&~A> Last spotted a ~A"
                                           role
                                           msg))))))

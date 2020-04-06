@@ -10,7 +10,7 @@
 (defconstant +peak-limit+ 25000)
 
 (defun peak-outside (door)
-  (let ((gob (gob-get-by-name door)))
+  (let ((gob (gob-get-closest-by-name door)))
     (if gob
         (progn
           (mv-click-gob gob +right-button+ +mf-shift+)

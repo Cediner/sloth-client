@@ -27,6 +27,7 @@
 package haven;
 
 import haven.sloth.Theme;
+import haven.sloth.gfx.GobCombatSprite;
 import haven.sloth.gui.fight.*;
 
 import java.awt.*;
@@ -213,6 +214,15 @@ public class Fightview extends Widget {
             Widget inf = obinfo(rel.gobid, false);
             if (inf != null)
                 inf.tick(dt);
+            final Gob gob = ui.sess.glob.oc.getgob(rel.gobid);
+            if (gob != null) {
+                final Gob.Overlay ol = gob.findol(GobCombatSprite.id);
+                if (ol != null) {
+                    ((GobCombatSprite) ol.spr).update(rel);
+                } else {
+                    gob.addol(new Gob.Overlay(GobCombatSprite.id, new GobCombatSprite(gob, rel)));
+                }
+            }
         }
 
         final Set<DefenseType> notfound = new HashSet<>(Arrays.asList(DefenseType.values()));
@@ -424,6 +434,13 @@ public class Fightview extends Widget {
                 lsrel.remove(rel);
                 if (rel == current)
                     setcur(null);
+                final Gob g = ui.sess.glob.oc.getgob(rel.gobid);
+                if (g != null) {
+                    final Gob.Overlay ol = g.findol(GobCombatSprite.id);
+                    if (ol != null) {
+                        ((GobCombatSprite) ol.spr).update(null);
+                    }
+                }
             }
             return;
             case "upd": {
