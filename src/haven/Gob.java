@@ -33,6 +33,7 @@ import haven.sloth.DefSettings;
 import haven.sloth.gfx.GobSpeedSprite;
 import haven.sloth.gfx.HitboxMesh;
 import haven.sloth.gfx.PlantStageSprite;
+import haven.sloth.gfx.SnowFall;
 import haven.sloth.gob.*;
 import haven.sloth.io.DangerousData;
 import haven.sloth.io.HighlightData;
@@ -327,6 +328,9 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 
                 if (type == Type.HUMAN || type == Type.ANIMAL) {
                     addol(new Overlay(GobSpeedSprite.id, new GobSpeedSprite(this)));
+                    //if(id == ui.gui.map.rlplgob) {
+                    //    addol(new Overlay(-4921, new SnowFall(this)));
+                    //}
                 }
 
                 //Check for any special attributes we should attach

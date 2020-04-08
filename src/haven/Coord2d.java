@@ -148,6 +148,11 @@ public class Coord2d implements Comparable<Coord2d>, java.io.Serializable {
         return (mod(f.x, f.y));
     }
 
+    public Coord2d rotate(double a) {
+        return new Coord2d((((x * Math.cos(a)) - (y * Math.sin(a)))),
+                (((x * Math.sin(a)) + (y * Math.cos(a)))));
+    }
+
     public double angle(Coord2d o) {
         return (Math.atan2(o.y - y, o.x - x));
     }

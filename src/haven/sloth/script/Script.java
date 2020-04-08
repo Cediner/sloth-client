@@ -5,30 +5,15 @@ import haven.Coord;
 import haven.UI;
 import haven.Widget;
 import haven.sloth.io.GridData;
-import org.armedbear.lisp.Interpreter;
-import org.armedbear.lisp.Load;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
-import org.javacord.api.entity.Mentionable;
-import org.javacord.api.entity.channel.Channel;
-import org.javacord.api.entity.message.MessageBuilder;
 
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.regex.Pattern;
 
-@SuppressWarnings("unused")
-public class Script extends Thread {
+public abstract class Script extends Thread {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
-    private static final Interpreter engine = Interpreter.createInstance();
-    static {
-        reloadConfig();
-    }
-
-    public static void reloadConfig() {
-
-        Load.load("data/scripts/lib/_config.lisp");
-    }
 
     public static class Message {
         public final Widget sender;
@@ -42,25 +27,6 @@ public class Script extends Thread {
         }
     }
 
-    //////////////////////////////////////////////////////////////////////////////////////////////
-    // Some basic scripting API
-    //////////////////////////////////////////////////////////////////////////////////////////////
-
-    public static Script myself() {
-        return (Script)Thread.currentThread();
-    }
-
-    public static void checkintp() throws InterruptedException {
-        if(((Script) Thread.currentThread()).intp()) {
-            throw new InterruptedException();
-        }
-    }
-
-    public static void wdgmsg(final Widget sender, final String msg, final Object[] args) {
-        sender.wdgmsg(msg, args);
-    }
-
-    private final String script;
     private final long sid;
     private final long start;
     public SessionDetails session;
@@ -74,15 +40,57 @@ public class Script extends Thread {
 
     private DiscordApi discord;
 
-    Script(final String script, final long id, final SessionDetails session) {
-        super(script + " @ " + id);
-        this.script = script;
+    public Script(final long id, final SessionDetails session) {
+        super("Script Thread Sid [" + id + "]");
         this.sid = id;
-        this.start = System.currentTimeMillis();
         this.session = session;
 
+        this.start = System.currentTimeMillis();
         this.listening = false;
         this.intp = false;
+    }
+
+    public double time() {
+        return (System.currentTimeMillis() - start) / 1000.0;
+    }
+
+    long sid() {
+        return sid;
+    }
+
+    public abstract String name();
+
+    @Override
+    public String toString() {
+        return String.format("%s [%d]", name(), sid);
+    }
+
+    @Override
+    public void interrupt() {
+        intp = true;
+        super.interrupt();
+    }
+
+    private boolean intp() {
+        return intp;
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////////////////
+    // Some basic scripting API
+    //////////////////////////////////////////////////////////////////////////////////////////////
+
+    public static Script myself() {
+        return (Script) Thread.currentThread();
+    }
+
+    public static void checkintp() throws InterruptedException {
+        if (((Script) Thread.currentThread()).intp()) {
+            throw new InterruptedException();
+        }
+    }
+
+    public static void wdgmsg(final Widget sender, final String msg, final Object[] args) {
+        sender.wdgmsg(msg, args);
     }
 
     /* Discord **********************************************************************************/
@@ -95,7 +103,7 @@ public class Script extends Thread {
     }
 
     public void endDiscord() {
-        if(discord != null) {
+        if (discord != null) {
             discord.disconnect();
             discord = null;
         }
@@ -148,61 +156,41 @@ public class Script extends Thread {
     }
     /* *****************************************************************************************/
 
-    public double time() {
-        return (System.currentTimeMillis() - start) / 1000.0;
-    }
-
-    long sid() {
-        return sid;
-    }
-
-    @Override
-    public String toString() {
-        return String.format("%s [%d]", script, sid);
-    }
-
-    @Override
-    public void interrupt() {
-        intp = true;
-        super.interrupt();
-    }
-
-    private boolean intp() {
-        return intp;
-    }
-
     /* Logs*********************************************************************************/
     public void log(final String msg) {
-        logger.atInfo().log("Script [%s] [sid %d] [start %d] %s", script, sid, start, msg);
+        logger.atInfo().log("Script [%s] [sid %d] [start %d] %s", name(), sid, start, msg);
     }
     /* *****************************************************************************************/
+
+
+    public abstract void script_run() throws Throwable;
 
     @Override
     public void run() {
         try {
-            Load.load(String.format("data/scripts/%s.lisp", script));
+            script_run();
 
             final UI ui = session.getUI();
             if (ui != null && ui.gui != null) {
                 if (intp) {
-                    ui.gui.msg("Script Interrupted -> scripts/" + script + " [" + sid + "]");
+                    ui.gui.msg("Script Interrupted -> scripts/" + name() + " [" + sid + "]");
                 } else {
-                    ui.gui.msg("Finished Script -> scripts/" + script + " [" + sid + "]");
+                    ui.gui.msg("Finished Script -> scripts/" + name() + " [" + sid + "]");
                 }
             }
         } catch (Throwable t) {
             final UI ui = session.getUI();
             if (ui != null && ui.gui != null) {
                 if (intp) {
-                    ui.gui.msg("Script Interrupted -> scripts/" + script + " [" + sid + "]");
+                    ui.gui.msg("Script Interrupted -> scripts/" + name() + " [" + sid + "]");
                 } else {
-                    ui.gui.msg("Script died -> scripts/" + script + " [" + sid + "]");
+                    ui.gui.msg("Script died -> scripts/" + name() + " [" + sid + "]");
                     try {
-                        logger.atSevere().withCause(t).log("Script died [%s] [sid %d] [start %d]", script, sid, start);
+                        logger.atSevere().withCause(t).log("Script died [%s] [sid %d] [start %d]", name(), sid, start);
                     } catch (Exception e) {
                         //Ignore
                     }
-                    logger.atSevere().withCause(t).log("Script %s [%d] died, review logs", script, sid);
+                    logger.atSevere().withCause(t).log("Script %s [%d] died, review logs", name(), sid);
                 }
             }
         }

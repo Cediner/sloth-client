@@ -7,7 +7,7 @@ import haven.sloth.gui.BeltWnd;
 import haven.sloth.gui.chr.CredoTree;
 import haven.sloth.gui.chr.SkillTree;
 import haven.sloth.io.*;
-import haven.sloth.script.Script;
+import haven.sloth.script.LispScript;
 
 import java.awt.*;
 import java.io.File;
@@ -366,7 +366,7 @@ public class DefSettings {
         //Piggy backing off this to init some other important settings
         logger.atInfo().log("Reload script config");
         //load Script config in the background
-        new Thread(Script::reloadConfig).start();
+        new Thread(LispScript::reloadConfig).start();
         final Optional<Storage> optint = Storage.create("jdbc:sqlite:data/static.sqlite");
         if (optint.isPresent()) {
             logger.atInfo().log("Loading movables");

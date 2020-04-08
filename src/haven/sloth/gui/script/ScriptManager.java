@@ -4,7 +4,7 @@ import haven.*;
 import haven.sloth.gui.TabManager;
 import haven.sloth.gui.indir.IndirLabel;
 import haven.sloth.gui.layout.LinearGrouping;
-import haven.sloth.script.Context;
+import haven.sloth.script.LispScript;
 import haven.sloth.script.Script;
 import haven.sloth.util.ObservableMapListener;
 
@@ -22,16 +22,61 @@ public class ScriptManager extends Window implements ObservableMapListener<Long,
         }
     }
 
+    private interface ScriptItm {
+        String name();
+
+        void run(final UI ui);
+    }
+
+    private static class LispScriptItm implements ScriptItm {
+        final String name;
+
+        public LispScriptItm(final String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String name() {
+            return "[Lisp]" + name;
+        }
+
+        @Override
+        public void run(final UI ui) {
+            ui.sess.details.context.launchLispScript(name, ui.sess.details);
+        }
+    }
+
+    private static class JavaScriptItm implements ScriptItm {
+        final String name;
+        final Class<? extends Script> cls;
+
+        public JavaScriptItm(final String name, final Class<? extends Script> cls) {
+            this.name = name;
+            this.cls = cls;
+        }
+
+        @Override
+        public String name() {
+            return "[Jayva]" + name;
+        }
+
+
+        @Override
+        public void run(UI ui) {
+            ui.sess.details.context.launchJavaScript(cls, ui.sess.details);
+        }
+    }
+
 
     private static class ScriptsList extends Widget {
-        private final List<String> scripts = new ArrayList<>();
+        private final List<ScriptItm> scripts = new ArrayList<>();
 
         private ScriptsList() {
             refresh();
             final Button refresh = new Button(300, "Refresh List", this::refresh);
-            final Listbox<String> list = new Listbox<String>(300, 20, 20) {
+            final Listbox<ScriptItm> list = new Listbox<ScriptItm>(300, 20, 20) {
                 @Override
-                protected String listitem(int i) {
+                protected ScriptItm listitem(int i) {
                     return scripts.get(i);
                 }
 
@@ -41,15 +86,12 @@ public class ScriptManager extends Window implements ObservableMapListener<Long,
                 }
 
                 @Override
-                protected void drawitem(GOut g, String item, int i) {
-                    FastText.print(g, Coord.z, item);
+                protected void drawitem(GOut g, ScriptItm item, int i) {
+                    FastText.print(g, Coord.z, item.name());
                 }
             };
-            final Button run = new Button(300, "Run Script", () -> {
-                if (list.sel != null) {
-                    ui.sess.details.context.launch(list.sel, ui.sess.details);
-                }
-            });
+            final Button run = new Button(300, "Run Script", () ->
+                    list.selindex().ifPresent((idx) -> scripts.get(idx).run(ui)));
             add(refresh);
             add(run, new Coord(0, refresh.sz.y + 5));
             add(list, new Coord(0, run.c.y + run.sz.y + 5));
@@ -63,16 +105,16 @@ public class ScriptManager extends Window implements ObservableMapListener<Long,
                 final File[] files = dir.listFiles((fdir, name) -> name.endsWith(".lisp") && !name.startsWith("_config"));
                 if (files != null) {
                     for (final File f : files) {
-                        scripts.add(f.getName().substring(0, f.getName().lastIndexOf(".lisp")));
+                        scripts.add(new LispScriptItm(f.getName().substring(0, f.getName().lastIndexOf(".lisp"))));
                     }
                 }
             }
 
-            Collections.sort(scripts);
+            scripts.sort(Comparator.comparing(ScriptItm::name, String::compareTo));
         }
     }
 
-    private Map<Long, ScriptWdg> scriptmap = new HashMap<>();
+    private final Map<Long, ScriptWdg> scriptmap = new HashMap<>();
     private final LinearGrouping scripts;
     private final Widget managertab;
 
@@ -81,7 +123,7 @@ public class ScriptManager extends Window implements ObservableMapListener<Long,
 
         Coord c = new Coord(0, 0);
         managertab = new Widget();
-        c.y += managertab.add(new Button(300, "Reload Config", Script::reloadConfig)).sz.y + 5;
+        c.y += managertab.add(new Button(300, "Reload Config", LispScript::reloadConfig)).sz.y + 5;
         scripts = managertab.add(new LinearGrouping("Running Scripts", 5), c.copy());
         managertab.pack();
     }
