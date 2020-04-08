@@ -33,7 +33,7 @@ public class Defer extends ThreadGroup {
     private static final Map<ThreadGroup, Defer> groups = new WeakHashMap<ThreadGroup, Defer>();
     private final Queue<Future<?>> queue = new PrioQueue<Future<?>>();
     private final Collection<Thread> pool = new LinkedList<Thread>();
-    private final int maxthreads = 2;
+    private final int maxthreads = 4;
 
     public interface Callable<T> {
         public T call() throws InterruptedException;
@@ -247,11 +247,8 @@ public class Defer extends ThreadGroup {
                 while (true) {
                     Future<?> f;
                     try {
-                        long start = System.currentTimeMillis();
                         synchronized (queue) {
                             while ((f = queue.poll()) == null) {
-                                if (System.currentTimeMillis() - start > 5000)
-                                    return;
                                 queue.wait(1000);
                             }
                         }

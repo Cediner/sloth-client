@@ -60,7 +60,7 @@
 		(let ((flag1 (gob-get-closest-by-name +flag+)))
 			(let ((flag2 (gob-get-closest-by-filter
 			 (lambda (g)
-			   (and 
+			   (and
 				(string= +flag+ (gob-name g))
 				(not (= (gob-id g) (gob-id flag1))))))))
 				(let ((pos1 (gob-rc flag1))
@@ -76,21 +76,9 @@
 					(if (> (coord2d-dist (gob-rc (my-gob)) pos1) 5)
 						(chat-send-message (area-chat) (format nil "Fail ~A" (coord2d-dist (gob-rc (my-gob)) pos1)))
 						(chat-send-message (area-chat) "Success")
-					)		
+					)
 				)
 			)
 		)
 	)
 )
-
-(script
-	(wait-for-movement-test)
-)
-;(script
-; (let ((flag (gob-get-closest-by-name +flag+))
-;       (me (my-gob)))
-;   (format t "Start ~A~%" (get-time))
-;   (mv-move-to (gob-rc flag))
-;   (forever
-;    (format t "[~A] Moving? ~A~%" (get-time) (is-gob-moving me))
-;    (sleep 0.1))))

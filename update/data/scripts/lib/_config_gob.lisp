@@ -14,6 +14,7 @@
 
 (java-func +gob+ gob-c "getc")
 (java-func +gob+ gob-name "name")
+(java-func +gob+ gob-v "getv")
 (java-func +gob+ gob-sdt "sdt")
 (java-func +gob+ gob-overlays "overlays")
 ;;friendly
@@ -118,7 +119,7 @@
 (export '(+plant+ +human+ +animal+ +tamed-animal+ +small-animal+ +water-vehicle+ +vehicle+
           gob-c gob-name gob-type gob-overlays gob-sdt is-gob-dead
           gob-kinname gob-equipment
-          gob-id gob-rc
+          gob-id gob-rc gob-v
           is-gob-a my-gob
           is-gob-moving is-gob-friendly is-gob-dangerous
           wait-for-movement

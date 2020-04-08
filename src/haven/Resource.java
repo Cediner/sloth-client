@@ -591,12 +591,8 @@ public class Resource implements Serializable {
                     while (true) {
                         Queued cur;
                         synchronized (queue) {
-                            long start = System.currentTimeMillis(), now = start;
                             while ((cur = queue.poll()) == null) {
-                                queue.wait(10000 - (now - start));
-                                now = System.currentTimeMillis();
-                                if (now - start >= 10000)
-                                    return;
+                                queue.wait(10000);
                             }
                         }
                         handle(cur);

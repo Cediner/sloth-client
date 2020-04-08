@@ -256,10 +256,8 @@ public class MapFile {
 
         public void run() {
             try {
-                long last = System.currentTimeMillis();
                 while (true) {
                     Runnable task;
-                    long now = System.currentTimeMillis();
                     synchronized (procmon) {
                         if (!updqueue.isEmpty()) {
                             Pair<MCache, Collection<MCache.Grid>> el = Utils.take(updqueue);
@@ -274,16 +272,11 @@ public class MapFile {
                             task = locked(MapFile.this::save, lock.readLock());
                             gdirty = false;
                         } else {
-                            if (now - last > 10000) {
-                                processor = null;
-                                return;
-                            }
                             procmon.wait(5000);
                             continue;
                         }
                     }
                     task.run();
-                    last = now;
                 }
             } catch (InterruptedException e) {
             } finally {
