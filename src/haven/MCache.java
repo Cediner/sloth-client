@@ -274,6 +274,16 @@ public class MCache {
                     if (old != null)
                         old.dispose();
                 }
+            } else if (cut.grid == null) {
+                //automatically build a grid mesh with every cut
+                buildgcut(cc);
+                if (cut.dgrid.done() || cut.grid == null) {
+                    FastMesh old = cut.grid;
+                    cut.grid = cut.dgrid.get();
+                    cut.dgrid = null;
+                    if (old != null)
+                        old.dispose();
+                }
             }
             return cut.grid;
         }
@@ -315,8 +325,6 @@ public class MCache {
             });
             if (prev != null)
                 prev.cancel();
-            //automatically build a grid mesh with every cut
-            buildgcut(cc);
         }
 
         /**
