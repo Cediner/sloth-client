@@ -46,6 +46,24 @@ public class ScriptManager extends Window implements ObservableMapListener<Long,
         }
     }
 
+    private static class LuaScriptItm implements ScriptItm {
+        final String name;
+
+        public LuaScriptItm(final String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String name() {
+            return "[Lua]" + name;
+        }
+
+        @Override
+        public void run(final UI ui) {
+            ui.sess.details.context.launchLuaScript(name, ui.sess.details);
+        }
+    }
+
     private static class JavaScriptItm implements ScriptItm {
         final String name;
         final Class<? extends Script> cls;
@@ -102,10 +120,15 @@ public class ScriptManager extends Window implements ObservableMapListener<Long,
             final File dir = new File("data/scripts/");
             scripts.clear();
             if (dir.exists()) {
-                final File[] files = dir.listFiles((fdir, name) -> name.endsWith(".lisp") && !name.startsWith("_config"));
+                final File[] files = dir.listFiles((fdir, name) -> (name.endsWith(".lisp") || name.endsWith(".lua"))
+                        && !name.startsWith("_config"));
                 if (files != null) {
                     for (final File f : files) {
-                        scripts.add(new LispScriptItm(f.getName().substring(0, f.getName().lastIndexOf(".lisp"))));
+                        if (f.getName().endsWith(".lisp")) {
+                            scripts.add(new LispScriptItm(f.getName().substring(0, f.getName().lastIndexOf(".lisp"))));
+                        } else if (f.getName().endsWith(".lua")) {
+                            scripts.add(new LuaScriptItm(f.getName().substring(0, f.getName().lastIndexOf(".lua"))));
+                        }
                     }
                 }
             }

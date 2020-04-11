@@ -52,6 +52,12 @@ public class Context {
         thr.start();
     }
 
+    public synchronized void launchLuaScript(final String script, final SessionDetails session) {
+        final Script thr = new LuaScript(script, idpool.next(), session);
+        scripts.put(thr.sid(), thr);
+        thr.start();
+    }
+
     public synchronized void dispatchmsg(final Widget wdg, final String msg, final Object... args) {
         for (final Script script : scripts.values()) {
             script.newmsg(wdg, msg, args);
