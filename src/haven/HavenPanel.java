@@ -133,7 +133,7 @@ public class HavenPanel extends GLCanvas implements Runnable, Console.Directory,
                             BGL gl = g.gl;
                             gl.glColor3f(1, 1, 1);
                             gl.glPointSize(4);
-                            gl.joglSetSwapInterval((aswap = iswap) ? 1 : 0);
+                            gl.joglSetSwapInterval((aswap = DefSettings.VSYNC.get()) ? 1 : 0);
                             gl.glEnable(GL.GL_BLEND);
                             //gl.glEnable(GL.GL_LINE_SMOOTH);
                             gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
@@ -534,8 +534,8 @@ public class HavenPanel extends GLCanvas implements Runnable, Console.Directory,
             DefSettings.checkForDirty();
             f.doneat = System.currentTimeMillis();
         }
-        if (iswap != aswap)
-            gl.setSwapInterval((aswap = iswap) ? 1 : 0);
+        if (DefSettings.VSYNC.get() != aswap)
+            gl.setSwapInterval((aswap = DefSettings.VSYNC.get()) ? 1 : 0);
     }
 
     private KeyEvent lastpress = null;
@@ -707,7 +707,7 @@ public class HavenPanel extends GLCanvas implements Runnable, Console.Directory,
                                 curf.tick("aux");
 
                             now = System.currentTimeMillis();
-                            long fd = bgmode ? this.bgfd : this.fd;
+                            long fd = 1000 / (bgmode ? DefSettings.BGFPS.get() : DefSettings.FPS.get());
                             if (now - then < fd) {
                                 synchronized (events) {
                                     events.wait(fd - (now - then));

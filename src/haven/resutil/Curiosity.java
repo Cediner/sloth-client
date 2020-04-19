@@ -73,7 +73,7 @@ public class Curiosity extends ItemInfo.Tip {
         if (exp > 0)
             buf.append(String.format("Learning points: $col[192,192,255]{%s}\n", Utils.thformat(exp)));
         if (time > 0)
-            buf.append(String.format("Study time: $col[192,255,192]{%s}\n", timefmt(time / 3)));
+            buf.append(String.format("Study time: $col[192,255,192]{%s}\n", timefmt((int) (time / 3.29d))));
         if (mw > 0)
             buf.append(String.format("Mental weight: $col[255,192,255]{%d}\n", mw));
         if (exp > 0 && time > 0) {

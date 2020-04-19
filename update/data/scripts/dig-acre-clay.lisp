@@ -7,7 +7,7 @@
 (in-package :dig-acre-clay)
 
 (defconstant +max-diff+ 11)
-(defconstant +clay+ 167)
+(defconstant +clay+ 182)
 
 (defconstant +coords+ (list (coord (* (east) +tilesz+) 0)
                             (coord (* (west) +tilesz+) 0)

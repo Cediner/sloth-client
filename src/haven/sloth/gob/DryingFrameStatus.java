@@ -12,8 +12,8 @@ public class DryingFrameStatus extends GAttrib implements Rendered {
         DRYING
     }
 
-    private static final Material.Colors dframeEmpty = new Material.Colors(new Color(87, 204, 73, 255));
-    private static final Material.Colors dframeDone = new Material.Colors(new Color(209, 42, 42, 255));
+    private static final Material.Colors dframeDone = new Material.Colors(new Color(87, 204, 73, 255));
+    private static final Material.Colors dframeEmpty = new Material.Colors(new Color(209, 42, 42, 255));
 
     private State state;
 

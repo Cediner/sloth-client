@@ -48,6 +48,12 @@ public class VideoOpts extends Scrollport {
             lighting.pack();
         }
         {//Display
+            display.add(new IndirCheckBox("VSync enabled", VSYNC));
+            display.add(new IndirLabel(() -> String.format("FPS: %d", FPS.get())));
+            display.add(new IndirHSlider(200, 5, 240, FPS));
+            display.add(new IndirLabel(() -> String.format("Background FPS: %d", BGFPS.get())));
+            display.add(new IndirHSlider(200, 5, 240, BGFPS));
+
             display.add(new IndirCheckBox("Render shadows", cf.SHADOWS));
             //shadow quality
             display.add(new IndirLabel(() -> String.format("Shadow Quality: %d", MapView.shadowmap[SHADOWSQUALITY.get()])));

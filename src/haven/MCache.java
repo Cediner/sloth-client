@@ -325,6 +325,7 @@ public class MCache {
             });
             if (prev != null)
                 prev.cancel();
+            buildgcut(cc);
         }
 
         /**

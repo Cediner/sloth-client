@@ -384,6 +384,10 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
         }
     }
 
+    public int getMaxStage() {
+        return Growth.maxstage(name());
+    }
+
     public int getMaxStage(final int guess) {
         int max = guess;
         for (FastMesh.MeshRes layer : getres().layers(FastMesh.MeshRes.class)) {

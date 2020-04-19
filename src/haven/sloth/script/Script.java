@@ -93,6 +93,10 @@ public abstract class Script extends Thread {
         sender.wdgmsg(msg, args);
     }
 
+    public long gettime() {
+        return System.currentTimeMillis();
+    }
+
     /* Discord **********************************************************************************/
     public void startDiscord(final String token) {
         discord = new DiscordApiBuilder().setToken(token).login().join();

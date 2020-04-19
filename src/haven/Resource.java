@@ -1496,9 +1496,11 @@ public class Resource implements Serializable {
             throw (new LoadException("Wrong res version (" + ver + " != " + this.ver + ")", this));
         }
         while (!in.eom()) {
-            LayerFactory<?> lc = ltypes.get(in.string());
+            final String ln = in.string();
+            LayerFactory<?> lc = ltypes.get(ln);
             int len = in.int32();
             if (lc == null) {
+                //System.out.printf("Skipped %s layer from %s\n", ln, name);
                 in.skip(len);
                 continue;
             }

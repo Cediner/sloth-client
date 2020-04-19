@@ -13,12 +13,14 @@ public class TanTubStatus extends GAttrib implements Rendered {
         EMPTY,
         DONE,
         WATER,
+        WATERBARK,
         WORKING
     }
 
     private static final Material.Colors dframeDone = new Material.Colors(new Color(87, 204, 73, 255));
     private static final Material.Colors dframeEmpty = new Material.Colors(new Color(255, 0, 0, 200));
     private static final Material.Colors dframeWater = new Material.Colors(new Color(0, 0, 255, 200));
+    private static final Material.Colors needsBark = new Material.Colors(new Color(232, 255, 0, 200));
 
     private State state;
 
@@ -37,6 +39,9 @@ public class TanTubStatus extends GAttrib implements Rendered {
                 case DONE:
                     rl.prepc(dframeDone);
                     break;
+                case WATERBARK:
+                    rl.prepc(needsBark);
+                    break;
                 case WATER:
                     rl.prepc(dframeWater);
                     break;
@@ -48,21 +53,23 @@ public class TanTubStatus extends GAttrib implements Rendered {
     public void tick() {
         final int sdt = gob.sdt();
         switch (sdt) {
-            case 10:
-            case 9:
-            case 8:
+            case 10: //done + has water + has  bark
+            case 9: //done
+            case 8: //done
                 state = State.DONE;
                 break;
-            case 2:
+            case 2: //empty but ready
+            case 1: //empty need bark
+            case 0: //empty need water + bark
                 state = State.EMPTY;
                 break;
-            case 0:
-            case 1:
-            case 4:
-            case 5:
+            case 5: //Has items + some water, needs more water or bark
+                state = State.WATERBARK;
+                break;
+            case 4: //Has items, needs bark + water
                 state = State.WATER;
                 break;
-            default:
+            default: //6 - working
                 state = State.WORKING;
                 break;
         }

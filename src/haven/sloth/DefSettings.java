@@ -2,6 +2,7 @@ package haven.sloth;
 
 import com.google.common.flogger.FluentLogger;
 import haven.Coord;
+import haven.Indir;
 import haven.sloth.gob.*;
 import haven.sloth.gui.BeltWnd;
 import haven.sloth.gui.chr.CredoTree;
@@ -125,12 +126,18 @@ public class DefSettings {
     public static final IndirSetting<Boolean> NOGOBAUDIO = new IndirSetting<>(global, "audio.no-gob-audio");
     public static final IndirSetting<Boolean> OPENINVONLOGIN = new IndirSetting<>(global, "gameplay.open-inv-on-login");
     public static final IndirSetting<Boolean> OPENBELTONLOGIN = new IndirSetting<>(global, "gameplay.open-belt-on-login");
-    public static final IndirSetting<Boolean> COLORDFRAMES= new IndirSetting<>(global, "gameplay.show-colored-frames");
+    public static final IndirSetting<Boolean> COLORDFRAMES = new IndirSetting<>(global, "gameplay.show-colored-frames");
     public static final IndirSetting<Boolean> COLORTUBS = new IndirSetting<>(global, "gameplay.show-colored-tubs");
     public static final IndirSetting<Boolean> COLORCUPBOARDS = new IndirSetting<>(global, "gameplay.show-colored-cupbaords");
 
     public static final IndirSetting<Boolean> KEEPGOBS = new IndirSetting<>(global, "graphics.dont-delete-gobs");            //[Bool] Don't delete gobs
     public static final IndirSetting<Boolean> KEEPGRIDS = new IndirSetting<>(global, "graphics.dont-delete-grids");          //[Bool] Don't delete map grids
+
+    //Display
+    public static final IndirSetting<Boolean> VSYNC = new IndirSetting<>(global, "display.vsync");
+    public static final IndirSetting<Integer> FPS = new IndirSetting<>(global, "display.fps");
+    public static final IndirSetting<Integer> BGFPS = new IndirSetting<>(global, "display.bg-fps");
+
 
     //Minimap
     public static final IndirSetting<Boolean> SHOWMMGOBS = new IndirSetting<>(global, "gameplay.show-minimap-gobs");    //[Bool] Toggle minimap gobs
@@ -325,6 +332,10 @@ public class DefSettings {
         FREECAMREXAXIS.ensure(false);
         FREECAMREYAXIS.ensure(false);
         FREECAMLOCKELAV.ensure(false);
+        //Display
+        VSYNC.ensure(true);
+        FPS.ensure(60);
+        BGFPS.ensure(10);
         //Figure out our themes
         HUDTHEME.ensure("sloth");
         MENUTHEME.ensure("default");

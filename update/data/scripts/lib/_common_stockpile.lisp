@@ -22,7 +22,7 @@
           (unless (mv-los-gob gob)
             (mv-path-to-gob gob))
           (mv-click-gob gob +right-button+ +mf-shift+)
-          (sleep 2)
+          (wait-for-movement-to-finish)
           (mv-move-to (gob-rc gob))))
   (when (held-item)
     (item-drop (held-item)))
@@ -69,7 +69,7 @@
   
 
 (defun store-items (itm stockpile-gob-name stockpile-item-name
-                     original-position bbox tiles)
+                        original-position bbox tiles)
   (let ((gob (gob-get-closest-by-filter
               (lambda (gob)
                 (and (bbox-within bbox (gob-rc gob))
@@ -87,16 +87,15 @@
     (let ((tiles (bbox-tiles bbox))
           (original-position (gob-rc (my-gob))))
       (forever
-        (sleep 0.1)
-        (pickup-items original-position item-gob-name)
-        (mv-smart-move original-position)
-        (let ((itm (inventory-get-items-by-filter
-                    (main-inventory)
-                    (lambda (itm)
-                      (search item-inv-name (item-name itm))))))
-          (when itm
-            (store-items (car itm) stockpile-gob-name stockpile-item-name
-                         original-position bbox tiles)))))))
+       (sleep 0.1)
+       (pickup-items original-position item-gob-name)
+       (let ((itm (inventory-get-items-by-filter
+                   (main-inventory)
+                   (lambda (itm)
+                     (search item-inv-name (item-name itm))))))
+         (when itm
+           (store-items (car itm) stockpile-gob-name stockpile-item-name
+                        original-position bbox tiles)))))))
 
 (export '(stockpile-items-forever
           pickup-items

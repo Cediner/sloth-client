@@ -32,7 +32,6 @@
 
 (script
 	(let ((tiles (bbox-tiles (get-bbox "Select an area"))))
-		(chat-send-message (area-chat) (format nil "~A" (length tiles)))
 		(loop
 			for tile = (get-next-snow-tile tiles)
 			while tile
