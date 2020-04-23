@@ -26,7 +26,9 @@
 
 package haven;
 
+import com.google.common.flogger.FluentLogger;
 import haven.sloth.io.SQLResCache;
+import haven.sloth.util.Timer;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -41,6 +43,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Resource implements Serializable {
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     public static Resource fake = new Resource(null, "fake", -1);
     private static ResCache prscache;
     private static ResCache sqlcache;
@@ -349,6 +352,7 @@ public class Resource implements Serializable {
         private final PrioQueue<Queued> queue = new PrioQueue<Queued>();
         private final Map<String, Queued> queued = new HashMap<String, Queued>();
         private final Pool parent;
+        private final Timer timer = new Timer();
 
         public Pool(Pool parent, ResSource... sources) {
             this.parent = parent;
@@ -438,9 +442,11 @@ public class Resource implements Serializable {
         }
 
         private void handle(Queued res) {
+            timer.start();
             for (ResSource src : sources) {
                 try {
                     InputStream in = src.get(res.name);
+                    timer.tick(src.toString());
                     try {
                         Resource ret = new Resource(this, res.name, res.ver);
                         ret.source = src;
@@ -449,9 +455,11 @@ public class Resource implements Serializable {
                         res.error = null;
                         break;
                     } finally {
+                        timer.tick("load");
                         in.close();
                     }
                 } catch (Throwable t) {
+                    timer.tick(src.toString() + " - failed");
                     LoadException error;
                     if (t instanceof LoadException)
                         error = (LoadException) t;
@@ -466,6 +474,11 @@ public class Resource implements Serializable {
                 }
             }
             res.done();
+            if (timer.total() > 500) {
+                logger.atFine().log("Resource loaded [name %s] [ver %d] [status %s] Summary:\n%s",
+                        res.name, res.ver, res.error,
+                        timer.summary());
+            }
         }
 
         public Named load(String name, int ver, int prio) {
@@ -732,6 +745,8 @@ public class Resource implements Serializable {
             synchronized (Resource.class) {
                 if (_remote == null) {
                     Pool remote = new Pool(local());
+                    //Add SQL files
+                    remote.add(new CacheSource(sqlcache));
                     //Add cache files
                     if (prscache != null) {
                         remote.add(new CacheSource(prscache));
