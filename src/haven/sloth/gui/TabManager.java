@@ -103,7 +103,7 @@ public class TabManager extends Widget {
             changetab(tab, btn);
         }
 
-        pack();
+        arrange();
         count++;
     }
 
@@ -167,9 +167,11 @@ public class TabManager extends Widget {
         for (TabButton btn : btns) {
             btn.c = new Coord(nextx, nexty);
             if (bw >= 0) {
-                btn.sz = new Coord(Math.max(bw, btn.sz.x), btn.sz.y);
-                btn.setup();
+                btn.sz = new Coord(bw, btn.sz.y);
+            } else {
+                btn.sz = new Coord(btn.sz);
             }
+            btn.setup();
             nextx += btn.sz.x;
         }
         pack();

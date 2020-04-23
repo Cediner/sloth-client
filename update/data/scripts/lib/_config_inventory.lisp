@@ -27,6 +27,12 @@
 ;;(java-func +inv+ inventory-can-drop-at "canDropAt" +coord+)
 ;;(java-func +inv+ inventory-item-at "itemAt" +coord+)
 
+(defun inventory-get-by-name (name)
+	(doarr (inv (inventories))
+		(when (search name (inventory-name inv))
+			(return-from inventory-get-by-name inv)))
+    nil)
+
 (defun inventory-can-drop-at (inv coord)
   (null (inventory-item-at inv coord)))
 
@@ -98,7 +104,7 @@
 
 (export '(main-inventory study-inventory belt-inventory
           inventory-count inventory inventories
-          inventory-name inventory-items inventory-size inventory-used-slots inventory-can-drop-at inventory-item-at
+          inventory-name inventory-items inventory-size inventory-used-slots inventory-get-by-name inventory-can-drop-at inventory-item-at
           inventory-free-slots inventory-full inventory-place-item
           inventory-transfer-items
           inventory-get-item-by-name inventory-get-items-by-name inventory-get-items-by-filter

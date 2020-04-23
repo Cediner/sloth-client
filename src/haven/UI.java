@@ -27,6 +27,7 @@
 package haven;
 
 import com.google.common.flogger.FluentLogger;
+import haven.sloth.util.Timer;
 
 import java.lang.ref.WeakReference;
 import java.util.*;
@@ -187,33 +188,46 @@ public class UI {
     //At 65535 wrap back around? Can we break the game by hitting that limit.............
     public int next_predicted_id = 2;
     public void newwidget(int id, String type, int parent, Object[] pargs, Object... cargs) throws InterruptedException {
+        final Timer nwtimer = new Timer();
+        nwtimer.start();
         Widget.Factory f = Widget.gettype2(type);
+        nwtimer.tick("gettype");
         synchronized (this) {
             Widget wdg = f.create(this, cargs);
+            nwtimer.tick("create");
             wdg.attach(this);
+            nwtimer.tick("attach");
             if (parent != 65535) {
                 Widget pwdg = widgets.get(parent);
+                nwtimer.tick("parent");
                 if (pwdg == null)
                     throw (new UIException("Null parent widget " + parent + " for " + id, type, cargs));
                 pwdg.addchild(wdg, pargs);
+                nwtimer.tick("addchild");
             }
             bind(wdg, id);
+            nwtimer.tick("bind");
         }
         next_predicted_id = id + 1;
-        logger.atFine().log("New Widget [id %s] [parent %d] [type %s] [args %s]", id, parent, type, Arrays.toString(cargs));
+        logger.atFine().log("New Widget [id %s] [parent %d] [type %s] [args %s] Summary:\n%s", id, parent, type, Arrays.toString(cargs), nwtimer.summary());
     }
 
     public void addwidget(int id, int parent, Object[] pargs) {
+        final Timer awtimer = new Timer();
+        awtimer.start();
         synchronized (this) {
             Widget wdg = widgets.get(id);
+            awtimer.tick("widget");
             if (wdg == null)
                 throw (new UIException("Null child widget " + id + " added to " + parent, null, pargs));
             Widget pwdg = widgets.get(parent);
+            awtimer.tick("parent");
             if (pwdg == null)
                 throw (new UIException("Null parent widget " + parent + " for " + id, null, pargs));
             pwdg.addchild(wdg, pargs);
+            awtimer.tick("addchild");
         }
-        logger.atFine().log("Add Widget [id %s] to [parent %d] [args %s]", id, parent, Arrays.toString(pargs));
+        logger.atFine().log("Add Widget [id %s] to [parent %d] [args %s]  Summary:\n%s", id, parent, Arrays.toString(pargs), awtimer.summary());
     }
 
     public abstract class Grab {

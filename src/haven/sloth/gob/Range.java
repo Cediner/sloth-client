@@ -26,7 +26,7 @@ public class Range extends GAttrib implements Rendered {
                         if (rads.containsKey(tiles)) {
                             rangemap.put(name, rads.get(tiles));
                         } else {
-                            rads.put(tiles, new BPRad(null, null, (float) (tiles * MCache.tilesz.x)));
+                            rads.put(tiles, new BPRad(null, null, (float) tiles));
                             rangemap.put(name, rads.get(tiles));
                         }
                     }

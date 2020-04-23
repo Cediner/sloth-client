@@ -21,5 +21,11 @@
       (flowermenu-select (flowermenu-petal-num petal))
       (return-from flowermenu-select-by-name t)))
   nil)
+  
+(defun flowermenu-get-petal-name (ind)
+  (doarr (petal (flowermenu-options (flowermenu)))
+    (when (= (flowermenu-petal-num petal) ind)
+      (return-from flowermenu-get-petal-name (flowermenu-petal-name petal))))
+  nil)
 
-(export '(flowermenu wait-for-flowermenu flowermenu-select flowermenu-select-by-name))
+(export '(flowermenu wait-for-flowermenu flowermenu-select flowermenu-select-by-name flowermenu-get-petal-name))

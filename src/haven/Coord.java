@@ -160,6 +160,14 @@ public class Coord implements Comparable<Coord>, java.io.Serializable {
         return (new Coord(Utils.floormod(x, d.x), Utils.floormod(y, d.y)));
     }
 
+    public Coord min(final Coord d) {
+        return new Coord(Math.min(x, d.x), Math.min(y, d.y));
+    }
+
+    public Coord max(final Coord d) {
+        return new Coord(Math.max(x, d.x), Math.max(y, d.y));
+    }
+
     public Coord copy() {
         return new Coord(x, y);
     }

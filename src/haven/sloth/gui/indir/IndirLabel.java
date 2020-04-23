@@ -9,12 +9,19 @@ import java.util.function.Supplier;
 
 public class IndirLabel extends Widget {
     private final Supplier<String> render;
+    private final Text.Foundry fnd;
     private Text text;
 
-    public IndirLabel(final Supplier<String> render) {
+    public IndirLabel(final Supplier<String> render, final Text.Foundry fnd) {
         this.render = render;
-        this.text = Text.std12.render(render.get());
+        this.fnd = fnd;
+        this.text = fnd.render(render.get());
         this.sz = text.sz();
+    }
+
+
+    public IndirLabel(final Supplier<String> render) {
+        this(render, Text.std12);
     }
 
     @Override
@@ -26,7 +33,7 @@ public class IndirLabel extends Widget {
     public void tick(double dt) {
         final String ntext = render.get();
         if (!ntext.equals(text.text)) {
-            text = Text.render(ntext);
+            text = fnd.render(ntext);
             sz = text.sz();
         }
     }

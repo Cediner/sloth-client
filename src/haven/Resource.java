@@ -473,17 +473,17 @@ public class Resource implements Serializable {
             synchronized (cache) {
                 Resource cur = cache.get(name);
                 if (cur != null) {
-                    if ((ver == -1) || (cur.ver == ver)) {
+                    if ((ver == -1) || (cur.ver >= ver)) {
                         return (cur.indir());
-                    } else if (ver < cur.ver) {
-                        /* Throw LoadException rather than
+                    } /*else if (ver < cur.ver) {
+                        * Throw LoadException rather than
                          * RuntimeException here, to make sure
                          * obsolete resources doing nested loading get
                          * properly handled. This could be the wrong
                          * way of going about it, however; I'm not
-                         * sure. */
+                         * sure. *
                         throw (new LoadException(String.format("Weird version number on %s (%d > %d), loaded from %s", cur.name, cur.ver, ver, cur.source), cur));
-                    }
+                    }*/
                 }
                 synchronized (queue) {
                     Queued cq = queued.get(name);

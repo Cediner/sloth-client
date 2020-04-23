@@ -131,6 +131,8 @@ public class Window extends MovableWidget implements DTarget {
 
     private boolean hidable = false, hidden;
 
+    private Runnable destroyHook = null;
+
     @RName("wnd")
     public static class $_ implements Factory {
         public Widget create(UI ui, Object[] args) {
@@ -410,6 +412,17 @@ public class Window extends MovableWidget implements DTarget {
             }
         }
         super.mousemove(c);
+    }
+
+    public void setDestroyHook(final Runnable r) {
+        this.destroyHook = r;
+    }
+
+    @Override
+    public void destroy() {
+        if (destroyHook != null)
+            destroyHook.run();
+        super.destroy();
     }
 
     public void close() {

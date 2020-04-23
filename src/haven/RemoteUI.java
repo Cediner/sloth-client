@@ -26,8 +26,13 @@
 
 package haven;
 
+import com.google.common.flogger.FluentLogger;
+import haven.sloth.util.Timer;
+
 public class RemoteUI implements UI.Receiver, UI.Runner {
-    Session sess, ret;
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
+    final Session sess;
+    Session ret;
     UI ui;
 
     public RemoteUI(Session sess) {
@@ -50,32 +55,53 @@ public class RemoteUI implements UI.Receiver, UI.Runner {
         }
     }
 
-    public Session run(UI ui) throws InterruptedException {
+    public Session run(final UI ui) throws InterruptedException {
         this.ui = ui;
         ui.setreceiver(this);
         while (true) {
             PMessage msg;
+            final Timer timer = new Timer();
             synchronized (ui) {
                 while ((msg = sess.getuimsg()) != null) {
+                    timer.start();
                     if (msg.type == RMessage.RMSG_NEWWDG) {
                         int id = msg.uint16();
                         String type = msg.string();
                         int parent = msg.uint16();
                         Object[] pargs = msg.list();
                         Object[] cargs = msg.list();
+                        timer.tick("decode");
                         ui.newwidget(id, type, parent, pargs, cargs);
+                        timer.tick("newwidget");
+                        if (timer.total() > 1000) {
+                            logger.atSevere().log("RemoteUI newwdg [id %d] [type %s] summary: \n%s", id, type, timer.summary());
+                        } else {
+                            logger.atFine().log("RemoteUI newwdg [id %d] [type %s] summary: \n%s", id, type, timer.summary());
+                        }
                     } else if (msg.type == RMessage.RMSG_WDGMSG) {
                         int id = msg.uint16();
                         String name = msg.string();
+                        timer.tick("decode");
                         ui.uimsg(id, name, msg.list());
+                        timer.tick("uimsg");
+                        if (timer.total() > 500)
+                            logger.atSevere().log("RemoteUI uimsg [id %d] [name %s] summary: \n%s", id, name, timer.summary());
+                        else
+                            logger.atFine().log("RemoteUI uimsg [id %d] [name %s] summary: \n%s", id, name, timer.summary());
                     } else if (msg.type == RMessage.RMSG_DSTWDG) {
                         int id = msg.uint16();
+                        timer.tick("decode");
                         ui.destroy(id);
+                        timer.tick("destroy");
+                        logger.atFine().log("RemoteUI destroy [id %d] summary: \n%s", id, timer.summary());
                     } else if (msg.type == RMessage.RMSG_ADDWDG) {
                         int id = msg.uint16();
                         int parent = msg.uint16();
                         Object[] pargs = msg.list();
+                        timer.tick("decode");
                         ui.addwidget(id, parent, pargs);
+                        timer.tick("addwidget");
+                        logger.atFine().log("RemoteUI addwdg [id %d] [par  %d] summary: \n%s", id, parent, timer.summary());
                     }
                 }
             }

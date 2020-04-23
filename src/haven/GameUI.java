@@ -38,6 +38,7 @@ import haven.sloth.gui.chr.StudyWnd;
 import haven.sloth.gui.core.Scrollport;
 import haven.sloth.gui.equip.MiniEquipView;
 import haven.sloth.gui.item.MiniInvView;
+import haven.sloth.gui.livestock.LivestockManager;
 import haven.sloth.gui.script.ScriptManager;
 import haven.sloth.io.BeltData;
 
@@ -104,6 +105,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public MiniEquipView mmequ;
     public StudyWnd study;
     public SkillnCredoWnd scwnd;
+    public LivestockManager lm;
 
     public String curvil = "???";
 
@@ -185,6 +187,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
         add(lrhandview);
         scwnd = add(new SkillnCredoWnd());
         scwnd.hide();
+        lm = add(new LivestockManager());
+        lm.hide();
     }
 
     @Override
@@ -570,7 +574,11 @@ public class GameUI extends ConsoleHost implements Console.Directory {
             questwnd.add(child, Coord.z);
         } else if (place == "misc") {
             Coord c;
-            if (args[1] instanceof Coord) {
+            if (child instanceof Window && ((Window) child).cap != null &&
+                    LivestockManager.animals.contains(((Window) child).cap.text)) {
+                lm.addAnimal((Window) child);
+                return;
+            } else if (args[1] instanceof Coord) {
                 c = (Coord) args[1];
             } else if (args[1] instanceof Coord2d) {
                 c = ((Coord2d) args[1]).mul(new Coord2d(this.sz.sub(child.sz))).round();

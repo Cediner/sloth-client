@@ -25,6 +25,12 @@ public class Scrollport extends Widget {
         super(vsz);
         this.vsz = vsz;
         ul = new Coord(0, 0);
+        resize(vsz);
+    }
+
+    public void resizeView(final Coord sz) {
+        this.sz = sz;
+        pack();
     }
 
     @Override

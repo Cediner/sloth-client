@@ -483,10 +483,12 @@ public class Widget {
             next.prev = prev;
         if (prev != null)
             prev.next = next;
-        if (parent.child == this)
-            parent.child = next;
-        if (parent.lchild == this)
-            parent.lchild = prev;
+        if (parent != null) {
+            if (parent.child == this)
+                parent.child = next;
+            if (parent.lchild == this)
+                parent.lchild = prev;
+        }
         next = null;
         prev = null;
     }
@@ -532,8 +534,10 @@ public class Widget {
         if (canfocus)
             setcanfocus(false);
         unlink();
-        parent.cdestroy(this);
-        parent = null;
+        if (parent != null) {
+            parent.cdestroy(this);
+            parent = null;
+        }
     }
 
     public void cdestroy(Widget w) {

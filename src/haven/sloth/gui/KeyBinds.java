@@ -113,6 +113,14 @@ public class KeyBinds {
                 return false;
             }
         }));
+        add("UI", new KeyBind("Toggle Livestock Manager", new IndirSetting<>(DefSettings.global, "keybind.toggle-livestock-manager"), "S-L", ui -> {
+            if (ui.gui != null) {
+                ui.gui.lm.toggleVisibility();
+                return true;
+            } else {
+                return false;
+            }
+        }));
         //Special settings toggles
         add("Gameplay", new KeyBind("Toggle grid lines", new IndirSetting<>(DefSettings.global, "keybind.toggle-grid"), "C-G", ui -> {
             DefSettings.SHOWGRID.set(!DefSettings.SHOWGRID.get());

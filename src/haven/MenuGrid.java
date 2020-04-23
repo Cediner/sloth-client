@@ -634,34 +634,37 @@ public class MenuGrid extends MovableWidget {
             curoff = 0;
             updlayout();
         } else if (msg.equals("fill")) {
-            synchronized (paginae) {
-                int a = 0;
-                while (a < args.length) {
-                    int fl = (Integer) args[a++];
-                    Pagina pag = paginafor(ui.sess.getres((Integer) args[a++]));
-                    if ((fl & 1) != 0) {
-                        pag.state(Pagina.State.ENABLED);
-                        pag.meter = 0;
-                        if ((fl & 2) != 0)
-                            pag.state(Pagina.State.DISABLED);
-                        if ((fl & 4) != 0) {
-                            pag.meter = ((Number) args[a++]).doubleValue() / 1000.0;
-                            pag.gettime = Utils.rtime();
-                            pag.dtime = ((Number) args[a++]).doubleValue() / 1000.0;
+            Defer.later(() -> {
+                synchronized (paginae) {
+                    int a = 0;
+                    while (a < args.length) {
+                        int fl = (Integer) args[a++];
+                        Pagina pag = paginafor(ui.sess.getres((Integer) args[a++]));
+                        if ((fl & 1) != 0) {
+                            pag.state(Pagina.State.ENABLED);
+                            pag.meter = 0;
+                            if ((fl & 2) != 0)
+                                pag.state(Pagina.State.DISABLED);
+                            if ((fl & 4) != 0) {
+                                pag.meter = ((Number) args[a++]).doubleValue() / 1000.0;
+                                pag.gettime = Utils.rtime();
+                                pag.dtime = ((Number) args[a++]).doubleValue() / 1000.0;
+                            }
+                            if ((fl & 8) != 0)
+                                pag.newp = 1;
+                            if ((fl & 16) != 0)
+                                pag.rawinfo = (Object[]) args[a++];
+                            else
+                                pag.rawinfo = new Object[0];
+                            paginae.add(pag);
+                        } else {
+                            paginae.remove(pag);
                         }
-                        if ((fl & 8) != 0)
-                            pag.newp = 1;
-                        if ((fl & 16) != 0)
-                            pag.rawinfo = (Object[]) args[a++];
-                        else
-                            pag.rawinfo = new Object[0];
-                        paginae.add(pag);
-                    } else {
-                        paginae.remove(pag);
                     }
+                    updlayout();
                 }
-                updlayout();
-            }
+                return true;
+            });
         } else {
             super.uimsg(msg, args);
         }

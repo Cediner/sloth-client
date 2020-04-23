@@ -33,8 +33,8 @@ import java.awt.Color;
 public class VMeter extends Widget {
     static Tex bg = Theme.tex("vm", 0);
     static Tex fg = Theme.tex("vm", 1);
-    Color cl;
-    int amount;
+    public Color cl;
+    public int amount;
 
     @RName("vm")
     public static class $_ implements Factory {
