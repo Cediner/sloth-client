@@ -6,11 +6,11 @@ import haven.sloth.gui.indir.IndirLabel;
 public class GoatTable extends AnimalTable {
     public GoatTable() {
         super();
-        setHeader(makeSimpleLabelRow("Mug shot", "Name", "Brand", "Pregnant", "Quality", "Meat quantity", "Milk quantity", "Wool quantity",
+        setHeader(makeSimpleLabelRow("Mug shot", "Name", "Sex", "Brand", "Pregnant", "Quality", "Meat quantity", "Milk quantity", "Wool quantity",
                 "Meat quality", "Milk quality", "Hide quality", "Wool quality", "Breeding quality", "Satiety", "Wellfedness"));
     }
 
-    public void addAnimal(final Window animal) {
+    public void addAnimal(final Window animal, final boolean male) {
         final Widget close = animal.child;
         final Avaview ava = (Avaview) animal.child.next;
         final Widget name = ava.next;
@@ -21,6 +21,7 @@ public class GoatTable extends AnimalTable {
             brand = name.next;
         }
 
+        final Label sex = new Label(male ? "M" : "F");
         final Label preg = new Label(((Label) brand.next).texts.startsWith("-- With") ? "Yes" : "No");
         final Label quality = (Label) scan(ava, "Quality:").next;
         final Widget meatAmt = scan(ava, "Meat quantity:").next;
@@ -49,9 +50,13 @@ public class GoatTable extends AnimalTable {
             if (g != null)
                 g.mark(25000);
         });
+        final Button kill = new Button(50, "M4Kill", () -> {
+            ((TextEntry) name).settext("Slaughter");
+            ((TextEntry) name).activate("Slaughter");
+        });
 
-        final Row row = generateRow(ava, name, brand, preg, quality, meatAmt, milkAmt, woolAmt, meatq, milkq, hideq, woolq,
-                breedq, satiety, fedness, mark, close);
+        final Row row = generateRow(ava, name, sex, brand, preg, quality, meatAmt, milkAmt, woolAmt, meatq, milkq, hideq, woolq,
+                breedq, satiety, fedness, mark, kill, close);
         animal.setDestroyHook(() -> remRow(row));
         addRow(row);
     }

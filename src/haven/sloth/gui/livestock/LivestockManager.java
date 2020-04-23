@@ -30,7 +30,7 @@ public class LivestockManager extends Window {
     private static final AnimalTable sheep = new SheepTable();
     private static final AnimalTable goats = new GoatTable();
     private static final AnimalTable horses = new HorseTable();
-    final TabManager tabs = new TabManager(1200);
+    final TabManager tabs = new TabManager(1300);
 
     public LivestockManager() {
         super(Coord.z, "Livestock Manager", "Livestock Manager");
@@ -56,28 +56,43 @@ public class LivestockManager extends Window {
         if (animalWnd.cap != null) {
             switch (animalWnd.cap.text) {
                 case "Hog":
+                    pigs.addAnimal(animalWnd, true);
+                    show("Pigs");
+                    break;
                 case "Sow":
-                    pigs.addAnimal(animalWnd);
+                    pigs.addAnimal(animalWnd, false);
                     show("Pigs");
                     break;
                 case "Billy":
+                    goats.addAnimal(animalWnd, true);
+                    show("Goats");
+                    break;
                 case "Nanny":
-                    goats.addAnimal(animalWnd);
+                    goats.addAnimal(animalWnd, false);
                     show("Goats");
                     break;
                 case "Stallion":
+                    horses.addAnimal(animalWnd, true);
+                    show("Horses");
+                    break;
                 case "Mare":
-                    horses.addAnimal(animalWnd);
+                    horses.addAnimal(animalWnd, false);
                     show("Horses");
                     break;
                 case "Ewe":
+                    sheep.addAnimal(animalWnd, false);
+                    show("Sheep");
+                    break;
                 case "Ram":
-                    sheep.addAnimal(animalWnd);
+                    sheep.addAnimal(animalWnd, true);
                     show("Sheep");
                     break;
                 case "Cow":
+                    cattle.addAnimal(animalWnd, false);
+                    show("Cattle");
+                    break;
                 case "Bull":
-                    cattle.addAnimal(animalWnd);
+                    cattle.addAnimal(animalWnd, true);
                     show("Cattle");
                     break;
             }

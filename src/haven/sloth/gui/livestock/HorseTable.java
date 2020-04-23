@@ -6,11 +6,11 @@ import haven.sloth.gui.indir.IndirLabel;
 public class HorseTable extends AnimalTable {
     public HorseTable() {
         super();
-        setHeader(makeSimpleLabelRow("Mug shot", "Name", "Brand", "Pregnant", "Quality", "Endurance", "Stamina", "Metabolism",
+        setHeader(makeSimpleLabelRow("Mug shot", "Name", "Sex", "Brand", "Pregnant", "Quality", "Endurance", "Stamina", "Metabolism",
                 "Meat quantity", "Milk quantity", "Meat quality", "Milk quality", "Hide quality", "Breeding quality", "Satiety", "Wellfedness"));
     }
 
-    public void addAnimal(final Window animal) {
+    public void addAnimal(final Window animal, final boolean male) {
         final Widget close = animal.child;
         final Avaview ava = (Avaview) animal.child.next;
         final Widget name = ava.next;
@@ -21,6 +21,7 @@ public class HorseTable extends AnimalTable {
             brand = name.next;
         }
 
+        final Label sex = new Label(male ? "M" : "F");
         final Label preg = new Label(((Label) brand.next).texts.startsWith("-- With") ? "Yes" : "No");
         final Label quality = (Label) scan(ava, "Quality:").next;
         final Widget endurance = scan(ava, "Endurance:").next;
@@ -50,9 +51,14 @@ public class HorseTable extends AnimalTable {
                 g.mark(25000);
         });
 
-        final Row row = generateRow(ava, name, brand, preg, quality, endurance, stam, meta,
+        final Button kill = new Button(50, "M4Kill", () -> {
+            ((TextEntry) name).settext("Slaughter");
+            ((TextEntry) name).activate("Slaughter");
+        });
+
+        final Row row = generateRow(ava, name, sex, brand, preg, quality, endurance, stam, meta,
                 meatAmt, milkAmt, meatq, milkq, hideq,
-                breedq, satiety, fedness, mark, close);
+                breedq, satiety, fedness, mark, kill, close);
         animal.setDestroyHook(() -> remRow(row));
         addRow(row);
     }

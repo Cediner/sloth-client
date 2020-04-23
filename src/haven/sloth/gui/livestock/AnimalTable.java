@@ -31,7 +31,7 @@ public abstract class AnimalTable extends RCellSheet {
     }
 
     public AnimalTable() {
-        super(new Coord(1200, 500));
+        super(new Coord(1300, 500));
     }
 
     public Row generateRow(final Widget... wdgs) {
@@ -45,5 +45,5 @@ public abstract class AnimalTable extends RCellSheet {
         return wdg;
     }
 
-    public abstract void addAnimal(final Window animal);
+    public abstract void addAnimal(final Window animal, final boolean male);
 }
