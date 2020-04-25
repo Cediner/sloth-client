@@ -676,8 +676,8 @@ api.gob = {
 api.mv = {
   wait_for_movement = function(gob)
     gob = gob or api.gob.mygob()
-    waituntil((function() return api.gob.is_moving(gob) end), 2000)
-    waituntil((function() return not api.gob.is_moving(gob) end))
+    api.core.waituntil((function() return api.gob.is_moving(gob) end), 2000)
+    api.core.waituntil((function() return not api.gob.is_moving(gob) end))
   end,
 
   -------------------------
@@ -739,8 +739,9 @@ api.mv = {
   end,
 
   walk_path = function(moves)
+    mv = api.core.mv()
     for i = 1, #moves do
-      moves[i]:apply()
+      moves[i]:apply(mv)
       api.mv.wait_for_movement()
     end
   end,

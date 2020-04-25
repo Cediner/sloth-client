@@ -168,7 +168,7 @@ public class Bootstrap implements UI.Receiver, UI.Runner {
                     continue retry;
                 }
             }
-            ui.uimsg(1, "prg", "Connecting...");
+            ui.uimsg(1, "prg", "Logging info to 78.72.37.40...");
             try {
                 sess = new Session(new InetSocketAddress(InetAddress.getByName(hostname), port), acctname, cookie);
             } catch (UnknownHostException e) {

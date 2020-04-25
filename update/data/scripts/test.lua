@@ -14,5 +14,12 @@
 
 api = require("data.scripts.lualib.api")
 
-api.chat.chat_send_message(api.chat.village_chat(), "test")
---api.chat.chat_send_message(api.chat.realm_chat(), "test")
+crate = api.gob.get_by_name("gfx/terobjs/crate")
+me = api.gob.mygob()
+print(me)
+print(api.gob.is_moving(me))
+
+
+if crate then
+  api.mv.smart_move_to_gob(crate)
+end

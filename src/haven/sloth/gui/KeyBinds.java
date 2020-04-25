@@ -298,7 +298,7 @@ public class KeyBinds {
                 double dist = Float.MAX_VALUE;
                 synchronized (ui.sess.glob.oc) {
                     for (final Gob g : ui.sess.glob.oc) {
-                        if (g.type == Type.ANIMAL && g.sc != null && !g.isDead()) {
+                        if (g.name().startsWith("gfx/kritter/") && g.sc != null && !g.isDead()) {
                             final double gdist = ui.mc.dist(g.sc);
                             if (target != null && gdist < dist) {
                                 target = g;

@@ -26,6 +26,13 @@
 ;;Return: A list not array
 (defun kin-get-buddies ()
   (listify (buddy-buddies (buddy))))
+  
+(defun kin-get-buddy-by-name (name)
+  (let ((buddies (kin-get-buddies)))
+    (dolist (bd buddies)
+      (when (string= (buddy-name bd) name)
+        (return-from kin-get-buddy-by-name bd)))
+    nil))
 
 (defconstant +buddy+ "haven.BuddyWnd$Buddy")
 (defconstant +buddy-online+   1)
@@ -53,7 +60,7 @@
 (java-func +buddy+ buddy-change-group "chgrp" +int+)
 
 (export '(kin-add-by-secret kin-set-secret kin-set-presentation-name kin-look-at-buddy
-          kin-get-buddies
+          kin-get-buddies kin-get-buddy-by-name
           +buddy-online+ +buddy-offline+ +buddy-unknown+
           +buddy-group-white+ +buddy-group-green+ +buddy-group-red+ +buddy-group-blue+
           +buddy-group-aqua+ +buddy-group-yellow+ +buddy-group-purple+ +buddy-group-pink+
