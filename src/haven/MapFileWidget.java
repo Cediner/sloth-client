@@ -37,6 +37,7 @@ import haven.MapFile.Marker;
 import haven.MapFile.PMarker;
 import haven.MapFile.SMarker;
 import haven.sloth.DefSettings;
+import haven.sloth.gui.MouseBind;
 import haven.sloth.io.map.markers.MarkerData;
 
 import static haven.MCache.cmaps;
@@ -558,9 +559,14 @@ public class MapFileWidget extends Widget {
                             final Coord2d offset = new Coord2d(pl.tc.sub(tc));
                             //Translate this to real map units and add to current map position
                             final Coord2d mc = plc.sub(offset.mul(MCache.tilesz));
-                            if (ui.modmeta) {
+                            final String act = MouseBind.generateSequence(ui, button);
+                            if (!(MouseBind.MV_QUEUE_MOVE.check(act, () -> {
                                 ui.gui.map.queuemove(mc);
-                            } else {
+                                return true;
+                            }) || MouseBind.MV_PATHFIND_MOVE.check(act, () -> {
+                                ui.gui.map.pathto(mc);
+                                return true;
+                            }))) {
                                 ui.gui.map.moveto(mc);
                             }
                         }

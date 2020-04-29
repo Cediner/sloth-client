@@ -2,15 +2,21 @@ package haven.sloth.gob;
 
 import haven.*;
 import haven.sloth.gfx.HitboxMesh;
+import haven.sloth.gfx.ObstMesh;
 import haven.sloth.io.Storage;
 import haven.sloth.script.pathfinding.Hitbox;
+import haven.sloth.script.pathfinding.Obst;
 import haven.sloth.util.ObservableCollection;
 import haven.sloth.util.ObservableListener;
 
+import java.awt.*;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * Hidden is a special GAttrib. If it exists only it will be rendered for this Gob if show hidden is on.
@@ -68,6 +74,8 @@ public class Hidden extends GAttrib {
 
     //private HitboxSprite spr = null;
     private HitboxMesh mesh = null;
+    private List<ObstMesh> omesh = new ArrayList<>();
+
 
     public Hidden(final Gob g) {
         super(g);
@@ -75,9 +83,13 @@ public class Hidden extends GAttrib {
     }
 
     public void setup(RenderList rl) {
-        if (mesh != null) {
+        if (mesh != null && omesh.size() == 0) {
             rl.prepo(States.xray);
             rl.add(mesh, null);
+        }
+        for (final ObstMesh ob : omesh) {
+            rl.prepo(States.xray);
+            rl.add(ob, null);
         }
     }
 
@@ -89,11 +101,24 @@ public class Hidden extends GAttrib {
             } else {
                 mesh = HitboxMesh.makehb(new Coord(11, 11), Coord.z);
             }
+
+            final Collection<Obst> obst = res.layers(Obst.class);
+            float h = 1.5f;
+            int g = 255;
+            if (obst != null) {
+                for (final Obst ob : obst) {
+                    if (ob.type != null) {
+                        omesh.add(ob.type.makeMesh(new Color(255, g, 0, 192), h));
+                        h -= 1f;
+                        g -= 128;
+                    }
+                }
+            }
         });
     }
 
     public void tick() {
-        if (mesh != null)
+        if (mesh != null || omesh != null)
             return;
         else
             make();

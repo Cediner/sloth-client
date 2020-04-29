@@ -18,7 +18,7 @@
    (make-crop :name "gfx/terobjs/plants/barley" :kind +ground+ :finish-stage '(3))
    (make-crop :name "gfx/terobjs/plants/carrot" :kind +ground+ :finish-stage '(3))
    (make-crop :name "gfx/terobjs/plants/poppy" :kind +ground+ :finish-stage '(4))
-   (make-crop :name "gfx/terobjs/plants/hemp" :kind +ground+ :finish-stage '(3))
+   (make-crop :name "gfx/terobjs/plants/hemp" :kind +ground+ :finish-stage '(4))
    (make-crop :name "gfx/terobjs/plants/pipeweed" :kind +trellis+ :finish-stage '(4))
    (make-crop :name "gfx/terobjs/plants/beet" :kind +ground+ :finish-stage '(3))
    (make-crop :name "gfx/terobjs/plants/hops" :kind +trellis+ :finish-stage '(6))

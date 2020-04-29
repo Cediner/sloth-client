@@ -642,30 +642,67 @@ api.gob = {
     ret = {}
     for i = 1, #gobs do
       if filter(gobs[i]) then
-        ret.insert(gobs[i])
+        table.insert(ret, gobs[i])
       end
     end
     return ret
   end,
 
   get_all_by_name = function(name)
-    return get_all_by_filter((function(g) return g:name() == name end))
+    return get_all_by_filter((function(g) string.find(g:name(), name) end))
   end,
 
   get_closest_by_filter_and_path = function(filter)
-
+    me = api.gob.mygob()
+    if me then
+      gobs = api.gob.get_all_by_filter(filter)
+      best = nil
+      bestdist = 999999999
+      mc = me.rc
+      for i = 1, #gobs do
+        path = api.mv.find_path_to_gob(gobs[i])
+        if path then
+          dist = api.mv.path_distance(path)
+          if best == nil or dist < bestdist then
+            best = gobs[i]
+            bestdist = dist
+          end
+        end
+      end
+      return best
+    else
+      return nil
+    end
   end,
 
   get_closest_by_filter = function(filter)
-
+    me = api.gob.mygob()
+    if me then
+      gobs = api.gob.get_all_by_filter(filter)
+      best = nil
+      mc = me.rc
+      if #gobs > 0 then
+        best = gobs[1]
+        bestdist = gobs[1].rc:dist(mc)
+        for i = 2, #gobs do
+          if gobs[i].rc:dist(mc) < bestdist then
+            best = gobs[i]
+            bestdist = gobs[i].rc:dist(mc)
+          end
+        end
+      end
+      return best
+    else
+      return nil
+    end
   end,
 
   get_closest_by_name_and_path = function(name)
-
+    return api.gob.get_closest_by_filter_and_path((function (g) return string.find(g:name(), name) end))
   end,
 
   get_closest_by_name = function(name)
-
+    return api.gob.get_closest_by_filter((function (g) return string.find(g:name(), name) end))
   end
 }
 

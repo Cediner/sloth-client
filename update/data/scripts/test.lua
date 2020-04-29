@@ -14,7 +14,7 @@
 
 api = require("data.scripts.lualib.api")
 
-crate = api.gob.get_by_name("gfx/terobjs/crate")
+crate = api.gob.get_closest_by_name("gfx/terobjs/crate")
 me = api.gob.mygob()
 print(me)
 print(api.gob.is_moving(me))

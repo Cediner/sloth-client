@@ -211,22 +211,30 @@ public abstract class Message {
     }
 
     public void bytes(byte[] b) {
-		bytes(b, 0, b.length);
-	}
+        bytes(b, 0, b.length);
+    }
 
-	public Coord coord() {
-		return (new Coord(int32(), int32()));
-	}
+    public Coord coord() {
+        return (new Coord(int32(), int32()));
+    }
 
-	public Color color() {
-		return (new Color(uint8(), uint8(), uint8(), uint8()));
-	}
+    public Coord coord16() {
+        return new Coord(int16(), int16());
+    }
 
-	public float float8() {
-		return (Utils.mfdec((byte) int8()));
-	}
+    public Coord2d coordf16() {
+        return new Coord2d(float16(), float16());
+    }
 
-	public float float16() {
+    public Color color() {
+        return (new Color(uint8(), uint8(), uint8(), uint8()));
+    }
+
+    public float float8() {
+        return (Utils.mfdec((byte) int8()));
+    }
+
+    public float float16() {
 		return (Utils.hfdec((short) int16()));
 	}
 

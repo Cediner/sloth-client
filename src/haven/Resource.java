@@ -352,7 +352,6 @@ public class Resource implements Serializable {
         private final PrioQueue<Queued> queue = new PrioQueue<Queued>();
         private final Map<String, Queued> queued = new HashMap<String, Queued>();
         private final Pool parent;
-        private final Timer timer = new Timer();
 
         public Pool(Pool parent, ResSource... sources) {
             this.parent = parent;
@@ -442,6 +441,7 @@ public class Resource implements Serializable {
         }
 
         private void handle(Queued res) {
+            final Timer timer = new Timer();
             timer.start();
             for (ResSource src : sources) {
                 try {
