@@ -27,6 +27,7 @@ public class Hitbox {
         hitboxes.put("gfx/kritter/jellyfish/jellyfish", NOHIT);
         //Knarrs seem to just take the hitbox of a player?
         hitboxes.put("gfx/terobjs/vehicle/knarr", new Hitbox(new Coord(-4, -4), new Coord(8, 8)));
+        hitboxes.put("gfx/terobjs/vehicle/snekkja", new Hitbox(new Coord(-32, -13), new Coord(64, 25)));
 
         //stone This looks wrong...
         hitboxes.put("gfx/terobjs/bumlings", new Hitbox(new Coord(8, 8), new Coord(-16, -16)));

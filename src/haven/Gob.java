@@ -295,6 +295,7 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 
     private boolean discovered = false;
     public Type type;
+    public List<Tag> tags;
 
     public Gob(Glob glob, Coord2d c, long id, int frame) {
         this.glob = glob;
@@ -322,6 +323,7 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
                 //Gobs we care about
                 //Figure out our type first
                 type = Type.getType(name);
+                tags = Tag.getTags(name);
                 //Avoid mannequins...
                 if (type == Type.HUMAN && attr.containsKey(GobHealth.class))
                     type = Type.UNKNOWN;
@@ -382,6 +384,10 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
             }
             discovered = true;
         }
+    }
+
+    public boolean hasTag(final Tag tag) {
+        return tags.contains(tag);
     }
 
     public int getMaxStage() {
