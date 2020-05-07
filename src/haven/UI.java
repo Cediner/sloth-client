@@ -185,7 +185,7 @@ public class UI {
     }
 
     //ids go sequential, 2^16 limit judging by parent != 65535...
-    //At 65535 wrap back around? Can we break the game by hitting that limit.............
+    //At 65535 it wraps back to 1 and breaks your client :)
     public int next_predicted_id = 2;
     public void newwidget(int id, String type, int parent, Object[] pargs, Object... cargs) throws InterruptedException {
         final Timer nwtimer = new Timer();
@@ -209,7 +209,8 @@ public class UI {
             nwtimer.tick("bind");
         }
         next_predicted_id = id + 1;
-        logger.atFine().log("New Widget [id %s] [parent %d] [type %s] [args %s] Summary:\n%s", id, parent, type, Arrays.toString(cargs), nwtimer.summary());
+        logger.atFine().log("New Widget [id %s]", id);
+        logger.atFiner().log("New Widget [id %s] [parent %d] [type %s] [args %s] Summary:\n%s", id, parent, type, Arrays.toString(cargs), nwtimer.summary());
     }
 
     public void addwidget(int id, int parent, Object[] pargs) {
@@ -227,7 +228,7 @@ public class UI {
             pwdg.addchild(wdg, pargs);
             awtimer.tick("addchild");
         }
-        logger.atFine().log("Add Widget [id %s] to [parent %d] [args %s]  Summary:\n%s", id, parent, Arrays.toString(pargs), awtimer.summary());
+        logger.atFiner().log("Add Widget [id %s] to [parent %d] [args %s]  Summary:\n%s", id, parent, Arrays.toString(pargs), awtimer.summary());
     }
 
     public abstract class Grab {
@@ -295,7 +296,7 @@ public class UI {
     }
 
     public void destroy(int id) {
-        logger.atFine().log("Destroy Widget [id %s]", id);
+        logger.atFiner().log("Destroy Widget [id %s]", id);
         synchronized (this) {
             if (widgets.containsKey(id)) {
                 Widget wdg = widgets.get(id);

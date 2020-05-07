@@ -1723,7 +1723,6 @@ public class MapView extends PView implements DTarget, Console.Directory {
     private Loading camload = null, lastload = null;
 
     public void draw(GOut g) {
-        glob.map.sendreqs();
         if ((olftimer != 0) && (olftimer < Utils.rtime()))
             unflashol();
         try {
@@ -1911,6 +1910,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
     }
 
     public void tick(double dt) {
+        glob.map.sendreqs();
         camload = null;
         try {
             if ((shake = shake * Math.pow(100, -dt)) < 0.01)

@@ -691,10 +691,11 @@ public class GameUI extends ConsoleHost implements Console.Directory {
             }
             break;
             case "prog": {
-                if (args.length > 0)
+                if (args.length > 0) {
                     prog = ((Number) args[0]).doubleValue() / 100.0;
-                else
+                } else {
                     prog = -1;
+                }
             }
             break;
             case "setbelt": {

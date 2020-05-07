@@ -328,7 +328,7 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
                 if (type == Type.HUMAN && attr.containsKey(GobHealth.class))
                     type = Type.UNKNOWN;
 
-                if (type == Type.HUMAN || type == Type.ANIMAL) {
+                if (type == Type.HUMAN || type == Type.ANIMAL || name.startsWith("gfx/kritter/")) {
                     addol(new Overlay(GobSpeedSprite.id, new GobSpeedSprite(this)));
                     //if(id == ui.gui.map.rlplgob) {
                     //    addol(new Overlay(-4921, new SnowFall(this)));
@@ -852,6 +852,16 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
                 i.remove();
                 break;
             }
+        }
+    }
+
+    public void click(final int btn, final int mods, final int overlay, final int fastmesh) {
+        final UI ui = glob.ui.get();
+        if (ui != null) {
+            final Coord pos = rc.floor(OCache.posres);
+            ui.gui.map.wdgmsg("click", Coord.o, pos, btn, mods,
+                    overlay > 0 ? 1 : 0,
+                    (int) id, pos, overlay, fastmesh);
         }
     }
 
