@@ -14,12 +14,18 @@
 
 api = require("data.scripts.lualib.api")
 
-crate = api.gob.get_closest_by_name("gfx/terobjs/crate")
-me = api.gob.mygob()
-print(me)
-print(api.gob.is_moving(me))
+horse = api.gob.get_by_name("gfx/kritter/horse/stallion")
 
-
-if crate then
-  api.mv.smart_move_to_gob(crate)
+while true do
+  print("click horse")
+  horse:click(3, api.const.mf_none, 0, -1)
+  print("wait on flowermenu")
+  api.flowermenu.wait_for_flowermenu()
+  print("select opt")
+  id = api.widget.next_wdg_id()
+  api.flowermenu.select(0)
+  script:sleep(250)
+  print("close  window")
+  api.widget.ui_force_wdgmsg(id, "close")
+  script:sleep(50)
 end

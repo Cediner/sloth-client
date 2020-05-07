@@ -62,14 +62,14 @@
 	(let ((hs (prompt-for-input "Enter the HS of this character")))
 		(msg-listen "(area-msg)")
 		(forever
-			(let ((message (loop-through-messages (lambda (msg) (member (aref (msg-args msg) 0) +commands+ :test 'equal)))))
+			(let ((message (loop-through-messages (lambda (msg) (member (aref (msg-args msg) 0) +commands+ :test (lambda (a b) (string-equal a b)))))))
 				(when message 
 					(let ((sender (aref (msg-args message) 1))
 						  (command (aref (msg-args message) 0)))
 						(if (string= sender "???")
 							(chat-send-message (area-chat) (format nil "Please Kin HS: ~A before gilding." hs))
 							(cond 
-								((string= command "Reset") (reset))
-								((string= command "Check") (check))
-								((string= command "Gild") (gild sender)))))))
+								((string-equal command "Reset") (reset))
+								((string-equal command "Check") (check))
+								((string-equal command "Gild") (gild sender)))))))
 			(sleep .5))))
