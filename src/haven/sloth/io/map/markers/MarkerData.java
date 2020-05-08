@@ -2,6 +2,7 @@ package haven.sloth.io.map.markers;
 
 import haven.Hash;
 import haven.MapFile;
+import haven.sloth.gob.Mark;
 import haven.sloth.io.Storage;
 
 import java.awt.*;
@@ -48,6 +49,7 @@ public class MarkerData {
         markable.put("gfx/tiles/ridges/caveout", new LinkedMarker("Cave (L1)", "custom/mm/icons/cave", Type.LINKED, MapFile.CAVEIN));
 
         markable.put("gfx/terobjs/bordercairn", new Marker("Border Cairn", "custom/mm/icons/realmcairn", Type.REALM));
+        markable.put("gfx/terobjs/seamark", new Marker("Seamark", "custom/mm/icons/realmcairn", Type.REALM));
 
         markable.put("gfx/terobjs/villageidol", new Marker("Idol", "custom/mm/icons/vidol", Type.VILLAGE));
         markable.put("gfx/terobjs/vflag", new Marker("Banner", "custom/mm/icons/banner", Type.VILLAGE));
