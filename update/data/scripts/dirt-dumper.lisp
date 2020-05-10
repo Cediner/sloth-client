@@ -15,11 +15,17 @@
   (mv-move-to dump-tile)
   (wait-for-movement)
   (loop
-     for itm = (inventory-get-item-by-name (main-inventory) "Soil")
+   for itm = (inventory-get-item-by-name (main-inventory) "Soil")
      while itm
      do (progn
           (item-drop-all-alike itm)
-          (sleep 1))))
+          (sleep 1)))
+  (loop
+   for itm = (inventory-get-item-by-name (main-inventory) "Earthworm")
+   while itm
+   do (progn
+        (item-drop-all-alike itm)
+        (sleep 1))))
   
 (script
  (let ((dump-tile (prompt-for-coord "Select a tile to dump dirt on")))

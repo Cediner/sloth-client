@@ -24,6 +24,7 @@
  (multiple-value-bind (token role)
      (prompt-for-discord-info)
    (let ((door (gob-name (prompt-for-selected-gob "Select the door object to peek through")))
+		 (message (prompt-for-input "Put a message to identify this scout bot"))
          (spotted-gobs (make-hash-table :test 'equal))
          (tick 0)
          (state :inside)
@@ -35,7 +36,7 @@
             (setf state :outside)
            (setf started-peek (get-time)))
           (progn
-            (scan-for-targets role spotted-gobs tick)
+            (scan-for-targets-custom-message role spotted-gobs tick message)
             (check-if-any-spotted-have-left role spotted-gobs tick)
             (incf tick)
             (when (>= (- (get-time) started-peek) +peek-limit+)

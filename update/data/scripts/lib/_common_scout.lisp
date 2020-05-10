@@ -21,6 +21,63 @@
   last-alert
   tick)
 
+(defun scan-for-targets-custom-message (role spotted-gobs tick message)
+  (let ((targets (gob-get-all-by-filter
+                  (lambda (gob)
+                    (or (member (gob-name gob) +targets+ :test 'equal)
+                        (and (jeq (gob-type gob) +human+)
+                             (not (is-gob-friendly gob))
+                             (gob-equipment gob)
+                             (not (jeq gob (my-gob)))))))))
+    (loop
+       for target in targets
+       do (let ((name (if (jeq (gob-type target) +human+) (gob-kinname target) (gob-name target)))
+                (extra (if (jeq (gob-type target) +human+)
+                           (let ((equs (gob-equipment target)))
+                             (apply #'concatenate 'string
+                                    (loop
+                                       for equ in (listify equs)
+                                       collect (format nil "~A~%" equ))))
+                             nil)))
+            (cond
+              ((and (gethash (gob-id target) spotted-gobs)
+                    (> (- (get-time) (spotted-gob-last-alert (gethash (gob-id target) spotted-gobs)))
+                       +alert-refresh+))
+               (let ((gob (gethash (gob-id target) spotted-gobs)))
+                 (setf (spotted-gob-last-spotted gob) (gob-rc target))
+                 (setf (spotted-gob-last-rc-at gob) (get-real-location-coord (gob-rc target)))
+                 (setf (spotted-gob-tick gob) tick)
+                 (setf (spotted-gob-last-alert gob) (get-time))
+                 (send-discord-message "player-alerts" 
+                                       (format nil "<@&~A> Still spotted a ~A [~A] @ ~A"
+                                               role
+                                               name
+                                               (gob-id target)
+                                               message))))
+              ((gethash (gob-id target) spotted-gobs)
+               (let ((gob (gethash (gob-id target) spotted-gobs)))
+                 (setf (spotted-gob-last-spotted gob) (gob-rc target))
+                 (setf (spotted-gob-last-rc-at gob) (get-real-location-coord (gob-rc target)))
+                 (setf (spotted-gob-tick gob) tick)))
+              (t ;;new target
+               (let ((gob (make-spotted-gob :id (gob-id target)
+                                            :name name
+                                            :first-rc-at (get-real-location-coord (gob-rc target))
+                                            :last-spotted (gob-rc target)
+                                            :last-alert (get-time)
+                                            :tick tick)))
+                 (setf (gethash (spotted-gob-id gob) spotted-gobs) gob)
+                 (send-discord-message "player-alerts"
+                                       (format nil
+                                               (if extra
+                                                   "<@&~A> Spotted a ~A [~A] @ ~A Wearing:~%~A"
+                                                   "<@&~A> Spotted a ~A [~A] @ ~A~A")
+                                               role
+                                               name
+                                               (gob-id target)
+                                               message
+                                               (if extra extra ""))))))))))
+											   
 (defun scan-for-targets (role spotted-gobs tick)
   (let ((targets (gob-get-all-by-filter
                   (lambda (gob)
