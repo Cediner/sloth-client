@@ -4,6 +4,7 @@ import com.google.common.flogger.FluentLogger;
 import haven.*;
 import haven.sloth.DefSettings;
 import haven.sloth.IndirSetting;
+import haven.sloth.gob.Target;
 import haven.sloth.gob.Type;
 import haven.sloth.io.ForagableData;
 
@@ -356,6 +357,121 @@ public class KeyBinds {
             } else {
                 return false;
             }
+        }));
+        add("Combat", new KeyBind("Target nearest animal to mouse", new IndirSetting<>(DefSettings.global, "keybind.target-nearest-animal"), "S-A", ui -> {
+            if (ui.gui != null && ui.gui.map != null && ui.gui.menu != null) {
+                Gob target = null;
+                double dist = Float.MAX_VALUE;
+                synchronized (ui.sess.glob.oc) {
+                    for (final Gob g : ui.sess.glob.oc) {
+                        if (g.name().startsWith("gfx/kritter/") && g.sc != null && !g.isDead()) {
+                            final double gdist = ui.mc.dist(g.sc);
+                            if (target != null && gdist < dist) {
+                                target = g;
+                                dist = gdist;
+                            } else if (target == null) {
+                                target = g;
+                                dist = gdist;
+                            }
+                        }
+                    }
+                }
+                if (target != null) {
+                    final Gob old = ui.sess.glob.oc.getgob(ui.gui.curtar);
+                    if (old != null) {
+                        old.delattr(Target.class);
+                    }
+                    ui.gui.curtar = target.id;
+                    target.setattr(new Target(target));
+                    for (Widget wdg = ui.gui.chat.lchild; wdg != null; wdg = wdg.prev) {
+                        if (wdg instanceof ChatUI.PartyChat) {
+                            final ChatUI.PartyChat chat = (ChatUI.PartyChat) wdg;
+                            chat.send(String.format(Target.target_pat, target.id));
+                        }
+                    }
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }));
+        add("Combat", new KeyBind("Target nearest player to mouse", new IndirSetting<>(DefSettings.global, "keybind.target-nearest-player"), "S-D", ui -> {
+            if (ui.gui != null && ui.gui.map != null && ui.gui.menu != null) {
+                Gob target = null;
+                double dist = Float.MAX_VALUE;
+                synchronized (ui.sess.glob.oc) {
+                    for (final Gob g : ui.sess.glob.oc) {
+                        if (g.id != ui.gui.map.plgob && g.type == Type.HUMAN && g.sc != null && !g.isDead()) {
+                            final KinInfo kin = g.getattr(KinInfo.class);
+                            if (kin == null || kin.group == DefSettings.BADKIN.get()) {
+                                final double gdist = ui.mc.dist(g.sc);
+                                if (target != null && gdist < dist) {
+                                    target = g;
+                                    dist = gdist;
+                                } else if (target == null) {
+                                    target = g;
+                                    dist = gdist;
+                                }
+                            }
+                        }
+                    }
+                }
+                if (target != null) {
+                    final Gob old = ui.sess.glob.oc.getgob(ui.gui.curtar);
+                    if (old != null) {
+                        old.delattr(Target.class);
+                    }
+                    ui.gui.curtar = target.id;
+                    target.setattr(new Target(target));
+                    for (Widget wdg = ui.gui.chat.lchild; wdg != null; wdg = wdg.prev) {
+                        if (wdg instanceof ChatUI.PartyChat) {
+                            final ChatUI.PartyChat chat = (ChatUI.PartyChat) wdg;
+                            chat.send(String.format(Target.target_pat, target.id));
+                        }
+                    }
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }));
+        add("Combat", new KeyBind("Aggro targeted gob", new IndirSetting<>(DefSettings.global, "keybind.aggro-target"), "S-T", ui -> {
+            if (ui.gui != null) {
+                final long tar = ui.gui.curtar;
+                if (ui.gui.fv != null) {
+                    final Fightview.Relation rel = ui.gui.fv.getrel2(tar);
+                    if (rel != null) {
+                        final Coord tc = ui.gui.map.cc.floor(posres);
+                        ui.gui.menu.wdgmsg("act", (Object[]) new Object[]{"aggro"});
+                        ui.gui.fv.wdgmsg("click", (int) rel.gobid, 1);
+                        ui.gui.map.wdgmsg("click", Coord.o, tc, 3, 0);
+                        return true;
+                    } else {
+                        Gob target = ui.sess.glob.oc.getgob(ui.gui.curtar);
+                        if (target != null && ui.gui.menu != null) {
+                            final Coord tc = target.rc.floor(OCache.posres);
+                            ui.gui.menu.wdgmsg("act", (Object[]) new Object[]{"aggro"});
+                            ui.gui.map.wdgmsg("click", target.sc, tc, 1, 0, 0, (int) target.id, tc, 0, -1);
+                            ui.gui.map.wdgmsg("click", target.sc, tc, 3, 0);
+                            return true;
+                        }
+                    }
+                } else {
+                    Gob target = ui.sess.glob.oc.getgob(ui.gui.curtar);
+                    if (target != null && ui.gui.menu != null) {
+                        final Coord tc = target.rc.floor(OCache.posres);
+                        ui.gui.menu.wdgmsg("act", (Object[]) new Object[]{"aggro"});
+                        ui.gui.map.wdgmsg("click", target.sc, tc, 1, 0, 0, (int) target.id, tc, 0, -1);
+                        ui.gui.map.wdgmsg("click", target.sc, tc, 3, 0);
+                        return true;
+                    }
+                }
+            }
+            return false;
         }));
         add("Movement", new KeyBind("Move West", new IndirSetting<>(DefSettings.global, "keybind.move-left"), "Left", ui -> {
             if (ui.gui != null && ui.gui.map != null) {

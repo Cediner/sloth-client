@@ -407,7 +407,15 @@ public class Fightview extends Widget {
         }
     }
 
-    private Relation getrel(long gobid) {
+    public Relation getrel2(final long gobid) {
+        for (Relation rel : lsrel) {
+            if (rel.gobid == gobid)
+                return (rel);
+        }
+        return null;
+    }
+
+    public Relation getrel(long gobid) {
         for (Relation rel : lsrel) {
             if (rel.gobid == gobid)
                 return (rel);
