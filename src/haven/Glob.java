@@ -54,6 +54,8 @@ public class Glob {
     public double skyblend = 0.0;
     private Map<Indir<Resource>, Object> wmap = new HashMap<Indir<Resource>, Object>();
 
+    public long lastAlert = 0;
+
     public Glob(Session sess) {
         this.sess = sess;
         gobhitmap = new GobHitmap();

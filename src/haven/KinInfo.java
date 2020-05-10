@@ -26,11 +26,14 @@
 
 package haven;
 
+import haven.sloth.DefSettings;
+import haven.sloth.gob.Rendered;
+
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.awt.Color;
 
-public class KinInfo extends GAttrib {
+public class KinInfo extends GAttrib implements Rendered {
     public static final BufferedImage vlg = Resource.loadimg("gfx/hud/vilind");
     public static final Text.Foundry nfnd = new Text.Foundry(Text.dfont, 10);
     public String name;
@@ -54,6 +57,18 @@ public class KinInfo extends GAttrib {
 
     public boolean isVillager() {
         return (type & 2) != 0;
+    }
+
+    @Override
+    public void setup(RenderList r) {
+        if (DefSettings.COLORIZEGOBS.get()) {
+            r.prepc(new Material.Colors(BuddyWnd.gc[group]));
+        }
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
     }
 
     public Tex rendered() {

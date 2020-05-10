@@ -351,19 +351,22 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
                 if (Hidden.isHidden(name)) {
                     setattr(new Hidden(this));
                 }
-                if(name.startsWith("gfx/terobjs/dframe")) {
+                if (name.startsWith("gfx/terobjs/dframe")) {
                     setattr(new DryingFrameStatus(this));
-                } else if(name.equals("gfx/terobjs/ttub")) {
+                } else if (name.equals("gfx/terobjs/ttub")) {
                     setattr(new TanTubStatus(this));
-                } else if(name.equals("gfx/terobjs/cupboard")) {
+                } else if (name.equals("gfx/terobjs/cupboard")) {
                     setattr(new CupboardStatus(this));
                 }
                 if (HighlightData.isHighlighted(name)) {
                     mark(-1);
                 }
+                if (id == ui.gui.curtar) {
+                    setattr(new Target(this));
+                }
                 if (type == Type.HUMAN) {
                     setattr(new Halo(this));
-                    if(id == ui.gui.map.plgob) {
+                    if (id == ui.gui.map.plgob) {
                         setattr(new MyGobIndicator(this));
                     }
                 }
@@ -760,7 +763,11 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
     }
 
     public void delattr(Class<? extends GAttrib> c) {
+        final GAttrib ga = getattr(c);
         attr.remove(attrclass(c));
+        if (ga instanceof haven.sloth.gob.Rendered) {
+            renderedattrs.remove(ga);
+        }
     }
 
     private Class<? extends ResAttr> rattrclass(Class<? extends ResAttr> cl) {

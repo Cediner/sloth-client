@@ -195,6 +195,10 @@ public class MapViewExt {
             final ArrayList<String> opts = new ArrayList<>();
             opts.add("Mark for party");
             opts.add("Mark for script");
+            if (mv.ui.gui.curtar != g.id)
+                opts.add("Target for party");
+            else
+                opts.add("Cancel Target for party");
             opts.add(!HighlightData.isHighlighted(name) ? "Highlight" : "Remove Highlight");
             opts.add(Hidden.isHidden(name) ? "Unhide" : "Hide");
             opts.add(Alerted.shouldAlert(name) ? "Remove Sound" : "Add Sound");
@@ -228,6 +232,35 @@ public class MapViewExt {
                     case "Mark for script": //Mark for script
                         mv.ui.sess.details.context.dispatchmsg(mv, "click-gob", g);
                         break;
+                    case "Cancel Target for party": {
+                        final Gob old = mv.ui.sess.glob.oc.getgob(mv.ui.gui.curtar);
+                        if (old != null) {
+                            old.delattr(Target.class);
+                        }
+                        mv.ui.gui.curtar = 0;
+                        for (Widget wdg = mv.ui.gui.chat.lchild; wdg != null; wdg = wdg.prev) {
+                            if (wdg instanceof ChatUI.PartyChat) {
+                                final ChatUI.PartyChat chat = (ChatUI.PartyChat) wdg;
+                                chat.send(String.format(Target.target_pat, 0));
+                            }
+                        }
+                    }
+                    break;
+                    case "Target for party": {
+                        final Gob old = mv.ui.sess.glob.oc.getgob(mv.ui.gui.curtar);
+                        if (old != null) {
+                            old.delattr(Target.class);
+                        }
+                        mv.ui.gui.curtar = g.id;
+                        g.setattr(new Target(g));
+                        for (Widget wdg = mv.ui.gui.chat.lchild; wdg != null; wdg = wdg.prev) {
+                            if (wdg instanceof ChatUI.PartyChat) {
+                                final ChatUI.PartyChat chat = (ChatUI.PartyChat) wdg;
+                                chat.send(String.format(Target.target_pat, g.id));
+                            }
+                        }
+                    }
+                    break;
                     case "Highlight": //Highlight for yourself
                         HighlightData.add(name);
                         mv.ui.sess.glob.oc.highlightGobs(name);

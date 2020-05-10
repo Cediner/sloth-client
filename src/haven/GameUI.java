@@ -108,6 +108,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public LivestockManager lm;
 
     public String curvil = "???";
+    public long curtar = 0;
 
     @RName("gameui")
     public static class $_ implements Factory {
@@ -195,6 +196,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public void destroy() {
         ui.root.add(ui.root.sessionDisplay = new SessionDisplay());
         super.destroy();
+        ui.gui = null;
     }
 
     public class Hidepanel extends Widget {

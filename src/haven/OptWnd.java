@@ -315,6 +315,8 @@ public class OptWnd extends Window {
                 gobs.add(new IndirCheckBox("Show colored drying frames", COLORDFRAMES));
                 gobs.add(new IndirCheckBox("Show colored tanning tubs", COLORTUBS));
                 gobs.add(new IndirCheckBox("Show colored cupboards", COLORCUPBOARDS));
+                gobs.add(new IndirCheckBox("Show colored players", COLORIZEGOBS));
+                gobs.add(new IndirCheckBox("Show colored aggro player", COLORIZEAGGRO));
                 gobs.add(new IndirCheckBox("Show Gob HP", SHOWGOBHP));
                 gobs.add(new IndirCheckBox("Show Gob Paths", SHOWGOBPATH));
                 gobs.add(ColorPreWithLabel("Minimap path color: ", MMPATHCOL));

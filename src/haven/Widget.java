@@ -470,12 +470,14 @@ public class Widget {
     }
 
     public void linkfirst() {
-        if (parent.child != null)
-            parent.child.prev = this;
-        if (parent.lchild == null)
-            parent.lchild = this;
-        this.next = parent.child;
-        parent.child = this;
+        if (parent != null) {
+            if (parent.child != null)
+                parent.child.prev = this;
+            if (parent.lchild == null)
+                parent.lchild = this;
+            this.next = parent.child;
+            parent.child = this;
+        }
     }
 
     public void unlink() {

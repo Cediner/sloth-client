@@ -12,6 +12,7 @@ public class SessionDisplay extends MovableWidget implements ObservableListener<
         private final UI ui;
         private final Button btn;
         private String nm;
+        private boolean alerted = false;
 
         public UIDisplay(final UI ui) {
             super(Coord.z);
@@ -26,6 +27,14 @@ public class SessionDisplay extends MovableWidget implements ObservableListener<
             if (nm.equals("Login") && ui.sess != null && ui.sess.username != null) {
                 nm = ui.sess.username;
                 btn.change(nm);
+            }
+
+            if (ui.sess != null && (System.currentTimeMillis() - ui.sess.glob.lastAlert) < 5000) {
+                btn.change(nm + " (A)");
+                alerted = true;
+            } else if (alerted) {
+                btn.change(nm);
+                alerted = false;
             }
         }
 

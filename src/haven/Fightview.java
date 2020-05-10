@@ -26,8 +26,10 @@
 
 package haven;
 
+import haven.sloth.DefSettings;
 import haven.sloth.Theme;
 import haven.sloth.gfx.GobCombatSprite;
+import haven.sloth.gob.AggroMark;
 import haven.sloth.gui.fight.*;
 
 import java.awt.*;
@@ -154,6 +156,22 @@ public class Fightview extends Widget {
 
         public void tick() {
             updateDefWeights();
+            if (DefSettings.COLORIZEAGGRO.get()) {
+                final Gob g = ui.sess.glob.oc.getgob(gobid);
+                if (g != null && g.findol(AggroMark.id) == null) {
+                    g.addol(new Gob.Overlay(AggroMark.id, new AggroMark()));
+                }
+            }
+        }
+
+        public void destroy() {
+            final Gob g = ui.sess.glob.oc.getgob(gobid);
+            if (g != null) {
+                final AggroMark am = (AggroMark) g.findol(AggroMark.id).spr;
+                if (am != null) {
+                    am.rem();
+                }
+            }
         }
 
         void checkWeight() {
@@ -211,6 +229,7 @@ public class Fightview extends Widget {
     public void tick(double dt) {
         super.tick(dt);
         for (Relation rel : lsrel) {
+            rel.tick();
             Widget inf = obinfo(rel.gobid, false);
             if (inf != null)
                 inf.tick(dt);
@@ -431,6 +450,7 @@ public class Fightview extends Widget {
             case "del": {
                 Relation rel = getrel((Integer) args[0]);
                 rel.remove();
+                rel.destroy();
                 lsrel.remove(rel);
                 if (rel == current)
                     setcur(null);

@@ -159,6 +159,10 @@ public class DefSettings {
     public static final IndirSetting<Coord> MMMEMSIZETWO = new IndirSetting<>(global, "minimap.remembered-size-two");
     public static final IndirSetting<Coord> MMMEMPOSTWO = new IndirSetting<>(global, "minimap.remembered-pos-two");
 
+    //Gob
+    public static final IndirSetting<Boolean> COLORIZEGOBS = new IndirSetting<>(global, "gob.colorize-kin");
+    public static final IndirSetting<Boolean> COLORIZEAGGRO = new IndirSetting<>(global, "gob.colorize-aggro");
+
     //Audio
     public static final IndirSetting<Double> ALERTVOL = new IndirSetting<>(global, "audio.alert-volume");
     public static final IndirSetting<Double> POPUPMSGVOL = new IndirSetting<>(global, "audio.popup-msg-volume");
@@ -291,6 +295,10 @@ public class DefSettings {
         COLORDFRAMES.ensure(true);
         COLORTUBS.ensure(true);
         COLORCUPBOARDS.ensure(true);
+        //Gobs
+        COLORIZEGOBS.ensure(true);
+        COLORIZEAGGRO.ensure(true);
+
         //Belts
         SHOWFKBELT.ensure(false);
         FKBELTPAGE.ensure(0);

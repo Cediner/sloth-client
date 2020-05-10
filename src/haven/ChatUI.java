@@ -27,6 +27,7 @@
 package haven;
 
 import haven.sloth.gob.Mark;
+import haven.sloth.gob.Target;
 import haven.sloth.gui.ChatUtils;
 import haven.sloth.script.Context;
 
@@ -877,23 +878,38 @@ public class ChatUI extends Widget {
                             });
                             return;
                         } else {
-
-                            final Matcher smatch = ChatUtils.CHAT_SEXT_MSG_PAT.matcher(line);
-                            if (smatch.find()) {
-                                final long targetid = Long.parseLong(smatch.group(1));
-                                if (ui.gui.map.plgob == targetid && ui.gui.map.ext.isMaster(gobid)) {
-                                    final String subject = smatch.group(2);
-                                    final String dargs = smatch.group(3);
-                                    ChatUtils.parseExternalCommand(ui, true, this, subject, dargs);
+                            final Matcher tarmatch = Target.TARGET_PATTERN.matcher(line);
+                            if (tarmatch.find()) {
+                                final long gid = Long.parseLong(tarmatch.group(1));
+                                final Gob old = ui.sess.glob.oc.getgob(ui.gui.curtar);
+                                if (old != null) {
+                                    old.delattr(Target.class);
+                                }
+                                ui.gui.curtar = gid;
+                                final Gob g = ui.sess.glob.oc.getgob(gid);
+                                if (g != null) {
+                                    g.setattr(new Target(g));
                                 }
                                 return;
                             } else {
-                                final Matcher dmatch = ChatUtils.CHAT_EXT_MSG_PAT.matcher(line);
-                                if (dmatch.find()) {
-                                    final String subject = dmatch.group(1);
-                                    final String dargs = dmatch.group(2);
-                                    ChatUtils.parseExternalCommand(ui, false, this, subject, dargs);
+
+                                final Matcher smatch = ChatUtils.CHAT_SEXT_MSG_PAT.matcher(line);
+                                if (smatch.find()) {
+                                    final long targetid = Long.parseLong(smatch.group(1));
+                                    if (ui.gui.map.plgob == targetid && ui.gui.map.ext.isMaster(gobid)) {
+                                        final String subject = smatch.group(2);
+                                        final String dargs = smatch.group(3);
+                                        ChatUtils.parseExternalCommand(ui, true, this, subject, dargs);
+                                    }
                                     return;
+                                } else {
+                                    final Matcher dmatch = ChatUtils.CHAT_EXT_MSG_PAT.matcher(line);
+                                    if (dmatch.find()) {
+                                        final String subject = dmatch.group(1);
+                                        final String dargs = dmatch.group(2);
+                                        ChatUtils.parseExternalCommand(ui, false, this, subject, dargs);
+                                        return;
+                                    }
                                 }
                             }
                         }
