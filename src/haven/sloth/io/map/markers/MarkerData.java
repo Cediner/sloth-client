@@ -48,6 +48,7 @@ public class MarkerData {
         markable.put("gfx/tiles/ridges/cavein", new LinkedMarker("Cave (Surface)", "custom/mm/icons/cave", Type.LINKED, MapFile.CAVE));
         markable.put("gfx/tiles/ridges/caveout", new LinkedMarker("Cave (L1)", "custom/mm/icons/cave", Type.LINKED, MapFile.CAVEIN));
 
+        markable.put("gfx/terobjs/coronationstone", new Marker("Coronation Stone", "custom/mm/icons/realmcairn", Type.REALM));
         markable.put("gfx/terobjs/bordercairn", new Marker("Border Cairn", "custom/mm/icons/realmcairn", Type.REALM));
         markable.put("gfx/terobjs/seamark", new Marker("Seamark", "custom/mm/icons/realmcairn", Type.REALM));
 

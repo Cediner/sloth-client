@@ -158,6 +158,7 @@
                                           role
                                           msg))))))
 (export '(scan-for-targets
+          scan-for-targets-custom-message
           describe-missing-gob
           spotted-gob
           check-if-any-spotted-have-left))
