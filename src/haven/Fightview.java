@@ -167,9 +167,12 @@ public class Fightview extends Widget {
         public void destroy() {
             final Gob g = ui.sess.glob.oc.getgob(gobid);
             if (g != null) {
-                final AggroMark am = (AggroMark) g.findol(AggroMark.id).spr;
-                if (am != null) {
-                    am.rem();
+                final Gob.Overlay ol = g.findol(AggroMark.id);
+                if (ol != null) {
+                    final AggroMark am = (AggroMark) ol.spr;
+                    if (am != null) {
+                        am.rem();
+                    }
                 }
             }
         }
