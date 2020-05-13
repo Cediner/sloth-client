@@ -878,9 +878,237 @@ api.flowermenu = {
   end
 }
 
+--------------------------------------------------
+-- Item Functionality
+--------------------------------------------------
+api.item = {
+  const = {
+    size = api.coord.coord2i(33, 33)
+  },
+
+  held_item = function ()
+    return session:getHeldItem()
+  end,
+
+  -------------------------------------------------
+  -- Items have a few built in functions and vars
+  -- examples:
+  --
+  -- itm:rnm() - name
+  -- itm:isFood()
+  -- itm:getContents() - Seed/Liquid/Weight based contents
+  -- itm:getRawContents() - array of string of content names
+  -- itm.quality
+  -- itm.num
+  -- itm.meter
+  --
+  -- For seed/Liquid/Weight based contents you
+  -- can use these variables for details:
+  -- cont.name
+  -- cont.type
+  -- cont.current  ( current value )
+  -- cont.max
+  -------------------------------------------------
+
+  is_item_contents = function (itm, name)
+    conts = itm:getContents()
+    if conts then
+      return name == conts.name
+    else
+      return nil
+    end
+  end,
+
+  position = function(itm)
+    return itm:witem().c:div(api.item.const.size)
+  end,
+
+  size = function(itm)
+    return itm:witem().sz:div(api.item.const.size)
+  end,
+
+  inventory = function(itm)
+    return itm:witem().parent
+  end,
+
+  transfer = function(itm)
+    script:wdgmsg(itm, "transfer", { api.coord.coord2i(1, 1), 1 })
+  end,
+
+  transfer_all_alike = function(itm)
+    script:wdgmsg(itm, "transfer", { api.coord.coord2i(1, 1), -1})
+  end,
+
+  drop = function(itm)
+    script:wdgmsg(itm, "drop", { api.coord.coord2i(1, 1), 1 })
+  end,
+
+  drop_all_alike = function(itm)
+    script:wdgmsg(itm, "drop", { api.coord.coord2i(1, 1), -1 })
+  end,
+
+  take = function(itm)
+    script:wdgmsg(itm, "take", { api.coord.coord2i(1, 1) })
+  end,
+
+  interact = function(itm, mflags)
+    script:wdgmsg(itm, "iact", { api.coord.coord2i(1, 1), mflags })
+  end,
+
+  interact_with_held_item = function(itm, mflags)
+    script:wdgmsg(itm, "itemact", { mflags })
+  end
+}
+
 
 --------------------------------------------------
+-- Inventory Functionality
 --------------------------------------------------
+api.inventory = {
+  main_inventory = function ()
+    return session:getMainInventory()
+  end,
+  study_inventory = function ()
+    return session:getStudyInventory()
+  end,
+  belt_inventory = function ()
+    return session:getBeltInventory()
+  end,
+  number_of_inventories = function ()
+    return session:numberOfInventories()
+  end,
+  get_inventory = function(idx)
+    return session:getInventory(idx)
+  end,
+  get_inventories = function()
+    return session:inventories()
+  end,
+  -----------------------------------------
+  -- for Inventories you can also
+  -- use these functions below as example
+  -- inv:name()
+  -- inv:items()
+  -- inv:totalSlots()
+  -- inv:usedSlots()
+  -----------------------------------------
+
+  get_by_name = function(name)
+    invs = api.inventory.get_inventories()
+    for i=1, #invs do
+      if invs[i]:name() == name then
+        return invs[i]
+      end
+    end
+    return nil
+  end,
+
+  item_at = function(inv, coord)
+    itms = inv:items()
+    for i=1, #itms do
+      if coord:between(api.item.position(itms[i]),
+                       api.item.size(itms[i])) then
+        return itms[i]
+      end
+    end
+    return nil
+  end,
+
+  can_drop_at = function(inv, coord)
+    return
+  end,
+
+  free_slots = function(inv)
+    return inv:totalSlots() - inv:usedSlots()
+  end,
+
+  full = function(inv)
+    return 0 == (inv:totalSlots() - inv:usedSlots())
+  end,
+
+  place_item = function(inv, pos)
+    script:wdgmsg(inv, "drop", { pos })
+  end,
+
+  transfer_items = function(inv_from, inv_to, amount)
+    script:wdgmsg(inv_from, "invxf", { inv_to.id, amount })
+  end,
+
+  get_item_by_name = function(inv, name)
+    itms = inv:items()
+    for i=1, #itms do
+      if name == itms[i]:rnm() then
+        return itms[i]
+      end
+    end
+    return nil
+  end,
+
+  get_items_by_name = function(inv, name)
+    itms = inv:items()
+    ret = {}
+    for i=1, #itms do
+      if name == itms[i]:rnm() then
+        table.insert(ret, itms[i])
+      end
+    end
+
+    return ret
+  end,
+
+  get_items_by_filter = function(inv, filter)
+    itms = inv:items()
+    ret = {}
+    for i=1, #itms do
+      if filter(itms[i]) then
+        table.insert(ret, itms[i])
+      end
+    end
+
+    return ret
+  end,
+
+  invs_get_items_by_filter = function(filter)
+    ret = {}
+    invs = api.inventory.get_inventories()
+    for i=1, #invs do
+      itms = invs[i]:items()
+      for j=1, #itms do
+        if filter(itms[j]) then
+          table.insert(ret, itms[j])
+        end
+      end
+    end
+    return ret
+  end,
+
+  drop_all_items_by_name = function(inv, name)
+    itms = inv:items()
+    for i=1, #itms do
+      if name  == itms[i]:rnm() then
+        api.item.drop(itms[i])
+        script:sleep(50)
+      end
+    end
+  end,
+
+  drop_all_items_alike = function(inv, itm)
+    if itm:rnm() ~=  "" then
+      api.inventory.drop_all_items_by_name(inv, itm:rnm())
+    end
+  end,
+
+  invs_drop_all_items_by_name = function(name)
+    invs = api.inventory.get_inventories()
+    for i=1, #invs do
+      api.inventory.drop_all_items_by_name(invs[i], name)
+    end
+  end,
+
+  invs_drop_all_items_alike = function(itm)
+    api.inventory.invs.drop_all_items_by_name(itm:rnm())
+  end,
+}
+
 --------------------------------------------------
 --------------------------------------------------
 

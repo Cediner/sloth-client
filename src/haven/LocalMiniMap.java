@@ -46,6 +46,7 @@ import haven.sloth.DefSettings;
 import haven.sloth.gob.Type;
 import haven.sloth.io.MapData;
 import haven.sloth.script.Context;
+import haven.sloth.script.pathfinding.Move;
 
 import javax.imageio.ImageIO;
 
@@ -429,7 +430,7 @@ public class LocalMiniMap extends Widget {
         Gob gob = findicongob(c);
         if (gob == null && (ui.modflags() == 0 || ui.modshift)) { //click tile
             if (ui.modshift) {
-                mv.queuemove(c2p(c.add(offset)));
+                mv.queuemove(new Move(c2p(c.add(offset))));
             } else {
                 mv.moveto(c2p(c.add(offset)));
             }

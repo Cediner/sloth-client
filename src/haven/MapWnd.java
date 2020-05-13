@@ -40,6 +40,7 @@ import haven.sloth.gob.Type;
 import haven.sloth.gui.DowseWnd;
 import haven.sloth.io.map.MapFileData;
 import haven.sloth.io.map.markers.MarkerData;
+import haven.sloth.script.pathfinding.Move;
 
 import static haven.LocalMiniMap.plx;
 import static haven.MCache.tilesz;
@@ -379,19 +380,19 @@ public class MapWnd extends Window {
         private void drawmovement(GOut g, final Location ploc) {
             synchronized (mv.movequeue) {
                 final Coord pc = new Coord2d(mv.getcc()).floor(tilesz);
-                final Coord2d movingto = mv.movingto();
-                final Iterator<Coord2d> queue = mv.movequeue();
+                final Move movingto = mv.movingto();
+                final Iterator<Move> queue = mv.movequeue();
                 Coord last;
                 if (movingto != null) {
                     //Make the line first
                     g.chcolor(DefSettings.MMPATHCOL.get());
                     final Coord cloc = xlate(ploc);
-                    last = xlate(new Location(ploc.seg, ploc.tc.add(movingto.floor(tilesz).sub(pc))));
+                    last = xlate(new Location(ploc.seg, ploc.tc.add(movingto.dest().floor(tilesz).sub(pc))));
                     if (last != null && cloc != null) {
                         g.dottedline(cloc, last, 2);
                         if (queue.hasNext()) {
                             while (queue.hasNext()) {
-                                final Coord next = xlate(new Location(ploc.seg, ploc.tc.add(queue.next().floor(tilesz).sub(pc))));
+                                final Coord next = xlate(new Location(ploc.seg, ploc.tc.add(queue.next().dest().floor(tilesz).sub(pc))));
                                 if (next != null) {
                                     g.dottedline(last, next, 2);
                                     last = next;

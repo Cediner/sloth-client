@@ -2,6 +2,7 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import haven.*;
 import haven.sloth.script.PointerData;
+import haven.sloth.script.pathfinding.Move;
 
 import java.util.Arrays;
 
@@ -203,7 +204,7 @@ public class Pointer extends Widget {
             if (gobid > 0) {
                 ui.gui.map.wdgmsg("click", rootpos().add(c), this.tc.floor(posres), button, ui.modflags(), 0, (int) gobid, this.tc.floor(posres), 0, -1);
             } else {
-                ui.gui.map.queuemove(this.tc);
+                ui.gui.map.queuemove(new Move(this.tc));
             }
             return true;
         } else {

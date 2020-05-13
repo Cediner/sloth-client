@@ -32,6 +32,9 @@ public class Hitbox {
         //stone This looks wrong...
         hitboxes.put("gfx/terobjs/bumlings", new Hitbox(new Coord(8, 8), new Coord(-16, -16)));
 
+        //trellis, definitely a decimal so this is an overestimate
+        hitboxes.put("gfx/terobjs/plants/trellis", new Hitbox(new Coord(-1, -5), new Coord(3, 11)));
+
         //walls
         //XXX: loftar's real hitbox size for this is certainly a decimal..
         final Hitbox wallseg = new Hitbox(new Coord(-5, -5), new Coord(11, 11));

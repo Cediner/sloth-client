@@ -168,6 +168,10 @@ public class DefSettings {
     public static final IndirSetting<Double> POPUPMSGVOL = new IndirSetting<>(global, "audio.popup-msg-volume");
     public static final IndirSetting<Boolean> SOUNDONPOPUPMSG = new IndirSetting<>(global, "audio.sound-on-friend-login");
 
+    //pathfinding
+    public static final IndirSetting<Boolean> LIMITPATHFINDING = new IndirSetting<>(global, "pathfinding.limit-search");
+    public static final IndirSetting<Boolean> RESEARCHUNTILGOAL = new IndirSetting<>(global, "pathfinding.research-until-at-goal");
+
     //Debug
     public static final IndirSetting<Boolean> DEBUG = new IndirSetting<>(global, "system.debug");
 
@@ -298,7 +302,9 @@ public class DefSettings {
         //Gobs
         COLORIZEGOBS.ensure(true);
         COLORIZEAGGRO.ensure(true);
-
+        //pathfinding
+        LIMITPATHFINDING.ensure(false);
+        RESEARCHUNTILGOAL.ensure(true);
         //Belts
         SHOWFKBELT.ensure(false);
         FKBELTPAGE.ensure(0);

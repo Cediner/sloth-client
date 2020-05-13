@@ -78,11 +78,11 @@ public class MapView extends PView implements DTarget, Console.Directory {
     private String lasttt = "";
     private Object tt;
     //Queued movement
-    private Coord2d movingto;
+    private Move movingto;
     private Coord2d lastrc;
     private double mspeed, totaldist = 0, mspeedavg, totaldt = 0;
     private long lastMove = System.currentTimeMillis();
-    public final Queue<Coord2d> movequeue = new ArrayDeque<>();
+    public final Queue<Move> movequeue = new ArrayDeque<>();
     public final MapViewExt ext = new MapViewExt(this);
 
     public interface Delayed {
@@ -1807,10 +1807,10 @@ public class MapView extends PView implements DTarget, Console.Directory {
         if (pl != null) {
             if (movingto != null && pl.getattr(Moving.class) != null) {
                 final Coord2d plc = new Coord2d(pl.getc());
-                final double left = plc.dist(movingto) / mspeed;
+                final double left = plc.dist(movingto.dest()) / mspeed;
                 //Only predictive models can trigger here
-                return movingto.dist(pl.rc) <= 5 || left == 0;
-            } else if (movingto == null || movingto.dist(pl.rc) <= 5) {
+                return movingto.dest().dist(pl.rc) <= 5 || left == 0;
+            } else if (movingto == null || movingto.dest().dist(pl.rc) <= 5) {
                 return true;
             } else {
                 //Way off target and not moving, cancel
@@ -1838,7 +1838,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
         }
     }
 
-    public void queuemove(final Coord2d c) {
+    public void queuemove(final Move c) {
         synchronized (movequeue) {
             movequeue.add(c);
         }
@@ -1856,14 +1856,25 @@ public class MapView extends PView implements DTarget, Console.Directory {
     public Move[] findpath(final Coord2d c) {
         final NBAPathfinder finder = new NBAPathfinder(ui);
         final List<Move> moves = finder.path(new Coord(ui.sess.glob.oc.getgob(plgob).getc()), c.floor());
+
+        if (moves != null && RESEARCHUNTILGOAL.get() && moves.get(moves.size() - 1).dest().dist(c) > 1.0) {
+            moves.add(new Move.Repath(moves.get(moves.size() - 1).dest(), c, null));
+        }
+
         return moves != null ? moves.toArray(new Move[0]) : null;
     }
 
     public Move[] findpath(final Gob g) {
+        final Coord2d c = new Coord2d(g.getc());
         g.updatePathfindingBlackout(true);
-        final Move[] moves = findpath(new Coord2d(g.getc()));
+        final NBAPathfinder finder = new NBAPathfinder(ui);
+        final List<Move> moves = finder.path(new Coord(ui.sess.glob.oc.getgob(plgob).getc()), c.floor());
+
+        if (moves != null && RESEARCHUNTILGOAL.get() && moves.get(moves.size() - 1).dest().dist(c) > 1.0) {
+            moves.add(new Move.Repath(moves.get(moves.size() - 1).dest(), c, null));
+        }
         g.updatePathfindingBlackout(false);
-        return moves;
+        return moves != null ? moves.toArray(new Move[0]) : null;
     }
 
     public void pathto(final Coord2d c) {
@@ -1871,15 +1882,19 @@ public class MapView extends PView implements DTarget, Console.Directory {
         if(moves != null) {
             clearmovequeue();
             for(final Move m : moves) {
-                queuemove(m.dest());
+                queuemove(m);
             }
         }
     }
 
     public void pathto(final Gob g) {
-        g.updatePathfindingBlackout(true);
-        pathto(new Coord2d(g.getc()));
-        g.updatePathfindingBlackout(false);
+        final Move[] moves = findpath(g);
+        if (moves != null) {
+            clearmovequeue();
+            for (final Move m : moves) {
+                queuemove(m);
+            }
+        }
     }
 
     public void moveto(final Coord2d c) {
@@ -1901,11 +1916,11 @@ public class MapView extends PView implements DTarget, Console.Directory {
         }
     }
 
-    public Coord2d movingto() {
+    public Move movingto() {
         return movingto;
     }
 
-    public Iterator<Coord2d> movequeue() {
+    public Iterator<Move> movequeue() {
         return movequeue.iterator();
     }
 
@@ -1928,9 +1943,11 @@ public class MapView extends PView implements DTarget, Console.Directory {
         synchronized (movequeue) {
             if (movequeue.size() > 0 && (System.currentTimeMillis() - lastMove > 500) && triggermove()) {
                 movingto = movequeue.poll();
-                ui.gui.pointer.update(movingto);
-                wdgmsg("click", new Coord(1, 1), movingto.floor(posres), 1, 0);
-                lastMove = System.currentTimeMillis();
+                if (movingto != null) {
+                    ui.gui.pointer.update(movingto.dest());
+                    movingto.apply(this);
+                    lastMove = System.currentTimeMillis();
+                }
             }
         }
     }
@@ -2267,7 +2284,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
                 }
                 return true;
             }) || MouseBind.MV_QUEUE_MOVE.check(seq, () -> {
-                movequeue.add(mc);
+                movequeue.add(new Move(mc));
                 return true;
             }) || MouseBind.MV_PATHFIND_MOVE.check(seq, () -> {
                 if (gobargs.length > 0) {

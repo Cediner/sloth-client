@@ -366,6 +366,8 @@ public class OptWnd extends Window {
                 final String[] tiers = {"Perfect", "Fastest"};
                 pathfinding.add(new IndirLabel(() -> String.format("Pathfinding Tier: %s", tiers[PATHFINDINGTIER.get() - 1])));
                 pathfinding.add(new IndirHSlider(200, 1, 2, PATHFINDINGTIER));
+                pathfinding.add(new IndirCheckBox("Limit pathfinding search to 40 tiles", LIMITPATHFINDING));
+                pathfinding.add(new IndirCheckBox("Research if goal was not found (requires Limited pathfinding)", RESEARCHUNTILGOAL));
                 pathfinding.pack();
             }
 

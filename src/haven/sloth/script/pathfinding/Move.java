@@ -59,4 +59,22 @@ public class Move {
 
         }
     }
+
+    public static class Repath extends Move {
+        private final Coord2d goal;
+        private final Gob g;
+
+        public Repath(final Coord2d c, final Coord2d goal, final Gob g) {
+            super(c);
+            this.goal = goal;
+            this.g = g;
+        }
+
+        public void apply(MapView mv) {
+            if (g != null)
+                mv.pathto(g);
+            else
+                mv.pathto(goal);
+        }
+    }
 }
