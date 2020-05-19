@@ -9,6 +9,7 @@
 (defconstant +alert-refresh+ (* 3 60 1000))
 (defconstant +targets+
   `("gfx/terobjs/vehicle/knarr"
+    "gfx/terobjs/vehicle/snekkja"
     "gfx/terobjs/vehicle/rowboat"))
 
 

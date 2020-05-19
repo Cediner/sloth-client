@@ -540,6 +540,11 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
                 sb.append("\n");
             }
         }
+        for (Overlay ol : ols) {
+            sb.append("Overlay: ");
+            sb.append(ol.name());
+            sb.append("\n");
+        }
         sb.append("Position: ");
         sb.append(getc());
         sb.append("\n");

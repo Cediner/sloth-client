@@ -2,6 +2,7 @@
 /.project
 /build
 *~
+etc/food-info2.json
 etc/res/*.bat
 etc/res/*.exe
 etc/res/layers/
