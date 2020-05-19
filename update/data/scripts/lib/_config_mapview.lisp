@@ -125,6 +125,7 @@
 (defun mv-path-to (mc)
   (let ((path (mv-find-path mc)))
     (mv-walk-path path)))
+
 (defun mv-path-to-gob (gob)
   (let ((path (mv-find-path-to-gob gob)))
     (mv-walk-path path)))
@@ -138,7 +139,9 @@
 
 (defun mv-smart-move-to-gob (gob)
   (if (mv-los-gob gob)
-      (mv-move-to-gob gob)
+      (progn
+        (mv-move-to-gob gob)
+        (wait-for-movement :gob (my-gob)))
       (mv-path-to-gob gob)))
 
 (export '(move move-apply move-destination

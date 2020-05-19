@@ -21,9 +21,29 @@
 (defun mc-tilify (c)
   (let ((tsz (coord 11 11)))
     (coord-add (Coord-mul (coord-div c tsz) tsz) (coord-div tsz (coord 2 2)))))
+	
+(defun mc-get-closest-tile (filter-fun &key (c (coord2d-to-coord (gob-rc (my-gob)))) (radius 62))
+	(let* ((cc (coord-div (mc-tilify c) (coord +tilesz+ +tilesz+)))
+		   (sc (coord-sub cc (coord radius radius)))
+		   (ec (coord-add cc (coord radius radius)))
+		   (tiles (bbox-tiles (bbox-make sc ec)))
+		   (best-tile nil)
+		   (bestdist 0))
+		(dolist (tile tiles)
+			(when (and  (funcall filter-fun tile)
+						(or (null best-tile)
+							(< (coord2d-dist (gob-rc (my-gob)) (coord-to-coord2d tile)) bestdist)))
+				(setf best-tile tile)
+				(setf bestdist (coord2d-dist (gob-rc (my-gob)) (coord-to-coord2d tile)))
+			)
+		)
+		(return-from mc-get-closest-tile best-tile)
+	)
+)
 
 (export '(mc-get-z mc-get-tile mc-tilify
-          mc-get-grid-id mc-get-tile-offset))
+          mc-get-grid-id mc-get-tile-offset
+		  mc-get-closest-tile))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
