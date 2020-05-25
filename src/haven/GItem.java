@@ -26,6 +26,7 @@
 
 package haven;
 
+import haven.resutil.Curiosity;
 import haven.resutil.FoodInfo;
 import haven.sloth.gui.item.ContentData;
 import haven.sloth.io.ItemData;
@@ -314,6 +315,10 @@ public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owne
 
     public boolean isFood() {
         return getinfo(FoodInfo.class).isPresent();
+    }
+
+    public boolean isCurio() {
+        return getinfo(Curiosity.class).isPresent();
     }
 
     /******************************************************************************/
