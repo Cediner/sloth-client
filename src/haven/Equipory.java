@@ -36,7 +36,6 @@ import haven.sloth.gui.equip.EquipmentItem;
 import haven.sloth.gui.equip.EquipmentType;
 
 import java.awt.*;
-import java.lang.ref.WeakReference;
 import java.util.*;
 import java.util.List;
 

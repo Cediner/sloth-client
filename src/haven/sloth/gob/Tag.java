@@ -18,12 +18,14 @@ public enum Tag {
     WATER_VEHICLE,
     LAND_VEHICLE,
     SNOW_VEHICLE,
+    SIEGE_VEHICLE,
     ANIMAL,
     TAMED_ANIMAL,
     MEAN_ANIMAL,
     SMALL_ANIMAL,
     CAN_PICK,
     CAN_OPEN,
+    CAN_FIGHT,
     CAN_BOARD;
 
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
