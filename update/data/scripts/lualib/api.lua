@@ -871,9 +871,13 @@ api.flowermenu = {
     api.core.waituntil((function () return session:getFlowermenu() end), 3000)
   end,
 
+  wait_for_no_flowermenu = function ()
+    api.core.waituntil((function () return not session:getFlowermenu() end), 3000)
+  end,
+
   select = function (index)
     if session:getFlowermenu() then
-      script:wdgmsg(session:getFlowermenu(), "cl", {index})
+      script:wdgmsg(session:getFlowermenu(), "cl", {index, api.const.mf_none})
     end
   end
 }

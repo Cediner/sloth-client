@@ -551,20 +551,20 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
         return sb.toString();
     }
 
-    public String rnm(Indir<Resource> r) {
-        try {
-            if (r != null && r.get() != null)
-                return r.get().name;
-            else
-                return "";
-        } catch (Exception e) {
-            return "";
+
+    public String rnm(final Indir<Resource> res) {
+        if (res instanceof Session.CachedRes.Ref) {
+            return ((Session.CachedRes.Ref) res).name();
+        } else if (res instanceof Resource.Named) {
+            return ((Resource.Spec) res).name;
+        } else {
+            return res.get().name;
         }
     }
 
     public boolean isFriendly() {
         final KinInfo kin = getattr(KinInfo.class);
-        if(kin != null) {
+        if (kin != null) {
             return DefSettings.BADKIN.get() != kin.group || (kin.isVillager() && (kin.name == null || kin.name.equals("") || kin.name.equals(" ")));
         } else {
             return false;

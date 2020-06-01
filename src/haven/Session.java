@@ -110,7 +110,7 @@ public class Session implements Resource.Resolver {
         }
     }
 
-    private static class CachedRes {
+    public static class CachedRes {
         private final int resid;
         private String resnm = null;
         private int resver;
@@ -120,7 +120,7 @@ public class Session implements Resource.Resolver {
             resid = id;
         }
 
-        private class Ref implements Indir<Resource> {
+        public class Ref implements Indir<Resource> {
             private Resource res;
 
             public Resource get() {
@@ -141,6 +141,10 @@ public class Session implements Resource.Resolver {
 
             private void reset() {
                 res = null;
+            }
+
+            public String name() {
+                return resnm;
             }
         }
 

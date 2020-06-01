@@ -172,10 +172,12 @@ public class Composite extends Drawable {
 
     public void chmod(List<MD> mod) {
         nmod = mod;
+        lastnmod = nmod;
     }
 
     public void chequ(List<ED> equ) {
         nequ = equ;
+        lastnequ = nequ;
     }
 
 

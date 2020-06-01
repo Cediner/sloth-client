@@ -84,7 +84,7 @@
 (defmacro wait-for-placing-gob-to-be-gone (&key (refresh 100) timeout)
   `(wait-until (lambda () (null (mv-placing-gob))) :refresh ,refresh :timeout ,timeout))
   
-(export '(mv-move-to mv-move-to-rel mv-los mv-los-gob
+(export '(mv-move-to mv-move-to-rel mv-los mv-los-gob mv-plgob
           mv-find-path mv-find-path-to-gob
           mv-clear-moves mv-queue-move
           mv-click-gob mv-interact-held-item-with-gob mv-interact-held-item-with-tile

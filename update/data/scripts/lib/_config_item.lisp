@@ -17,6 +17,7 @@
 (java-func +session+ session-held-item "getHeldItem")
 (java-func +item+ item-name "rnm")
 (java-func +item+ item-is-food "isFood")
+(java-func +item+ item-is-curio "isCurio")
 (java-func +item+ item-get-contents "hasContents")
 (java-func +item+ item-get-all-contents "getRawContents")
 (java-func +item+ item-witem "witem")
@@ -65,7 +66,7 @@
 
 (export '(liquid-type weight-type seed-type
           item-position item-size item-inventory
-          item-name item-is-food item-get-contents item-witem
+          item-name item-is-food item-is-curio item-get-contents item-witem
           item-get-all-contents
           item-quality item-amount item-meter
           contents-name contents-type contents-current contents-max
