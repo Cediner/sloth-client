@@ -558,7 +558,12 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
         } else if (res instanceof Resource.Named) {
             return ((Resource.Spec) res).name;
         } else {
-            return res.get().name;
+            if (res != null && res.get() != null){
+                return res.get().name;
+            }
+            else {
+                return "";
+            }
         }
     }
 
