@@ -553,18 +553,20 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
 
 
     public String rnm(final Indir<Resource> res) {
+        final String nm;
         if (res instanceof Session.CachedRes.Ref) {
-            return ((Session.CachedRes.Ref) res).name();
+            nm = ((Session.CachedRes.Ref) res).name();
         } else if (res instanceof Resource.Named) {
-            return ((Resource.Spec) res).name;
+            nm = ((Resource.Spec) res).name;
         } else {
-            if (res != null && res.get() != null){
-                return res.get().name;
-            }
-            else {
-                return "";
+            if (res != null && res.get() != null) {
+                nm = res.get().name;
+            } else {
+                nm = "";
             }
         }
+
+        return nm != null ? nm : "";
     }
 
     public boolean isFriendly() {
