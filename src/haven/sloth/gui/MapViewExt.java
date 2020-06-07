@@ -328,7 +328,7 @@ public class MapViewExt {
         final FlowerMenu modmenu = new FlowerMenu((selection) -> {
             switch (selection) {
                 case "Mark for Party": { //Mark for party
-                    //Translate to Grid + Gird Offset
+                    //Translate to Grid + Grid Offset
                     final Coord tc = mc.floor(tilesz);
                     final Coord2d tcd = mc.div(tilesz);
 

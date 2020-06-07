@@ -42,6 +42,7 @@ import haven.sloth.script.pathfinding.Hitbox;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
@@ -427,7 +428,7 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
             //don't want objects being held to be on the hitmap
             final UI ui = glob.ui.get();
             if(getattr(HeldBy.class) == null &&
-                    (getattr(Holding.class) == null || ui == null || getattr(Holding.class).held.id != ui.gui.map.plgob) &&
+                    (getattr(Holding.class) == null || ui == null || !getattr(Holding.class).held.contains(ui.gui.map.plgob)) &&
                     !pathfinding_blackout) {
                 hitboxcoords = glob.gobhitmap.add(this);
             }
@@ -510,11 +511,13 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
         sb.append("\n");
         final Holding holding = getattr(Holding.class);
         if (holding != null) {
-            sb.append("Holding: ");
-            sb.append(holding.held.id);
-            sb.append(" - ");
-            sb.append(holding.held.resname().orElse("Unknown"));
-            sb.append("\n");
+            for(long id : holding.held){
+                sb.append("Holding: ");
+                sb.append(id);
+                sb.append(" - ");
+                sb.append(glob.oc.getgob(id).resname().orElse("Unknown"));
+                sb.append("\n");
+            }
         } else {
             final HeldBy heldby = getattr(HeldBy.class);
             if (heldby != null) {
@@ -725,7 +728,7 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
                 final UI ui = glob.ui.get();
                 if (discovered) {
                     if (getattr(HeldBy.class) == null &&
-                            (getattr(Holding.class) == null || ui == null || getattr(Holding.class).held.id != ui.gui.map.plgob) &&
+                            (getattr(Holding.class) == null || ui == null || !getattr(Holding.class).held.contains(ui.gui.map.plgob)) &&
                             !pathfinding_blackout) {
                         hitboxcoords = glob.gobhitmap.add(this);
                     }
@@ -932,6 +935,52 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
         } else {
             return null;
         }
+    }
+
+    /**
+     * For scripting API only
+     */
+    public String[] poses(){
+        Drawable d = getattr(Drawable.class);
+        if (d instanceof Composite) {
+            Composite comp = (Composite) d;
+            final List<String> poses = new ArrayList<>();
+
+            if (comp.oldposes != null) {
+                for (ResData res : comp.oldposes) {
+                    poses.add(rnm(res.res));
+                }
+            }
+            if (comp.oldtposes != null) {
+                for (ResData res : comp.oldtposes) {
+                    poses.add(rnm(res.res));
+                }
+            }
+            return poses.toArray(new String[0]);
+        }
+        return null;
+    }
+
+    /**
+     * For scripting API only
+     */
+    public long heldBy(){
+        final HeldBy heldby = getattr(HeldBy.class);
+        if (heldby != null) {
+            return heldby.holder.id;
+        }
+        return -1;
+    }
+
+    /**
+     * For scripting API only
+     */
+    public Long[] holding(){
+        final Holding holding = getattr(Holding.class);
+        if (holding != null) {
+            return holding.held.toArray(new Long[holding.held.size()]);
+        }
+        return null;
     }
 
     public int sdt() {

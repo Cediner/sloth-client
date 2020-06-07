@@ -85,8 +85,13 @@ public class Following extends Moving {
         final Gob tgt = tgt();
         if (tgt != null) {
             final Holding holding = tgt.getattr(Holding.class);
-            if (holding == null || holding.held != gob) {
+            if (holding == null) {
                 tgt.setattr(new Holding(tgt, gob));
+                gob.delayedsetattr(new HeldBy(gob, tgt), Gob::updateHitmap);
+            }
+            else if (!holding.held.contains(gob.id)){
+                holding.held.add(gob.id);
+                tgt.setattr(holding);
                 gob.delayedsetattr(new HeldBy(gob, tgt), Gob::updateHitmap);
             }
         }

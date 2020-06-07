@@ -575,6 +575,18 @@ public class MCache {
         return (getgrido(tc.div(cmaps)));
     }
 
+    /**
+     * For scripting API only
+     */
+    public Coord2d getcoord(long id, double offsetx, double offsety){
+        Optional<Grid> grid = getgrido(id);
+        if (grid.isPresent()){
+            Coord2d coord = new Coord2d(grid.get().ul).add(offsetx, offsety).mul(tilesz);
+            return coord;
+        }
+        return null;
+    }
+
     public long getgridid(Coord2d mc) {
         final Optional<Grid> grid = getgridto(mc.floor(tilesz));
         return grid.map((g) -> g.id).orElse(-1L);

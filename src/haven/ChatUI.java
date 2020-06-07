@@ -619,6 +619,12 @@ public class ChatUI extends Widget {
         public String name() {
             return (name);
         }
+
+        @Override
+        public void append(Message msg) {
+            super.append(msg);
+            ui.sess.details.context.dispatchmsg(this, "sys", msg.text().text);
+        }
     }
 
     public static abstract class EntryChannel extends Channel {
