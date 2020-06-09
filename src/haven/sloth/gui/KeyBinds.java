@@ -4,6 +4,7 @@ import com.google.common.flogger.FluentLogger;
 import haven.*;
 import haven.sloth.DefSettings;
 import haven.sloth.IndirSetting;
+import haven.sloth.gob.Holding;
 import haven.sloth.gob.Target;
 import haven.sloth.gob.Type;
 import haven.sloth.io.ForagableData;
@@ -227,7 +228,7 @@ public class KeyBinds {
                     synchronized (ui.sess.glob.oc) {
                         for (final Gob g : ui.sess.glob.oc) {
                             final Optional<String> name = g.resname();
-                            if (name.isPresent() && ForagableData.isForagable(name.get(), g)) {
+                            if (name.isPresent() && (ForagableData.isForagable(name.get(), g) || isKickSled(name.get(), g, ui.gui.map.plgob))) {
                                 final float gdist = plc.dist(g.getc());
                                 if (target != null && gdist < dist) {
                                     target = g;
@@ -563,6 +564,17 @@ public class KeyBinds {
         for (final KeyBind kb : Fightsess.keys) {
             add("Combat", kb);
         }
+    }
+
+    private boolean isKickSled(final String name, final Gob g, long plgob){
+        if(name.equals("gfx/terobjs/vehicle/spark")){
+            final Holding holding = g.getattr(Holding.class);
+            if (holding != null){
+                return !holding.held.contains(plgob) && holding.held.size() < 2;
+            }
+            return true;
+        }
+        return false;
     }
 
     public void add(final String group, final KeyBind kb) {
