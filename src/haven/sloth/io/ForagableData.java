@@ -2,6 +2,7 @@ package haven.sloth.io;
 
 import haven.*;
 import haven.sloth.DefSettings;
+import haven.sloth.gob.Holding;
 import haven.sloth.gob.Type;
 
 import java.sql.ResultSet;
@@ -35,6 +36,7 @@ public class ForagableData {
         });
     }
 
+
     public static boolean isForagable(final String name, final Gob g) {
         return name.startsWith("gfx/terobjs/herbs/") ||
                 (DefSettings.FORAGEANIMALS.get() && g.type == Type.SMALLANIMAL) ||
@@ -42,7 +44,6 @@ public class ForagableData {
                 (name.equals("gfx/kritter/swan/swan") && g.isDead()) ||
                 (name.equals("gfx/kritter/adder/adder") && g.isDead()) ||
                 (name.startsWith("gfx/terobjs/items/")) ||
-                (name.equals("gfx/terobjs/vehicle/spark")) ||
                 forageable_names.contains(name);
     }
 

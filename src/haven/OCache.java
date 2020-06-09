@@ -620,7 +620,15 @@ public class OCache implements Iterable<Gob> {
             if (heldby != null) {
                 g.delattr(HeldBy.class);
                 g.updateHitmap();
-                heldby.holder.delattr(Holding.class);
+                Gob holder = heldby.holder;
+                final Holding holding = holder.getattr(Holding.class);
+                holding.held.remove(g.id);
+                if (holding.held.size() == 0){
+                    holder.delattr(Holding.class);
+                }
+                else {
+                    holder.setattr(holding);
+                }
             }
         } else {
             Following flw = g.getattr(Following.class);

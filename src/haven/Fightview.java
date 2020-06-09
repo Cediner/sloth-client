@@ -226,6 +226,20 @@ public class Fightview extends Widget {
                 //Ignore, but really should never hit here
             }
         }
+
+
+        /*******************************************************************************
+         * For Scripting API only
+         */
+
+        public void peace(){
+            //if not peaced, peace
+            if(give.state != 1){
+                give.wdgmsg("click", 1);
+            }
+        }
+
+        /******************************************************************************/
     }
 
     @Override
@@ -385,6 +399,12 @@ public class Fightview extends Widget {
             FastText.printf(g, new Coord(12, y + 3), "IP %d", rel.ip);
             g.chcolor(Color.RED);
             FastText.printf(g, new Coord(12, y + 15), "IP %d", rel.oip);
+            final Gob gob = ui.sess.glob.oc.getgob(rel.gobid);
+            if (gob != null){
+                g.chcolor(Color.BLUE);
+                FastText.printf(g, new Coord(12, y + 27), "Speed: %f", gob.getv());
+                FastText.printf(g, new Coord(12, y + 39), "Distance: %f", gob.getc().dist(ui.sess.glob.oc.getgob(ui.gui.map.plgob).getc()) / 11.0);
+            }
             g.chcolor();
             final Coord c = new Coord(13, y + 32);
             for (Widget wdg = rel.buffs.child; wdg != null; wdg = wdg.next) {
@@ -513,4 +533,15 @@ public class Fightview extends Widget {
         }
         super.uimsg(msg, args);
     }
+
+
+    /*******************************************************************************
+     * For Scripting API only
+     */
+
+    public Relation[] getrelations(){
+        return lsrel.toArray(new Relation[0]);
+    }
+
+    /******************************************************************************/
 }

@@ -2345,7 +2345,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
                         final MCache.Grid grid = ui.sess.glob.map.getgrid(mc.floor(tilesz).div(MCache.cmaps));
                         final Resource res = ui.sess.glob.map.tilesetr(tile_id);
                         final String name = ui.sess.glob.map.tiler(tile_id).getClass().getSimpleName();
-                        updatett("Tile: " + res.name + "[" + tile_id + "] of type " + name + "\n" + mc + " [" + grid.id + "]");
+                        updatett("Tile: " + res.name + "[" + tile_id + "] of type " + name + "\n" + mc + "\n[" + grid.id + "]");
                     } catch (Exception e) {
                         lasttt = "";
                         tt = null;
@@ -2357,7 +2357,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
                     final MCache.Grid grid = ui.sess.glob.map.getgrid(mc.floor(tilesz).div(MCache.cmaps));
                     final Resource res = ui.sess.glob.map.tilesetr(tile_id);
                     final String name = ui.sess.glob.map.tiler(tile_id).getClass().getSimpleName();
-                    updatett("Tile: " + res.name + "[" + tile_id + "] of type " + name + "\n" + mc + " [" + grid.id + "]");
+                    updatett("Tile: " + res.name + "[" + tile_id + "] of type " + name + "\n" + mc + "\n[" + grid.id + "]");
                 } catch (Exception e) {
                     lasttt = "";
                     tt = null;
