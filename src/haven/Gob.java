@@ -514,10 +514,15 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
         final Holding holding = getattr(Holding.class);
         if (holding != null) {
             for(long id : holding.held){
+                final Gob g = glob.oc.getgob(id);
                 sb.append("Holding: ");
                 sb.append(id);
                 sb.append(" - ");
-                sb.append(glob.oc.getgob(id).resname().orElse("Unknown"));
+                if (g != null) {
+                    sb.append(g.resname().orElse("Unknown"));
+                } else {
+                    sb.append("Unknown");
+                }
                 sb.append("\n");
             }
         } else {
