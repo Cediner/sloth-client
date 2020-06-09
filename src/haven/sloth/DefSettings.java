@@ -129,6 +129,7 @@ public class DefSettings {
     public static final IndirSetting<Boolean> COLORDFRAMES = new IndirSetting<>(global, "gameplay.show-colored-frames");
     public static final IndirSetting<Boolean> COLORTUBS = new IndirSetting<>(global, "gameplay.show-colored-tubs");
     public static final IndirSetting<Boolean> COLORCUPBOARDS = new IndirSetting<>(global, "gameplay.show-colored-cupbaords");
+    public static final IndirSetting<Boolean> COLORCRACKS = new IndirSetting<>(global, "gameplay.show-colored-racks");
 
     public static final IndirSetting<Boolean> KEEPGOBS = new IndirSetting<>(global, "graphics.dont-delete-gobs");            //[Bool] Don't delete gobs
     public static final IndirSetting<Boolean> KEEPGRIDS = new IndirSetting<>(global, "graphics.dont-delete-grids");          //[Bool] Don't delete map grids
@@ -299,6 +300,7 @@ public class DefSettings {
         COLORDFRAMES.ensure(true);
         COLORTUBS.ensure(true);
         COLORCUPBOARDS.ensure(true);
+        COLORCRACKS.ensure(true);
         //Gobs
         COLORIZEGOBS.ensure(true);
         COLORIZEAGGRO.ensure(true);

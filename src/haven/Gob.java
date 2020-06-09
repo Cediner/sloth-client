@@ -358,6 +358,8 @@ public class Gob implements Sprite.Owner, Skeleton.ModOwner, Rendered {
                     setattr(new TanTubStatus(this));
                 } else if (name.equals("gfx/terobjs/cupboard")) {
                     setattr(new CupboardStatus(this));
+                } else if (name.equals("gfx/terobjs/cheeserack")){
+                    setattr(new CheeseRackStatus(this));
                 }
                 if (HighlightData.isHighlighted(name)) {
                     mark(-1);
