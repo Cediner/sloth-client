@@ -8,6 +8,8 @@
 (java-func +mcache+ mc-get-tile-1 "gettile_safe" +coord+)
 (java-func +mcache+ mc-get-grid-id-1 "getgridid" +coord2d+)
 (java-func +mcache+ mc-get-tile-offset-1 "gettileoffset" +coord2d+)
+(java-func +mcache+ mc-get-coord-1 "getcoord" +long+ +double+ +double+)
+
 (defmacro mc-get-z (c)
   `(mc-get-z-1 (mc) (coord-div ,c (coord +tilesz+ +tilesz+))))
 (defmacro mc-get-tile (c)
@@ -17,6 +19,8 @@
   `(mc-get-grid-id-1 (mc) ,c))
 (defmacro mc-get-tile-offset (c)
   `(mc-get-tile-offset-1 (mc) ,c))
+(defmacro mc-get-coord (id x y)
+  `(mc-get-coord-1 (mc) ,id ,x ,y))
 
 (defun mc-tilify (c)
   (let ((tsz (coord 11 11)))
@@ -42,7 +46,7 @@
 )
 
 (export '(mc-get-z mc-get-tile mc-tilify
-          mc-get-grid-id mc-get-tile-offset
+          mc-get-grid-id mc-get-tile-offset mc-get-coord
 		  mc-get-closest-tile))
 
 

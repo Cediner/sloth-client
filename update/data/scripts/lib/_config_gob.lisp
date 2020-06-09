@@ -17,6 +17,9 @@
 (java-func +gob+ gob-v "getv")
 (java-func +gob+ gob-sdt "sdt")
 (java-func +gob+ gob-overlays "overlays")
+(java-func +gob+ gob-poses "poses")
+(java-func +gob+ gob-heldBy "heldBy")
+(java-func +gob+ gob-holding "holding")
 ;;friendly
 (java-func +gob+ is-gob-dead "isDead")
 (java-func +gob+ is-gob-friendly "isFriendly")
@@ -117,7 +120,7 @@
   `(gob-get-closest-by-filter (lambda (gob) (string= ,name (gob-name gob)))))
 
 (export '(+plant+ +human+ +animal+ +tamed-animal+ +small-animal+ +water-vehicle+ +vehicle+
-          gob-c gob-name gob-type gob-overlays gob-sdt is-gob-dead
+          gob-c gob-name gob-type gob-overlays gob-poses gob-heldBy gob-holding gob-sdt is-gob-dead
           gob-kinname gob-equipment
           gob-id gob-rc gob-v
           is-gob-a my-gob

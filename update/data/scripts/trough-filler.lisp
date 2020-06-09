@@ -62,7 +62,7 @@
 				 )
 				(when item
 					(item-take item)
-					(sleep 1)
+					(wait-until (lambda() (held-item)))
 				)
 			)
 		)
@@ -80,7 +80,7 @@
 		do (progn	
 			(mv-smart-move-to-gob gob)
 			(mv-interact-held-item-with-gob gob +mf-shift+)
-			(wait-for-movement)
+			(sleep.1)
 			(pickup-item)
 		)
 	)
