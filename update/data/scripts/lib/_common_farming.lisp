@@ -32,6 +32,7 @@
    (make-crop :name "gfx/terobjs/plants/cucumber" :kind +trellis+ :finish-stage '(4))
    (make-crop :name "gfx/terobjs/plants/leek" :kind +ground+ :finish-stage '(4))
    (make-crop :name "gfx/terobjs/plants/lettuce" :kind +ground+ :finish-stage '(4))
+   (make-crop :name "gfx/terobjs/plants/wheat" :kindd +ground+ :finish-stage '(3))
    (make-crop :name "gfx/terobjs/plants/millet" :kind +ground+ :finish-stage '(3))))
 (defconstant +crop-lookup+ (make-hash-table :test 'equal))
 (loop
