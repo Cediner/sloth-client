@@ -41,14 +41,14 @@ public class HashDirCache implements ResCache {
 
     public static File findbase() {
         try {
-//            sloth:
-//            {
-//                File appdata = new File("data/");
-//                File base = new File(appdata, "cache");
-//                if (!base.exists() && !base.mkdirs())
-//                    break sloth;
-//                return (base);
-//            }
+            sloth:
+            {
+                File appdata = new File("data/");
+                File base = new File(appdata, "cache");
+                if (!base.exists() && !base.mkdirs())
+                    break sloth;
+                return (base);
+            }
             windows:
             {
                 String path = System.getenv("APPDATA");
