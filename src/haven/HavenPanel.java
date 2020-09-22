@@ -105,26 +105,83 @@ public class HavenPanel extends GLCanvas implements Runnable, Console.Directory,
                     redraw(gl);
             }
 
+//            public void init(GLAutoDrawable d) {
+//                try {
+//                    GL gl = d.getGL();
+//                    if (h != null) {
+//                        h.lsetprop("gl.vendor", gl.glGetString(gl.GL_VENDOR));
+//                        h.lsetprop("gl.version", gl.glGetString(gl.GL_VERSION));
+//                        h.lsetprop("gl.renderer", gl.glGetString(gl.GL_RENDERER));
+//                        h.lsetprop("gl.exts", Arrays.asList(gl.glGetString(gl.GL_EXTENSIONS).split(" ")));
+//                        h.lsetprop("gl.caps", d.getChosenGLCapabilities().toString());
+//                        h.lsetprop("gl.conf", glconf);
+//                    }
+//                    glconf = GLConfig.fromgl(gl, d.getContext(), getChosenGLCapabilities());
+//                    if (gldebug)
+//                        d.getContext().addGLDebugListener(System.err::println);
+//
+//			/* if(gldebug) {
+//			    if(!d.getContext().isGLDebugMessageEnabled())
+//				System.err.println("GL debugging not actually enabled");
+//			    ((GL2)gl).glDebugMessageControl(GL.GL_DONT_CARE, GL.GL_DONT_CARE, GL.GL_DONT_CARE, 0, null, true);
+//			} */
+//                    if (ui != null) {
+//                        ui.cons.add(glconf);
+//                    }
+//                    gstate = new GLState() {
+//                        public void apply(GOut g) {
+//                            BGL gl = g.gl;
+//                            gl.glColor3f(1, 1, 1);
+//                            gl.glPointSize(4);
+//                            gl.joglSetSwapInterval((aswap = DefSettings.VSYNC.get()) ? 1 : 0);
+//                            gl.glEnable(GL.GL_BLEND);
+//                            //gl.glEnable(GL.GL_LINE_SMOOTH);
+//                            gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+//                            if (g.gc.glmajver >= 2)
+//                                gl.glBlendEquationSeparate(GL.GL_FUNC_ADD, GL2.GL_MAX);
+//                            if (g.gc.havefsaa()) {
+//                                /* Apparently, having sample
+//                                 * buffers in the config enables
+//                                 * multisampling by default on
+//                                 * some systems. */
+//                                g.gl.glDisable(GL.GL_MULTISAMPLE);
+//                            }
+//                            GOut.checkerr(gl);
+//                        }
+//
+//                        public void unapply(GOut g) {
+//                        }
+//
+//                        public void prep(Buffer buf) {
+//                            buf.put(global, this);
+//                        }
+//                    };
+//                } catch (RuntimeException e) {
+//                    uncaught = e;
+//                    throw (e);
+//                }
+//            }
             public void init(GLAutoDrawable d) {
                 try {
                     GL gl = d.getGL();
                     if (h != null) {
-                        h.lsetprop("gl.vendor", gl.glGetString(gl.GL_VENDOR));
-                        h.lsetprop("gl.version", gl.glGetString(gl.GL_VERSION));
-                        h.lsetprop("gl.renderer", gl.glGetString(gl.GL_RENDERER));
-                        h.lsetprop("gl.exts", Arrays.asList(gl.glGetString(gl.GL_EXTENSIONS).split(" ")));
-                        h.lsetprop("gl.caps", d.getChosenGLCapabilities().toString());
-                        h.lsetprop("gl.conf", glconf);
+                        String vendor = gl.glGetString(gl.GL_VENDOR);
+//                        isATI = vendor.contains("AMD") || vendor.contains("ATI");
+                        h.lsetprop("gpu", vendor + " (" + gl.glGetString(gl.GL_RENDERER) + ") - " + gl.glGetString(gl.GL_VERSION));
+                        // h.lsetprop("gl.vendor", vendor);
+                        // h.lsetprop("gl.version", gl.glGetString(gl.GL_VERSION));
+                        // h.lsetprop("gl.renderer", gl.glGetString(gl.GL_RENDERER));
+                        // h.lsetprop("gl.exts", Arrays.asList(gl.glGetString(gl.GL_EXTENSIONS).split(" ")));
+                        // h.lsetprop("gl.caps", d.getChosenGLCapabilities().toString());
+                        // h.lsetprop("gl.conf", glconf);
                     }
                     glconf = GLConfig.fromgl(gl, d.getContext(), getChosenGLCapabilities());
-                    if (gldebug)
-                        d.getContext().addGLDebugListener(System.err::println);
-
-			/* if(gldebug) {
-			    if(!d.getContext().isGLDebugMessageEnabled())
-				System.err.println("GL debugging not actually enabled");
-			    ((GL2)gl).glDebugMessageControl(GL.GL_DONT_CARE, GL.GL_DONT_CARE, GL.GL_DONT_CARE, 0, null, true);
-			} */
+                    if (gldebug) {
+                        if (!d.getContext().isGLDebugMessageEnabled())
+                            System.err.println("GL debugging not actually enabled");
+                        ((GL2) gl).glDebugMessageControl(GL.GL_DONT_CARE, GL.GL_DONT_CARE, GL.GL_DONT_CARE, 0, null, true);
+                    }
+                    glconf.pref = GLSettings.load(glconf, true);
                     if (ui != null) {
                         ui.cons.add(glconf);
                     }
@@ -133,7 +190,7 @@ public class HavenPanel extends GLCanvas implements Runnable, Console.Directory,
                             BGL gl = g.gl;
                             gl.glColor3f(1, 1, 1);
                             gl.glPointSize(4);
-                            gl.joglSetSwapInterval((aswap = DefSettings.VSYNC.get()) ? 1 : 0);
+                            gl.joglSetSwapInterval((aswap = iswap) ? 1 : 0);
                             gl.glEnable(GL.GL_BLEND);
                             //gl.glEnable(GL.GL_LINE_SMOOTH);
                             gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
