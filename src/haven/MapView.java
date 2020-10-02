@@ -1844,6 +1844,13 @@ public class MapView extends PView implements DTarget, Console.Directory {
         }
     }
 
+    public void queuemove(final Coord2d c2d) {
+        final Move c = new Move(c2d);
+        synchronized (movequeue) {
+            movequeue.add(c);
+        }
+    }
+
     public boolean los(final Coord2d c) {
         final NBAPathfinder finder = new NBAPathfinder(ui);
         return finder.walk(new Coord(ui.sess.glob.oc.getgob(plgob).getc()), c.floor());

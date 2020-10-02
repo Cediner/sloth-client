@@ -84,8 +84,8 @@ public class ChatUtils {
                         Float.parseFloat(nextToken(argstr, ref)),
                         Float.parseFloat(nextToken(argstr, ref)));
             case "coord2d":
-                return new Coord2d(Double.parseDouble(nextToken(argstr, ref)),
-                        Double.parseDouble(nextToken(argstr, ref)));
+                return new Coord2d(Double.parseDouble(nextToken(argstr, ref).replace(',', '.')),
+                        Double.parseDouble(nextToken(argstr, ref).replace(',', '.')));
             default:
                 throw new RuntimeException("Invalid dispatch message - " + argstr);
         }
