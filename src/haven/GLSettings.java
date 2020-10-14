@@ -129,16 +129,16 @@ public class GLSettings implements java.io.Serializable {
     public GLSettings(GLConfig cfg) {
         this.cfg = cfg;
         //GLSettings
-//        PFLIGHTING.ensure(true);
-//        CELSHADING.ensure(false);
-//        SHADOWS.ensure(true);
-//        WATERSURFACE.ensure(true);
-//        ANTIALIASING.ensure(false);
-//        ALPHACOV.ensure(false);
-//        MESHMODE.ensure("VAO");
-//        INSTANCING.ensure(true);
-//        OUTLINES.ensure(true);
-//        ANISOLEVEL.ensure(0);
+        PFLIGHTING.ensure(true);
+        CELSHADING.ensure(false);
+        SHADOWS.ensure(true);
+        WATERSURFACE.ensure(true);
+        ANTIALIASING.ensure(false);
+        ALPHACOV.ensure(false);
+        MESHMODE.ensure("VAO");
+        INSTANCING.ensure(true);
+        OUTLINES.ensure(true);
+        ANISOLEVEL.ensure(0);
     }
 
     private static class SettingException extends RuntimeException {
