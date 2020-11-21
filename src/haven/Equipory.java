@@ -46,25 +46,28 @@ public class Equipory extends Widget implements DTarget {
     private static final Tex bg = Resource.loadtex("gfx/hud/equip/bg");
     private static final Color debuff = new Color(255, 128, 128);
     private static final Color buff = new Color(128, 255, 128);
-    private static final int rx = 34 + bg.sz().x;
+    private static final int rx = invsq.sz().x + bg.sz().x;
+    private static final int yo = Inventory.sqsz.y;
     public static final Coord ecoords[] = {
-            new Coord(0, 0),    //head
-            new Coord(rx, 0),      //access
-            new Coord(0, 33),   //shirt
-            new Coord(rx, 33),     //shirt2
-            new Coord(0, 66),   //hands
-            new Coord(rx, 66),     //belt [5]
-            new Coord(0, 99), //Weapon slot	[6]
-            new Coord(rx, 99),   //Weapon slot   [7]
-            new Coord(0, 132),
-            new Coord(rx, 132),
-            new Coord(0, 165),
-            new Coord(rx, 165),
-            new Coord(0, 198),
-            new Coord(rx, 198),
-            new Coord(0, 231),
-            new Coord(rx, 231),
-            new Coord(34, 0),
+            new Coord(0, 0 * yo),
+            new Coord(0, 1 * yo),
+            new Coord(0, 2 * yo),
+            new Coord(rx, 2 * yo),
+            new Coord(0, 3 * yo),
+            new Coord(rx, 3 * yo),
+            new Coord(0, 4 * yo),
+            new Coord(rx, 4 * yo),
+            new Coord(0, 5 * yo),
+            new Coord(rx, 5 * yo),
+            new Coord(0, 6 * yo),
+            new Coord(rx, 6 * yo),
+            new Coord(0, 7 * yo),
+            new Coord(rx, 7 * yo),
+            new Coord(0, 8 * yo),
+            new Coord(rx, 8 * yo),
+            new Coord(invsq.sz().x, 0 * yo),
+            new Coord(rx, 0 * yo),
+            new Coord(rx, 1 * yo),
     };
     public static final Tex[] ebgs = new Tex[ecoords.length];
     public static final Text[] etts = new Text[ecoords.length];
@@ -133,7 +136,7 @@ public class Equipory extends Widget implements DTarget {
             protected java.awt.Color clearcolor() {
                 return (null);
             }
-        }, new Coord(34, 0));
+        }, new Coord(invsq.sz().x, 0));
         ava.color = null;
     }
 
@@ -271,7 +274,7 @@ public class Equipory extends Widget implements DTarget {
             } catch (Loading l) {
             }
         }
-        for (int i = 0; i < 16; i++) {
+        for (int i = 0; i < ecoords.length; i++) {
             if ((slots & (1 << i)) != 0) {
                 g.chcolor(255, 255, 0, 64);
                 g.frect(ecoords[i].add(1, 1), invsq.sz().sub(2, 2));
