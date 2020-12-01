@@ -88,9 +88,9 @@ public abstract class ItemInfo {
     }
 
     public static class FactMaker implements Resource.PublishedCode.Instancer {
-        public InfoFactory make(Class<?> cl) throws InstantiationException, IllegalAccessException {
+        public InfoFactory make(Class<?> cl, Resource ires, Object... argv) {
             if (InfoFactory.class.isAssignableFrom(cl))
-                return (cl.asSubclass(InfoFactory.class).newInstance());
+                return (Resource.PublishedCode.Instancer.stdmake(cl.asSubclass(InfoFactory.class), ires, argv));
             try {
                 Function<Object[], ItemInfo> make = Utils.smthfun(cl, "mkinfo", ItemInfo.class, Owner.class, Object[].class);
                 return (new InfoFactory() {

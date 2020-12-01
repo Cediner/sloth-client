@@ -1406,6 +1406,14 @@ public class Utils {
         }
     }
 
+    public static <T> T construct(Class<T> cl) {
+        try {
+            return (construct(cl.getConstructor()));
+        } catch (NoSuchMethodException e) {
+            throw (new RuntimeException(e));
+        }
+    }
+
     public static Object invoke(Method mth, Object ob, Object... args) {
         try {
             return (mth.invoke(ob, args));
@@ -1416,6 +1424,11 @@ public class Utils {
                 throw ((RuntimeException) e.getCause());
             throw (new RuntimeException(e.getCause()));
         }
+    }
+
+    public static <R> Function<Object[], R> consfun(Class<R> cl, Class<?>... args) throws NoSuchMethodException {
+        Constructor<R> cons = cl.getConstructor(args);
+        return (iargs -> construct(cons, iargs));
     }
 
     public static <R> Function<Object[], R> smthfun(Class<?> cl, String name, Class<R> rtype, Class<?>... args) throws NoSuchMethodException {
